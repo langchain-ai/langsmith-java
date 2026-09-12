@@ -9,9 +9,11 @@ import com.langchain.smith.services.async.DatasetServiceAsync
 import com.langchain.smith.services.async.EvaluatorServiceAsync
 import com.langchain.smith.services.async.ExampleServiceAsync
 import com.langchain.smith.services.async.FeedbackServiceAsync
+import com.langchain.smith.services.async.FleetServiceAsync
 import com.langchain.smith.services.async.InfoServiceAsync
 import com.langchain.smith.services.async.IssueServiceAsync
 import com.langchain.smith.services.async.OnlineEvaluatorServiceAsync
+import com.langchain.smith.services.async.ProductFeedbackServiceAsync
 import com.langchain.smith.services.async.PublicServiceAsync
 import com.langchain.smith.services.async.RepoServiceAsync
 import com.langchain.smith.services.async.RunServiceAsync
@@ -58,6 +60,10 @@ interface LangsmithClientAsync {
      * The original service is not modified.
      */
     fun withOptions(modifier: Consumer<ClientOptions.Builder>): LangsmithClientAsync
+
+    fun productFeedback(): ProductFeedbackServiceAsync
+
+    fun fleet(): FleetServiceAsync
 
     fun sessions(): SessionServiceAsync
 
@@ -121,6 +127,10 @@ interface LangsmithClientAsync {
         fun withOptions(
             modifier: Consumer<ClientOptions.Builder>
         ): LangsmithClientAsync.WithRawResponse
+
+        fun productFeedback(): ProductFeedbackServiceAsync.WithRawResponse
+
+        fun fleet(): FleetServiceAsync.WithRawResponse
 
         fun sessions(): SessionServiceAsync.WithRawResponse
 

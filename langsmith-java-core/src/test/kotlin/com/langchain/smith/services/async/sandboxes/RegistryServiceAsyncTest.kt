@@ -25,8 +25,10 @@ internal class RegistryServiceAsyncTest {
             registryServiceAsync.create(
                 RegistryCreateParams.builder()
                     .name("name")
-                    .password("password")
                     .url("url")
+                    .authType(RegistryCreateParams.AuthType.DOCKER_CONFIG)
+                    .awsRoleArn("aws_role_arn")
+                    .password("password")
                     .username("username")
                     .build()
             )
@@ -65,6 +67,8 @@ internal class RegistryServiceAsyncTest {
             registryServiceAsync.update(
                 RegistryUpdateParams.builder()
                     .pathName("name")
+                    .authType(RegistryUpdateParams.AuthType.DOCKER_CONFIG)
+                    .awsRoleArn("aws_role_arn")
                     .bodyName("name")
                     .password("password")
                     .url("url")

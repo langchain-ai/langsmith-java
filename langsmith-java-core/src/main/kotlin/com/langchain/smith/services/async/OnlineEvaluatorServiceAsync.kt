@@ -101,7 +101,10 @@ interface OnlineEvaluatorServiceAsync {
     ): CompletableFuture<OnlineEvaluator> =
         retrieve(evaluatorId, OnlineEvaluatorRetrieveParams.none(), requestOptions)
 
-    /** Update an existing evaluator's name, LLM configuration, or code configuration. */
+    /**
+     * Update an existing evaluator's name, LLM configuration, or code configuration. Returns 409
+     * when a code evaluator build is ENQUEUED or BUILDING.
+     */
     fun update(
         evaluatorId: String,
         params: OnlineEvaluatorUpdateParams,
@@ -150,9 +153,11 @@ interface OnlineEvaluatorServiceAsync {
         list(OnlineEvaluatorListParams.none(), requestOptions)
 
     /**
-     * Delete an evaluator. When delete_run_rules is true, all run rules referencing this evaluator
-     * are deleted first (same tenant). Associated llm_evaluators and code_evaluators rows are
-     * removed by foreign-key cascade when the evaluator row is deleted.
+     * Delete an evaluator. Returns 409 when a code evaluator build is ENQUEUED or BUILDING, or when
+     * run rules still reference the evaluator and delete_run_rules is false. When delete_run_rules
+     * is true, all run rules referencing this evaluator are deleted first (same tenant) if the
+     * build is not in flight. Associated llm_evaluators and code_evaluators rows are removed by
+     * foreign-key cascade when the evaluator row is deleted.
      */
     fun delete(evaluatorId: String): CompletableFuture<Void?> =
         delete(evaluatorId, OnlineEvaluatorDeleteParams.none())
@@ -199,8 +204,8 @@ interface OnlineEvaluatorServiceAsync {
     /**
      * Returns per-day LLM evaluator spend for the requested 7-day period, grouped by evaluator,
      * resource, or run rule. Exactly one of group_by, evaluator_id, session_id, or dataset_id is
-     * required. resource_id, type, and feedback_key may be supplied with group_by to narrow listing
-     * aggregations.
+     * required. resource_id, type, feedback_key, and tag_value_id may be supplied with group_by to
+     * narrow listing aggregations.
      */
     fun spend(
         params: OnlineEvaluatorSpendParams

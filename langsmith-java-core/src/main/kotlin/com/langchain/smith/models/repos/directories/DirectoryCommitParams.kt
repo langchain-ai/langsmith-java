@@ -23,7 +23,8 @@ import kotlin.jvm.optionals.getOrNull
 
 /**
  * Creates a new directory commit for an agent or skill repository by applying file/link create,
- * update, and delete operations.
+ * update, and delete operations. Linked directories default to the LATEST selector; use COMMIT to
+ * pin one commit. The legacy commit_id write field is deprecated and resolves as LATEST.
  */
 class DirectoryCommitParams
 private constructor(
@@ -39,7 +40,8 @@ private constructor(
     fun repo(): Optional<String> = Optional.ofNullable(repo)
 
     /**
-     * Files maps path to an Entry (object = create/update/link, null = delete/unlink).
+     * Paths to create, update, link, delete, or unlink. Use null to delete or unlink an existing
+     * path.
      *
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
@@ -53,10 +55,7 @@ private constructor(
     fun parentCommit(): Optional<String> = body.parentCommit()
 
     /**
-     * SkipWebhooks, when true, suppresses Context Hub commit webhooks for this commit. Deliberately
-     * a plain bool, not the any (bool | []string) shape of the prompt-hub
-     * CreateCommitReq.SkipWebhooks: Context Hub v1 has no per-webhook filtering, so a bool is the
-     * correct shape.
+     * SkipWebhooks suppresses Context Hub commit webhooks for this commit.
      *
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
@@ -143,7 +142,10 @@ private constructor(
          */
         fun body(body: Body) = apply { this.body = body.toBuilder() }
 
-        /** Files maps path to an Entry (object = create/update/link, null = delete/unlink). */
+        /**
+         * Paths to create, update, link, delete, or unlink. Use null to delete or unlink an
+         * existing path.
+         */
         fun files(files: Files) = apply { body.files(files) }
 
         /**
@@ -167,12 +169,7 @@ private constructor(
             body.parentCommit(parentCommit)
         }
 
-        /**
-         * SkipWebhooks, when true, suppresses Context Hub commit webhooks for this commit.
-         * Deliberately a plain bool, not the any (bool | []string) shape of the prompt-hub
-         * CreateCommitReq.SkipWebhooks: Context Hub v1 has no per-webhook filtering, so a bool is
-         * the correct shape.
-         */
+        /** SkipWebhooks suppresses Context Hub commit webhooks for this commit. */
         fun skipWebhooks(skipWebhooks: Boolean) = apply { body.skipWebhooks(skipWebhooks) }
 
         /**
@@ -359,7 +356,8 @@ private constructor(
         ) : this(files, parentCommit, skipWebhooks, mutableMapOf())
 
         /**
-         * Files maps path to an Entry (object = create/update/link, null = delete/unlink).
+         * Paths to create, update, link, delete, or unlink. Use null to delete or unlink an
+         * existing path.
          *
          * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
          *   the server responded with an unexpected value).
@@ -373,10 +371,7 @@ private constructor(
         fun parentCommit(): Optional<String> = parentCommit.getOptional("parent_commit")
 
         /**
-         * SkipWebhooks, when true, suppresses Context Hub commit webhooks for this commit.
-         * Deliberately a plain bool, not the any (bool | []string) shape of the prompt-hub
-         * CreateCommitReq.SkipWebhooks: Context Hub v1 has no per-webhook filtering, so a bool is
-         * the correct shape.
+         * SkipWebhooks suppresses Context Hub commit webhooks for this commit.
          *
          * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
          *   the server responded with an unexpected value).
@@ -444,7 +439,10 @@ private constructor(
                 additionalProperties = body.additionalProperties.toMutableMap()
             }
 
-            /** Files maps path to an Entry (object = create/update/link, null = delete/unlink). */
+            /**
+             * Paths to create, update, link, delete, or unlink. Use null to delete or unlink an
+             * existing path.
+             */
             fun files(files: Files) = files(JsonField.of(files))
 
             /**
@@ -469,12 +467,7 @@ private constructor(
                 this.parentCommit = parentCommit
             }
 
-            /**
-             * SkipWebhooks, when true, suppresses Context Hub commit webhooks for this commit.
-             * Deliberately a plain bool, not the any (bool | []string) shape of the prompt-hub
-             * CreateCommitReq.SkipWebhooks: Context Hub v1 has no per-webhook filtering, so a bool
-             * is the correct shape.
-             */
+            /** SkipWebhooks suppresses Context Hub commit webhooks for this commit. */
             fun skipWebhooks(skipWebhooks: Boolean) = skipWebhooks(JsonField.of(skipWebhooks))
 
             /**
@@ -580,7 +573,10 @@ private constructor(
             "Body{files=$files, parentCommit=$parentCommit, skipWebhooks=$skipWebhooks, additionalProperties=$additionalProperties}"
     }
 
-    /** Files maps path to an Entry (object = create/update/link, null = delete/unlink). */
+    /**
+     * Paths to create, update, link, delete, or unlink. Use null to delete or unlink an existing
+     * path.
+     */
     class Files
     @JsonCreator
     private constructor(

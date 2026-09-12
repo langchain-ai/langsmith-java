@@ -20,7 +20,13 @@ internal class OnlineEvaluatorListPageResponseTest {
                         .id("id")
                         .codeEvaluator(
                             OnlineCodeEvaluator.builder()
+                                .advancedFeaturesEnabled(true)
                                 .code("code")
+                                .dependencies("dependencies")
+                                .evaluatorBuildError("evaluator_build_error")
+                                .evaluatorBuildStatus(
+                                    OnlineCodeEvaluator.EvaluatorBuildStatus.ENQUEUED
+                                )
                                 .evaluatorId("evaluator_id")
                                 .language("language")
                                 .build()
@@ -79,7 +85,11 @@ internal class OnlineEvaluatorListPageResponseTest {
                     .id("id")
                     .codeEvaluator(
                         OnlineCodeEvaluator.builder()
+                            .advancedFeaturesEnabled(true)
                             .code("code")
+                            .dependencies("dependencies")
+                            .evaluatorBuildError("evaluator_build_error")
+                            .evaluatorBuildStatus(OnlineCodeEvaluator.EvaluatorBuildStatus.ENQUEUED)
                             .evaluatorId("evaluator_id")
                             .language("language")
                             .build()
@@ -142,7 +152,13 @@ internal class OnlineEvaluatorListPageResponseTest {
                         .id("id")
                         .codeEvaluator(
                             OnlineCodeEvaluator.builder()
+                                .advancedFeaturesEnabled(true)
                                 .code("code")
+                                .dependencies("dependencies")
+                                .evaluatorBuildError("evaluator_build_error")
+                                .evaluatorBuildStatus(
+                                    OnlineCodeEvaluator.EvaluatorBuildStatus.ENQUEUED
+                                )
                                 .evaluatorId("evaluator_id")
                                 .language("language")
                                 .build()

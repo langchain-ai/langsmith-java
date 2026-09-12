@@ -34,6 +34,7 @@ internal class AnnotationQueueAnnotationQueuesParamsTest {
                     .description("description")
                     .isAssertion(true)
                     .isRequired(true)
+                    .regexValidator("string")
                     .scoreDescriptions(
                         AnnotationQueueRubricItemSchema.ScoreDescriptions.builder()
                             .putAdditionalProperty("foo", JsonValue.from("string"))
@@ -76,6 +77,7 @@ internal class AnnotationQueueAnnotationQueuesParamsTest {
                         .description("description")
                         .isAssertion(true)
                         .isRequired(true)
+                        .regexValidator("string")
                         .scoreDescriptions(
                             AnnotationQueueRubricItemSchema.ScoreDescriptions.builder()
                                 .putAdditionalProperty("foo", JsonValue.from("string"))
@@ -117,6 +119,7 @@ internal class AnnotationQueueAnnotationQueuesParamsTest {
                     .description("description")
                     .isAssertion(true)
                     .isRequired(true)
+                    .regexValidator("string")
                     .scoreDescriptions(
                         AnnotationQueueRubricItemSchema.ScoreDescriptions.builder()
                             .putAdditionalProperty("foo", JsonValue.from("string"))

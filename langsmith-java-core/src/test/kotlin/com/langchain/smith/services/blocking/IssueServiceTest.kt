@@ -3,6 +3,7 @@
 package com.langchain.smith.services.blocking
 
 import com.langchain.smith.client.okhttp.LangsmithOkHttpClient
+import com.langchain.smith.models.issues.IssueRetrieveParams
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 
@@ -15,7 +16,10 @@ internal class IssueServiceTest {
             LangsmithOkHttpClient.builder().apiKey("My API Key").tenantId("My Tenant ID").build()
         val issueService = client.issues()
 
-        val issue = issueService.retrieve("id")
+        val issue =
+            issueService.retrieve(
+                IssueRetrieveParams.builder().id("id").includeLinearContext(true).build()
+            )
 
         issue.validate()
     }

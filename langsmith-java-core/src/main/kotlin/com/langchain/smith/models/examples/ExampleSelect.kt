@@ -38,6 +38,8 @@ class ExampleSelect @JsonCreator private constructor(private val value: JsonFiel
 
         @JvmField val SOURCE_TRACE_ID = of("source_trace_id")
 
+        @JvmField val SOURCE_THREAD_ID = of("source_thread_id")
+
         @JvmField val METADATA = of("metadata")
 
         @JvmField val INPUTS = of("inputs")
@@ -60,6 +62,7 @@ class ExampleSelect @JsonCreator private constructor(private val value: JsonFiel
         SOURCE_SESSION_ID,
         SOURCE_RUN_START_TIME,
         SOURCE_TRACE_ID,
+        SOURCE_THREAD_ID,
         METADATA,
         INPUTS,
         OUTPUTS,
@@ -85,6 +88,7 @@ class ExampleSelect @JsonCreator private constructor(private val value: JsonFiel
         SOURCE_SESSION_ID,
         SOURCE_RUN_START_TIME,
         SOURCE_TRACE_ID,
+        SOURCE_THREAD_ID,
         METADATA,
         INPUTS,
         OUTPUTS,
@@ -113,6 +117,7 @@ class ExampleSelect @JsonCreator private constructor(private val value: JsonFiel
             SOURCE_SESSION_ID -> Value.SOURCE_SESSION_ID
             SOURCE_RUN_START_TIME -> Value.SOURCE_RUN_START_TIME
             SOURCE_TRACE_ID -> Value.SOURCE_TRACE_ID
+            SOURCE_THREAD_ID -> Value.SOURCE_THREAD_ID
             METADATA -> Value.METADATA
             INPUTS -> Value.INPUTS
             OUTPUTS -> Value.OUTPUTS
@@ -139,6 +144,7 @@ class ExampleSelect @JsonCreator private constructor(private val value: JsonFiel
             SOURCE_SESSION_ID -> Known.SOURCE_SESSION_ID
             SOURCE_RUN_START_TIME -> Known.SOURCE_RUN_START_TIME
             SOURCE_TRACE_ID -> Known.SOURCE_TRACE_ID
+            SOURCE_THREAD_ID -> Known.SOURCE_THREAD_ID
             METADATA -> Known.METADATA
             INPUTS -> Known.INPUTS
             OUTPUTS -> Known.OUTPUTS

@@ -6,12 +6,15 @@ import com.google.errorprone.annotations.MustBeClosed
 import com.langchain.smith.core.ClientOptions
 import com.langchain.smith.core.RequestOptions
 import com.langchain.smith.core.http.HttpResponseFor
+import com.langchain.smith.models.threads.ThreadAggregateStatsParams
+import com.langchain.smith.models.threads.ThreadAggregateStatsResponse
 import com.langchain.smith.models.threads.ThreadListTracesPage
 import com.langchain.smith.models.threads.ThreadListTracesParams
 import com.langchain.smith.models.threads.ThreadQueryPage
 import com.langchain.smith.models.threads.ThreadQueryParams
 import com.langchain.smith.models.threads.ThreadStats
 import com.langchain.smith.models.threads.ThreadStatsParams
+import com.langchain.smith.services.blocking.threads.ShareService
 import java.util.function.Consumer
 
 interface ThreadService {
@@ -27,6 +30,24 @@ interface ThreadService {
      * The original service is not modified.
      */
     fun withOptions(modifier: Consumer<ClientOptions.Builder>): ThreadService
+
+    fun share(): ShareService
+
+    /**
+     * GET with body payload — no resources created. Returns aggregate statistics for threads in a
+     * tracing project. The response includes the thread counts, run counts, latency percentiles,
+     * rates, token totals, and cost totals requested in `select`.
+     *
+     * Self-hosted deployments require LangSmith `v0.17` or later.
+     */
+    fun aggregateStats(params: ThreadAggregateStatsParams): ThreadAggregateStatsResponse =
+        aggregateStats(params, RequestOptions.none())
+
+    /** @see aggregateStats */
+    fun aggregateStats(
+        params: ThreadAggregateStatsParams,
+        requestOptions: RequestOptions = RequestOptions.none(),
+    ): ThreadAggregateStatsResponse
 
     /**
      * Retrieve all traces belonging to a specific thread within a project.
@@ -56,7 +77,7 @@ interface ThreadService {
 
     /**
      * Query threads within a project (session), with cursor-based pagination. Returns threads
-     * matching the given time range and optional filter.
+     * matching the given time range and optional filters.
      *
      * Self-hosted deployments require LangSmith `v0.16` or later.
      */
@@ -110,6 +131,25 @@ interface ThreadService {
          * The original service is not modified.
          */
         fun withOptions(modifier: Consumer<ClientOptions.Builder>): ThreadService.WithRawResponse
+
+        fun share(): ShareService.WithRawResponse
+
+        /**
+         * Returns a raw HTTP response for `post /api/v2/threads/stats`, but is otherwise the same
+         * as [ThreadService.aggregateStats].
+         */
+        @MustBeClosed
+        fun aggregateStats(
+            params: ThreadAggregateStatsParams
+        ): HttpResponseFor<ThreadAggregateStatsResponse> =
+            aggregateStats(params, RequestOptions.none())
+
+        /** @see aggregateStats */
+        @MustBeClosed
+        fun aggregateStats(
+            params: ThreadAggregateStatsParams,
+            requestOptions: RequestOptions = RequestOptions.none(),
+        ): HttpResponseFor<ThreadAggregateStatsResponse>
 
         /**
          * Returns a raw HTTP response for `get /api/v2/threads/{thread_id}/traces`, but is

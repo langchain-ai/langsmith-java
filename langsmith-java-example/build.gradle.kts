@@ -35,6 +35,12 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("org.springframework.boot:spring-boot-starter")
 
+    constraints {
+        implementation("org.apache.tomcat.embed:tomcat-embed-core:10.1.59")
+        implementation("org.apache.tomcat.embed:tomcat-embed-el:10.1.59")
+        implementation("org.apache.tomcat.embed:tomcat-embed-websocket:10.1.59")
+    }
+
     // Simple logging for examples. This lets smoke tests show SDK debug/trace logs.
     runtimeOnly("org.slf4j:slf4j-simple:2.0.17")
 }

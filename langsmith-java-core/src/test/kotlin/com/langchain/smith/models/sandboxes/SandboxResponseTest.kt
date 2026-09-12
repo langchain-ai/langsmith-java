@@ -182,6 +182,7 @@ internal class SandboxResponseTest {
                                 )
                                 .build()
                         )
+                        .description("description")
                         .addNoProxy("string")
                         .addRule(
                             SandboxResponse.ProxyConfig.Rule.builder()
@@ -215,6 +216,7 @@ internal class SandboxResponseTest {
                                         )
                                         .build()
                                 )
+                                .description("description")
                                 .enabled(true)
                                 .envVars(
                                     SandboxResponse.ProxyConfig.Rule.EnvVars.builder()
@@ -254,6 +256,17 @@ internal class SandboxResponseTest {
                                 .type("type")
                                 .build()
                         )
+                        .build()
+                )
+                .runConfig(
+                    SandboxResponse.RunConfig.builder()
+                        .envVars(
+                            SandboxResponse.RunConfig.EnvVars.builder()
+                                .putAdditionalProperty("foo", JsonValue.from("string"))
+                                .build()
+                        )
+                        .user("user")
+                        .workDir("work_dir")
                         .build()
                 )
                 .sizeClass("size_class")
@@ -431,6 +444,7 @@ internal class SandboxResponseTest {
                             )
                             .build()
                     )
+                    .description("description")
                     .addNoProxy("string")
                     .addRule(
                         SandboxResponse.ProxyConfig.Rule.builder()
@@ -462,6 +476,7 @@ internal class SandboxResponseTest {
                                     )
                                     .build()
                             )
+                            .description("description")
                             .enabled(true)
                             .envVars(
                                 SandboxResponse.ProxyConfig.Rule.EnvVars.builder()
@@ -499,6 +514,18 @@ internal class SandboxResponseTest {
                             .type("type")
                             .build()
                     )
+                    .build()
+            )
+        assertThat(sandboxResponse.runConfig())
+            .contains(
+                SandboxResponse.RunConfig.builder()
+                    .envVars(
+                        SandboxResponse.RunConfig.EnvVars.builder()
+                            .putAdditionalProperty("foo", JsonValue.from("string"))
+                            .build()
+                    )
+                    .user("user")
+                    .workDir("work_dir")
                     .build()
             )
         assertThat(sandboxResponse.sizeClass()).contains("size_class")
@@ -684,6 +711,7 @@ internal class SandboxResponseTest {
                                 )
                                 .build()
                         )
+                        .description("description")
                         .addNoProxy("string")
                         .addRule(
                             SandboxResponse.ProxyConfig.Rule.builder()
@@ -717,6 +745,7 @@ internal class SandboxResponseTest {
                                         )
                                         .build()
                                 )
+                                .description("description")
                                 .enabled(true)
                                 .envVars(
                                     SandboxResponse.ProxyConfig.Rule.EnvVars.builder()
@@ -756,6 +785,17 @@ internal class SandboxResponseTest {
                                 .type("type")
                                 .build()
                         )
+                        .build()
+                )
+                .runConfig(
+                    SandboxResponse.RunConfig.builder()
+                        .envVars(
+                            SandboxResponse.RunConfig.EnvVars.builder()
+                                .putAdditionalProperty("foo", JsonValue.from("string"))
+                                .build()
+                        )
+                        .user("user")
+                        .workDir("work_dir")
                         .build()
                 )
                 .sizeClass("size_class")

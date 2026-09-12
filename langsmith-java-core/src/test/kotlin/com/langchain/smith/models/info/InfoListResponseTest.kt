@@ -24,6 +24,7 @@ internal class InfoListResponseTest {
                         .useMultipartEndpoint(true)
                         .build()
                 )
+                .billingInstallationId("billing_installation_id")
                 .customerInfo(
                     InfoListResponse.CustomerInfo.builder()
                         .customerId("customer_id")
@@ -59,6 +60,7 @@ internal class InfoListResponseTest {
                     .useMultipartEndpoint(true)
                     .build()
             )
+        assertThat(infoListResponse.billingInstallationId()).contains("billing_installation_id")
         assertThat(infoListResponse.customerInfo())
             .contains(
                 InfoListResponse.CustomerInfo.builder()
@@ -101,6 +103,7 @@ internal class InfoListResponseTest {
                         .useMultipartEndpoint(true)
                         .build()
                 )
+                .billingInstallationId("billing_installation_id")
                 .customerInfo(
                     InfoListResponse.CustomerInfo.builder()
                         .customerId("customer_id")

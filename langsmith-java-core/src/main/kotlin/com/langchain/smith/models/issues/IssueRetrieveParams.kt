@@ -17,11 +17,15 @@ import kotlin.jvm.optionals.getOrNull
 class IssueRetrieveParams
 private constructor(
     private val id: String?,
+    private val includeLinearContext: Boolean?,
     private val additionalHeaders: Headers,
     private val additionalQueryParams: QueryParams,
 ) : Params {
 
     fun id(): Optional<String> = Optional.ofNullable(id)
+
+    /** Include current Linear workflow state and validated linked GitHub pull request URLs */
+    fun includeLinearContext(): Optional<Boolean> = Optional.ofNullable(includeLinearContext)
 
     /** Additional headers to send with the request. */
     fun _additionalHeaders(): Headers = additionalHeaders
@@ -43,12 +47,14 @@ private constructor(
     class Builder internal constructor() {
 
         private var id: String? = null
+        private var includeLinearContext: Boolean? = null
         private var additionalHeaders: Headers.Builder = Headers.builder()
         private var additionalQueryParams: QueryParams.Builder = QueryParams.builder()
 
         @JvmSynthetic
         internal fun from(issueRetrieveParams: IssueRetrieveParams) = apply {
             id = issueRetrieveParams.id
+            includeLinearContext = issueRetrieveParams.includeLinearContext
             additionalHeaders = issueRetrieveParams.additionalHeaders.toBuilder()
             additionalQueryParams = issueRetrieveParams.additionalQueryParams.toBuilder()
         }
@@ -57,6 +63,26 @@ private constructor(
 
         /** Alias for calling [Builder.id] with `id.orElse(null)`. */
         fun id(id: Optional<String>) = id(id.getOrNull())
+
+        /** Include current Linear workflow state and validated linked GitHub pull request URLs */
+        fun includeLinearContext(includeLinearContext: Boolean?) = apply {
+            this.includeLinearContext = includeLinearContext
+        }
+
+        /**
+         * Alias for [Builder.includeLinearContext].
+         *
+         * This unboxed primitive overload exists for backwards compatibility.
+         */
+        fun includeLinearContext(includeLinearContext: Boolean) =
+            includeLinearContext(includeLinearContext as Boolean?)
+
+        /**
+         * Alias for calling [Builder.includeLinearContext] with
+         * `includeLinearContext.orElse(null)`.
+         */
+        fun includeLinearContext(includeLinearContext: Optional<Boolean>) =
+            includeLinearContext(includeLinearContext.getOrNull())
 
         fun additionalHeaders(additionalHeaders: Headers) = apply {
             this.additionalHeaders.clear()
@@ -162,7 +188,12 @@ private constructor(
          * Further updates to this [Builder] will not mutate the returned instance.
          */
         fun build(): IssueRetrieveParams =
-            IssueRetrieveParams(id, additionalHeaders.build(), additionalQueryParams.build())
+            IssueRetrieveParams(
+                id,
+                includeLinearContext,
+                additionalHeaders.build(),
+                additionalQueryParams.build(),
+            )
     }
 
     fun _pathParam(index: Int): String =
@@ -173,7 +204,13 @@ private constructor(
 
     override fun _headers(): Headers = additionalHeaders
 
-    override fun _queryParams(): QueryParams = additionalQueryParams
+    override fun _queryParams(): QueryParams =
+        QueryParams.builder()
+            .apply {
+                includeLinearContext?.let { put("include_linear_context", it.toString()) }
+                putAll(additionalQueryParams)
+            }
+            .build()
 
     override fun equals(other: Any?): Boolean {
         if (this === other) {
@@ -182,12 +219,14 @@ private constructor(
 
         return other is IssueRetrieveParams &&
             id == other.id &&
+            includeLinearContext == other.includeLinearContext &&
             additionalHeaders == other.additionalHeaders &&
             additionalQueryParams == other.additionalQueryParams
     }
 
-    override fun hashCode(): Int = Objects.hash(id, additionalHeaders, additionalQueryParams)
+    override fun hashCode(): Int =
+        Objects.hash(id, includeLinearContext, additionalHeaders, additionalQueryParams)
 
     override fun toString() =
-        "IssueRetrieveParams{id=$id, additionalHeaders=$additionalHeaders, additionalQueryParams=$additionalQueryParams}"
+        "IssueRetrieveParams{id=$id, includeLinearContext=$includeLinearContext, additionalHeaders=$additionalHeaders, additionalQueryParams=$additionalQueryParams}"
 }

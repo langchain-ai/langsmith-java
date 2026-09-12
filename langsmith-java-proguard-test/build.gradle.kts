@@ -8,10 +8,10 @@ buildscript {
         resolutionStrategy {
             // CVE-2025-67030: remove once Shadow safely resolves plexus-utils >= 4.0.3.
             force("org.codehaus.plexus:plexus-utils:4.0.3")
-            // CVE-2025-68161 and CVE-2026-34477/34478/34480: remove once the build
-            // plugins resolve Log4j >= 2.25.4.
-            force("org.apache.logging.log4j:log4j-api:2.25.4")
-            force("org.apache.logging.log4j:log4j-core:2.25.4")
+            // CVE-2025-68161, CVE-2026-34477/34478/34480, and CVE-2026-49844:
+            // remove once the build plugins resolve Log4j >= 2.25.5.
+            force("org.apache.logging.log4j:log4j-api:2.25.5")
+            force("org.apache.logging.log4j:log4j-core:2.25.5")
         }
     }
 

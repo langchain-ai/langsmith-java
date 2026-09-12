@@ -76,7 +76,8 @@ interface DirectoryServiceAsync {
 
     /**
      * Creates a new directory commit for an agent or skill repository by applying file/link create,
-     * update, and delete operations.
+     * update, and delete operations. Linked directories default to the LATEST selector; use COMMIT
+     * to pin one commit. The legacy commit_id write field is deprecated and resolves as LATEST.
      */
     fun commit(
         repo: String,

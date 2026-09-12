@@ -48,6 +48,7 @@ private constructor(
     private val name: JsonField<String>,
     private val preserveMemoryOnStop: JsonField<Boolean>,
     private val proxyConfig: JsonField<ProxyConfig>,
+    private val runConfig: JsonField<RunConfig>,
     private val sizeClass: JsonField<String>,
     private val snapshotId: JsonField<String>,
     private val status: JsonField<String>,
@@ -91,6 +92,9 @@ private constructor(
         @JsonProperty("proxy_config")
         @ExcludeMissing
         proxyConfig: JsonField<ProxyConfig> = JsonMissing.of(),
+        @JsonProperty("run_config")
+        @ExcludeMissing
+        runConfig: JsonField<RunConfig> = JsonMissing.of(),
         @JsonProperty("size_class") @ExcludeMissing sizeClass: JsonField<String> = JsonMissing.of(),
         @JsonProperty("snapshot_id")
         @ExcludeMissing
@@ -118,6 +122,7 @@ private constructor(
         name,
         preserveMemoryOnStop,
         proxyConfig,
+        runConfig,
         sizeClass,
         snapshotId,
         status,
@@ -214,6 +219,15 @@ private constructor(
      *   server responded with an unexpected value).
      */
     fun proxyConfig(): Optional<ProxyConfig> = proxyConfig.getOptional("proxy_config")
+
+    /**
+     * RunConfig is what the sandbox's commands run with: the user, working directory and base env
+     * beneath env_vars.
+     *
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
+    fun runConfig(): Optional<RunConfig> = runConfig.getOptional("run_config")
 
     /**
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
@@ -380,6 +394,13 @@ private constructor(
     fun _proxyConfig(): JsonField<ProxyConfig> = proxyConfig
 
     /**
+     * Returns the raw JSON value of [runConfig].
+     *
+     * Unlike [runConfig], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    @JsonProperty("run_config") @ExcludeMissing fun _runConfig(): JsonField<RunConfig> = runConfig
+
+    /**
      * Returns the raw JSON value of [sizeClass].
      *
      * Unlike [sizeClass], this method doesn't throw if the JSON field has an unexpected type.
@@ -472,6 +493,7 @@ private constructor(
         private var name: JsonField<String> = JsonMissing.of()
         private var preserveMemoryOnStop: JsonField<Boolean> = JsonMissing.of()
         private var proxyConfig: JsonField<ProxyConfig> = JsonMissing.of()
+        private var runConfig: JsonField<RunConfig> = JsonMissing.of()
         private var sizeClass: JsonField<String> = JsonMissing.of()
         private var snapshotId: JsonField<String> = JsonMissing.of()
         private var status: JsonField<String> = JsonMissing.of()
@@ -498,6 +520,7 @@ private constructor(
             name = sandboxResponse.name
             preserveMemoryOnStop = sandboxResponse.preserveMemoryOnStop
             proxyConfig = sandboxResponse.proxyConfig
+            runConfig = sandboxResponse.runConfig
             sizeClass = sandboxResponse.sizeClass
             snapshotId = sandboxResponse.snapshotId
             status = sandboxResponse.status
@@ -677,6 +700,21 @@ private constructor(
             this.proxyConfig = proxyConfig
         }
 
+        /**
+         * RunConfig is what the sandbox's commands run with: the user, working directory and base
+         * env beneath env_vars.
+         */
+        fun runConfig(runConfig: RunConfig) = runConfig(JsonField.of(runConfig))
+
+        /**
+         * Sets [Builder.runConfig] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.runConfig] with a well-typed [RunConfig] value instead.
+         * This method is primarily for setting the field to an undocumented or not yet supported
+         * value.
+         */
+        fun runConfig(runConfig: JsonField<RunConfig>) = apply { this.runConfig = runConfig }
+
         fun sizeClass(sizeClass: String) = sizeClass(JsonField.of(sizeClass))
 
         /**
@@ -805,6 +843,7 @@ private constructor(
                 name,
                 preserveMemoryOnStop,
                 proxyConfig,
+                runConfig,
                 sizeClass,
                 snapshotId,
                 status,
@@ -846,6 +885,7 @@ private constructor(
         name()
         preserveMemoryOnStop()
         proxyConfig().ifPresent { it.validate() }
+        runConfig().ifPresent { it.validate() }
         sizeClass()
         snapshotId()
         status()
@@ -886,6 +926,7 @@ private constructor(
             (if (name.asKnown().isPresent) 1 else 0) +
             (if (preserveMemoryOnStop.asKnown().isPresent) 1 else 0) +
             (proxyConfig.asKnown().getOrNull()?.validity() ?: 0) +
+            (runConfig.asKnown().getOrNull()?.validity() ?: 0) +
             (if (sizeClass.asKnown().isPresent) 1 else 0) +
             (if (snapshotId.asKnown().isPresent) 1 else 0) +
             (if (status.asKnown().isPresent) 1 else 0) +
@@ -12444,6 +12485,7 @@ private constructor(
     private constructor(
         private val accessControl: JsonField<AccessControl>,
         private val callbacks: JsonField<List<Callback>>,
+        private val description: JsonField<String>,
         private val noProxy: JsonField<List<String>>,
         private val rules: JsonField<List<Rule>>,
         private val additionalProperties: MutableMap<String, JsonValue>,
@@ -12457,11 +12499,14 @@ private constructor(
             @JsonProperty("callbacks")
             @ExcludeMissing
             callbacks: JsonField<List<Callback>> = JsonMissing.of(),
+            @JsonProperty("description")
+            @ExcludeMissing
+            description: JsonField<String> = JsonMissing.of(),
             @JsonProperty("no_proxy")
             @ExcludeMissing
             noProxy: JsonField<List<String>> = JsonMissing.of(),
             @JsonProperty("rules") @ExcludeMissing rules: JsonField<List<Rule>> = JsonMissing.of(),
-        ) : this(accessControl, callbacks, noProxy, rules, mutableMapOf())
+        ) : this(accessControl, callbacks, description, noProxy, rules, mutableMapOf())
 
         /**
          * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
@@ -12474,6 +12519,15 @@ private constructor(
          *   the server responded with an unexpected value).
          */
         fun callbacks(): Optional<List<Callback>> = callbacks.getOptional("callbacks")
+
+        /**
+         * Description says what this configuration as a whole lets the sandbox reach, complementing
+         * the per-rule descriptions. At most 1024 characters.
+         *
+         * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
+         *   the server responded with an unexpected value).
+         */
+        fun description(): Optional<String> = description.getOptional("description")
 
         /**
          * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
@@ -12505,6 +12559,15 @@ private constructor(
         @JsonProperty("callbacks")
         @ExcludeMissing
         fun _callbacks(): JsonField<List<Callback>> = callbacks
+
+        /**
+         * Returns the raw JSON value of [description].
+         *
+         * Unlike [description], this method doesn't throw if the JSON field has an unexpected type.
+         */
+        @JsonProperty("description")
+        @ExcludeMissing
+        fun _description(): JsonField<String> = description
 
         /**
          * Returns the raw JSON value of [noProxy].
@@ -12543,6 +12606,7 @@ private constructor(
 
             private var accessControl: JsonField<AccessControl> = JsonMissing.of()
             private var callbacks: JsonField<MutableList<Callback>>? = null
+            private var description: JsonField<String> = JsonMissing.of()
             private var noProxy: JsonField<MutableList<String>>? = null
             private var rules: JsonField<MutableList<Rule>>? = null
             private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
@@ -12551,6 +12615,7 @@ private constructor(
             internal fun from(proxyConfig: ProxyConfig) = apply {
                 accessControl = proxyConfig.accessControl
                 callbacks = proxyConfig.callbacks.map { it.toMutableList() }
+                description = proxyConfig.description
                 noProxy = proxyConfig.noProxy.map { it.toMutableList() }
                 rules = proxyConfig.rules.map { it.toMutableList() }
                 additionalProperties = proxyConfig.additionalProperties.toMutableMap()
@@ -12593,6 +12658,23 @@ private constructor(
                     (callbacks ?: JsonField.of(mutableListOf())).also {
                         checkKnown("callbacks", it).add(callback)
                     }
+            }
+
+            /**
+             * Description says what this configuration as a whole lets the sandbox reach,
+             * complementing the per-rule descriptions. At most 1024 characters.
+             */
+            fun description(description: String) = description(JsonField.of(description))
+
+            /**
+             * Sets [Builder.description] to an arbitrary JSON value.
+             *
+             * You should usually call [Builder.description] with a well-typed [String] value
+             * instead. This method is primarily for setting the field to an undocumented or not yet
+             * supported value.
+             */
+            fun description(description: JsonField<String>) = apply {
+                this.description = description
             }
 
             fun noProxy(noProxy: List<String>) = noProxy(JsonField.of(noProxy))
@@ -12673,6 +12755,7 @@ private constructor(
                 ProxyConfig(
                     accessControl,
                     (callbacks ?: JsonMissing.of()).map { it.toImmutable() },
+                    description,
                     (noProxy ?: JsonMissing.of()).map { it.toImmutable() },
                     (rules ?: JsonMissing.of()).map { it.toImmutable() },
                     additionalProperties.toMutableMap(),
@@ -12697,6 +12780,7 @@ private constructor(
 
             accessControl().ifPresent { it.validate() }
             callbacks().ifPresent { it.forEach { it.validate() } }
+            description()
             noProxy()
             rules().ifPresent { it.forEach { it.validate() } }
             validated = true
@@ -12720,6 +12804,7 @@ private constructor(
         internal fun validity(): Int =
             (accessControl.asKnown().getOrNull()?.validity() ?: 0) +
                 (callbacks.asKnown().getOrNull()?.sumOf { it.validity().toInt() } ?: 0) +
+                (if (description.asKnown().isPresent) 1 else 0) +
                 (noProxy.asKnown().getOrNull()?.size ?: 0) +
                 (rules.asKnown().getOrNull()?.sumOf { it.validity().toInt() } ?: 0)
 
@@ -13756,6 +13841,7 @@ private constructor(
         private constructor(
             private val name: JsonField<String>,
             private val aws: JsonField<Aws>,
+            private val description: JsonField<String>,
             private val enabled: JsonField<Boolean>,
             private val envVars: JsonField<EnvVars>,
             private val gcp: JsonField<Gcp>,
@@ -13770,6 +13856,9 @@ private constructor(
             private constructor(
                 @JsonProperty("name") @ExcludeMissing name: JsonField<String> = JsonMissing.of(),
                 @JsonProperty("aws") @ExcludeMissing aws: JsonField<Aws> = JsonMissing.of(),
+                @JsonProperty("description")
+                @ExcludeMissing
+                description: JsonField<String> = JsonMissing.of(),
                 @JsonProperty("enabled")
                 @ExcludeMissing
                 enabled: JsonField<Boolean> = JsonMissing.of(),
@@ -13790,6 +13879,7 @@ private constructor(
             ) : this(
                 name,
                 aws,
+                description,
                 enabled,
                 envVars,
                 gcp,
@@ -13812,6 +13902,15 @@ private constructor(
              *   if the server responded with an unexpected value).
              */
             fun aws(): Optional<Aws> = aws.getOptional("aws")
+
+            /**
+             * Description says what this rule lets the sandbox reach, so an agent driving the
+             * sandbox can be told its capabilities. At most 1024 characters.
+             *
+             * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g.
+             *   if the server responded with an unexpected value).
+             */
+            fun description(): Optional<String> = description.getOptional("description")
 
             /**
              * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g.
@@ -13877,6 +13976,16 @@ private constructor(
              * Unlike [aws], this method doesn't throw if the JSON field has an unexpected type.
              */
             @JsonProperty("aws") @ExcludeMissing fun _aws(): JsonField<Aws> = aws
+
+            /**
+             * Returns the raw JSON value of [description].
+             *
+             * Unlike [description], this method doesn't throw if the JSON field has an unexpected
+             * type.
+             */
+            @JsonProperty("description")
+            @ExcludeMissing
+            fun _description(): JsonField<String> = description
 
             /**
              * Returns the raw JSON value of [enabled].
@@ -13965,6 +14074,7 @@ private constructor(
 
                 private var name: JsonField<String>? = null
                 private var aws: JsonField<Aws> = JsonMissing.of()
+                private var description: JsonField<String> = JsonMissing.of()
                 private var enabled: JsonField<Boolean> = JsonMissing.of()
                 private var envVars: JsonField<EnvVars> = JsonMissing.of()
                 private var gcp: JsonField<Gcp> = JsonMissing.of()
@@ -13978,6 +14088,7 @@ private constructor(
                 internal fun from(rule: Rule) = apply {
                     name = rule.name
                     aws = rule.aws
+                    description = rule.description
                     enabled = rule.enabled
                     envVars = rule.envVars
                     gcp = rule.gcp
@@ -14009,6 +14120,23 @@ private constructor(
                  * value.
                  */
                 fun aws(aws: JsonField<Aws>) = apply { this.aws = aws }
+
+                /**
+                 * Description says what this rule lets the sandbox reach, so an agent driving the
+                 * sandbox can be told its capabilities. At most 1024 characters.
+                 */
+                fun description(description: String) = description(JsonField.of(description))
+
+                /**
+                 * Sets [Builder.description] to an arbitrary JSON value.
+                 *
+                 * You should usually call [Builder.description] with a well-typed [String] value
+                 * instead. This method is primarily for setting the field to an undocumented or not
+                 * yet supported value.
+                 */
+                fun description(description: JsonField<String>) = apply {
+                    this.description = description
+                }
 
                 fun enabled(enabled: Boolean) = enabled(JsonField.of(enabled))
 
@@ -14179,6 +14307,7 @@ private constructor(
                     Rule(
                         checkRequired("name", name),
                         aws,
+                        description,
                         enabled,
                         envVars,
                         gcp,
@@ -14209,6 +14338,7 @@ private constructor(
 
                 name()
                 aws().ifPresent { it.validate() }
+                description()
                 enabled()
                 envVars().ifPresent { it.validate() }
                 gcp().ifPresent { it.validate() }
@@ -14237,6 +14367,7 @@ private constructor(
             internal fun validity(): Int =
                 (if (name.asKnown().isPresent) 1 else 0) +
                     (aws.asKnown().getOrNull()?.validity() ?: 0) +
+                    (if (description.asKnown().isPresent) 1 else 0) +
                     (if (enabled.asKnown().isPresent) 1 else 0) +
                     (envVars.asKnown().getOrNull()?.validity() ?: 0) +
                     (gcp.asKnown().getOrNull()?.validity() ?: 0) +
@@ -16471,6 +16602,7 @@ private constructor(
                 return other is Rule &&
                     name == other.name &&
                     aws == other.aws &&
+                    description == other.description &&
                     enabled == other.enabled &&
                     envVars == other.envVars &&
                     gcp == other.gcp &&
@@ -16485,6 +16617,7 @@ private constructor(
                 Objects.hash(
                     name,
                     aws,
+                    description,
                     enabled,
                     envVars,
                     gcp,
@@ -16499,7 +16632,7 @@ private constructor(
             override fun hashCode(): Int = hashCode
 
             override fun toString() =
-                "Rule{name=$name, aws=$aws, enabled=$enabled, envVars=$envVars, gcp=$gcp, headers=$headers, matchHosts=$matchHosts, matchPaths=$matchPaths, type=$type, additionalProperties=$additionalProperties}"
+                "Rule{name=$name, aws=$aws, description=$description, enabled=$enabled, envVars=$envVars, gcp=$gcp, headers=$headers, matchHosts=$matchHosts, matchPaths=$matchPaths, type=$type, additionalProperties=$additionalProperties}"
         }
 
         override fun equals(other: Any?): Boolean {
@@ -16510,19 +16643,359 @@ private constructor(
             return other is ProxyConfig &&
                 accessControl == other.accessControl &&
                 callbacks == other.callbacks &&
+                description == other.description &&
                 noProxy == other.noProxy &&
                 rules == other.rules &&
                 additionalProperties == other.additionalProperties
         }
 
         private val hashCode: Int by lazy {
-            Objects.hash(accessControl, callbacks, noProxy, rules, additionalProperties)
+            Objects.hash(
+                accessControl,
+                callbacks,
+                description,
+                noProxy,
+                rules,
+                additionalProperties,
+            )
         }
 
         override fun hashCode(): Int = hashCode
 
         override fun toString() =
-            "ProxyConfig{accessControl=$accessControl, callbacks=$callbacks, noProxy=$noProxy, rules=$rules, additionalProperties=$additionalProperties}"
+            "ProxyConfig{accessControl=$accessControl, callbacks=$callbacks, description=$description, noProxy=$noProxy, rules=$rules, additionalProperties=$additionalProperties}"
+    }
+
+    /**
+     * RunConfig is what the sandbox's commands run with: the user, working directory and base env
+     * beneath env_vars.
+     */
+    class RunConfig
+    @JsonCreator(mode = JsonCreator.Mode.DISABLED)
+    private constructor(
+        private val envVars: JsonField<EnvVars>,
+        private val user: JsonField<String>,
+        private val workDir: JsonField<String>,
+        private val additionalProperties: MutableMap<String, JsonValue>,
+    ) {
+
+        @JsonCreator
+        private constructor(
+            @JsonProperty("env_vars")
+            @ExcludeMissing
+            envVars: JsonField<EnvVars> = JsonMissing.of(),
+            @JsonProperty("user") @ExcludeMissing user: JsonField<String> = JsonMissing.of(),
+            @JsonProperty("work_dir") @ExcludeMissing workDir: JsonField<String> = JsonMissing.of(),
+        ) : this(envVars, user, workDir, mutableMapOf())
+
+        /**
+         * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
+         *   the server responded with an unexpected value).
+         */
+        fun envVars(): Optional<EnvVars> = envVars.getOptional("env_vars")
+
+        /**
+         * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
+         *   the server responded with an unexpected value).
+         */
+        fun user(): Optional<String> = user.getOptional("user")
+
+        /**
+         * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
+         *   the server responded with an unexpected value).
+         */
+        fun workDir(): Optional<String> = workDir.getOptional("work_dir")
+
+        /**
+         * Returns the raw JSON value of [envVars].
+         *
+         * Unlike [envVars], this method doesn't throw if the JSON field has an unexpected type.
+         */
+        @JsonProperty("env_vars") @ExcludeMissing fun _envVars(): JsonField<EnvVars> = envVars
+
+        /**
+         * Returns the raw JSON value of [user].
+         *
+         * Unlike [user], this method doesn't throw if the JSON field has an unexpected type.
+         */
+        @JsonProperty("user") @ExcludeMissing fun _user(): JsonField<String> = user
+
+        /**
+         * Returns the raw JSON value of [workDir].
+         *
+         * Unlike [workDir], this method doesn't throw if the JSON field has an unexpected type.
+         */
+        @JsonProperty("work_dir") @ExcludeMissing fun _workDir(): JsonField<String> = workDir
+
+        @JsonAnySetter
+        private fun putAdditionalProperty(key: String, value: JsonValue) {
+            additionalProperties.put(key, value)
+        }
+
+        @JsonAnyGetter
+        @ExcludeMissing
+        fun _additionalProperties(): Map<String, JsonValue> =
+            Collections.unmodifiableMap(additionalProperties)
+
+        fun toBuilder() = Builder().from(this)
+
+        companion object {
+
+            /** Returns a mutable builder for constructing an instance of [RunConfig]. */
+            @JvmStatic fun builder() = Builder()
+        }
+
+        /** A builder for [RunConfig]. */
+        class Builder internal constructor() {
+
+            private var envVars: JsonField<EnvVars> = JsonMissing.of()
+            private var user: JsonField<String> = JsonMissing.of()
+            private var workDir: JsonField<String> = JsonMissing.of()
+            private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
+
+            @JvmSynthetic
+            internal fun from(runConfig: RunConfig) = apply {
+                envVars = runConfig.envVars
+                user = runConfig.user
+                workDir = runConfig.workDir
+                additionalProperties = runConfig.additionalProperties.toMutableMap()
+            }
+
+            fun envVars(envVars: EnvVars) = envVars(JsonField.of(envVars))
+
+            /**
+             * Sets [Builder.envVars] to an arbitrary JSON value.
+             *
+             * You should usually call [Builder.envVars] with a well-typed [EnvVars] value instead.
+             * This method is primarily for setting the field to an undocumented or not yet
+             * supported value.
+             */
+            fun envVars(envVars: JsonField<EnvVars>) = apply { this.envVars = envVars }
+
+            fun user(user: String) = user(JsonField.of(user))
+
+            /**
+             * Sets [Builder.user] to an arbitrary JSON value.
+             *
+             * You should usually call [Builder.user] with a well-typed [String] value instead. This
+             * method is primarily for setting the field to an undocumented or not yet supported
+             * value.
+             */
+            fun user(user: JsonField<String>) = apply { this.user = user }
+
+            fun workDir(workDir: String) = workDir(JsonField.of(workDir))
+
+            /**
+             * Sets [Builder.workDir] to an arbitrary JSON value.
+             *
+             * You should usually call [Builder.workDir] with a well-typed [String] value instead.
+             * This method is primarily for setting the field to an undocumented or not yet
+             * supported value.
+             */
+            fun workDir(workDir: JsonField<String>) = apply { this.workDir = workDir }
+
+            fun additionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
+                this.additionalProperties.clear()
+                putAllAdditionalProperties(additionalProperties)
+            }
+
+            fun putAdditionalProperty(key: String, value: JsonValue) = apply {
+                additionalProperties.put(key, value)
+            }
+
+            fun putAllAdditionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
+                this.additionalProperties.putAll(additionalProperties)
+            }
+
+            fun removeAdditionalProperty(key: String) = apply { additionalProperties.remove(key) }
+
+            fun removeAllAdditionalProperties(keys: Set<String>) = apply {
+                keys.forEach(::removeAdditionalProperty)
+            }
+
+            /**
+             * Returns an immutable instance of [RunConfig].
+             *
+             * Further updates to this [Builder] will not mutate the returned instance.
+             */
+            fun build(): RunConfig =
+                RunConfig(envVars, user, workDir, additionalProperties.toMutableMap())
+        }
+
+        private var validated: Boolean = false
+
+        /**
+         * Validates that the types of all values in this object match their expected types
+         * recursively.
+         *
+         * This method is _not_ forwards compatible with new types from the API for existing fields.
+         *
+         * @throws LangChainInvalidDataException if any value type in this object doesn't match its
+         *   expected type.
+         */
+        fun validate(): RunConfig = apply {
+            if (validated) {
+                return@apply
+            }
+
+            envVars().ifPresent { it.validate() }
+            user()
+            workDir()
+            validated = true
+        }
+
+        fun isValid(): Boolean =
+            try {
+                validate()
+                true
+            } catch (e: LangChainInvalidDataException) {
+                false
+            }
+
+        /**
+         * Returns a score indicating how many valid values are contained in this object
+         * recursively.
+         *
+         * Used for best match union deserialization.
+         */
+        @JvmSynthetic
+        internal fun validity(): Int =
+            (envVars.asKnown().getOrNull()?.validity() ?: 0) +
+                (if (user.asKnown().isPresent) 1 else 0) +
+                (if (workDir.asKnown().isPresent) 1 else 0)
+
+        class EnvVars
+        @JsonCreator
+        private constructor(
+            @com.fasterxml.jackson.annotation.JsonValue
+            private val additionalProperties: Map<String, JsonValue>
+        ) {
+
+            @JsonAnyGetter
+            @ExcludeMissing
+            fun _additionalProperties(): Map<String, JsonValue> = additionalProperties
+
+            fun toBuilder() = Builder().from(this)
+
+            companion object {
+
+                /** Returns a mutable builder for constructing an instance of [EnvVars]. */
+                @JvmStatic fun builder() = Builder()
+            }
+
+            /** A builder for [EnvVars]. */
+            class Builder internal constructor() {
+
+                private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
+
+                @JvmSynthetic
+                internal fun from(envVars: EnvVars) = apply {
+                    additionalProperties = envVars.additionalProperties.toMutableMap()
+                }
+
+                fun additionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
+                    this.additionalProperties.clear()
+                    putAllAdditionalProperties(additionalProperties)
+                }
+
+                fun putAdditionalProperty(key: String, value: JsonValue) = apply {
+                    additionalProperties.put(key, value)
+                }
+
+                fun putAllAdditionalProperties(additionalProperties: Map<String, JsonValue>) =
+                    apply {
+                        this.additionalProperties.putAll(additionalProperties)
+                    }
+
+                fun removeAdditionalProperty(key: String) = apply {
+                    additionalProperties.remove(key)
+                }
+
+                fun removeAllAdditionalProperties(keys: Set<String>) = apply {
+                    keys.forEach(::removeAdditionalProperty)
+                }
+
+                /**
+                 * Returns an immutable instance of [EnvVars].
+                 *
+                 * Further updates to this [Builder] will not mutate the returned instance.
+                 */
+                fun build(): EnvVars = EnvVars(additionalProperties.toImmutable())
+            }
+
+            private var validated: Boolean = false
+
+            /**
+             * Validates that the types of all values in this object match their expected types
+             * recursively.
+             *
+             * This method is _not_ forwards compatible with new types from the API for existing
+             * fields.
+             *
+             * @throws LangChainInvalidDataException if any value type in this object doesn't match
+             *   its expected type.
+             */
+            fun validate(): EnvVars = apply {
+                if (validated) {
+                    return@apply
+                }
+
+                validated = true
+            }
+
+            fun isValid(): Boolean =
+                try {
+                    validate()
+                    true
+                } catch (e: LangChainInvalidDataException) {
+                    false
+                }
+
+            /**
+             * Returns a score indicating how many valid values are contained in this object
+             * recursively.
+             *
+             * Used for best match union deserialization.
+             */
+            @JvmSynthetic
+            internal fun validity(): Int =
+                additionalProperties.count { (_, value) -> !value.isNull() && !value.isMissing() }
+
+            override fun equals(other: Any?): Boolean {
+                if (this === other) {
+                    return true
+                }
+
+                return other is EnvVars && additionalProperties == other.additionalProperties
+            }
+
+            private val hashCode: Int by lazy { Objects.hash(additionalProperties) }
+
+            override fun hashCode(): Int = hashCode
+
+            override fun toString() = "EnvVars{additionalProperties=$additionalProperties}"
+        }
+
+        override fun equals(other: Any?): Boolean {
+            if (this === other) {
+                return true
+            }
+
+            return other is RunConfig &&
+                envVars == other.envVars &&
+                user == other.user &&
+                workDir == other.workDir &&
+                additionalProperties == other.additionalProperties
+        }
+
+        private val hashCode: Int by lazy {
+            Objects.hash(envVars, user, workDir, additionalProperties)
+        }
+
+        override fun hashCode(): Int = hashCode
+
+        override fun toString() =
+            "RunConfig{envVars=$envVars, user=$user, workDir=$workDir, additionalProperties=$additionalProperties}"
     }
 
     override fun equals(other: Any?): Boolean {
@@ -16545,6 +17018,7 @@ private constructor(
             name == other.name &&
             preserveMemoryOnStop == other.preserveMemoryOnStop &&
             proxyConfig == other.proxyConfig &&
+            runConfig == other.runConfig &&
             sizeClass == other.sizeClass &&
             snapshotId == other.snapshotId &&
             status == other.status &&
@@ -16572,6 +17046,7 @@ private constructor(
             name,
             preserveMemoryOnStop,
             proxyConfig,
+            runConfig,
             sizeClass,
             snapshotId,
             status,
@@ -16587,5 +17062,5 @@ private constructor(
     override fun hashCode(): Int = hashCode
 
     override fun toString() =
-        "SandboxResponse{id=$id, cpuMillicores=$cpuMillicores, createdAt=$createdAt, createdBy=$createdBy, dataplaneUrl=$dataplaneUrl, deleteAfterStopSeconds=$deleteAfterStopSeconds, fsCapacityBytes=$fsCapacityBytes, idleTtlSeconds=$idleTtlSeconds, labels=$labels, memBytes=$memBytes, mountConfig=$mountConfig, name=$name, preserveMemoryOnStop=$preserveMemoryOnStop, proxyConfig=$proxyConfig, sizeClass=$sizeClass, snapshotId=$snapshotId, status=$status, statusMessage=$statusMessage, stoppedAt=$stoppedAt, updatedAt=$updatedAt, updatedBy=$updatedBy, vcpus=$vcpus, additionalProperties=$additionalProperties}"
+        "SandboxResponse{id=$id, cpuMillicores=$cpuMillicores, createdAt=$createdAt, createdBy=$createdBy, dataplaneUrl=$dataplaneUrl, deleteAfterStopSeconds=$deleteAfterStopSeconds, fsCapacityBytes=$fsCapacityBytes, idleTtlSeconds=$idleTtlSeconds, labels=$labels, memBytes=$memBytes, mountConfig=$mountConfig, name=$name, preserveMemoryOnStop=$preserveMemoryOnStop, proxyConfig=$proxyConfig, runConfig=$runConfig, sizeClass=$sizeClass, snapshotId=$snapshotId, status=$status, statusMessage=$statusMessage, stoppedAt=$stoppedAt, updatedAt=$updatedAt, updatedBy=$updatedBy, vcpus=$vcpus, additionalProperties=$additionalProperties}"
 }

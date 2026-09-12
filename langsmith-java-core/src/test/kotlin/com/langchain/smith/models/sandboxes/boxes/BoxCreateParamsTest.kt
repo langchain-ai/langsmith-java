@@ -175,6 +175,7 @@ internal class BoxCreateParamsTest {
                             )
                             .build()
                     )
+                    .description("description")
                     .addNoProxy("string")
                     .addRule(
                         BoxCreateParams.ProxyConfig.Rule.builder()
@@ -206,6 +207,7 @@ internal class BoxCreateParamsTest {
                                     )
                                     .build()
                             )
+                            .description("description")
                             .enabled(true)
                             .envVars(
                                 BoxCreateParams.ProxyConfig.Rule.EnvVars.builder()
@@ -246,6 +248,18 @@ internal class BoxCreateParamsTest {
                     .build()
             )
             .restoreMemory(true)
+            .runConfig(
+                BoxCreateParams.RunConfig.builder()
+                    .envVars(
+                        BoxCreateParams.RunConfig.EnvVars.builder()
+                            .putAdditionalProperty("foo", JsonValue.from("string"))
+                            .build()
+                    )
+                    .user("user")
+                    .workDir("work_dir")
+                    .build()
+            )
+            .snapshot("snapshot")
             .snapshotId("snapshot_id")
             .snapshotName("snapshot_name")
             .addTagValueId("string")
@@ -426,6 +440,7 @@ internal class BoxCreateParamsTest {
                                 )
                                 .build()
                         )
+                        .description("description")
                         .addNoProxy("string")
                         .addRule(
                             BoxCreateParams.ProxyConfig.Rule.builder()
@@ -459,6 +474,7 @@ internal class BoxCreateParamsTest {
                                         )
                                         .build()
                                 )
+                                .description("description")
                                 .enabled(true)
                                 .envVars(
                                     BoxCreateParams.ProxyConfig.Rule.EnvVars.builder()
@@ -501,6 +517,18 @@ internal class BoxCreateParamsTest {
                         .build()
                 )
                 .restoreMemory(true)
+                .runConfig(
+                    BoxCreateParams.RunConfig.builder()
+                        .envVars(
+                            BoxCreateParams.RunConfig.EnvVars.builder()
+                                .putAdditionalProperty("foo", JsonValue.from("string"))
+                                .build()
+                        )
+                        .user("user")
+                        .workDir("work_dir")
+                        .build()
+                )
+                .snapshot("snapshot")
                 .snapshotId("snapshot_id")
                 .snapshotName("snapshot_name")
                 .addTagValueId("string")
@@ -676,6 +704,7 @@ internal class BoxCreateParamsTest {
                             )
                             .build()
                     )
+                    .description("description")
                     .addNoProxy("string")
                     .addRule(
                         BoxCreateParams.ProxyConfig.Rule.builder()
@@ -707,6 +736,7 @@ internal class BoxCreateParamsTest {
                                     )
                                     .build()
                             )
+                            .description("description")
                             .enabled(true)
                             .envVars(
                                 BoxCreateParams.ProxyConfig.Rule.EnvVars.builder()
@@ -747,6 +777,19 @@ internal class BoxCreateParamsTest {
                     .build()
             )
         assertThat(body.restoreMemory()).contains(true)
+        assertThat(body.runConfig())
+            .contains(
+                BoxCreateParams.RunConfig.builder()
+                    .envVars(
+                        BoxCreateParams.RunConfig.EnvVars.builder()
+                            .putAdditionalProperty("foo", JsonValue.from("string"))
+                            .build()
+                    )
+                    .user("user")
+                    .workDir("work_dir")
+                    .build()
+            )
+        assertThat(body.snapshot()).contains("snapshot")
         assertThat(body.snapshotId()).contains("snapshot_id")
         assertThat(body.snapshotName()).contains("snapshot_name")
         assertThat(body.tagValueIds().getOrNull()).containsExactly("string")

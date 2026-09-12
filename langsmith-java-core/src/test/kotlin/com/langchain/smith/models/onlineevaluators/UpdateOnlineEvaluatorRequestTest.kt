@@ -16,7 +16,9 @@ internal class UpdateOnlineEvaluatorRequestTest {
             UpdateOnlineEvaluatorRequest.builder()
                 .codeEvaluator(
                     UpdateOnlineCodeEvaluatorRequest.builder()
+                        .advancedFeaturesEnabled(true)
                         .code("code")
+                        .dependencies("dependencies")
                         .language("language")
                         .build()
                 )
@@ -35,7 +37,12 @@ internal class UpdateOnlineEvaluatorRequestTest {
 
         assertThat(updateOnlineEvaluatorRequest.codeEvaluator())
             .contains(
-                UpdateOnlineCodeEvaluatorRequest.builder().code("code").language("language").build()
+                UpdateOnlineCodeEvaluatorRequest.builder()
+                    .advancedFeaturesEnabled(true)
+                    .code("code")
+                    .dependencies("dependencies")
+                    .language("language")
+                    .build()
             )
         assertThat(updateOnlineEvaluatorRequest.llmEvaluator())
             .contains(
@@ -58,7 +65,9 @@ internal class UpdateOnlineEvaluatorRequestTest {
             UpdateOnlineEvaluatorRequest.builder()
                 .codeEvaluator(
                     UpdateOnlineCodeEvaluatorRequest.builder()
+                        .advancedFeaturesEnabled(true)
                         .code("code")
+                        .dependencies("dependencies")
                         .language("language")
                         .build()
                 )
