@@ -10,16 +10,20 @@ import com.langchain.smith.core.checkRequired
 import com.langchain.smith.core.http.Headers
 import com.langchain.smith.core.http.QueryParams
 import com.langchain.smith.errors.LangChainInvalidDataException
+import java.time.OffsetDateTime
+import java.time.format.DateTimeFormatter
 import java.util.Objects
 import java.util.Optional
 import kotlin.jvm.optionals.getOrNull
 
 /**
  * List RUN and THREAD items in a single annotation queue for one review status section, with opaque
- * cursor pagination. Optional item_type=RUN|THREAD filters the page. direction=backward returns
- * items before the supplied cursor. The response contains item metadata only, not expanded run or
- * thread payloads. status=archived returns items whose queue review requirements have been
- * satisfied, not merely items the caller personally marked completed.
+ * cursor pagination. Optional item_type=RUN|THREAD filters the page. Optional
+ * min_start_time/max_start_time bound the item's trace start time; items with no start time are
+ * excluded when either bound is set. direction=backward returns items before the supplied cursor.
+ * The response contains item metadata only, not expanded run or thread payloads. status=archived
+ * returns items whose queue review requirements have been satisfied, not merely items the caller
+ * personally marked completed.
  */
 class ItemListParams
 private constructor(
@@ -28,6 +32,8 @@ private constructor(
     private val cursor: String?,
     private val direction: Direction?,
     private val itemType: ItemType?,
+    private val maxStartTime: OffsetDateTime?,
+    private val minStartTime: OffsetDateTime?,
     private val pageSize: Long?,
     private val additionalHeaders: Headers,
     private val additionalQueryParams: QueryParams,
@@ -46,6 +52,18 @@ private constructor(
 
     /** Filter to RUN or THREAD */
     fun itemType(): Optional<ItemType> = Optional.ofNullable(itemType)
+
+    /**
+     * Only items whose trace start time is at or before this timestamp. Omit or send the zero time
+     * for no bound
+     */
+    fun maxStartTime(): Optional<OffsetDateTime> = Optional.ofNullable(maxStartTime)
+
+    /**
+     * Only items whose trace start time is at or after this timestamp. Omit or send the zero time
+     * for no bound
+     */
+    fun minStartTime(): Optional<OffsetDateTime> = Optional.ofNullable(minStartTime)
 
     /** Page size (max 100) */
     fun pageSize(): Optional<Long> = Optional.ofNullable(pageSize)
@@ -79,6 +97,8 @@ private constructor(
         private var cursor: String? = null
         private var direction: Direction? = null
         private var itemType: ItemType? = null
+        private var maxStartTime: OffsetDateTime? = null
+        private var minStartTime: OffsetDateTime? = null
         private var pageSize: Long? = null
         private var additionalHeaders: Headers.Builder = Headers.builder()
         private var additionalQueryParams: QueryParams.Builder = QueryParams.builder()
@@ -90,6 +110,8 @@ private constructor(
             cursor = itemListParams.cursor
             direction = itemListParams.direction
             itemType = itemListParams.itemType
+            maxStartTime = itemListParams.maxStartTime
+            minStartTime = itemListParams.minStartTime
             pageSize = itemListParams.pageSize
             additionalHeaders = itemListParams.additionalHeaders.toBuilder()
             additionalQueryParams = itemListParams.additionalQueryParams.toBuilder()
@@ -120,6 +142,26 @@ private constructor(
 
         /** Alias for calling [Builder.itemType] with `itemType.orElse(null)`. */
         fun itemType(itemType: Optional<ItemType>) = itemType(itemType.getOrNull())
+
+        /**
+         * Only items whose trace start time is at or before this timestamp. Omit or send the zero
+         * time for no bound
+         */
+        fun maxStartTime(maxStartTime: OffsetDateTime?) = apply { this.maxStartTime = maxStartTime }
+
+        /** Alias for calling [Builder.maxStartTime] with `maxStartTime.orElse(null)`. */
+        fun maxStartTime(maxStartTime: Optional<OffsetDateTime>) =
+            maxStartTime(maxStartTime.getOrNull())
+
+        /**
+         * Only items whose trace start time is at or after this timestamp. Omit or send the zero
+         * time for no bound
+         */
+        fun minStartTime(minStartTime: OffsetDateTime?) = apply { this.minStartTime = minStartTime }
+
+        /** Alias for calling [Builder.minStartTime] with `minStartTime.orElse(null)`. */
+        fun minStartTime(minStartTime: Optional<OffsetDateTime>) =
+            minStartTime(minStartTime.getOrNull())
 
         /** Page size (max 100) */
         fun pageSize(pageSize: Long?) = apply { this.pageSize = pageSize }
@@ -251,6 +293,8 @@ private constructor(
                 cursor,
                 direction,
                 itemType,
+                maxStartTime,
+                minStartTime,
                 pageSize,
                 additionalHeaders.build(),
                 additionalQueryParams.build(),
@@ -272,6 +316,12 @@ private constructor(
                 cursor?.let { put("cursor", it) }
                 direction?.let { put("direction", it.toString()) }
                 itemType?.let { put("item_type", it.toString()) }
+                maxStartTime?.let {
+                    put("max_start_time", DateTimeFormatter.ISO_OFFSET_DATE_TIME.format(it))
+                }
+                minStartTime?.let {
+                    put("min_start_time", DateTimeFormatter.ISO_OFFSET_DATE_TIME.format(it))
+                }
                 pageSize?.let { put("page_size", it.toString()) }
                 putAll(additionalQueryParams)
             }
@@ -707,6 +757,8 @@ private constructor(
             cursor == other.cursor &&
             direction == other.direction &&
             itemType == other.itemType &&
+            maxStartTime == other.maxStartTime &&
+            minStartTime == other.minStartTime &&
             pageSize == other.pageSize &&
             additionalHeaders == other.additionalHeaders &&
             additionalQueryParams == other.additionalQueryParams
@@ -719,11 +771,13 @@ private constructor(
             cursor,
             direction,
             itemType,
+            maxStartTime,
+            minStartTime,
             pageSize,
             additionalHeaders,
             additionalQueryParams,
         )
 
     override fun toString() =
-        "ItemListParams{queueId=$queueId, status=$status, cursor=$cursor, direction=$direction, itemType=$itemType, pageSize=$pageSize, additionalHeaders=$additionalHeaders, additionalQueryParams=$additionalQueryParams}"
+        "ItemListParams{queueId=$queueId, status=$status, cursor=$cursor, direction=$direction, itemType=$itemType, maxStartTime=$maxStartTime, minStartTime=$minStartTime, pageSize=$pageSize, additionalHeaders=$additionalHeaders, additionalQueryParams=$additionalQueryParams}"
 }
