@@ -44,33 +44,10 @@ internal class BoxServiceTest {
                             .auth(
                                 BoxCreateParams.MountConfig.Auth.builder()
                                     .aws(
-                                        BoxCreateParams.MountConfig.Auth.Aws.builder()
-                                            .accessKeyId(
-                                                BoxCreateParams.MountConfig.Auth.Aws.AccessKeyId
-                                                    .builder()
-                                                    .type(
-                                                        BoxCreateParams.MountConfig.Auth.Aws
-                                                            .AccessKeyId
-                                                            .Type
-                                                            .PLAINTEXT
-                                                    )
-                                                    .isSet(true)
-                                                    .value("value")
-                                                    .build()
-                                            )
-                                            .secretAccessKey(
-                                                BoxCreateParams.MountConfig.Auth.Aws.SecretAccessKey
-                                                    .builder()
-                                                    .type(
-                                                        BoxCreateParams.MountConfig.Auth.Aws
-                                                            .SecretAccessKey
-                                                            .Type
-                                                            .PLAINTEXT
-                                                    )
-                                                    .isSet(true)
-                                                    .value("value")
-                                                    .build()
-                                            )
+                                        BoxCreateParams.MountConfig.Auth.Aws
+                                            .SandboxesSandboxAwsMountRoleAuthConfig
+                                            .builder()
+                                            .roleArn("x")
                                             .build()
                                     )
                                     .gcp(
@@ -210,33 +187,10 @@ internal class BoxServiceTest {
                                 BoxCreateParams.ProxyConfig.Rule.builder()
                                     .name("name")
                                     .aws(
-                                        BoxCreateParams.ProxyConfig.Rule.Aws.builder()
-                                            .accessKeyId(
-                                                BoxCreateParams.ProxyConfig.Rule.Aws.AccessKeyId
-                                                    .builder()
-                                                    .type(
-                                                        BoxCreateParams.ProxyConfig.Rule.Aws
-                                                            .AccessKeyId
-                                                            .Type
-                                                            .PLAINTEXT
-                                                    )
-                                                    .isSet(true)
-                                                    .value("value")
-                                                    .build()
-                                            )
-                                            .secretAccessKey(
-                                                BoxCreateParams.ProxyConfig.Rule.Aws.SecretAccessKey
-                                                    .builder()
-                                                    .type(
-                                                        BoxCreateParams.ProxyConfig.Rule.Aws
-                                                            .SecretAccessKey
-                                                            .Type
-                                                            .PLAINTEXT
-                                                    )
-                                                    .isSet(true)
-                                                    .value("value")
-                                                    .build()
-                                            )
+                                        BoxCreateParams.ProxyConfig.Rule.Aws
+                                            .SandboxesProxyAwsRoleConfig
+                                            .builder()
+                                            .roleArn("x")
                                             .build()
                                     )
                                     .description("description")
@@ -369,33 +323,10 @@ internal class BoxServiceTest {
                                 BoxUpdateParams.ProxyConfig.Rule.builder()
                                     .bodyName("name")
                                     .aws(
-                                        BoxUpdateParams.ProxyConfig.Rule.Aws.builder()
-                                            .accessKeyId(
-                                                BoxUpdateParams.ProxyConfig.Rule.Aws.AccessKeyId
-                                                    .builder()
-                                                    .type(
-                                                        BoxUpdateParams.ProxyConfig.Rule.Aws
-                                                            .AccessKeyId
-                                                            .Type
-                                                            .PLAINTEXT
-                                                    )
-                                                    .isSet(true)
-                                                    .value("value")
-                                                    .build()
-                                            )
-                                            .secretAccessKey(
-                                                BoxUpdateParams.ProxyConfig.Rule.Aws.SecretAccessKey
-                                                    .builder()
-                                                    .type(
-                                                        BoxUpdateParams.ProxyConfig.Rule.Aws
-                                                            .SecretAccessKey
-                                                            .Type
-                                                            .PLAINTEXT
-                                                    )
-                                                    .isSet(true)
-                                                    .value("value")
-                                                    .build()
-                                            )
+                                        BoxUpdateParams.ProxyConfig.Rule.Aws
+                                            .SandboxesProxyAwsRoleConfig
+                                            .builder()
+                                            .roleArn("x")
                                             .build()
                                     )
                                     .description("description")

@@ -52,30 +52,9 @@ internal class BoxUpdateParamsTest {
                         BoxUpdateParams.ProxyConfig.Rule.builder()
                             .bodyName("name")
                             .aws(
-                                BoxUpdateParams.ProxyConfig.Rule.Aws.builder()
-                                    .accessKeyId(
-                                        BoxUpdateParams.ProxyConfig.Rule.Aws.AccessKeyId.builder()
-                                            .type(
-                                                BoxUpdateParams.ProxyConfig.Rule.Aws.AccessKeyId
-                                                    .Type
-                                                    .PLAINTEXT
-                                            )
-                                            .isSet(true)
-                                            .value("value")
-                                            .build()
-                                    )
-                                    .secretAccessKey(
-                                        BoxUpdateParams.ProxyConfig.Rule.Aws.SecretAccessKey
-                                            .builder()
-                                            .type(
-                                                BoxUpdateParams.ProxyConfig.Rule.Aws.SecretAccessKey
-                                                    .Type
-                                                    .PLAINTEXT
-                                            )
-                                            .isSet(true)
-                                            .value("value")
-                                            .build()
-                                    )
+                                BoxUpdateParams.ProxyConfig.Rule.Aws.SandboxesProxyAwsRoleConfig
+                                    .builder()
+                                    .roleArn("x")
                                     .build()
                             )
                             .description("description")
@@ -187,32 +166,9 @@ internal class BoxUpdateParamsTest {
                             BoxUpdateParams.ProxyConfig.Rule.builder()
                                 .bodyName("name")
                                 .aws(
-                                    BoxUpdateParams.ProxyConfig.Rule.Aws.builder()
-                                        .accessKeyId(
-                                            BoxUpdateParams.ProxyConfig.Rule.Aws.AccessKeyId
-                                                .builder()
-                                                .type(
-                                                    BoxUpdateParams.ProxyConfig.Rule.Aws.AccessKeyId
-                                                        .Type
-                                                        .PLAINTEXT
-                                                )
-                                                .isSet(true)
-                                                .value("value")
-                                                .build()
-                                        )
-                                        .secretAccessKey(
-                                            BoxUpdateParams.ProxyConfig.Rule.Aws.SecretAccessKey
-                                                .builder()
-                                                .type(
-                                                    BoxUpdateParams.ProxyConfig.Rule.Aws
-                                                        .SecretAccessKey
-                                                        .Type
-                                                        .PLAINTEXT
-                                                )
-                                                .isSet(true)
-                                                .value("value")
-                                                .build()
-                                        )
+                                    BoxUpdateParams.ProxyConfig.Rule.Aws.SandboxesProxyAwsRoleConfig
+                                        .builder()
+                                        .roleArn("x")
                                         .build()
                                 )
                                 .description("description")
@@ -314,30 +270,9 @@ internal class BoxUpdateParamsTest {
                         BoxUpdateParams.ProxyConfig.Rule.builder()
                             .bodyName("name")
                             .aws(
-                                BoxUpdateParams.ProxyConfig.Rule.Aws.builder()
-                                    .accessKeyId(
-                                        BoxUpdateParams.ProxyConfig.Rule.Aws.AccessKeyId.builder()
-                                            .type(
-                                                BoxUpdateParams.ProxyConfig.Rule.Aws.AccessKeyId
-                                                    .Type
-                                                    .PLAINTEXT
-                                            )
-                                            .isSet(true)
-                                            .value("value")
-                                            .build()
-                                    )
-                                    .secretAccessKey(
-                                        BoxUpdateParams.ProxyConfig.Rule.Aws.SecretAccessKey
-                                            .builder()
-                                            .type(
-                                                BoxUpdateParams.ProxyConfig.Rule.Aws.SecretAccessKey
-                                                    .Type
-                                                    .PLAINTEXT
-                                            )
-                                            .isSet(true)
-                                            .value("value")
-                                            .build()
-                                    )
+                                BoxUpdateParams.ProxyConfig.Rule.Aws.SandboxesProxyAwsRoleConfig
+                                    .builder()
+                                    .roleArn("x")
                                     .build()
                             )
                             .description("description")
