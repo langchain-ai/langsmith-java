@@ -6,6 +6,7 @@ import com.fasterxml.jackson.annotation.JsonAnyGetter
 import com.fasterxml.jackson.annotation.JsonAnySetter
 import com.fasterxml.jackson.annotation.JsonCreator
 import com.fasterxml.jackson.annotation.JsonProperty
+import com.langchain.smith.core.Enum
 import com.langchain.smith.core.ExcludeMissing
 import com.langchain.smith.core.JsonField
 import com.langchain.smith.core.JsonMissing
@@ -22,7 +23,10 @@ import kotlin.jvm.optionals.getOrNull
 /**
  * Create a short-lived JWT for accessing an HTTP service running on a specific port inside a
  * sandbox. Returns a browser_url (sets auth cookie via redirect), a service_url (for use with the
- * X-Langsmith-Sandbox-Service-Token header), the raw token, and its expiry.
+ * X-Langsmith-Sandbox-Service-Token header), the raw token, and its expiry. Set
+ * access=restricted|workspace to instead enable durable LangSmith login (no token; users
+ * authenticate with their normal LangSmith session), or access=off to disable it. LangSmith login
+ * and token access are mutually exclusive per service URL.
  */
 class BoxGenerateServiceUrlParams
 private constructor(
@@ -35,6 +39,18 @@ private constructor(
     fun name(): Optional<String> = Optional.ofNullable(name)
 
     /**
+     * Access selects the login mode, mutually exclusive with the minted token. Omit the field for
+     * token mode: mint a short-lived service token (default). "restricted" — LangSmith login: any
+     * user with SandboxesRead on the sandbox. "workspace" — LangSmith login: any member of the
+     * owning workspace. "off" — remove an existing LangSmith login grant and mint a token. A
+     * LangSmith login grant is durable; token mode is refused (409) while one exists.
+     *
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
+    fun access(): Optional<Access> = body.access()
+
+    /**
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
      */
@@ -45,6 +61,13 @@ private constructor(
      *   server responded with an unexpected value).
      */
     fun port(): Optional<Long> = body.port()
+
+    /**
+     * Returns the raw JSON value of [access].
+     *
+     * Unlike [access], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    fun _access(): JsonField<Access> = body._access()
 
     /**
      * Returns the raw JSON value of [expiresInSeconds].
@@ -107,10 +130,29 @@ private constructor(
          *
          * This is generally only useful if you are already constructing the body separately.
          * Otherwise, it's more convenient to use the top-level setters instead:
+         * - [access]
          * - [expiresInSeconds]
          * - [port]
          */
         fun body(body: Body) = apply { this.body = body.toBuilder() }
+
+        /**
+         * Access selects the login mode, mutually exclusive with the minted token. Omit the field
+         * for token mode: mint a short-lived service token (default). "restricted" — LangSmith
+         * login: any user with SandboxesRead on the sandbox. "workspace" — LangSmith login: any
+         * member of the owning workspace. "off" — remove an existing LangSmith login grant and mint
+         * a token. A LangSmith login grant is durable; token mode is refused (409) while one
+         * exists.
+         */
+        fun access(access: Access) = apply { body.access(access) }
+
+        /**
+         * Sets [Builder.access] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.access] with a well-typed [Access] value instead. This
+         * method is primarily for setting the field to an undocumented or not yet supported value.
+         */
+        fun access(access: JsonField<Access>) = apply { body.access(access) }
 
         fun expiresInSeconds(expiresInSeconds: Long) = apply {
             body.expiresInSeconds(expiresInSeconds)
@@ -283,6 +325,7 @@ private constructor(
     class Body
     @JsonCreator(mode = JsonCreator.Mode.DISABLED)
     private constructor(
+        private val access: JsonField<Access>,
         private val expiresInSeconds: JsonField<Long>,
         private val port: JsonField<Long>,
         private val additionalProperties: MutableMap<String, JsonValue>,
@@ -290,11 +333,25 @@ private constructor(
 
         @JsonCreator
         private constructor(
+            @JsonProperty("access") @ExcludeMissing access: JsonField<Access> = JsonMissing.of(),
             @JsonProperty("expires_in_seconds")
             @ExcludeMissing
             expiresInSeconds: JsonField<Long> = JsonMissing.of(),
             @JsonProperty("port") @ExcludeMissing port: JsonField<Long> = JsonMissing.of(),
-        ) : this(expiresInSeconds, port, mutableMapOf())
+        ) : this(access, expiresInSeconds, port, mutableMapOf())
+
+        /**
+         * Access selects the login mode, mutually exclusive with the minted token. Omit the field
+         * for token mode: mint a short-lived service token (default). "restricted" — LangSmith
+         * login: any user with SandboxesRead on the sandbox. "workspace" — LangSmith login: any
+         * member of the owning workspace. "off" — remove an existing LangSmith login grant and mint
+         * a token. A LangSmith login grant is durable; token mode is refused (409) while one
+         * exists.
+         *
+         * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
+         *   the server responded with an unexpected value).
+         */
+        fun access(): Optional<Access> = access.getOptional("access")
 
         /**
          * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
@@ -307,6 +364,13 @@ private constructor(
          *   the server responded with an unexpected value).
          */
         fun port(): Optional<Long> = port.getOptional("port")
+
+        /**
+         * Returns the raw JSON value of [access].
+         *
+         * Unlike [access], this method doesn't throw if the JSON field has an unexpected type.
+         */
+        @JsonProperty("access") @ExcludeMissing fun _access(): JsonField<Access> = access
 
         /**
          * Returns the raw JSON value of [expiresInSeconds].
@@ -346,16 +410,37 @@ private constructor(
         /** A builder for [Body]. */
         class Builder internal constructor() {
 
+            private var access: JsonField<Access> = JsonMissing.of()
             private var expiresInSeconds: JsonField<Long> = JsonMissing.of()
             private var port: JsonField<Long> = JsonMissing.of()
             private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
 
             @JvmSynthetic
             internal fun from(body: Body) = apply {
+                access = body.access
                 expiresInSeconds = body.expiresInSeconds
                 port = body.port
                 additionalProperties = body.additionalProperties.toMutableMap()
             }
+
+            /**
+             * Access selects the login mode, mutually exclusive with the minted token. Omit the
+             * field for token mode: mint a short-lived service token (default). "restricted" —
+             * LangSmith login: any user with SandboxesRead on the sandbox. "workspace" — LangSmith
+             * login: any member of the owning workspace. "off" — remove an existing LangSmith login
+             * grant and mint a token. A LangSmith login grant is durable; token mode is refused
+             * (409) while one exists.
+             */
+            fun access(access: Access) = access(JsonField.of(access))
+
+            /**
+             * Sets [Builder.access] to an arbitrary JSON value.
+             *
+             * You should usually call [Builder.access] with a well-typed [Access] value instead.
+             * This method is primarily for setting the field to an undocumented or not yet
+             * supported value.
+             */
+            fun access(access: JsonField<Access>) = apply { this.access = access }
 
             fun expiresInSeconds(expiresInSeconds: Long) =
                 expiresInSeconds(JsonField.of(expiresInSeconds))
@@ -406,7 +491,8 @@ private constructor(
              *
              * Further updates to this [Builder] will not mutate the returned instance.
              */
-            fun build(): Body = Body(expiresInSeconds, port, additionalProperties.toMutableMap())
+            fun build(): Body =
+                Body(access, expiresInSeconds, port, additionalProperties.toMutableMap())
         }
 
         private var validated: Boolean = false
@@ -425,6 +511,7 @@ private constructor(
                 return@apply
             }
 
+            access().ifPresent { it.validate() }
             expiresInSeconds()
             port()
             validated = true
@@ -446,7 +533,8 @@ private constructor(
          */
         @JvmSynthetic
         internal fun validity(): Int =
-            (if (expiresInSeconds.asKnown().isPresent) 1 else 0) +
+            (access.asKnown().getOrNull()?.validity() ?: 0) +
+                (if (expiresInSeconds.asKnown().isPresent) 1 else 0) +
                 (if (port.asKnown().isPresent) 1 else 0)
 
         override fun equals(other: Any?): Boolean {
@@ -455,19 +543,169 @@ private constructor(
             }
 
             return other is Body &&
+                access == other.access &&
                 expiresInSeconds == other.expiresInSeconds &&
                 port == other.port &&
                 additionalProperties == other.additionalProperties
         }
 
         private val hashCode: Int by lazy {
-            Objects.hash(expiresInSeconds, port, additionalProperties)
+            Objects.hash(access, expiresInSeconds, port, additionalProperties)
         }
 
         override fun hashCode(): Int = hashCode
 
         override fun toString() =
-            "Body{expiresInSeconds=$expiresInSeconds, port=$port, additionalProperties=$additionalProperties}"
+            "Body{access=$access, expiresInSeconds=$expiresInSeconds, port=$port, additionalProperties=$additionalProperties}"
+    }
+
+    /**
+     * Access selects the login mode, mutually exclusive with the minted token. Omit the field for
+     * token mode: mint a short-lived service token (default). "restricted" — LangSmith login: any
+     * user with SandboxesRead on the sandbox. "workspace" — LangSmith login: any member of the
+     * owning workspace. "off" — remove an existing LangSmith login grant and mint a token. A
+     * LangSmith login grant is durable; token mode is refused (409) while one exists.
+     */
+    class Access @JsonCreator private constructor(private val value: JsonField<String>) : Enum {
+
+        /**
+         * Returns this class instance's raw value.
+         *
+         * This is usually only useful if this instance was deserialized from data that doesn't
+         * match any known member, and you want to know that value. For example, if the SDK is on an
+         * older version than the API, then the API may respond with new members that the SDK is
+         * unaware of.
+         */
+        @com.fasterxml.jackson.annotation.JsonValue fun _value(): JsonField<String> = value
+
+        companion object {
+
+            @JvmField val RESTRICTED = of("restricted")
+
+            @JvmField val WORKSPACE = of("workspace")
+
+            @JvmField val OFF = of("off")
+
+            @JvmStatic fun of(value: String) = Access(JsonField.of(value))
+        }
+
+        /** An enum containing [Access]'s known values. */
+        enum class Known {
+            RESTRICTED,
+            WORKSPACE,
+            OFF,
+        }
+
+        /**
+         * An enum containing [Access]'s known values, as well as an [_UNKNOWN] member.
+         *
+         * An instance of [Access] can contain an unknown value in a couple of cases:
+         * - It was deserialized from data that doesn't match any known member. For example, if the
+         *   SDK is on an older version than the API, then the API may respond with new members that
+         *   the SDK is unaware of.
+         * - It was constructed with an arbitrary value using the [of] method.
+         */
+        enum class Value {
+            RESTRICTED,
+            WORKSPACE,
+            OFF,
+            /** An enum member indicating that [Access] was instantiated with an unknown value. */
+            _UNKNOWN,
+        }
+
+        /**
+         * Returns an enum member corresponding to this class instance's value, or [Value._UNKNOWN]
+         * if the class was instantiated with an unknown value.
+         *
+         * Use the [known] method instead if you're certain the value is always known or if you want
+         * to throw for the unknown case.
+         */
+        fun value(): Value =
+            when (this) {
+                RESTRICTED -> Value.RESTRICTED
+                WORKSPACE -> Value.WORKSPACE
+                OFF -> Value.OFF
+                else -> Value._UNKNOWN
+            }
+
+        /**
+         * Returns an enum member corresponding to this class instance's value.
+         *
+         * Use the [value] method instead if you're uncertain the value is always known and don't
+         * want to throw for the unknown case.
+         *
+         * @throws LangChainInvalidDataException if this class instance's value is a not a known
+         *   member.
+         */
+        fun known(): Known =
+            when (this) {
+                RESTRICTED -> Known.RESTRICTED
+                WORKSPACE -> Known.WORKSPACE
+                OFF -> Known.OFF
+                else -> throw LangChainInvalidDataException("Unknown Access: $value")
+            }
+
+        /**
+         * Returns this class instance's primitive wire representation.
+         *
+         * This differs from the [toString] method because that method is primarily for debugging
+         * and generally doesn't throw.
+         *
+         * @throws LangChainInvalidDataException if this class instance's value does not have the
+         *   expected primitive type.
+         */
+        fun asString(): String =
+            _value().asString().orElseThrow {
+                LangChainInvalidDataException("Value is not a String")
+            }
+
+        private var validated: Boolean = false
+
+        /**
+         * Validates that the types of all values in this object match their expected types
+         * recursively.
+         *
+         * This method is _not_ forwards compatible with new types from the API for existing fields.
+         *
+         * @throws LangChainInvalidDataException if any value type in this object doesn't match its
+         *   expected type.
+         */
+        fun validate(): Access = apply {
+            if (validated) {
+                return@apply
+            }
+
+            known()
+            validated = true
+        }
+
+        fun isValid(): Boolean =
+            try {
+                validate()
+                true
+            } catch (e: LangChainInvalidDataException) {
+                false
+            }
+
+        /**
+         * Returns a score indicating how many valid values are contained in this object
+         * recursively.
+         *
+         * Used for best match union deserialization.
+         */
+        @JvmSynthetic internal fun validity(): Int = if (value() == Value._UNKNOWN) 0 else 1
+
+        override fun equals(other: Any?): Boolean {
+            if (this === other) {
+                return true
+            }
+
+            return other is Access && value == other.value
+        }
+
+        override fun hashCode() = value.hashCode()
+
+        override fun toString() = value.toString()
     }
 
     override fun equals(other: Any?): Boolean {

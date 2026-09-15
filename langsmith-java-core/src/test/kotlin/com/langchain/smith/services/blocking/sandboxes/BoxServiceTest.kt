@@ -557,6 +557,7 @@ internal class BoxServiceTest {
             boxService.generateServiceUrl(
                 BoxGenerateServiceUrlParams.builder()
                     .name("name")
+                    .access(BoxGenerateServiceUrlParams.Access.RESTRICTED)
                     .expiresInSeconds(0L)
                     .port(0L)
                     .build()

@@ -242,7 +242,10 @@ interface BoxService {
     /**
      * Create a short-lived JWT for accessing an HTTP service running on a specific port inside a
      * sandbox. Returns a browser_url (sets auth cookie via redirect), a service_url (for use with
-     * the X-Langsmith-Sandbox-Service-Token header), the raw token, and its expiry.
+     * the X-Langsmith-Sandbox-Service-Token header), the raw token, and its expiry. Set
+     * access=restricted|workspace to instead enable durable LangSmith login (no token; users
+     * authenticate with their normal LangSmith session), or access=off to disable it. LangSmith
+     * login and token access are mutually exclusive per service URL.
      */
     fun generateServiceUrl(name: String): ServiceUrlResponse =
         generateServiceUrl(name, BoxGenerateServiceUrlParams.none())
