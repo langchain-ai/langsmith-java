@@ -204,8 +204,10 @@ interface ItemServiceAsync {
         deleteAll(queueId, ItemDeleteAllParams.none(), requestOptions)
 
     /**
-     * Returns the number of annotation queue items for the requested reviewer-specific or archived
-     * bucket.
+     * Returns the number of annotation queue items in one status bucket. The two time windows are
+     * independent: start_time/end_time bound when an item was archived,
+     * min_start_time/max_start_time bound when its trace ran. Items with no trace start time are
+     * excluded when either of the latter is set.
      */
     fun retrieveCount(
         queueId: String,
