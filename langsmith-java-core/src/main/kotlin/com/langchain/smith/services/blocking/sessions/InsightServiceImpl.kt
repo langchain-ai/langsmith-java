@@ -29,6 +29,8 @@ import com.langchain.smith.models.sessions.insights.InsightRetrieveRunsParams
 import com.langchain.smith.models.sessions.insights.InsightRetrieveRunsResponse
 import com.langchain.smith.models.sessions.insights.InsightUpdateParams
 import com.langchain.smith.models.sessions.insights.InsightUpdateResponse
+import com.langchain.smith.services.blocking.sessions.insights.ConfigService
+import com.langchain.smith.services.blocking.sessions.insights.ConfigServiceImpl
 import java.util.function.Consumer
 import kotlin.jvm.optionals.getOrNull
 
@@ -39,10 +41,14 @@ class InsightServiceImpl internal constructor(private val clientOptions: ClientO
         WithRawResponseImpl(clientOptions)
     }
 
+    private val configs: ConfigService by lazy { ConfigServiceImpl(clientOptions) }
+
     override fun withRawResponse(): InsightService.WithRawResponse = withRawResponse
 
     override fun withOptions(modifier: Consumer<ClientOptions.Builder>): InsightService =
         InsightServiceImpl(clientOptions.toBuilder().apply(modifier::accept).build())
+
+    override fun configs(): ConfigService = configs
 
     override fun create(
         params: InsightCreateParams,
@@ -89,12 +95,18 @@ class InsightServiceImpl internal constructor(private val clientOptions: ClientO
         private val errorHandler: Handler<HttpResponse> =
             errorHandler(errorBodyHandler(clientOptions.jsonMapper))
 
+        private val configs: ConfigService.WithRawResponse by lazy {
+            ConfigServiceImpl.WithRawResponseImpl(clientOptions)
+        }
+
         override fun withOptions(
             modifier: Consumer<ClientOptions.Builder>
         ): InsightService.WithRawResponse =
             InsightServiceImpl.WithRawResponseImpl(
                 clientOptions.toBuilder().apply(modifier::accept).build()
             )
+
+        override fun configs(): ConfigService.WithRawResponse = configs
 
         private val createHandler: Handler<InsightCreateResponse> =
             jsonHandler<InsightCreateResponse>(clientOptions.jsonMapper)

@@ -18,6 +18,7 @@ import com.langchain.smith.models.sessions.insights.InsightRetrieveRunsParams
 import com.langchain.smith.models.sessions.insights.InsightRetrieveRunsResponse
 import com.langchain.smith.models.sessions.insights.InsightUpdateParams
 import com.langchain.smith.models.sessions.insights.InsightUpdateResponse
+import com.langchain.smith.services.blocking.sessions.insights.ConfigService
 import java.util.function.Consumer
 
 interface InsightService {
@@ -33,6 +34,8 @@ interface InsightService {
      * The original service is not modified.
      */
     fun withOptions(modifier: Consumer<ClientOptions.Builder>): InsightService
+
+    fun configs(): ConfigService
 
     /** Create an insights job. */
     fun create(sessionId: String, params: InsightCreateParams): InsightCreateResponse =
@@ -182,6 +185,8 @@ interface InsightService {
          * The original service is not modified.
          */
         fun withOptions(modifier: Consumer<ClientOptions.Builder>): InsightService.WithRawResponse
+
+        fun configs(): ConfigService.WithRawResponse
 
         /**
          * Returns a raw HTTP response for `post /api/v1/sessions/{session_id}/insights`, but is

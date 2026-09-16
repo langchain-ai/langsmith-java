@@ -17,6 +17,7 @@ import com.langchain.smith.models.sessions.insights.InsightRetrieveRunsParams
 import com.langchain.smith.models.sessions.insights.InsightRetrieveRunsResponse
 import com.langchain.smith.models.sessions.insights.InsightUpdateParams
 import com.langchain.smith.models.sessions.insights.InsightUpdateResponse
+import com.langchain.smith.services.async.sessions.insights.ConfigServiceAsync
 import java.util.concurrent.CompletableFuture
 import java.util.function.Consumer
 
@@ -33,6 +34,8 @@ interface InsightServiceAsync {
      * The original service is not modified.
      */
     fun withOptions(modifier: Consumer<ClientOptions.Builder>): InsightServiceAsync
+
+    fun configs(): ConfigServiceAsync
 
     /** Create an insights job. */
     fun create(
@@ -206,6 +209,8 @@ interface InsightServiceAsync {
         fun withOptions(
             modifier: Consumer<ClientOptions.Builder>
         ): InsightServiceAsync.WithRawResponse
+
+        fun configs(): ConfigServiceAsync.WithRawResponse
 
         /**
          * Returns a raw HTTP response for `post /api/v1/sessions/{session_id}/insights`, but is
