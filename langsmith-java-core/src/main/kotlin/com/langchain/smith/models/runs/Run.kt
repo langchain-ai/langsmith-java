@@ -44,6 +44,7 @@ private constructor(
     private val isRoot: JsonField<Boolean>,
     private val lastQueuedAt: JsonField<OffsetDateTime>,
     private val latencySeconds: JsonField<Double>,
+    private val lsUserId: JsonField<String>,
     private val manifest: JsonField<Manifest>,
     private val metadata: JsonField<Metadata>,
     private val name: JsonField<String>,
@@ -122,6 +123,7 @@ private constructor(
         @JsonProperty("latency_seconds")
         @ExcludeMissing
         latencySeconds: JsonField<Double> = JsonMissing.of(),
+        @JsonProperty("ls_user_id") @ExcludeMissing lsUserId: JsonField<String> = JsonMissing.of(),
         @JsonProperty("manifest") @ExcludeMissing manifest: JsonField<Manifest> = JsonMissing.of(),
         @JsonProperty("metadata") @ExcludeMissing metadata: JsonField<Metadata> = JsonMissing.of(),
         @JsonProperty("name") @ExcludeMissing name: JsonField<String> = JsonMissing.of(),
@@ -192,6 +194,7 @@ private constructor(
         isRoot,
         lastQueuedAt,
         latencySeconds,
+        lsUserId,
         manifest,
         metadata,
         name,
@@ -394,6 +397,15 @@ private constructor(
      *   server responded with an unexpected value).
      */
     fun latencySeconds(): Optional<Double> = latencySeconds.getOptional("latency_seconds")
+
+    /**
+     * `ls_user_id` identifies the LangSmith user whose credential traced the run. It is absent for
+     * runs traced with a service-account API key, which has no associated user.
+     *
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
+    fun lsUserId(): Optional<String> = lsUserId.getOptional("ls_user_id")
 
     /**
      * `manifest` is the serialized configuration of the traced component (for example the model
@@ -781,6 +793,13 @@ private constructor(
     fun _latencySeconds(): JsonField<Double> = latencySeconds
 
     /**
+     * Returns the raw JSON value of [lsUserId].
+     *
+     * Unlike [lsUserId], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    @JsonProperty("ls_user_id") @ExcludeMissing fun _lsUserId(): JsonField<String> = lsUserId
+
+    /**
      * Returns the raw JSON value of [manifest].
      *
      * Unlike [manifest], this method doesn't throw if the JSON field has an unexpected type.
@@ -1015,6 +1034,7 @@ private constructor(
         private var isRoot: JsonField<Boolean> = JsonMissing.of()
         private var lastQueuedAt: JsonField<OffsetDateTime> = JsonMissing.of()
         private var latencySeconds: JsonField<Double> = JsonMissing.of()
+        private var lsUserId: JsonField<String> = JsonMissing.of()
         private var manifest: JsonField<Manifest> = JsonMissing.of()
         private var metadata: JsonField<Metadata> = JsonMissing.of()
         private var name: JsonField<String> = JsonMissing.of()
@@ -1064,6 +1084,7 @@ private constructor(
             isRoot = run.isRoot
             lastQueuedAt = run.lastQueuedAt
             latencySeconds = run.latencySeconds
+            lsUserId = run.lsUserId
             manifest = run.manifest
             metadata = run.metadata
             name = run.name
@@ -1393,6 +1414,20 @@ private constructor(
         fun latencySeconds(latencySeconds: JsonField<Double>) = apply {
             this.latencySeconds = latencySeconds
         }
+
+        /**
+         * `ls_user_id` identifies the LangSmith user whose credential traced the run. It is absent
+         * for runs traced with a service-account API key, which has no associated user.
+         */
+        fun lsUserId(lsUserId: String) = lsUserId(JsonField.of(lsUserId))
+
+        /**
+         * Sets [Builder.lsUserId] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.lsUserId] with a well-typed [String] value instead. This
+         * method is primarily for setting the field to an undocumented or not yet supported value.
+         */
+        fun lsUserId(lsUserId: JsonField<String>) = apply { this.lsUserId = lsUserId }
 
         /**
          * `manifest` is the serialized configuration of the traced component (for example the model
@@ -1800,6 +1835,7 @@ private constructor(
                 isRoot,
                 lastQueuedAt,
                 latencySeconds,
+                lsUserId,
                 manifest,
                 metadata,
                 name,
@@ -1864,6 +1900,7 @@ private constructor(
         isRoot()
         lastQueuedAt()
         latencySeconds()
+        lsUserId()
         manifest().ifPresent { it.validate() }
         metadata().ifPresent { it.validate() }
         name()
@@ -1927,6 +1964,7 @@ private constructor(
             (if (isRoot.asKnown().isPresent) 1 else 0) +
             (if (lastQueuedAt.asKnown().isPresent) 1 else 0) +
             (if (latencySeconds.asKnown().isPresent) 1 else 0) +
+            (if (lsUserId.asKnown().isPresent) 1 else 0) +
             (manifest.asKnown().getOrNull()?.validity() ?: 0) +
             (metadata.asKnown().getOrNull()?.validity() ?: 0) +
             (if (name.asKnown().isPresent) 1 else 0) +
@@ -4187,6 +4225,7 @@ private constructor(
             isRoot == other.isRoot &&
             lastQueuedAt == other.lastQueuedAt &&
             latencySeconds == other.latencySeconds &&
+            lsUserId == other.lsUserId &&
             manifest == other.manifest &&
             metadata == other.metadata &&
             name == other.name &&
@@ -4237,6 +4276,7 @@ private constructor(
             isRoot,
             lastQueuedAt,
             latencySeconds,
+            lsUserId,
             manifest,
             metadata,
             name,
@@ -4268,5 +4308,5 @@ private constructor(
     override fun hashCode(): Int = hashCode
 
     override fun toString() =
-        "Run{id=$id, appPath=$appPath, attachments=$attachments, completionCost=$completionCost, completionCostDetails=$completionCostDetails, completionTokenDetails=$completionTokenDetails, completionTokens=$completionTokens, dottedOrder=$dottedOrder, endTime=$endTime, error=$error, errorPreview=$errorPreview, events=$events, extra=$extra, feedbackStats=$feedbackStats, firstTokenTime=$firstTokenTime, inputs=$inputs, inputsPreview=$inputsPreview, isInDataset=$isInDataset, isRoot=$isRoot, lastQueuedAt=$lastQueuedAt, latencySeconds=$latencySeconds, manifest=$manifest, metadata=$metadata, name=$name, outputs=$outputs, outputsPreview=$outputsPreview, parentRunIds=$parentRunIds, priceModelId=$priceModelId, projectId=$projectId, promptCost=$promptCost, promptCostDetails=$promptCostDetails, promptTokenDetails=$promptTokenDetails, promptTokens=$promptTokens, referenceDatasetId=$referenceDatasetId, referenceExampleId=$referenceExampleId, runType=$runType, shareUrl=$shareUrl, startTime=$startTime, status=$status, tags=$tags, threadEvaluationTime=$threadEvaluationTime, threadId=$threadId, totalCost=$totalCost, totalTokens=$totalTokens, traceId=$traceId, additionalProperties=$additionalProperties}"
+        "Run{id=$id, appPath=$appPath, attachments=$attachments, completionCost=$completionCost, completionCostDetails=$completionCostDetails, completionTokenDetails=$completionTokenDetails, completionTokens=$completionTokens, dottedOrder=$dottedOrder, endTime=$endTime, error=$error, errorPreview=$errorPreview, events=$events, extra=$extra, feedbackStats=$feedbackStats, firstTokenTime=$firstTokenTime, inputs=$inputs, inputsPreview=$inputsPreview, isInDataset=$isInDataset, isRoot=$isRoot, lastQueuedAt=$lastQueuedAt, latencySeconds=$latencySeconds, lsUserId=$lsUserId, manifest=$manifest, metadata=$metadata, name=$name, outputs=$outputs, outputsPreview=$outputsPreview, parentRunIds=$parentRunIds, priceModelId=$priceModelId, projectId=$projectId, promptCost=$promptCost, promptCostDetails=$promptCostDetails, promptTokenDetails=$promptTokenDetails, promptTokens=$promptTokens, referenceDatasetId=$referenceDatasetId, referenceExampleId=$referenceExampleId, runType=$runType, shareUrl=$shareUrl, startTime=$startTime, status=$status, tags=$tags, threadEvaluationTime=$threadEvaluationTime, threadId=$threadId, totalCost=$totalCost, totalTokens=$totalTokens, traceId=$traceId, additionalProperties=$additionalProperties}"
 }

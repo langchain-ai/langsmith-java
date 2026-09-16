@@ -99,6 +99,7 @@ internal class TraceTest {
                         .isRoot(true)
                         .lastQueuedAt(OffsetDateTime.parse("2024-01-15T10:31:00Z"))
                         .latencySeconds(1.523)
+                        .lsUserId("f6a7b8c9-d0e1-4f2a-3b4c-5d6e7f8a9b0c")
                         .manifest(
                             Run.Manifest.builder()
                                 .putAdditionalProperty("foo", JsonValue.from("bar"))
@@ -249,6 +250,7 @@ internal class TraceTest {
                     .isRoot(true)
                     .lastQueuedAt(OffsetDateTime.parse("2024-01-15T10:31:00Z"))
                     .latencySeconds(1.523)
+                    .lsUserId("f6a7b8c9-d0e1-4f2a-3b4c-5d6e7f8a9b0c")
                     .manifest(
                         Run.Manifest.builder()
                             .putAdditionalProperty("foo", JsonValue.from("bar"))
@@ -404,6 +406,7 @@ internal class TraceTest {
                         .isRoot(true)
                         .lastQueuedAt(OffsetDateTime.parse("2024-01-15T10:31:00Z"))
                         .latencySeconds(1.523)
+                        .lsUserId("f6a7b8c9-d0e1-4f2a-3b4c-5d6e7f8a9b0c")
                         .manifest(
                             Run.Manifest.builder()
                                 .putAdditionalProperty("foo", JsonValue.from("bar"))

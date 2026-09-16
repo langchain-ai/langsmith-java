@@ -12,9 +12,16 @@ internal class CreateOnlineCodeEvaluatorRequestTest {
     @Test
     fun create() {
         val createOnlineCodeEvaluatorRequest =
-            CreateOnlineCodeEvaluatorRequest.builder().code("code").language("language").build()
+            CreateOnlineCodeEvaluatorRequest.builder()
+                .advancedFeaturesEnabled(true)
+                .code("code")
+                .dependencies("dependencies")
+                .language("language")
+                .build()
 
+        assertThat(createOnlineCodeEvaluatorRequest.advancedFeaturesEnabled()).contains(true)
         assertThat(createOnlineCodeEvaluatorRequest.code()).contains("code")
+        assertThat(createOnlineCodeEvaluatorRequest.dependencies()).contains("dependencies")
         assertThat(createOnlineCodeEvaluatorRequest.language()).contains("language")
     }
 
@@ -22,7 +29,12 @@ internal class CreateOnlineCodeEvaluatorRequestTest {
     fun roundtrip() {
         val jsonMapper = jsonMapper()
         val createOnlineCodeEvaluatorRequest =
-            CreateOnlineCodeEvaluatorRequest.builder().code("code").language("language").build()
+            CreateOnlineCodeEvaluatorRequest.builder()
+                .advancedFeaturesEnabled(true)
+                .code("code")
+                .dependencies("dependencies")
+                .language("language")
+                .build()
 
         val roundtrippedCreateOnlineCodeEvaluatorRequest =
             jsonMapper.readValue(

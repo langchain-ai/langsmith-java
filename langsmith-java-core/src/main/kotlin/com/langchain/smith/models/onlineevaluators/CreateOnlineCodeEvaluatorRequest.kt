@@ -14,26 +14,48 @@ import com.langchain.smith.errors.LangChainInvalidDataException
 import java.util.Collections
 import java.util.Objects
 import java.util.Optional
+import kotlin.jvm.optionals.getOrNull
 
 class CreateOnlineCodeEvaluatorRequest
 @JsonCreator(mode = JsonCreator.Mode.DISABLED)
 private constructor(
+    private val advancedFeaturesEnabled: JsonField<Boolean>,
     private val code: JsonField<String>,
+    private val dependencies: JsonField<String>,
     private val language: JsonField<String>,
     private val additionalProperties: MutableMap<String, JsonValue>,
 ) {
 
     @JsonCreator
     private constructor(
+        @JsonProperty("advanced_features_enabled")
+        @ExcludeMissing
+        advancedFeaturesEnabled: JsonField<Boolean> = JsonMissing.of(),
         @JsonProperty("code") @ExcludeMissing code: JsonField<String> = JsonMissing.of(),
+        @JsonProperty("dependencies")
+        @ExcludeMissing
+        dependencies: JsonField<String> = JsonMissing.of(),
         @JsonProperty("language") @ExcludeMissing language: JsonField<String> = JsonMissing.of(),
-    ) : this(code, language, mutableMapOf())
+    ) : this(advancedFeaturesEnabled, code, dependencies, language, mutableMapOf())
+
+    /**
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
+    fun advancedFeaturesEnabled(): Optional<Boolean> =
+        advancedFeaturesEnabled.getOptional("advanced_features_enabled")
 
     /**
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
      */
     fun code(): Optional<String> = code.getOptional("code")
+
+    /**
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
+    fun dependencies(): Optional<String> = dependencies.getOptional("dependencies")
 
     /**
      * Default: "python"
@@ -44,11 +66,30 @@ private constructor(
     fun language(): Optional<String> = language.getOptional("language")
 
     /**
+     * Returns the raw JSON value of [advancedFeaturesEnabled].
+     *
+     * Unlike [advancedFeaturesEnabled], this method doesn't throw if the JSON field has an
+     * unexpected type.
+     */
+    @JsonProperty("advanced_features_enabled")
+    @ExcludeMissing
+    fun _advancedFeaturesEnabled(): JsonField<Boolean> = advancedFeaturesEnabled
+
+    /**
      * Returns the raw JSON value of [code].
      *
      * Unlike [code], this method doesn't throw if the JSON field has an unexpected type.
      */
     @JsonProperty("code") @ExcludeMissing fun _code(): JsonField<String> = code
+
+    /**
+     * Returns the raw JSON value of [dependencies].
+     *
+     * Unlike [dependencies], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    @JsonProperty("dependencies")
+    @ExcludeMissing
+    fun _dependencies(): JsonField<String> = dependencies
 
     /**
      * Returns the raw JSON value of [language].
@@ -81,18 +122,36 @@ private constructor(
     /** A builder for [CreateOnlineCodeEvaluatorRequest]. */
     class Builder internal constructor() {
 
+        private var advancedFeaturesEnabled: JsonField<Boolean> = JsonMissing.of()
         private var code: JsonField<String> = JsonMissing.of()
+        private var dependencies: JsonField<String> = JsonMissing.of()
         private var language: JsonField<String> = JsonMissing.of()
         private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
 
         @JvmSynthetic
         internal fun from(createOnlineCodeEvaluatorRequest: CreateOnlineCodeEvaluatorRequest) =
             apply {
+                advancedFeaturesEnabled = createOnlineCodeEvaluatorRequest.advancedFeaturesEnabled
                 code = createOnlineCodeEvaluatorRequest.code
+                dependencies = createOnlineCodeEvaluatorRequest.dependencies
                 language = createOnlineCodeEvaluatorRequest.language
                 additionalProperties =
                     createOnlineCodeEvaluatorRequest.additionalProperties.toMutableMap()
             }
+
+        fun advancedFeaturesEnabled(advancedFeaturesEnabled: Boolean) =
+            advancedFeaturesEnabled(JsonField.of(advancedFeaturesEnabled))
+
+        /**
+         * Sets [Builder.advancedFeaturesEnabled] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.advancedFeaturesEnabled] with a well-typed [Boolean]
+         * value instead. This method is primarily for setting the field to an undocumented or not
+         * yet supported value.
+         */
+        fun advancedFeaturesEnabled(advancedFeaturesEnabled: JsonField<Boolean>) = apply {
+            this.advancedFeaturesEnabled = advancedFeaturesEnabled
+        }
 
         fun code(code: String) = code(JsonField.of(code))
 
@@ -103,6 +162,22 @@ private constructor(
          * method is primarily for setting the field to an undocumented or not yet supported value.
          */
         fun code(code: JsonField<String>) = apply { this.code = code }
+
+        fun dependencies(dependencies: String?) = dependencies(JsonField.ofNullable(dependencies))
+
+        /** Alias for calling [Builder.dependencies] with `dependencies.orElse(null)`. */
+        fun dependencies(dependencies: Optional<String>) = dependencies(dependencies.getOrNull())
+
+        /**
+         * Sets [Builder.dependencies] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.dependencies] with a well-typed [String] value instead.
+         * This method is primarily for setting the field to an undocumented or not yet supported
+         * value.
+         */
+        fun dependencies(dependencies: JsonField<String>) = apply {
+            this.dependencies = dependencies
+        }
 
         /** Default: "python" */
         fun language(language: String) = language(JsonField.of(language))
@@ -140,7 +215,13 @@ private constructor(
          * Further updates to this [Builder] will not mutate the returned instance.
          */
         fun build(): CreateOnlineCodeEvaluatorRequest =
-            CreateOnlineCodeEvaluatorRequest(code, language, additionalProperties.toMutableMap())
+            CreateOnlineCodeEvaluatorRequest(
+                advancedFeaturesEnabled,
+                code,
+                dependencies,
+                language,
+                additionalProperties.toMutableMap(),
+            )
     }
 
     private var validated: Boolean = false
@@ -158,7 +239,9 @@ private constructor(
             return@apply
         }
 
+        advancedFeaturesEnabled()
         code()
+        dependencies()
         language()
         validated = true
     }
@@ -178,7 +261,10 @@ private constructor(
      */
     @JvmSynthetic
     internal fun validity(): Int =
-        (if (code.asKnown().isPresent) 1 else 0) + (if (language.asKnown().isPresent) 1 else 0)
+        (if (advancedFeaturesEnabled.asKnown().isPresent) 1 else 0) +
+            (if (code.asKnown().isPresent) 1 else 0) +
+            (if (dependencies.asKnown().isPresent) 1 else 0) +
+            (if (language.asKnown().isPresent) 1 else 0)
 
     override fun equals(other: Any?): Boolean {
         if (this === other) {
@@ -186,15 +272,19 @@ private constructor(
         }
 
         return other is CreateOnlineCodeEvaluatorRequest &&
+            advancedFeaturesEnabled == other.advancedFeaturesEnabled &&
             code == other.code &&
+            dependencies == other.dependencies &&
             language == other.language &&
             additionalProperties == other.additionalProperties
     }
 
-    private val hashCode: Int by lazy { Objects.hash(code, language, additionalProperties) }
+    private val hashCode: Int by lazy {
+        Objects.hash(advancedFeaturesEnabled, code, dependencies, language, additionalProperties)
+    }
 
     override fun hashCode(): Int = hashCode
 
     override fun toString() =
-        "CreateOnlineCodeEvaluatorRequest{code=$code, language=$language, additionalProperties=$additionalProperties}"
+        "CreateOnlineCodeEvaluatorRequest{advancedFeaturesEnabled=$advancedFeaturesEnabled, code=$code, dependencies=$dependencies, language=$language, additionalProperties=$additionalProperties}"
 }

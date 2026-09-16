@@ -21,7 +21,10 @@ import com.langchain.smith.models.sandboxes.SnapshotListResponse
 import com.langchain.smith.models.sandboxes.SnapshotResponse
 import com.langchain.smith.models.sandboxes.snapshots.SnapshotCreateParams
 import com.langchain.smith.models.sandboxes.snapshots.SnapshotDeleteParams
+import com.langchain.smith.models.sandboxes.snapshots.SnapshotListPage
 import com.langchain.smith.models.sandboxes.snapshots.SnapshotListParams
+import com.langchain.smith.models.sandboxes.snapshots.SnapshotRetrieveByNameParams
+import com.langchain.smith.models.sandboxes.snapshots.SnapshotRetrieveByNameResponse
 import com.langchain.smith.models.sandboxes.snapshots.SnapshotRetrieveParams
 import java.util.function.Consumer
 import kotlin.jvm.optionals.getOrNull
@@ -55,7 +58,7 @@ class SnapshotServiceImpl internal constructor(private val clientOptions: Client
     override fun list(
         params: SnapshotListParams,
         requestOptions: RequestOptions,
-    ): SnapshotListResponse =
+    ): SnapshotListPage =
         // get /api/v2/sandboxes/snapshots
         withRawResponse().list(params, requestOptions).parse()
 
@@ -63,6 +66,13 @@ class SnapshotServiceImpl internal constructor(private val clientOptions: Client
         // delete /api/v2/sandboxes/snapshots/{snapshot_id}
         withRawResponse().delete(params, requestOptions)
     }
+
+    override fun retrieveByName(
+        params: SnapshotRetrieveByNameParams,
+        requestOptions: RequestOptions,
+    ): SnapshotRetrieveByNameResponse =
+        // get /api/v2/sandboxes/snapshots-by-name/{name}
+        withRawResponse().retrieveByName(params, requestOptions).parse()
 
     class WithRawResponseImpl internal constructor(private val clientOptions: ClientOptions) :
         SnapshotService.WithRawResponse {
@@ -141,7 +151,7 @@ class SnapshotServiceImpl internal constructor(private val clientOptions: Client
         override fun list(
             params: SnapshotListParams,
             requestOptions: RequestOptions,
-        ): HttpResponseFor<SnapshotListResponse> {
+        ): HttpResponseFor<SnapshotListPage> {
             val request =
                 HttpRequest.builder()
                     .method(HttpMethod.GET)
@@ -158,6 +168,13 @@ class SnapshotServiceImpl internal constructor(private val clientOptions: Client
                         if (requestOptions.responseValidation!!) {
                             it.validate()
                         }
+                    }
+                    .let {
+                        SnapshotListPage.builder()
+                            .service(SnapshotServiceImpl(clientOptions))
+                            .params(params)
+                            .response(it)
+                            .build()
                     }
             }
         }
@@ -183,6 +200,42 @@ class SnapshotServiceImpl internal constructor(private val clientOptions: Client
             val response = clientOptions.httpClient.execute(request, requestOptions)
             return errorHandler.handle(response).parseable {
                 response.use { deleteHandler.handle(it) }
+            }
+        }
+
+        private val retrieveByNameHandler: Handler<SnapshotRetrieveByNameResponse> =
+            jsonHandler<SnapshotRetrieveByNameResponse>(clientOptions.jsonMapper)
+
+        override fun retrieveByName(
+            params: SnapshotRetrieveByNameParams,
+            requestOptions: RequestOptions,
+        ): HttpResponseFor<SnapshotRetrieveByNameResponse> {
+            // We check here instead of in the params builder because this can be specified
+            // positionally or in the params class.
+            checkRequired("name", params.name().getOrNull())
+            val request =
+                HttpRequest.builder()
+                    .method(HttpMethod.GET)
+                    .baseUrl(clientOptions.baseUrl())
+                    .addPathSegments(
+                        "api",
+                        "v2",
+                        "sandboxes",
+                        "snapshots-by-name",
+                        params._pathParam(0),
+                    )
+                    .build()
+                    .prepare(clientOptions, params)
+            val requestOptions = requestOptions.applyDefaults(RequestOptions.from(clientOptions))
+            val response = clientOptions.httpClient.execute(request, requestOptions)
+            return errorHandler.handle(response).parseable {
+                response
+                    .use { retrieveByNameHandler.handle(it) }
+                    .also {
+                        if (requestOptions.responseValidation!!) {
+                            it.validate()
+                        }
+                    }
             }
         }
     }

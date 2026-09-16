@@ -109,8 +109,8 @@ private constructor(
     fun feedbackKeys(): Optional<List<String>> = feedbackKeys.getOptional("feedback_keys")
 
     /**
-     * IsManaged marks a LangChain-managed evaluator (currently the managed Perceived Error judge).
-     * NULL in the DB is read as false via COALESCE.
+     * IsManaged marks a LangChain Tuned Evaluator (currently the tuned Perceived Error judge). NULL
+     * in the DB is read as false via COALESCE.
      *
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
@@ -371,8 +371,8 @@ private constructor(
         }
 
         /**
-         * IsManaged marks a LangChain-managed evaluator (currently the managed Perceived Error
-         * judge). NULL in the DB is read as false via COALESCE.
+         * IsManaged marks a LangChain Tuned Evaluator (currently the tuned Perceived Error judge).
+         * NULL in the DB is read as false via COALESCE.
          */
         fun isManaged(isManaged: Boolean) = isManaged(JsonField.of(isManaged))
 

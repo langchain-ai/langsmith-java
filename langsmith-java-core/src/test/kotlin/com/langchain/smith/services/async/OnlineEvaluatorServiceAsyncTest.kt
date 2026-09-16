@@ -35,7 +35,9 @@ internal class OnlineEvaluatorServiceAsyncTest {
                 CreateOnlineEvaluatorRequest.builder()
                     .codeEvaluator(
                         CreateOnlineCodeEvaluatorRequest.builder()
+                            .advancedFeaturesEnabled(true)
                             .code("code")
+                            .dependencies("dependencies")
                             .language("language")
                             .build()
                     )
@@ -90,7 +92,9 @@ internal class OnlineEvaluatorServiceAsyncTest {
                         UpdateOnlineEvaluatorRequest.builder()
                             .codeEvaluator(
                                 UpdateOnlineCodeEvaluatorRequest.builder()
+                                    .advancedFeaturesEnabled(true)
                                     .code("code")
+                                    .dependencies("dependencies")
                                     .language("language")
                                     .build()
                             )
@@ -193,6 +197,7 @@ internal class OnlineEvaluatorServiceAsyncTest {
                     .groupBy("group_by")
                     .addResourceId("string")
                     .sessionId("session_id")
+                    .addTagValueId("string")
                     .type("type")
                     .build()
             )

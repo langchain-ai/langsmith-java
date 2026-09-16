@@ -14,6 +14,7 @@ internal class BoxCreateSnapshotParamsTest {
             .pathName("name")
             .bodyName("name")
             .checkpoint("checkpoint")
+            .description("description")
             .dockerImage("docker_image")
             .fsCapacityBytes(0L)
             .includeMemory(true)
@@ -22,6 +23,18 @@ internal class BoxCreateSnapshotParamsTest {
                     .putAdditionalProperty("foo", JsonValue.from("string"))
                     .build()
             )
+            .runConfig(
+                BoxCreateSnapshotParams.RunConfig.builder()
+                    .envVars(
+                        BoxCreateSnapshotParams.RunConfig.EnvVars.builder()
+                            .putAdditionalProperty("foo", JsonValue.from("string"))
+                            .build()
+                    )
+                    .user("user")
+                    .workDir("work_dir")
+                    .build()
+            )
+            .tag("tag")
             .build()
     }
 
@@ -41,6 +54,7 @@ internal class BoxCreateSnapshotParamsTest {
                 .pathName("name")
                 .bodyName("name")
                 .checkpoint("checkpoint")
+                .description("description")
                 .dockerImage("docker_image")
                 .fsCapacityBytes(0L)
                 .includeMemory(true)
@@ -49,12 +63,25 @@ internal class BoxCreateSnapshotParamsTest {
                         .putAdditionalProperty("foo", JsonValue.from("string"))
                         .build()
                 )
+                .runConfig(
+                    BoxCreateSnapshotParams.RunConfig.builder()
+                        .envVars(
+                            BoxCreateSnapshotParams.RunConfig.EnvVars.builder()
+                                .putAdditionalProperty("foo", JsonValue.from("string"))
+                                .build()
+                        )
+                        .user("user")
+                        .workDir("work_dir")
+                        .build()
+                )
+                .tag("tag")
                 .build()
 
         val body = params._body()
 
         assertThat(body.bodyName()).isEqualTo("name")
         assertThat(body.checkpoint()).contains("checkpoint")
+        assertThat(body.description()).contains("description")
         assertThat(body.dockerImage()).contains("docker_image")
         assertThat(body.fsCapacityBytes()).contains(0L)
         assertThat(body.includeMemory()).contains(true)
@@ -64,6 +91,19 @@ internal class BoxCreateSnapshotParamsTest {
                     .putAdditionalProperty("foo", JsonValue.from("string"))
                     .build()
             )
+        assertThat(body.runConfig())
+            .contains(
+                BoxCreateSnapshotParams.RunConfig.builder()
+                    .envVars(
+                        BoxCreateSnapshotParams.RunConfig.EnvVars.builder()
+                            .putAdditionalProperty("foo", JsonValue.from("string"))
+                            .build()
+                    )
+                    .user("user")
+                    .workDir("work_dir")
+                    .build()
+            )
+        assertThat(body.tag()).contains("tag")
     }
 
     @Test

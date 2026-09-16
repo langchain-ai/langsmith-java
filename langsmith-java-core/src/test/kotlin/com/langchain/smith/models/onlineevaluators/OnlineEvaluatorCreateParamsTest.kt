@@ -15,7 +15,9 @@ internal class OnlineEvaluatorCreateParamsTest {
                 CreateOnlineEvaluatorRequest.builder()
                     .codeEvaluator(
                         CreateOnlineCodeEvaluatorRequest.builder()
+                            .advancedFeaturesEnabled(true)
                             .code("code")
+                            .dependencies("dependencies")
                             .language("language")
                             .build()
                     )
@@ -42,7 +44,9 @@ internal class OnlineEvaluatorCreateParamsTest {
                     CreateOnlineEvaluatorRequest.builder()
                         .codeEvaluator(
                             CreateOnlineCodeEvaluatorRequest.builder()
+                                .advancedFeaturesEnabled(true)
                                 .code("code")
+                                .dependencies("dependencies")
                                 .language("language")
                                 .build()
                         )
@@ -67,7 +71,9 @@ internal class OnlineEvaluatorCreateParamsTest {
                 CreateOnlineEvaluatorRequest.builder()
                     .codeEvaluator(
                         CreateOnlineCodeEvaluatorRequest.builder()
+                            .advancedFeaturesEnabled(true)
                             .code("code")
+                            .dependencies("dependencies")
                             .language("language")
                             .build()
                     )

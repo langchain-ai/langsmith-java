@@ -14,12 +14,14 @@ internal class ServiceUrlResponseTest {
         val serviceUrlResponse =
             ServiceUrlResponse.builder()
                 .token("token")
+                .access(ServiceUrlResponse.Access.RESTRICTED)
                 .browserUrl("browser_url")
                 .expiresAt("expires_at")
                 .serviceUrl("service_url")
                 .build()
 
         assertThat(serviceUrlResponse.token()).contains("token")
+        assertThat(serviceUrlResponse.access()).contains(ServiceUrlResponse.Access.RESTRICTED)
         assertThat(serviceUrlResponse.browserUrl()).contains("browser_url")
         assertThat(serviceUrlResponse.expiresAt()).contains("expires_at")
         assertThat(serviceUrlResponse.serviceUrl()).contains("service_url")
@@ -31,6 +33,7 @@ internal class ServiceUrlResponseTest {
         val serviceUrlResponse =
             ServiceUrlResponse.builder()
                 .token("token")
+                .access(ServiceUrlResponse.Access.RESTRICTED)
                 .browserUrl("browser_url")
                 .expiresAt("expires_at")
                 .serviceUrl("service_url")

@@ -3,6 +3,7 @@
 package com.langchain.smith.models.annotationqueues.items
 
 import com.langchain.smith.core.http.QueryParams
+import java.time.OffsetDateTime
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
@@ -16,6 +17,8 @@ internal class ItemListParamsTest {
             .cursor("cursor")
             .direction(ItemListParams.Direction.FORWARD)
             .itemType(ItemListParams.ItemType.RUN)
+            .maxStartTime(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
+            .minStartTime(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
             .pageSize(0L)
             .build()
     }
@@ -42,6 +45,8 @@ internal class ItemListParamsTest {
                 .cursor("cursor")
                 .direction(ItemListParams.Direction.FORWARD)
                 .itemType(ItemListParams.ItemType.RUN)
+                .maxStartTime(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
+                .minStartTime(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
                 .pageSize(0L)
                 .build()
 
@@ -54,6 +59,8 @@ internal class ItemListParamsTest {
                     .put("cursor", "cursor")
                     .put("direction", "forward")
                     .put("item_type", "RUN")
+                    .put("max_start_time", "2019-12-27T18:11:19.117Z")
+                    .put("min_start_time", "2019-12-27T18:11:19.117Z")
                     .put("page_size", "0")
                     .build()
             )

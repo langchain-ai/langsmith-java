@@ -9,7 +9,12 @@ internal class BoxGenerateServiceUrlParamsTest {
 
     @Test
     fun create() {
-        BoxGenerateServiceUrlParams.builder().name("name").expiresInSeconds(0L).port(0L).build()
+        BoxGenerateServiceUrlParams.builder()
+            .name("name")
+            .access(BoxGenerateServiceUrlParams.Access.RESTRICTED)
+            .expiresInSeconds(0L)
+            .port(0L)
+            .build()
     }
 
     @Test
@@ -24,10 +29,16 @@ internal class BoxGenerateServiceUrlParamsTest {
     @Test
     fun body() {
         val params =
-            BoxGenerateServiceUrlParams.builder().name("name").expiresInSeconds(0L).port(0L).build()
+            BoxGenerateServiceUrlParams.builder()
+                .name("name")
+                .access(BoxGenerateServiceUrlParams.Access.RESTRICTED)
+                .expiresInSeconds(0L)
+                .port(0L)
+                .build()
 
         val body = params._body()
 
+        assertThat(body.access()).contains(BoxGenerateServiceUrlParams.Access.RESTRICTED)
         assertThat(body.expiresInSeconds()).contains(0L)
         assertThat(body.port()).contains(0L)
     }
