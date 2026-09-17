@@ -377,6 +377,8 @@ private constructor(
 
             @JvmField val ERROR_PREVIEW = of("ERROR_PREVIEW")
 
+            @JvmField val TURN_NUMBER = of("TURN_NUMBER")
+
             @JvmStatic fun of(value: String) = Select(JsonField.of(value))
         }
 
@@ -406,6 +408,7 @@ private constructor(
             COMPLETION_COST_DETAILS,
             NAME,
             ERROR_PREVIEW,
+            TURN_NUMBER,
         }
 
         /**
@@ -442,6 +445,7 @@ private constructor(
             COMPLETION_COST_DETAILS,
             NAME,
             ERROR_PREVIEW,
+            TURN_NUMBER,
             /** An enum member indicating that [Select] was instantiated with an unknown value. */
             _UNKNOWN,
         }
@@ -479,6 +483,7 @@ private constructor(
                 COMPLETION_COST_DETAILS -> Value.COMPLETION_COST_DETAILS
                 NAME -> Value.NAME
                 ERROR_PREVIEW -> Value.ERROR_PREVIEW
+                TURN_NUMBER -> Value.TURN_NUMBER
                 else -> Value._UNKNOWN
             }
 
@@ -517,6 +522,7 @@ private constructor(
                 COMPLETION_COST_DETAILS -> Known.COMPLETION_COST_DETAILS
                 NAME -> Known.NAME
                 ERROR_PREVIEW -> Known.ERROR_PREVIEW
+                TURN_NUMBER -> Known.TURN_NUMBER
                 else -> throw LangChainInvalidDataException("Unknown Select: $value")
             }
 
