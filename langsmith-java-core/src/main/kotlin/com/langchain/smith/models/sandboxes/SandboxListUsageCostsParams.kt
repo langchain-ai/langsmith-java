@@ -30,6 +30,7 @@ private constructor(
     private val endTime: OffsetDateTime,
     private val startTime: OffsetDateTime,
     private val cursor: String?,
+    private val granularity: Granularity?,
     private val pageSize: Long?,
     private val resourceIds: List<String>?,
     private val resourceType: ResourceType?,
@@ -45,6 +46,12 @@ private constructor(
 
     /** Opaque pagination cursor */
     fun cursor(): Optional<String> = Optional.ofNullable(cursor)
+
+    /**
+     * HOUR returns hourly buckets. RESOURCE sums each resource over the requested interval and sets
+     * period_start to start_time.
+     */
+    fun granularity(): Optional<Granularity> = Optional.ofNullable(granularity)
 
     /** Maximum rows to return */
     fun pageSize(): Optional<Long> = Optional.ofNullable(pageSize)
@@ -83,6 +90,7 @@ private constructor(
         private var endTime: OffsetDateTime? = null
         private var startTime: OffsetDateTime? = null
         private var cursor: String? = null
+        private var granularity: Granularity? = null
         private var pageSize: Long? = null
         private var resourceIds: MutableList<String>? = null
         private var resourceType: ResourceType? = null
@@ -94,6 +102,7 @@ private constructor(
             endTime = sandboxListUsageCostsParams.endTime
             startTime = sandboxListUsageCostsParams.startTime
             cursor = sandboxListUsageCostsParams.cursor
+            granularity = sandboxListUsageCostsParams.granularity
             pageSize = sandboxListUsageCostsParams.pageSize
             resourceIds = sandboxListUsageCostsParams.resourceIds?.toMutableList()
             resourceType = sandboxListUsageCostsParams.resourceType
@@ -112,6 +121,15 @@ private constructor(
 
         /** Alias for calling [Builder.cursor] with `cursor.orElse(null)`. */
         fun cursor(cursor: Optional<String>) = cursor(cursor.getOrNull())
+
+        /**
+         * HOUR returns hourly buckets. RESOURCE sums each resource over the requested interval and
+         * sets period_start to start_time.
+         */
+        fun granularity(granularity: Granularity?) = apply { this.granularity = granularity }
+
+        /** Alias for calling [Builder.granularity] with `granularity.orElse(null)`. */
+        fun granularity(granularity: Optional<Granularity>) = granularity(granularity.getOrNull())
 
         /** Maximum rows to return */
         fun pageSize(pageSize: Long?) = apply { this.pageSize = pageSize }
@@ -266,6 +284,7 @@ private constructor(
                 checkRequired("endTime", endTime),
                 checkRequired("startTime", startTime),
                 cursor,
+                granularity,
                 pageSize,
                 resourceIds?.toImmutable(),
                 resourceType,
@@ -282,12 +301,156 @@ private constructor(
                 put("end_time", DateTimeFormatter.ISO_OFFSET_DATE_TIME.format(endTime))
                 put("start_time", DateTimeFormatter.ISO_OFFSET_DATE_TIME.format(startTime))
                 cursor?.let { put("cursor", it) }
+                granularity?.let { put("granularity", it.toString()) }
                 pageSize?.let { put("page_size", it.toString()) }
                 resourceIds?.forEach { put("resource_ids", it) }
                 resourceType?.let { put("resource_type", it.toString()) }
                 putAll(additionalQueryParams)
             }
             .build()
+
+    /**
+     * HOUR returns hourly buckets. RESOURCE sums each resource over the requested interval and sets
+     * period_start to start_time.
+     */
+    class Granularity @JsonCreator private constructor(private val value: JsonField<String>) :
+        Enum {
+
+        /**
+         * Returns this class instance's raw value.
+         *
+         * This is usually only useful if this instance was deserialized from data that doesn't
+         * match any known member, and you want to know that value. For example, if the SDK is on an
+         * older version than the API, then the API may respond with new members that the SDK is
+         * unaware of.
+         */
+        @com.fasterxml.jackson.annotation.JsonValue fun _value(): JsonField<String> = value
+
+        companion object {
+
+            @JvmField val HOUR = of("HOUR")
+
+            @JvmField val RESOURCE = of("RESOURCE")
+
+            @JvmStatic fun of(value: String) = Granularity(JsonField.of(value))
+        }
+
+        /** An enum containing [Granularity]'s known values. */
+        enum class Known {
+            HOUR,
+            RESOURCE,
+        }
+
+        /**
+         * An enum containing [Granularity]'s known values, as well as an [_UNKNOWN] member.
+         *
+         * An instance of [Granularity] can contain an unknown value in a couple of cases:
+         * - It was deserialized from data that doesn't match any known member. For example, if the
+         *   SDK is on an older version than the API, then the API may respond with new members that
+         *   the SDK is unaware of.
+         * - It was constructed with an arbitrary value using the [of] method.
+         */
+        enum class Value {
+            HOUR,
+            RESOURCE,
+            /**
+             * An enum member indicating that [Granularity] was instantiated with an unknown value.
+             */
+            _UNKNOWN,
+        }
+
+        /**
+         * Returns an enum member corresponding to this class instance's value, or [Value._UNKNOWN]
+         * if the class was instantiated with an unknown value.
+         *
+         * Use the [known] method instead if you're certain the value is always known or if you want
+         * to throw for the unknown case.
+         */
+        fun value(): Value =
+            when (this) {
+                HOUR -> Value.HOUR
+                RESOURCE -> Value.RESOURCE
+                else -> Value._UNKNOWN
+            }
+
+        /**
+         * Returns an enum member corresponding to this class instance's value.
+         *
+         * Use the [value] method instead if you're uncertain the value is always known and don't
+         * want to throw for the unknown case.
+         *
+         * @throws LangChainInvalidDataException if this class instance's value is a not a known
+         *   member.
+         */
+        fun known(): Known =
+            when (this) {
+                HOUR -> Known.HOUR
+                RESOURCE -> Known.RESOURCE
+                else -> throw LangChainInvalidDataException("Unknown Granularity: $value")
+            }
+
+        /**
+         * Returns this class instance's primitive wire representation.
+         *
+         * This differs from the [toString] method because that method is primarily for debugging
+         * and generally doesn't throw.
+         *
+         * @throws LangChainInvalidDataException if this class instance's value does not have the
+         *   expected primitive type.
+         */
+        fun asString(): String =
+            _value().asString().orElseThrow {
+                LangChainInvalidDataException("Value is not a String")
+            }
+
+        private var validated: Boolean = false
+
+        /**
+         * Validates that the types of all values in this object match their expected types
+         * recursively.
+         *
+         * This method is _not_ forwards compatible with new types from the API for existing fields.
+         *
+         * @throws LangChainInvalidDataException if any value type in this object doesn't match its
+         *   expected type.
+         */
+        fun validate(): Granularity = apply {
+            if (validated) {
+                return@apply
+            }
+
+            known()
+            validated = true
+        }
+
+        fun isValid(): Boolean =
+            try {
+                validate()
+                true
+            } catch (e: LangChainInvalidDataException) {
+                false
+            }
+
+        /**
+         * Returns a score indicating how many valid values are contained in this object
+         * recursively.
+         *
+         * Used for best match union deserialization.
+         */
+        @JvmSynthetic internal fun validity(): Int = if (value() == Value._UNKNOWN) 0 else 1
+
+        override fun equals(other: Any?): Boolean {
+            if (this === other) {
+                return true
+            }
+
+            return other is Granularity && value == other.value
+        }
+
+        override fun hashCode() = value.hashCode()
+
+        override fun toString() = value.toString()
+    }
 
     /** Resource type filter */
     class ResourceType @JsonCreator private constructor(private val value: JsonField<String>) :
@@ -438,6 +601,7 @@ private constructor(
             endTime == other.endTime &&
             startTime == other.startTime &&
             cursor == other.cursor &&
+            granularity == other.granularity &&
             pageSize == other.pageSize &&
             resourceIds == other.resourceIds &&
             resourceType == other.resourceType &&
@@ -450,6 +614,7 @@ private constructor(
             endTime,
             startTime,
             cursor,
+            granularity,
             pageSize,
             resourceIds,
             resourceType,
@@ -458,5 +623,5 @@ private constructor(
         )
 
     override fun toString() =
-        "SandboxListUsageCostsParams{endTime=$endTime, startTime=$startTime, cursor=$cursor, pageSize=$pageSize, resourceIds=$resourceIds, resourceType=$resourceType, additionalHeaders=$additionalHeaders, additionalQueryParams=$additionalQueryParams}"
+        "SandboxListUsageCostsParams{endTime=$endTime, startTime=$startTime, cursor=$cursor, granularity=$granularity, pageSize=$pageSize, resourceIds=$resourceIds, resourceType=$resourceType, additionalHeaders=$additionalHeaders, additionalQueryParams=$additionalQueryParams}"
 }
