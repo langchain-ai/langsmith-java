@@ -16,6 +16,7 @@ import kotlin.jvm.optionals.getOrNull
  */
 class OnlineEvaluatorListParams
 private constructor(
+    private val agentId: String?,
     private val feedbackKey: String?,
     private val limit: Long?,
     private val nameContains: String?,
@@ -28,6 +29,9 @@ private constructor(
     private val additionalHeaders: Headers,
     private val additionalQueryParams: QueryParams,
 ) : Params {
+
+    /** Filter to evaluators attached to the agent's environments or tagged datasets */
+    fun agentId(): Optional<String> = Optional.ofNullable(agentId)
 
     /** Filter by feedback key */
     fun feedbackKey(): Optional<String> = Optional.ofNullable(feedbackKey)
@@ -77,6 +81,7 @@ private constructor(
     /** A builder for [OnlineEvaluatorListParams]. */
     class Builder internal constructor() {
 
+        private var agentId: String? = null
         private var feedbackKey: String? = null
         private var limit: Long? = null
         private var nameContains: String? = null
@@ -91,6 +96,7 @@ private constructor(
 
         @JvmSynthetic
         internal fun from(onlineEvaluatorListParams: OnlineEvaluatorListParams) = apply {
+            agentId = onlineEvaluatorListParams.agentId
             feedbackKey = onlineEvaluatorListParams.feedbackKey
             limit = onlineEvaluatorListParams.limit
             nameContains = onlineEvaluatorListParams.nameContains
@@ -103,6 +109,12 @@ private constructor(
             additionalHeaders = onlineEvaluatorListParams.additionalHeaders.toBuilder()
             additionalQueryParams = onlineEvaluatorListParams.additionalQueryParams.toBuilder()
         }
+
+        /** Filter to evaluators attached to the agent's environments or tagged datasets */
+        fun agentId(agentId: String?) = apply { this.agentId = agentId }
+
+        /** Alias for calling [Builder.agentId] with `agentId.orElse(null)`. */
+        fun agentId(agentId: Optional<String>) = agentId(agentId.getOrNull())
 
         /** Filter by feedback key */
         fun feedbackKey(feedbackKey: String?) = apply { this.feedbackKey = feedbackKey }
@@ -306,6 +318,7 @@ private constructor(
          */
         fun build(): OnlineEvaluatorListParams =
             OnlineEvaluatorListParams(
+                agentId,
                 feedbackKey,
                 limit,
                 nameContains,
@@ -325,6 +338,7 @@ private constructor(
     override fun _queryParams(): QueryParams =
         QueryParams.builder()
             .apply {
+                agentId?.let { put("agent_id", it) }
                 feedbackKey?.let { put("feedback_key", it) }
                 limit?.let { put("limit", it.toString()) }
                 nameContains?.let { put("name_contains", it) }
@@ -344,6 +358,7 @@ private constructor(
         }
 
         return other is OnlineEvaluatorListParams &&
+            agentId == other.agentId &&
             feedbackKey == other.feedbackKey &&
             limit == other.limit &&
             nameContains == other.nameContains &&
@@ -359,6 +374,7 @@ private constructor(
 
     override fun hashCode(): Int =
         Objects.hash(
+            agentId,
             feedbackKey,
             limit,
             nameContains,
@@ -373,5 +389,5 @@ private constructor(
         )
 
     override fun toString() =
-        "OnlineEvaluatorListParams{feedbackKey=$feedbackKey, limit=$limit, nameContains=$nameContains, offset=$offset, resourceId=$resourceId, sortBy=$sortBy, sortByDesc=$sortByDesc, tagValueId=$tagValueId, type=$type, additionalHeaders=$additionalHeaders, additionalQueryParams=$additionalQueryParams}"
+        "OnlineEvaluatorListParams{agentId=$agentId, feedbackKey=$feedbackKey, limit=$limit, nameContains=$nameContains, offset=$offset, resourceId=$resourceId, sortBy=$sortBy, sortByDesc=$sortByDesc, tagValueId=$tagValueId, type=$type, additionalHeaders=$additionalHeaders, additionalQueryParams=$additionalQueryParams}"
 }

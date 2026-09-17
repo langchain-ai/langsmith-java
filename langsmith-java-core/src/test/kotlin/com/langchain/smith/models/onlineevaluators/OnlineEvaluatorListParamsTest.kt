@@ -11,6 +11,7 @@ internal class OnlineEvaluatorListParamsTest {
     @Test
     fun create() {
         OnlineEvaluatorListParams.builder()
+            .agentId("agent_id")
             .feedbackKey("feedback_key")
             .limit(0L)
             .nameContains("name_contains")
@@ -27,6 +28,7 @@ internal class OnlineEvaluatorListParamsTest {
     fun queryParams() {
         val params =
             OnlineEvaluatorListParams.builder()
+                .agentId("agent_id")
                 .feedbackKey("feedback_key")
                 .limit(0L)
                 .nameContains("name_contains")
@@ -43,6 +45,7 @@ internal class OnlineEvaluatorListParamsTest {
         assertThat(queryParams)
             .isEqualTo(
                 QueryParams.builder()
+                    .put("agent_id", "agent_id")
                     .put("feedback_key", "feedback_key")
                     .put("limit", "0")
                     .put("name_contains", "name_contains")
