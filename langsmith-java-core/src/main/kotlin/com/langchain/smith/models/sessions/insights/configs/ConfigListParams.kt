@@ -1,33 +1,26 @@
 // File generated from our OpenAPI spec by Stainless.
 
-package com.langchain.smith.models.sessions.insights
+package com.langchain.smith.models.sessions.insights.configs
 
-import com.langchain.smith.core.JsonValue
 import com.langchain.smith.core.Params
-import com.langchain.smith.core.checkRequired
 import com.langchain.smith.core.http.Headers
 import com.langchain.smith.core.http.QueryParams
-import com.langchain.smith.core.toImmutable
 import java.util.Objects
 import java.util.Optional
 import kotlin.jvm.optionals.getOrNull
 
-/** Delete an Insights job for a project. */
-class InsightDeleteParams
+/** List Insights job configurations for a project. */
+class ConfigListParams
 private constructor(
-    private val sessionId: String,
-    private val jobId: String?,
+    private val sessionId: String?,
+    private val includePrebuilts: Boolean?,
     private val additionalHeaders: Headers,
     private val additionalQueryParams: QueryParams,
-    private val additionalBodyProperties: Map<String, JsonValue>,
 ) : Params {
 
-    fun sessionId(): String = sessionId
+    fun sessionId(): Optional<String> = Optional.ofNullable(sessionId)
 
-    fun jobId(): Optional<String> = Optional.ofNullable(jobId)
-
-    /** Additional body properties to send with the request. */
-    fun _additionalBodyProperties(): Map<String, JsonValue> = additionalBodyProperties
+    fun includePrebuilts(): Optional<Boolean> = Optional.ofNullable(includePrebuilts)
 
     /** Additional headers to send with the request. */
     fun _additionalHeaders(): Headers = additionalHeaders
@@ -39,41 +32,48 @@ private constructor(
 
     companion object {
 
-        /**
-         * Returns a mutable builder for constructing an instance of [InsightDeleteParams].
-         *
-         * The following fields are required:
-         * ```java
-         * .sessionId()
-         * ```
-         */
+        @JvmStatic fun none(): ConfigListParams = builder().build()
+
+        /** Returns a mutable builder for constructing an instance of [ConfigListParams]. */
         @JvmStatic fun builder() = Builder()
     }
 
-    /** A builder for [InsightDeleteParams]. */
+    /** A builder for [ConfigListParams]. */
     class Builder internal constructor() {
 
         private var sessionId: String? = null
-        private var jobId: String? = null
+        private var includePrebuilts: Boolean? = null
         private var additionalHeaders: Headers.Builder = Headers.builder()
         private var additionalQueryParams: QueryParams.Builder = QueryParams.builder()
-        private var additionalBodyProperties: MutableMap<String, JsonValue> = mutableMapOf()
 
         @JvmSynthetic
-        internal fun from(insightDeleteParams: InsightDeleteParams) = apply {
-            sessionId = insightDeleteParams.sessionId
-            jobId = insightDeleteParams.jobId
-            additionalHeaders = insightDeleteParams.additionalHeaders.toBuilder()
-            additionalQueryParams = insightDeleteParams.additionalQueryParams.toBuilder()
-            additionalBodyProperties = insightDeleteParams.additionalBodyProperties.toMutableMap()
+        internal fun from(configListParams: ConfigListParams) = apply {
+            sessionId = configListParams.sessionId
+            includePrebuilts = configListParams.includePrebuilts
+            additionalHeaders = configListParams.additionalHeaders.toBuilder()
+            additionalQueryParams = configListParams.additionalQueryParams.toBuilder()
         }
 
-        fun sessionId(sessionId: String) = apply { this.sessionId = sessionId }
+        fun sessionId(sessionId: String?) = apply { this.sessionId = sessionId }
 
-        fun jobId(jobId: String?) = apply { this.jobId = jobId }
+        /** Alias for calling [Builder.sessionId] with `sessionId.orElse(null)`. */
+        fun sessionId(sessionId: Optional<String>) = sessionId(sessionId.getOrNull())
 
-        /** Alias for calling [Builder.jobId] with `jobId.orElse(null)`. */
-        fun jobId(jobId: Optional<String>) = jobId(jobId.getOrNull())
+        fun includePrebuilts(includePrebuilts: Boolean?) = apply {
+            this.includePrebuilts = includePrebuilts
+        }
+
+        /**
+         * Alias for [Builder.includePrebuilts].
+         *
+         * This unboxed primitive overload exists for backwards compatibility.
+         */
+        fun includePrebuilts(includePrebuilts: Boolean) =
+            includePrebuilts(includePrebuilts as Boolean?)
+
+        /** Alias for calling [Builder.includePrebuilts] with `includePrebuilts.orElse(null)`. */
+        fun includePrebuilts(includePrebuilts: Optional<Boolean>) =
+            includePrebuilts(includePrebuilts.getOrNull())
 
         fun additionalHeaders(additionalHeaders: Headers) = apply {
             this.additionalHeaders.clear()
@@ -173,86 +173,51 @@ private constructor(
             additionalQueryParams.removeAll(keys)
         }
 
-        fun additionalBodyProperties(additionalBodyProperties: Map<String, JsonValue>) = apply {
-            this.additionalBodyProperties.clear()
-            putAllAdditionalBodyProperties(additionalBodyProperties)
-        }
-
-        fun putAdditionalBodyProperty(key: String, value: JsonValue) = apply {
-            additionalBodyProperties.put(key, value)
-        }
-
-        fun putAllAdditionalBodyProperties(additionalBodyProperties: Map<String, JsonValue>) =
-            apply {
-                this.additionalBodyProperties.putAll(additionalBodyProperties)
-            }
-
-        fun removeAdditionalBodyProperty(key: String) = apply {
-            additionalBodyProperties.remove(key)
-        }
-
-        fun removeAllAdditionalBodyProperties(keys: Set<String>) = apply {
-            keys.forEach(::removeAdditionalBodyProperty)
-        }
-
         /**
-         * Returns an immutable instance of [InsightDeleteParams].
+         * Returns an immutable instance of [ConfigListParams].
          *
          * Further updates to this [Builder] will not mutate the returned instance.
-         *
-         * The following fields are required:
-         * ```java
-         * .sessionId()
-         * ```
-         *
-         * @throws IllegalStateException if any required field is unset.
          */
-        fun build(): InsightDeleteParams =
-            InsightDeleteParams(
-                checkRequired("sessionId", sessionId),
-                jobId,
+        fun build(): ConfigListParams =
+            ConfigListParams(
+                sessionId,
+                includePrebuilts,
                 additionalHeaders.build(),
                 additionalQueryParams.build(),
-                additionalBodyProperties.toImmutable(),
             )
     }
 
-    fun _body(): Optional<Map<String, JsonValue>> =
-        Optional.ofNullable(additionalBodyProperties.ifEmpty { null })
-
     fun _pathParam(index: Int): String =
         when (index) {
-            0 -> sessionId
-            1 -> jobId ?: ""
+            0 -> sessionId ?: ""
             else -> ""
         }
 
     override fun _headers(): Headers = additionalHeaders
 
-    override fun _queryParams(): QueryParams = additionalQueryParams
+    override fun _queryParams(): QueryParams =
+        QueryParams.builder()
+            .apply {
+                includePrebuilts?.let { put("include_prebuilts", it.toString()) }
+                putAll(additionalQueryParams)
+            }
+            .build()
 
     override fun equals(other: Any?): Boolean {
         if (this === other) {
             return true
         }
 
-        return other is InsightDeleteParams &&
+        return other is ConfigListParams &&
             sessionId == other.sessionId &&
-            jobId == other.jobId &&
+            includePrebuilts == other.includePrebuilts &&
             additionalHeaders == other.additionalHeaders &&
-            additionalQueryParams == other.additionalQueryParams &&
-            additionalBodyProperties == other.additionalBodyProperties
+            additionalQueryParams == other.additionalQueryParams
     }
 
     override fun hashCode(): Int =
-        Objects.hash(
-            sessionId,
-            jobId,
-            additionalHeaders,
-            additionalQueryParams,
-            additionalBodyProperties,
-        )
+        Objects.hash(sessionId, includePrebuilts, additionalHeaders, additionalQueryParams)
 
     override fun toString() =
-        "InsightDeleteParams{sessionId=$sessionId, jobId=$jobId, additionalHeaders=$additionalHeaders, additionalQueryParams=$additionalQueryParams, additionalBodyProperties=$additionalBodyProperties}"
+        "ConfigListParams{sessionId=$sessionId, includePrebuilts=$includePrebuilts, additionalHeaders=$additionalHeaders, additionalQueryParams=$additionalQueryParams}"
 }

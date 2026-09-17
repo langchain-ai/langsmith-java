@@ -15,7 +15,7 @@ import com.langchain.smith.errors.LangChainInvalidDataException
 import java.util.Collections
 import java.util.Objects
 
-/** Response to update a session cluster job. */
+/** Response to updating an Insights job. */
 class InsightUpdateResponse
 @JsonCreator(mode = JsonCreator.Mode.DISABLED)
 private constructor(

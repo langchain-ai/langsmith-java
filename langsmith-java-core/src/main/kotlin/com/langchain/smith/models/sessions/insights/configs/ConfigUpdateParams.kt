@@ -1,6 +1,6 @@
 // File generated from our OpenAPI spec by Stainless.
 
-package com.langchain.smith.models.sessions.insights
+package com.langchain.smith.models.sessions.insights.configs
 
 import com.fasterxml.jackson.annotation.JsonAnyGetter
 import com.fasterxml.jackson.annotation.JsonAnySetter
@@ -15,16 +15,17 @@ import com.langchain.smith.core.checkRequired
 import com.langchain.smith.core.http.Headers
 import com.langchain.smith.core.http.QueryParams
 import com.langchain.smith.errors.LangChainInvalidDataException
+import com.langchain.smith.models.sessions.insights.CreateRunClusteringJobRequest
 import java.util.Collections
 import java.util.Objects
 import java.util.Optional
 import kotlin.jvm.optionals.getOrNull
 
-/** Update an Insights job for a project. */
-class InsightUpdateParams
+/** Update an Insights job configuration for a project. */
+class ConfigUpdateParams
 private constructor(
     private val sessionId: String,
-    private val jobId: String?,
+    private val configId: String?,
     private val body: Body,
     private val additionalHeaders: Headers,
     private val additionalQueryParams: QueryParams,
@@ -32,13 +33,47 @@ private constructor(
 
     fun sessionId(): String = sessionId
 
-    fun jobId(): Optional<String> = Optional.ofNullable(jobId)
+    fun configId(): Optional<String> = Optional.ofNullable(configId)
 
     /**
-     * @throws LangChainInvalidDataException if the JSON field has an unexpected type or is
-     *   unexpectedly missing or null (e.g. if the server responded with an unexpected value).
+     * Configuration for an Insights job.
+     *
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
      */
-    fun name(): String = body.name()
+    fun config(): Optional<CreateRunClusteringJobRequest> = body.config()
+
+    /**
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
+    fun description(): Optional<String> = body.description()
+
+    /**
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
+    fun name(): Optional<String> = body.name()
+
+    /**
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
+    fun scheduleCron(): Optional<String> = body.scheduleCron()
+
+    /**
+     * Returns the raw JSON value of [config].
+     *
+     * Unlike [config], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    fun _config(): JsonField<CreateRunClusteringJobRequest> = body._config()
+
+    /**
+     * Returns the raw JSON value of [description].
+     *
+     * Unlike [description], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    fun _description(): JsonField<String> = body._description()
 
     /**
      * Returns the raw JSON value of [name].
@@ -46,6 +81,13 @@ private constructor(
      * Unlike [name], this method doesn't throw if the JSON field has an unexpected type.
      */
     fun _name(): JsonField<String> = body._name()
+
+    /**
+     * Returns the raw JSON value of [scheduleCron].
+     *
+     * Unlike [scheduleCron], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    fun _scheduleCron(): JsonField<String> = body._scheduleCron()
 
     fun _additionalBodyProperties(): Map<String, JsonValue> = body._additionalProperties()
 
@@ -60,52 +102,86 @@ private constructor(
     companion object {
 
         /**
-         * Returns a mutable builder for constructing an instance of [InsightUpdateParams].
+         * Returns a mutable builder for constructing an instance of [ConfigUpdateParams].
          *
          * The following fields are required:
          * ```java
          * .sessionId()
-         * .name()
          * ```
          */
         @JvmStatic fun builder() = Builder()
     }
 
-    /** A builder for [InsightUpdateParams]. */
+    /** A builder for [ConfigUpdateParams]. */
     class Builder internal constructor() {
 
         private var sessionId: String? = null
-        private var jobId: String? = null
+        private var configId: String? = null
         private var body: Body.Builder = Body.builder()
         private var additionalHeaders: Headers.Builder = Headers.builder()
         private var additionalQueryParams: QueryParams.Builder = QueryParams.builder()
 
         @JvmSynthetic
-        internal fun from(insightUpdateParams: InsightUpdateParams) = apply {
-            sessionId = insightUpdateParams.sessionId
-            jobId = insightUpdateParams.jobId
-            body = insightUpdateParams.body.toBuilder()
-            additionalHeaders = insightUpdateParams.additionalHeaders.toBuilder()
-            additionalQueryParams = insightUpdateParams.additionalQueryParams.toBuilder()
+        internal fun from(configUpdateParams: ConfigUpdateParams) = apply {
+            sessionId = configUpdateParams.sessionId
+            configId = configUpdateParams.configId
+            body = configUpdateParams.body.toBuilder()
+            additionalHeaders = configUpdateParams.additionalHeaders.toBuilder()
+            additionalQueryParams = configUpdateParams.additionalQueryParams.toBuilder()
         }
 
         fun sessionId(sessionId: String) = apply { this.sessionId = sessionId }
 
-        fun jobId(jobId: String?) = apply { this.jobId = jobId }
+        fun configId(configId: String?) = apply { this.configId = configId }
 
-        /** Alias for calling [Builder.jobId] with `jobId.orElse(null)`. */
-        fun jobId(jobId: Optional<String>) = jobId(jobId.getOrNull())
+        /** Alias for calling [Builder.configId] with `configId.orElse(null)`. */
+        fun configId(configId: Optional<String>) = configId(configId.getOrNull())
 
         /**
          * Sets the entire request body.
          *
          * This is generally only useful if you are already constructing the body separately.
          * Otherwise, it's more convenient to use the top-level setters instead:
+         * - [config]
+         * - [description]
          * - [name]
+         * - [scheduleCron]
          */
         fun body(body: Body) = apply { this.body = body.toBuilder() }
 
-        fun name(name: String) = apply { body.name(name) }
+        /** Configuration for an Insights job. */
+        fun config(config: CreateRunClusteringJobRequest?) = apply { body.config(config) }
+
+        /** Alias for calling [Builder.config] with `config.orElse(null)`. */
+        fun config(config: Optional<CreateRunClusteringJobRequest>) = config(config.getOrNull())
+
+        /**
+         * Sets [Builder.config] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.config] with a well-typed
+         * [CreateRunClusteringJobRequest] value instead. This method is primarily for setting the
+         * field to an undocumented or not yet supported value.
+         */
+        fun config(config: JsonField<CreateRunClusteringJobRequest>) = apply { body.config(config) }
+
+        fun description(description: String?) = apply { body.description(description) }
+
+        /** Alias for calling [Builder.description] with `description.orElse(null)`. */
+        fun description(description: Optional<String>) = description(description.getOrNull())
+
+        /**
+         * Sets [Builder.description] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.description] with a well-typed [String] value instead.
+         * This method is primarily for setting the field to an undocumented or not yet supported
+         * value.
+         */
+        fun description(description: JsonField<String>) = apply { body.description(description) }
+
+        fun name(name: String?) = apply { body.name(name) }
+
+        /** Alias for calling [Builder.name] with `name.orElse(null)`. */
+        fun name(name: Optional<String>) = name(name.getOrNull())
 
         /**
          * Sets [Builder.name] to an arbitrary JSON value.
@@ -114,6 +190,22 @@ private constructor(
          * method is primarily for setting the field to an undocumented or not yet supported value.
          */
         fun name(name: JsonField<String>) = apply { body.name(name) }
+
+        fun scheduleCron(scheduleCron: String?) = apply { body.scheduleCron(scheduleCron) }
+
+        /** Alias for calling [Builder.scheduleCron] with `scheduleCron.orElse(null)`. */
+        fun scheduleCron(scheduleCron: Optional<String>) = scheduleCron(scheduleCron.getOrNull())
+
+        /**
+         * Sets [Builder.scheduleCron] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.scheduleCron] with a well-typed [String] value instead.
+         * This method is primarily for setting the field to an undocumented or not yet supported
+         * value.
+         */
+        fun scheduleCron(scheduleCron: JsonField<String>) = apply {
+            body.scheduleCron(scheduleCron)
+        }
 
         fun additionalBodyProperties(additionalBodyProperties: Map<String, JsonValue>) = apply {
             body.additionalProperties(additionalBodyProperties)
@@ -233,22 +325,21 @@ private constructor(
         }
 
         /**
-         * Returns an immutable instance of [InsightUpdateParams].
+         * Returns an immutable instance of [ConfigUpdateParams].
          *
          * Further updates to this [Builder] will not mutate the returned instance.
          *
          * The following fields are required:
          * ```java
          * .sessionId()
-         * .name()
          * ```
          *
          * @throws IllegalStateException if any required field is unset.
          */
-        fun build(): InsightUpdateParams =
-            InsightUpdateParams(
+        fun build(): ConfigUpdateParams =
+            ConfigUpdateParams(
                 checkRequired("sessionId", sessionId),
-                jobId,
+                configId,
                 body.build(),
                 additionalHeaders.build(),
                 additionalQueryParams.build(),
@@ -260,7 +351,7 @@ private constructor(
     fun _pathParam(index: Int): String =
         when (index) {
             0 -> sessionId
-            1 -> jobId ?: ""
+            1 -> configId ?: ""
             else -> ""
         }
 
@@ -268,24 +359,74 @@ private constructor(
 
     override fun _queryParams(): QueryParams = additionalQueryParams
 
-    /** Request to update an Insights job. */
+    /** Request to update an Insights job configuration. */
     class Body
     @JsonCreator(mode = JsonCreator.Mode.DISABLED)
     private constructor(
+        private val config: JsonField<CreateRunClusteringJobRequest>,
+        private val description: JsonField<String>,
         private val name: JsonField<String>,
+        private val scheduleCron: JsonField<String>,
         private val additionalProperties: MutableMap<String, JsonValue>,
     ) {
 
         @JsonCreator
         private constructor(
-            @JsonProperty("name") @ExcludeMissing name: JsonField<String> = JsonMissing.of()
-        ) : this(name, mutableMapOf())
+            @JsonProperty("config")
+            @ExcludeMissing
+            config: JsonField<CreateRunClusteringJobRequest> = JsonMissing.of(),
+            @JsonProperty("description")
+            @ExcludeMissing
+            description: JsonField<String> = JsonMissing.of(),
+            @JsonProperty("name") @ExcludeMissing name: JsonField<String> = JsonMissing.of(),
+            @JsonProperty("schedule_cron")
+            @ExcludeMissing
+            scheduleCron: JsonField<String> = JsonMissing.of(),
+        ) : this(config, description, name, scheduleCron, mutableMapOf())
 
         /**
-         * @throws LangChainInvalidDataException if the JSON field has an unexpected type or is
-         *   unexpectedly missing or null (e.g. if the server responded with an unexpected value).
+         * Configuration for an Insights job.
+         *
+         * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
+         *   the server responded with an unexpected value).
          */
-        fun name(): String = name.getRequired("name")
+        fun config(): Optional<CreateRunClusteringJobRequest> = config.getOptional("config")
+
+        /**
+         * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
+         *   the server responded with an unexpected value).
+         */
+        fun description(): Optional<String> = description.getOptional("description")
+
+        /**
+         * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
+         *   the server responded with an unexpected value).
+         */
+        fun name(): Optional<String> = name.getOptional("name")
+
+        /**
+         * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
+         *   the server responded with an unexpected value).
+         */
+        fun scheduleCron(): Optional<String> = scheduleCron.getOptional("schedule_cron")
+
+        /**
+         * Returns the raw JSON value of [config].
+         *
+         * Unlike [config], this method doesn't throw if the JSON field has an unexpected type.
+         */
+        @JsonProperty("config")
+        @ExcludeMissing
+        fun _config(): JsonField<CreateRunClusteringJobRequest> = config
+
+        /**
+         * Returns the raw JSON value of [description].
+         *
+         * Unlike [description], this method doesn't throw if the JSON field has an unexpected type.
+         */
+        @JsonProperty("description")
+        @ExcludeMissing
+        fun _description(): JsonField<String> = description
 
         /**
          * Returns the raw JSON value of [name].
@@ -293,6 +434,16 @@ private constructor(
          * Unlike [name], this method doesn't throw if the JSON field has an unexpected type.
          */
         @JsonProperty("name") @ExcludeMissing fun _name(): JsonField<String> = name
+
+        /**
+         * Returns the raw JSON value of [scheduleCron].
+         *
+         * Unlike [scheduleCron], this method doesn't throw if the JSON field has an unexpected
+         * type.
+         */
+        @JsonProperty("schedule_cron")
+        @ExcludeMissing
+        fun _scheduleCron(): JsonField<String> = scheduleCron
 
         @JsonAnySetter
         private fun putAdditionalProperty(key: String, value: JsonValue) {
@@ -308,30 +459,66 @@ private constructor(
 
         companion object {
 
-            /**
-             * Returns a mutable builder for constructing an instance of [Body].
-             *
-             * The following fields are required:
-             * ```java
-             * .name()
-             * ```
-             */
+            /** Returns a mutable builder for constructing an instance of [Body]. */
             @JvmStatic fun builder() = Builder()
         }
 
         /** A builder for [Body]. */
         class Builder internal constructor() {
 
-            private var name: JsonField<String>? = null
+            private var config: JsonField<CreateRunClusteringJobRequest> = JsonMissing.of()
+            private var description: JsonField<String> = JsonMissing.of()
+            private var name: JsonField<String> = JsonMissing.of()
+            private var scheduleCron: JsonField<String> = JsonMissing.of()
             private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
 
             @JvmSynthetic
             internal fun from(body: Body) = apply {
+                config = body.config
+                description = body.description
                 name = body.name
+                scheduleCron = body.scheduleCron
                 additionalProperties = body.additionalProperties.toMutableMap()
             }
 
-            fun name(name: String) = name(JsonField.of(name))
+            /** Configuration for an Insights job. */
+            fun config(config: CreateRunClusteringJobRequest?) =
+                config(JsonField.ofNullable(config))
+
+            /** Alias for calling [Builder.config] with `config.orElse(null)`. */
+            fun config(config: Optional<CreateRunClusteringJobRequest>) = config(config.getOrNull())
+
+            /**
+             * Sets [Builder.config] to an arbitrary JSON value.
+             *
+             * You should usually call [Builder.config] with a well-typed
+             * [CreateRunClusteringJobRequest] value instead. This method is primarily for setting
+             * the field to an undocumented or not yet supported value.
+             */
+            fun config(config: JsonField<CreateRunClusteringJobRequest>) = apply {
+                this.config = config
+            }
+
+            fun description(description: String?) = description(JsonField.ofNullable(description))
+
+            /** Alias for calling [Builder.description] with `description.orElse(null)`. */
+            fun description(description: Optional<String>) = description(description.getOrNull())
+
+            /**
+             * Sets [Builder.description] to an arbitrary JSON value.
+             *
+             * You should usually call [Builder.description] with a well-typed [String] value
+             * instead. This method is primarily for setting the field to an undocumented or not yet
+             * supported value.
+             */
+            fun description(description: JsonField<String>) = apply {
+                this.description = description
+            }
+
+            fun name(name: String?) = name(JsonField.ofNullable(name))
+
+            /** Alias for calling [Builder.name] with `name.orElse(null)`. */
+            fun name(name: Optional<String>) = name(name.getOrNull())
 
             /**
              * Sets [Builder.name] to an arbitrary JSON value.
@@ -341,6 +528,24 @@ private constructor(
              * value.
              */
             fun name(name: JsonField<String>) = apply { this.name = name }
+
+            fun scheduleCron(scheduleCron: String?) =
+                scheduleCron(JsonField.ofNullable(scheduleCron))
+
+            /** Alias for calling [Builder.scheduleCron] with `scheduleCron.orElse(null)`. */
+            fun scheduleCron(scheduleCron: Optional<String>) =
+                scheduleCron(scheduleCron.getOrNull())
+
+            /**
+             * Sets [Builder.scheduleCron] to an arbitrary JSON value.
+             *
+             * You should usually call [Builder.scheduleCron] with a well-typed [String] value
+             * instead. This method is primarily for setting the field to an undocumented or not yet
+             * supported value.
+             */
+            fun scheduleCron(scheduleCron: JsonField<String>) = apply {
+                this.scheduleCron = scheduleCron
+            }
 
             fun additionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
                 this.additionalProperties.clear()
@@ -365,16 +570,9 @@ private constructor(
              * Returns an immutable instance of [Body].
              *
              * Further updates to this [Builder] will not mutate the returned instance.
-             *
-             * The following fields are required:
-             * ```java
-             * .name()
-             * ```
-             *
-             * @throws IllegalStateException if any required field is unset.
              */
             fun build(): Body =
-                Body(checkRequired("name", name), additionalProperties.toMutableMap())
+                Body(config, description, name, scheduleCron, additionalProperties.toMutableMap())
         }
 
         private var validated: Boolean = false
@@ -393,7 +591,10 @@ private constructor(
                 return@apply
             }
 
+            config().ifPresent { it.validate() }
+            description()
             name()
+            scheduleCron()
             validated = true
         }
 
@@ -411,7 +612,12 @@ private constructor(
          *
          * Used for best match union deserialization.
          */
-        @JvmSynthetic internal fun validity(): Int = (if (name.asKnown().isPresent) 1 else 0)
+        @JvmSynthetic
+        internal fun validity(): Int =
+            (config.asKnown().getOrNull()?.validity() ?: 0) +
+                (if (description.asKnown().isPresent) 1 else 0) +
+                (if (name.asKnown().isPresent) 1 else 0) +
+                (if (scheduleCron.asKnown().isPresent) 1 else 0)
 
         override fun equals(other: Any?): Boolean {
             if (this === other) {
@@ -419,15 +625,21 @@ private constructor(
             }
 
             return other is Body &&
+                config == other.config &&
+                description == other.description &&
                 name == other.name &&
+                scheduleCron == other.scheduleCron &&
                 additionalProperties == other.additionalProperties
         }
 
-        private val hashCode: Int by lazy { Objects.hash(name, additionalProperties) }
+        private val hashCode: Int by lazy {
+            Objects.hash(config, description, name, scheduleCron, additionalProperties)
+        }
 
         override fun hashCode(): Int = hashCode
 
-        override fun toString() = "Body{name=$name, additionalProperties=$additionalProperties}"
+        override fun toString() =
+            "Body{config=$config, description=$description, name=$name, scheduleCron=$scheduleCron, additionalProperties=$additionalProperties}"
     }
 
     override fun equals(other: Any?): Boolean {
@@ -435,17 +647,17 @@ private constructor(
             return true
         }
 
-        return other is InsightUpdateParams &&
+        return other is ConfigUpdateParams &&
             sessionId == other.sessionId &&
-            jobId == other.jobId &&
+            configId == other.configId &&
             body == other.body &&
             additionalHeaders == other.additionalHeaders &&
             additionalQueryParams == other.additionalQueryParams
     }
 
     override fun hashCode(): Int =
-        Objects.hash(sessionId, jobId, body, additionalHeaders, additionalQueryParams)
+        Objects.hash(sessionId, configId, body, additionalHeaders, additionalQueryParams)
 
     override fun toString() =
-        "InsightUpdateParams{sessionId=$sessionId, jobId=$jobId, body=$body, additionalHeaders=$additionalHeaders, additionalQueryParams=$additionalQueryParams}"
+        "ConfigUpdateParams{sessionId=$sessionId, configId=$configId, body=$body, additionalHeaders=$additionalHeaders, additionalQueryParams=$additionalQueryParams}"
 }

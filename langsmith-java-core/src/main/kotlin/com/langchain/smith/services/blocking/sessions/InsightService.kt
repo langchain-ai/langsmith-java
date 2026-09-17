@@ -37,7 +37,7 @@ interface InsightService {
 
     fun configs(): ConfigService
 
-    /** Create an insights job. */
+    /** Create an Insights job for a project. */
     fun create(sessionId: String, params: InsightCreateParams): InsightCreateResponse =
         create(sessionId, params, RequestOptions.none())
 
@@ -59,7 +59,7 @@ interface InsightService {
         requestOptions: RequestOptions = RequestOptions.none(),
     ): InsightCreateResponse
 
-    /** Update a session cluster job. */
+    /** Update an Insights job for a project. */
     fun update(jobId: String, params: InsightUpdateParams): InsightUpdateResponse =
         update(jobId, params, RequestOptions.none())
 
@@ -80,7 +80,7 @@ interface InsightService {
         requestOptions: RequestOptions = RequestOptions.none(),
     ): InsightUpdateResponse
 
-    /** Get all clusters for a session. */
+    /** List Insights jobs for a project. */
     fun list(sessionId: String): InsightListPage = list(sessionId, InsightListParams.none())
 
     /** @see list */
@@ -109,7 +109,7 @@ interface InsightService {
     fun list(sessionId: String, requestOptions: RequestOptions): InsightListPage =
         list(sessionId, InsightListParams.none(), requestOptions)
 
-    /** Delete a session cluster job. */
+    /** Delete an Insights job for a project. */
     fun delete(jobId: String, params: InsightDeleteParams): InsightDeleteResponse =
         delete(jobId, params, RequestOptions.none())
 
@@ -130,7 +130,7 @@ interface InsightService {
         requestOptions: RequestOptions = RequestOptions.none(),
     ): InsightDeleteResponse
 
-    /** Get a specific cluster job for a session. */
+    /** Get an Insights job for a project. */
     fun retrieveJob(jobId: String, params: InsightRetrieveJobParams): InsightRetrieveJobResponse =
         retrieveJob(jobId, params, RequestOptions.none())
 
@@ -152,7 +152,7 @@ interface InsightService {
         requestOptions: RequestOptions = RequestOptions.none(),
     ): InsightRetrieveJobResponse
 
-    /** Get all runs for a cluster job, optionally filtered by cluster. */
+    /** List runs analyzed by an Insights job, optionally filtered by report cluster. */
     fun retrieveRuns(
         jobId: String,
         params: InsightRetrieveRunsParams,

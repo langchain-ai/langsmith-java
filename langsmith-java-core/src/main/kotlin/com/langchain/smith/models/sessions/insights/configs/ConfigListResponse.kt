@@ -21,13 +21,14 @@ import java.util.Optional
 import kotlin.jvm.optionals.getOrNull
 
 /** An Insights job configuration. */
-class ConfigCreateResponse
+class ConfigListResponse
 @JsonCreator(mode = JsonCreator.Mode.DISABLED)
 private constructor(
     private val id: JsonField<String>,
     private val config: JsonField<Config>,
-    private val description: JsonField<String>,
     private val name: JsonField<String>,
+    private val prebuilt: JsonField<Boolean>,
+    private val description: JsonField<String>,
     private val scheduleCron: JsonField<String>,
     private val additionalProperties: MutableMap<String, JsonValue>,
 ) {
@@ -36,14 +37,15 @@ private constructor(
     private constructor(
         @JsonProperty("id") @ExcludeMissing id: JsonField<String> = JsonMissing.of(),
         @JsonProperty("config") @ExcludeMissing config: JsonField<Config> = JsonMissing.of(),
+        @JsonProperty("name") @ExcludeMissing name: JsonField<String> = JsonMissing.of(),
+        @JsonProperty("prebuilt") @ExcludeMissing prebuilt: JsonField<Boolean> = JsonMissing.of(),
         @JsonProperty("description")
         @ExcludeMissing
         description: JsonField<String> = JsonMissing.of(),
-        @JsonProperty("name") @ExcludeMissing name: JsonField<String> = JsonMissing.of(),
         @JsonProperty("schedule_cron")
         @ExcludeMissing
         scheduleCron: JsonField<String> = JsonMissing.of(),
-    ) : this(id, config, description, name, scheduleCron, mutableMapOf())
+    ) : this(id, config, name, prebuilt, description, scheduleCron, mutableMapOf())
 
     /**
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type or is
@@ -60,16 +62,22 @@ private constructor(
     fun config(): Config = config.getRequired("config")
 
     /**
-     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
-     *   server responded with an unexpected value).
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type or is
+     *   unexpectedly missing or null (e.g. if the server responded with an unexpected value).
      */
-    fun description(): Optional<String> = description.getOptional("description")
+    fun name(): String = name.getRequired("name")
 
     /**
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type or is
      *   unexpectedly missing or null (e.g. if the server responded with an unexpected value).
      */
-    fun name(): String = name.getRequired("name")
+    fun prebuilt(): Boolean = prebuilt.getRequired("prebuilt")
+
+    /**
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
+    fun description(): Optional<String> = description.getOptional("description")
 
     /**
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
@@ -92,18 +100,25 @@ private constructor(
     @JsonProperty("config") @ExcludeMissing fun _config(): JsonField<Config> = config
 
     /**
-     * Returns the raw JSON value of [description].
-     *
-     * Unlike [description], this method doesn't throw if the JSON field has an unexpected type.
-     */
-    @JsonProperty("description") @ExcludeMissing fun _description(): JsonField<String> = description
-
-    /**
      * Returns the raw JSON value of [name].
      *
      * Unlike [name], this method doesn't throw if the JSON field has an unexpected type.
      */
     @JsonProperty("name") @ExcludeMissing fun _name(): JsonField<String> = name
+
+    /**
+     * Returns the raw JSON value of [prebuilt].
+     *
+     * Unlike [prebuilt], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    @JsonProperty("prebuilt") @ExcludeMissing fun _prebuilt(): JsonField<Boolean> = prebuilt
+
+    /**
+     * Returns the raw JSON value of [description].
+     *
+     * Unlike [description], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    @JsonProperty("description") @ExcludeMissing fun _description(): JsonField<String> = description
 
     /**
      * Returns the raw JSON value of [scheduleCron].
@@ -129,37 +144,39 @@ private constructor(
     companion object {
 
         /**
-         * Returns a mutable builder for constructing an instance of [ConfigCreateResponse].
+         * Returns a mutable builder for constructing an instance of [ConfigListResponse].
          *
          * The following fields are required:
          * ```java
          * .id()
          * .config()
-         * .description()
          * .name()
+         * .prebuilt()
          * ```
          */
         @JvmStatic fun builder() = Builder()
     }
 
-    /** A builder for [ConfigCreateResponse]. */
+    /** A builder for [ConfigListResponse]. */
     class Builder internal constructor() {
 
         private var id: JsonField<String>? = null
         private var config: JsonField<Config>? = null
-        private var description: JsonField<String>? = null
         private var name: JsonField<String>? = null
+        private var prebuilt: JsonField<Boolean>? = null
+        private var description: JsonField<String> = JsonMissing.of()
         private var scheduleCron: JsonField<String> = JsonMissing.of()
         private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
 
         @JvmSynthetic
-        internal fun from(configCreateResponse: ConfigCreateResponse) = apply {
-            id = configCreateResponse.id
-            config = configCreateResponse.config
-            description = configCreateResponse.description
-            name = configCreateResponse.name
-            scheduleCron = configCreateResponse.scheduleCron
-            additionalProperties = configCreateResponse.additionalProperties.toMutableMap()
+        internal fun from(configListResponse: ConfigListResponse) = apply {
+            id = configListResponse.id
+            config = configListResponse.config
+            name = configListResponse.name
+            prebuilt = configListResponse.prebuilt
+            description = configListResponse.description
+            scheduleCron = configListResponse.scheduleCron
+            additionalProperties = configListResponse.additionalProperties.toMutableMap()
         }
 
         fun id(id: String) = id(JsonField.of(id))
@@ -183,6 +200,27 @@ private constructor(
          */
         fun config(config: JsonField<Config>) = apply { this.config = config }
 
+        fun name(name: String) = name(JsonField.of(name))
+
+        /**
+         * Sets [Builder.name] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.name] with a well-typed [String] value instead. This
+         * method is primarily for setting the field to an undocumented or not yet supported value.
+         */
+        fun name(name: JsonField<String>) = apply { this.name = name }
+
+        fun prebuilt(prebuilt: Boolean) = prebuilt(JsonField.of(prebuilt))
+
+        /**
+         * Sets [Builder.prebuilt] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.prebuilt] with a well-typed [Boolean] value instead.
+         * This method is primarily for setting the field to an undocumented or not yet supported
+         * value.
+         */
+        fun prebuilt(prebuilt: JsonField<Boolean>) = apply { this.prebuilt = prebuilt }
+
         fun description(description: String?) = description(JsonField.ofNullable(description))
 
         /** Alias for calling [Builder.description] with `description.orElse(null)`. */
@@ -196,16 +234,6 @@ private constructor(
          * value.
          */
         fun description(description: JsonField<String>) = apply { this.description = description }
-
-        fun name(name: String) = name(JsonField.of(name))
-
-        /**
-         * Sets [Builder.name] to an arbitrary JSON value.
-         *
-         * You should usually call [Builder.name] with a well-typed [String] value instead. This
-         * method is primarily for setting the field to an undocumented or not yet supported value.
-         */
-        fun name(name: JsonField<String>) = apply { this.name = name }
 
         fun scheduleCron(scheduleCron: String?) = scheduleCron(JsonField.ofNullable(scheduleCron))
 
@@ -243,7 +271,7 @@ private constructor(
         }
 
         /**
-         * Returns an immutable instance of [ConfigCreateResponse].
+         * Returns an immutable instance of [ConfigListResponse].
          *
          * Further updates to this [Builder] will not mutate the returned instance.
          *
@@ -251,18 +279,19 @@ private constructor(
          * ```java
          * .id()
          * .config()
-         * .description()
          * .name()
+         * .prebuilt()
          * ```
          *
          * @throws IllegalStateException if any required field is unset.
          */
-        fun build(): ConfigCreateResponse =
-            ConfigCreateResponse(
+        fun build(): ConfigListResponse =
+            ConfigListResponse(
                 checkRequired("id", id),
                 checkRequired("config", config),
-                checkRequired("description", description),
                 checkRequired("name", name),
+                checkRequired("prebuilt", prebuilt),
+                description,
                 scheduleCron,
                 additionalProperties.toMutableMap(),
             )
@@ -278,15 +307,16 @@ private constructor(
      * @throws LangChainInvalidDataException if any value type in this object doesn't match its
      *   expected type.
      */
-    fun validate(): ConfigCreateResponse = apply {
+    fun validate(): ConfigListResponse = apply {
         if (validated) {
             return@apply
         }
 
         id()
         config().validate()
-        description()
         name()
+        prebuilt()
+        description()
         scheduleCron()
         validated = true
     }
@@ -308,8 +338,9 @@ private constructor(
     internal fun validity(): Int =
         (if (id.asKnown().isPresent) 1 else 0) +
             (config.asKnown().getOrNull()?.validity() ?: 0) +
-            (if (description.asKnown().isPresent) 1 else 0) +
             (if (name.asKnown().isPresent) 1 else 0) +
+            (if (prebuilt.asKnown().isPresent) 1 else 0) +
+            (if (description.asKnown().isPresent) 1 else 0) +
             (if (scheduleCron.asKnown().isPresent) 1 else 0)
 
     /** Saved configuration for an Insights job. */
@@ -1555,21 +1586,22 @@ private constructor(
             return true
         }
 
-        return other is ConfigCreateResponse &&
+        return other is ConfigListResponse &&
             id == other.id &&
             config == other.config &&
-            description == other.description &&
             name == other.name &&
+            prebuilt == other.prebuilt &&
+            description == other.description &&
             scheduleCron == other.scheduleCron &&
             additionalProperties == other.additionalProperties
     }
 
     private val hashCode: Int by lazy {
-        Objects.hash(id, config, description, name, scheduleCron, additionalProperties)
+        Objects.hash(id, config, name, prebuilt, description, scheduleCron, additionalProperties)
     }
 
     override fun hashCode(): Int = hashCode
 
     override fun toString() =
-        "ConfigCreateResponse{id=$id, config=$config, description=$description, name=$name, scheduleCron=$scheduleCron, additionalProperties=$additionalProperties}"
+        "ConfigListResponse{id=$id, config=$config, name=$name, prebuilt=$prebuilt, description=$description, scheduleCron=$scheduleCron, additionalProperties=$additionalProperties}"
 }

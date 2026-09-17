@@ -21,7 +21,7 @@ import java.util.Optional
 import kotlin.jvm.optionals.getOrNull
 
 /** An Insights job configuration. */
-class ConfigCreateResponse
+class ConfigUpdateResponse
 @JsonCreator(mode = JsonCreator.Mode.DISABLED)
 private constructor(
     private val id: JsonField<String>,
@@ -129,7 +129,7 @@ private constructor(
     companion object {
 
         /**
-         * Returns a mutable builder for constructing an instance of [ConfigCreateResponse].
+         * Returns a mutable builder for constructing an instance of [ConfigUpdateResponse].
          *
          * The following fields are required:
          * ```java
@@ -142,7 +142,7 @@ private constructor(
         @JvmStatic fun builder() = Builder()
     }
 
-    /** A builder for [ConfigCreateResponse]. */
+    /** A builder for [ConfigUpdateResponse]. */
     class Builder internal constructor() {
 
         private var id: JsonField<String>? = null
@@ -153,13 +153,13 @@ private constructor(
         private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
 
         @JvmSynthetic
-        internal fun from(configCreateResponse: ConfigCreateResponse) = apply {
-            id = configCreateResponse.id
-            config = configCreateResponse.config
-            description = configCreateResponse.description
-            name = configCreateResponse.name
-            scheduleCron = configCreateResponse.scheduleCron
-            additionalProperties = configCreateResponse.additionalProperties.toMutableMap()
+        internal fun from(configUpdateResponse: ConfigUpdateResponse) = apply {
+            id = configUpdateResponse.id
+            config = configUpdateResponse.config
+            description = configUpdateResponse.description
+            name = configUpdateResponse.name
+            scheduleCron = configUpdateResponse.scheduleCron
+            additionalProperties = configUpdateResponse.additionalProperties.toMutableMap()
         }
 
         fun id(id: String) = id(JsonField.of(id))
@@ -243,7 +243,7 @@ private constructor(
         }
 
         /**
-         * Returns an immutable instance of [ConfigCreateResponse].
+         * Returns an immutable instance of [ConfigUpdateResponse].
          *
          * Further updates to this [Builder] will not mutate the returned instance.
          *
@@ -257,8 +257,8 @@ private constructor(
          *
          * @throws IllegalStateException if any required field is unset.
          */
-        fun build(): ConfigCreateResponse =
-            ConfigCreateResponse(
+        fun build(): ConfigUpdateResponse =
+            ConfigUpdateResponse(
                 checkRequired("id", id),
                 checkRequired("config", config),
                 checkRequired("description", description),
@@ -278,7 +278,7 @@ private constructor(
      * @throws LangChainInvalidDataException if any value type in this object doesn't match its
      *   expected type.
      */
-    fun validate(): ConfigCreateResponse = apply {
+    fun validate(): ConfigUpdateResponse = apply {
         if (validated) {
             return@apply
         }
@@ -1555,7 +1555,7 @@ private constructor(
             return true
         }
 
-        return other is ConfigCreateResponse &&
+        return other is ConfigUpdateResponse &&
             id == other.id &&
             config == other.config &&
             description == other.description &&
@@ -1571,5 +1571,5 @@ private constructor(
     override fun hashCode(): Int = hashCode
 
     override fun toString() =
-        "ConfigCreateResponse{id=$id, config=$config, description=$description, name=$name, scheduleCron=$scheduleCron, additionalProperties=$additionalProperties}"
+        "ConfigUpdateResponse{id=$id, config=$config, description=$description, name=$name, scheduleCron=$scheduleCron, additionalProperties=$additionalProperties}"
 }

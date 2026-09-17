@@ -16,8 +16,15 @@ import com.langchain.smith.core.http.HttpResponseFor
 import com.langchain.smith.core.http.json
 import com.langchain.smith.core.http.parseable
 import com.langchain.smith.core.prepare
+import com.langchain.smith.models.ConfigsEnvelope
 import com.langchain.smith.models.sessions.insights.configs.ConfigCreateParams
 import com.langchain.smith.models.sessions.insights.configs.ConfigCreateResponse
+import com.langchain.smith.models.sessions.insights.configs.ConfigDeleteParams
+import com.langchain.smith.models.sessions.insights.configs.ConfigDeleteResponse
+import com.langchain.smith.models.sessions.insights.configs.ConfigListParams
+import com.langchain.smith.models.sessions.insights.configs.ConfigListResponse
+import com.langchain.smith.models.sessions.insights.configs.ConfigUpdateParams
+import com.langchain.smith.models.sessions.insights.configs.ConfigUpdateResponse
 import java.util.function.Consumer
 import kotlin.jvm.optionals.getOrNull
 
@@ -39,6 +46,27 @@ class ConfigServiceImpl internal constructor(private val clientOptions: ClientOp
     ): ConfigCreateResponse =
         // post /api/v1/sessions/{session_id}/insights/configs
         withRawResponse().create(params, requestOptions).parse()
+
+    override fun update(
+        params: ConfigUpdateParams,
+        requestOptions: RequestOptions,
+    ): ConfigUpdateResponse =
+        // patch /api/v1/sessions/{session_id}/insights/configs/{config_id}
+        withRawResponse().update(params, requestOptions).parse()
+
+    override fun list(
+        params: ConfigListParams,
+        requestOptions: RequestOptions,
+    ): List<ConfigListResponse> =
+        // get /api/v1/sessions/{session_id}/insights/configs
+        withRawResponse().list(params, requestOptions).parse()
+
+    override fun delete(
+        params: ConfigDeleteParams,
+        requestOptions: RequestOptions,
+    ): ConfigDeleteResponse =
+        // delete /api/v1/sessions/{session_id}/insights/configs/{config_id}
+        withRawResponse().delete(params, requestOptions).parse()
 
     class WithRawResponseImpl internal constructor(private val clientOptions: ClientOptions) :
         ConfigService.WithRawResponse {
@@ -83,6 +111,122 @@ class ConfigServiceImpl internal constructor(private val clientOptions: ClientOp
             return errorHandler.handle(response).parseable {
                 response
                     .use { createHandler.handle(it) }
+                    .also {
+                        if (requestOptions.responseValidation!!) {
+                            it.validate()
+                        }
+                    }
+            }
+        }
+
+        private val updateHandler: Handler<ConfigUpdateResponse> =
+            jsonHandler<ConfigUpdateResponse>(clientOptions.jsonMapper)
+
+        override fun update(
+            params: ConfigUpdateParams,
+            requestOptions: RequestOptions,
+        ): HttpResponseFor<ConfigUpdateResponse> {
+            // We check here instead of in the params builder because this can be specified
+            // positionally or in the params class.
+            checkRequired("configId", params.configId().getOrNull())
+            val request =
+                HttpRequest.builder()
+                    .method(HttpMethod.PATCH)
+                    .baseUrl(clientOptions.baseUrl())
+                    .addPathSegments(
+                        "api",
+                        "v1",
+                        "sessions",
+                        params._pathParam(0),
+                        "insights",
+                        "configs",
+                        params._pathParam(1),
+                    )
+                    .body(json(clientOptions.jsonMapper, params._body()))
+                    .build()
+                    .prepare(clientOptions, params)
+            val requestOptions = requestOptions.applyDefaults(RequestOptions.from(clientOptions))
+            val response = clientOptions.httpClient.execute(request, requestOptions)
+            return errorHandler.handle(response).parseable {
+                response
+                    .use { updateHandler.handle(it) }
+                    .also {
+                        if (requestOptions.responseValidation!!) {
+                            it.validate()
+                        }
+                    }
+            }
+        }
+
+        private val listHandler: Handler<ConfigsEnvelope<List<ConfigListResponse>>> =
+            jsonHandler<ConfigsEnvelope<List<ConfigListResponse>>>(clientOptions.jsonMapper)
+
+        override fun list(
+            params: ConfigListParams,
+            requestOptions: RequestOptions,
+        ): HttpResponseFor<List<ConfigListResponse>> {
+            // We check here instead of in the params builder because this can be specified
+            // positionally or in the params class.
+            checkRequired("sessionId", params.sessionId().getOrNull())
+            val request =
+                HttpRequest.builder()
+                    .method(HttpMethod.GET)
+                    .baseUrl(clientOptions.baseUrl())
+                    .addPathSegments(
+                        "api",
+                        "v1",
+                        "sessions",
+                        params._pathParam(0),
+                        "insights",
+                        "configs",
+                    )
+                    .build()
+                    .prepare(clientOptions, params)
+            val requestOptions = requestOptions.applyDefaults(RequestOptions.from(clientOptions))
+            val response = clientOptions.httpClient.execute(request, requestOptions)
+            return errorHandler.handle(response).parseable {
+                response
+                    .use { listHandler.handle(it) }
+                    .also {
+                        if (requestOptions.responseValidation!!) {
+                            it.validate()
+                        }
+                    }
+                    .configs()
+            }
+        }
+
+        private val deleteHandler: Handler<ConfigDeleteResponse> =
+            jsonHandler<ConfigDeleteResponse>(clientOptions.jsonMapper)
+
+        override fun delete(
+            params: ConfigDeleteParams,
+            requestOptions: RequestOptions,
+        ): HttpResponseFor<ConfigDeleteResponse> {
+            // We check here instead of in the params builder because this can be specified
+            // positionally or in the params class.
+            checkRequired("configId", params.configId().getOrNull())
+            val request =
+                HttpRequest.builder()
+                    .method(HttpMethod.DELETE)
+                    .baseUrl(clientOptions.baseUrl())
+                    .addPathSegments(
+                        "api",
+                        "v1",
+                        "sessions",
+                        params._pathParam(0),
+                        "insights",
+                        "configs",
+                        params._pathParam(1),
+                    )
+                    .apply { params._body().ifPresent { body(json(clientOptions.jsonMapper, it)) } }
+                    .build()
+                    .prepare(clientOptions, params)
+            val requestOptions = requestOptions.applyDefaults(RequestOptions.from(clientOptions))
+            val response = clientOptions.httpClient.execute(request, requestOptions)
+            return errorHandler.handle(response).parseable {
+                response
+                    .use { deleteHandler.handle(it) }
                     .also {
                         if (requestOptions.responseValidation!!) {
                             it.validate()

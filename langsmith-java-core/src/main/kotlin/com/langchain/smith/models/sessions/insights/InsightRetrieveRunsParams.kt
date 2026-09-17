@@ -14,7 +14,7 @@ import java.util.Objects
 import java.util.Optional
 import kotlin.jvm.optionals.getOrNull
 
-/** Get all runs for a cluster job, optionally filtered by cluster. */
+/** List runs analyzed by an Insights job, optionally filtered by report cluster. */
 class InsightRetrieveRunsParams
 private constructor(
     private val sessionId: String,

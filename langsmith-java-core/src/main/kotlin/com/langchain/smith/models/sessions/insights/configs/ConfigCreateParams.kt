@@ -21,7 +21,7 @@ import java.util.Objects
 import java.util.Optional
 import kotlin.jvm.optionals.getOrNull
 
-/** Save an insights job config. */
+/** Create an Insights job configuration for a project. */
 class ConfigCreateParams
 private constructor(
     private val sessionId: String?,
@@ -33,7 +33,7 @@ private constructor(
     fun sessionId(): Optional<String> = Optional.ofNullable(sessionId)
 
     /**
-     * Request to create a run clustering job.
+     * Configuration for an Insights job.
      *
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type or is
      *   unexpectedly missing or null (e.g. if the server responded with an unexpected value).
@@ -143,7 +143,7 @@ private constructor(
          */
         fun body(body: Body) = apply { this.body = body.toBuilder() }
 
-        /** Request to create a run clustering job. */
+        /** Configuration for an Insights job. */
         fun config(config: CreateRunClusteringJobRequest) = apply { body.config(config) }
 
         /**
@@ -346,7 +346,7 @@ private constructor(
 
     override fun _queryParams(): QueryParams = additionalQueryParams
 
-    /** Request to create a clustering job config. */
+    /** Request to create an Insights job configuration. */
     class Body
     @JsonCreator(mode = JsonCreator.Mode.DISABLED)
     private constructor(
@@ -372,7 +372,7 @@ private constructor(
         ) : this(config, name, description, scheduleCron, mutableMapOf())
 
         /**
-         * Request to create a run clustering job.
+         * Configuration for an Insights job.
          *
          * @throws LangChainInvalidDataException if the JSON field has an unexpected type or is
          *   unexpectedly missing or null (e.g. if the server responded with an unexpected value).
@@ -476,7 +476,7 @@ private constructor(
                 additionalProperties = body.additionalProperties.toMutableMap()
             }
 
-            /** Request to create a run clustering job. */
+            /** Configuration for an Insights job. */
             fun config(config: CreateRunClusteringJobRequest) = config(JsonField.of(config))
 
             /**

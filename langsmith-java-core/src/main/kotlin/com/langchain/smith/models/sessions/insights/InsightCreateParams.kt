@@ -11,7 +11,7 @@ import java.util.Objects
 import java.util.Optional
 import kotlin.jvm.optionals.getOrNull
 
-/** Create an insights job. */
+/** Create an Insights job for a project. */
 class InsightCreateParams
 private constructor(
     private val sessionId: String?,
@@ -22,7 +22,7 @@ private constructor(
 
     fun sessionId(): Optional<String> = Optional.ofNullable(sessionId)
 
-    /** Request to create a run clustering job. */
+    /** Configuration for an Insights job. */
     fun createRunClusteringJobRequest(): CreateRunClusteringJobRequest =
         createRunClusteringJobRequest
 
@@ -71,7 +71,7 @@ private constructor(
         /** Alias for calling [Builder.sessionId] with `sessionId.orElse(null)`. */
         fun sessionId(sessionId: Optional<String>) = sessionId(sessionId.getOrNull())
 
-        /** Request to create a run clustering job. */
+        /** Configuration for an Insights job. */
         fun createRunClusteringJobRequest(
             createRunClusteringJobRequest: CreateRunClusteringJobRequest
         ) = apply { this.createRunClusteringJobRequest = createRunClusteringJobRequest }

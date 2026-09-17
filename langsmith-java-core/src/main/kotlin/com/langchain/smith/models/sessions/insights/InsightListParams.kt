@@ -9,7 +9,7 @@ import java.util.Objects
 import java.util.Optional
 import kotlin.jvm.optionals.getOrNull
 
-/** Get all clusters for a session. */
+/** List Insights jobs for a project. */
 class InsightListParams
 private constructor(
     private val sessionId: String?,

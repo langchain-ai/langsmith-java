@@ -1,6 +1,6 @@
 // File generated from our OpenAPI spec by Stainless.
 
-package com.langchain.smith.models.sessions.insights
+package com.langchain.smith.models.sessions.insights.configs
 
 import com.fasterxml.jackson.annotation.JsonAnyGetter
 import com.fasterxml.jackson.annotation.JsonAnySetter
@@ -14,27 +14,21 @@ import com.langchain.smith.core.checkRequired
 import com.langchain.smith.errors.LangChainInvalidDataException
 import java.util.Collections
 import java.util.Objects
-import java.util.Optional
-import kotlin.jvm.optionals.getOrNull
 
-/** An Insights job queued for execution. */
-class InsightCreateResponse
+/** Confirmation that an Insights job configuration was deleted. */
+class ConfigDeleteResponse
 @JsonCreator(mode = JsonCreator.Mode.DISABLED)
 private constructor(
     private val id: JsonField<String>,
-    private val name: JsonField<String>,
-    private val status: JsonField<String>,
-    private val error: JsonField<String>,
+    private val message: JsonField<String>,
     private val additionalProperties: MutableMap<String, JsonValue>,
 ) {
 
     @JsonCreator
     private constructor(
         @JsonProperty("id") @ExcludeMissing id: JsonField<String> = JsonMissing.of(),
-        @JsonProperty("name") @ExcludeMissing name: JsonField<String> = JsonMissing.of(),
-        @JsonProperty("status") @ExcludeMissing status: JsonField<String> = JsonMissing.of(),
-        @JsonProperty("error") @ExcludeMissing error: JsonField<String> = JsonMissing.of(),
-    ) : this(id, name, status, error, mutableMapOf())
+        @JsonProperty("message") @ExcludeMissing message: JsonField<String> = JsonMissing.of(),
+    ) : this(id, message, mutableMapOf())
 
     /**
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type or is
@@ -46,19 +40,7 @@ private constructor(
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type or is
      *   unexpectedly missing or null (e.g. if the server responded with an unexpected value).
      */
-    fun name(): String = name.getRequired("name")
-
-    /**
-     * @throws LangChainInvalidDataException if the JSON field has an unexpected type or is
-     *   unexpectedly missing or null (e.g. if the server responded with an unexpected value).
-     */
-    fun status(): String = status.getRequired("status")
-
-    /**
-     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
-     *   server responded with an unexpected value).
-     */
-    fun error(): Optional<String> = error.getOptional("error")
+    fun message(): String = message.getRequired("message")
 
     /**
      * Returns the raw JSON value of [id].
@@ -68,25 +50,11 @@ private constructor(
     @JsonProperty("id") @ExcludeMissing fun _id(): JsonField<String> = id
 
     /**
-     * Returns the raw JSON value of [name].
+     * Returns the raw JSON value of [message].
      *
-     * Unlike [name], this method doesn't throw if the JSON field has an unexpected type.
+     * Unlike [message], this method doesn't throw if the JSON field has an unexpected type.
      */
-    @JsonProperty("name") @ExcludeMissing fun _name(): JsonField<String> = name
-
-    /**
-     * Returns the raw JSON value of [status].
-     *
-     * Unlike [status], this method doesn't throw if the JSON field has an unexpected type.
-     */
-    @JsonProperty("status") @ExcludeMissing fun _status(): JsonField<String> = status
-
-    /**
-     * Returns the raw JSON value of [error].
-     *
-     * Unlike [error], this method doesn't throw if the JSON field has an unexpected type.
-     */
-    @JsonProperty("error") @ExcludeMissing fun _error(): JsonField<String> = error
+    @JsonProperty("message") @ExcludeMissing fun _message(): JsonField<String> = message
 
     @JsonAnySetter
     private fun putAdditionalProperty(key: String, value: JsonValue) {
@@ -103,34 +71,29 @@ private constructor(
     companion object {
 
         /**
-         * Returns a mutable builder for constructing an instance of [InsightCreateResponse].
+         * Returns a mutable builder for constructing an instance of [ConfigDeleteResponse].
          *
          * The following fields are required:
          * ```java
          * .id()
-         * .name()
-         * .status()
+         * .message()
          * ```
          */
         @JvmStatic fun builder() = Builder()
     }
 
-    /** A builder for [InsightCreateResponse]. */
+    /** A builder for [ConfigDeleteResponse]. */
     class Builder internal constructor() {
 
         private var id: JsonField<String>? = null
-        private var name: JsonField<String>? = null
-        private var status: JsonField<String>? = null
-        private var error: JsonField<String> = JsonMissing.of()
+        private var message: JsonField<String>? = null
         private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
 
         @JvmSynthetic
-        internal fun from(insightCreateResponse: InsightCreateResponse) = apply {
-            id = insightCreateResponse.id
-            name = insightCreateResponse.name
-            status = insightCreateResponse.status
-            error = insightCreateResponse.error
-            additionalProperties = insightCreateResponse.additionalProperties.toMutableMap()
+        internal fun from(configDeleteResponse: ConfigDeleteResponse) = apply {
+            id = configDeleteResponse.id
+            message = configDeleteResponse.message
+            additionalProperties = configDeleteResponse.additionalProperties.toMutableMap()
         }
 
         fun id(id: String) = id(JsonField.of(id))
@@ -143,38 +106,15 @@ private constructor(
          */
         fun id(id: JsonField<String>) = apply { this.id = id }
 
-        fun name(name: String) = name(JsonField.of(name))
+        fun message(message: String) = message(JsonField.of(message))
 
         /**
-         * Sets [Builder.name] to an arbitrary JSON value.
+         * Sets [Builder.message] to an arbitrary JSON value.
          *
-         * You should usually call [Builder.name] with a well-typed [String] value instead. This
+         * You should usually call [Builder.message] with a well-typed [String] value instead. This
          * method is primarily for setting the field to an undocumented or not yet supported value.
          */
-        fun name(name: JsonField<String>) = apply { this.name = name }
-
-        fun status(status: String) = status(JsonField.of(status))
-
-        /**
-         * Sets [Builder.status] to an arbitrary JSON value.
-         *
-         * You should usually call [Builder.status] with a well-typed [String] value instead. This
-         * method is primarily for setting the field to an undocumented or not yet supported value.
-         */
-        fun status(status: JsonField<String>) = apply { this.status = status }
-
-        fun error(error: String?) = error(JsonField.ofNullable(error))
-
-        /** Alias for calling [Builder.error] with `error.orElse(null)`. */
-        fun error(error: Optional<String>) = error(error.getOrNull())
-
-        /**
-         * Sets [Builder.error] to an arbitrary JSON value.
-         *
-         * You should usually call [Builder.error] with a well-typed [String] value instead. This
-         * method is primarily for setting the field to an undocumented or not yet supported value.
-         */
-        fun error(error: JsonField<String>) = apply { this.error = error }
+        fun message(message: JsonField<String>) = apply { this.message = message }
 
         fun additionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
             this.additionalProperties.clear()
@@ -196,25 +136,22 @@ private constructor(
         }
 
         /**
-         * Returns an immutable instance of [InsightCreateResponse].
+         * Returns an immutable instance of [ConfigDeleteResponse].
          *
          * Further updates to this [Builder] will not mutate the returned instance.
          *
          * The following fields are required:
          * ```java
          * .id()
-         * .name()
-         * .status()
+         * .message()
          * ```
          *
          * @throws IllegalStateException if any required field is unset.
          */
-        fun build(): InsightCreateResponse =
-            InsightCreateResponse(
+        fun build(): ConfigDeleteResponse =
+            ConfigDeleteResponse(
                 checkRequired("id", id),
-                checkRequired("name", name),
-                checkRequired("status", status),
-                error,
+                checkRequired("message", message),
                 additionalProperties.toMutableMap(),
             )
     }
@@ -229,15 +166,13 @@ private constructor(
      * @throws LangChainInvalidDataException if any value type in this object doesn't match its
      *   expected type.
      */
-    fun validate(): InsightCreateResponse = apply {
+    fun validate(): ConfigDeleteResponse = apply {
         if (validated) {
             return@apply
         }
 
         id()
-        name()
-        status()
-        error()
+        message()
         validated = true
     }
 
@@ -256,30 +191,23 @@ private constructor(
      */
     @JvmSynthetic
     internal fun validity(): Int =
-        (if (id.asKnown().isPresent) 1 else 0) +
-            (if (name.asKnown().isPresent) 1 else 0) +
-            (if (status.asKnown().isPresent) 1 else 0) +
-            (if (error.asKnown().isPresent) 1 else 0)
+        (if (id.asKnown().isPresent) 1 else 0) + (if (message.asKnown().isPresent) 1 else 0)
 
     override fun equals(other: Any?): Boolean {
         if (this === other) {
             return true
         }
 
-        return other is InsightCreateResponse &&
+        return other is ConfigDeleteResponse &&
             id == other.id &&
-            name == other.name &&
-            status == other.status &&
-            error == other.error &&
+            message == other.message &&
             additionalProperties == other.additionalProperties
     }
 
-    private val hashCode: Int by lazy {
-        Objects.hash(id, name, status, error, additionalProperties)
-    }
+    private val hashCode: Int by lazy { Objects.hash(id, message, additionalProperties) }
 
     override fun hashCode(): Int = hashCode
 
     override fun toString() =
-        "InsightCreateResponse{id=$id, name=$name, status=$status, error=$error, additionalProperties=$additionalProperties}"
+        "ConfigDeleteResponse{id=$id, message=$message, additionalProperties=$additionalProperties}"
 }
