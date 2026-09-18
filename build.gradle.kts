@@ -29,9 +29,9 @@ allprojects {
     configurations.matching { it.name == "kotlinBouncyCastleConfiguration" }.configureEach {
         // CVE-2026-3505: remove once Kotlin's publishing validation selects Bouncy Castle >= 1.84.
         resolutionStrategy.force(
-            "org.bouncycastle:bcpg-jdk18on:1.84",
-            "org.bouncycastle:bcpkix-jdk18on:1.84",
-            "org.bouncycastle:bcprov-jdk18on:1.84",
+            "org.bouncycastle:bcpg-jdk18on:1.85",
+            "org.bouncycastle:bcpkix-jdk18on:1.85",
+            "org.bouncycastle:bcprov-jdk18on:1.85",
         )
     }
 }
