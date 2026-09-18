@@ -28,6 +28,8 @@ private constructor(
     private val filter: String?,
     private val pageSize: Long?,
     private val selects: List<Select>?,
+    private val traceFilter: String?,
+    private val treeFilter: String?,
     private val additionalHeaders: Headers,
     private val additionalQueryParams: QueryParams,
 ) : Params {
@@ -64,6 +66,18 @@ private constructor(
      */
     fun selects(): Optional<List<Select>> = Optional.ofNullable(selects)
 
+    /**
+     * `trace_filter` narrows traces by applying a LangSmith filter expression to each trace's root
+     * run.
+     */
+    fun traceFilter(): Optional<String> = Optional.ofNullable(traceFilter)
+
+    /**
+     * `tree_filter` narrows traces to those containing at least one run that matches the LangSmith
+     * filter expression.
+     */
+    fun treeFilter(): Optional<String> = Optional.ofNullable(treeFilter)
+
     /** Additional headers to send with the request. */
     fun _additionalHeaders(): Headers = additionalHeaders
 
@@ -94,6 +108,8 @@ private constructor(
         private var filter: String? = null
         private var pageSize: Long? = null
         private var selects: MutableList<Select>? = null
+        private var traceFilter: String? = null
+        private var treeFilter: String? = null
         private var additionalHeaders: Headers.Builder = Headers.builder()
         private var additionalQueryParams: QueryParams.Builder = QueryParams.builder()
 
@@ -105,6 +121,8 @@ private constructor(
             filter = threadListTracesParams.filter
             pageSize = threadListTracesParams.pageSize
             selects = threadListTracesParams.selects?.toMutableList()
+            traceFilter = threadListTracesParams.traceFilter
+            treeFilter = threadListTracesParams.treeFilter
             additionalHeaders = threadListTracesParams.additionalHeaders.toBuilder()
             additionalQueryParams = threadListTracesParams.additionalQueryParams.toBuilder()
         }
@@ -171,6 +189,24 @@ private constructor(
         fun addSelect(select: Select) = apply {
             selects = (selects ?: mutableListOf()).apply { add(select) }
         }
+
+        /**
+         * `trace_filter` narrows traces by applying a LangSmith filter expression to each trace's
+         * root run.
+         */
+        fun traceFilter(traceFilter: String?) = apply { this.traceFilter = traceFilter }
+
+        /** Alias for calling [Builder.traceFilter] with `traceFilter.orElse(null)`. */
+        fun traceFilter(traceFilter: Optional<String>) = traceFilter(traceFilter.getOrNull())
+
+        /**
+         * `tree_filter` narrows traces to those containing at least one run that matches the
+         * LangSmith filter expression.
+         */
+        fun treeFilter(treeFilter: String?) = apply { this.treeFilter = treeFilter }
+
+        /** Alias for calling [Builder.treeFilter] with `treeFilter.orElse(null)`. */
+        fun treeFilter(treeFilter: Optional<String>) = treeFilter(treeFilter.getOrNull())
 
         fun additionalHeaders(additionalHeaders: Headers) = apply {
             this.additionalHeaders.clear()
@@ -290,6 +326,8 @@ private constructor(
                 filter,
                 pageSize,
                 selects?.toImmutable(),
+                traceFilter,
+                treeFilter,
                 additionalHeaders.build(),
                 additionalQueryParams.build(),
             )
@@ -311,6 +349,8 @@ private constructor(
                 filter?.let { put("filter", it) }
                 pageSize?.let { put("page_size", it.toString()) }
                 selects?.forEach { put("selects", it.toString()) }
+                traceFilter?.let { put("trace_filter", it) }
+                treeFilter?.let { put("tree_filter", it) }
                 putAll(additionalQueryParams)
             }
             .build()
@@ -601,6 +641,8 @@ private constructor(
             filter == other.filter &&
             pageSize == other.pageSize &&
             selects == other.selects &&
+            traceFilter == other.traceFilter &&
+            treeFilter == other.treeFilter &&
             additionalHeaders == other.additionalHeaders &&
             additionalQueryParams == other.additionalQueryParams
     }
@@ -613,10 +655,12 @@ private constructor(
             filter,
             pageSize,
             selects,
+            traceFilter,
+            treeFilter,
             additionalHeaders,
             additionalQueryParams,
         )
 
     override fun toString() =
-        "ThreadListTracesParams{threadId=$threadId, projectId=$projectId, cursor=$cursor, filter=$filter, pageSize=$pageSize, selects=$selects, additionalHeaders=$additionalHeaders, additionalQueryParams=$additionalQueryParams}"
+        "ThreadListTracesParams{threadId=$threadId, projectId=$projectId, cursor=$cursor, filter=$filter, pageSize=$pageSize, selects=$selects, traceFilter=$traceFilter, treeFilter=$treeFilter, additionalHeaders=$additionalHeaders, additionalQueryParams=$additionalQueryParams}"
 }
