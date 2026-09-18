@@ -30,6 +30,7 @@ internal class OnlineCodeEvaluatorTest {
                         )
                         .build()
                 )
+                .requireAttachments(true)
                 .build()
 
         assertThat(onlineCodeEvaluator.advancedFeaturesEnabled()).contains(true)
@@ -51,6 +52,7 @@ internal class OnlineCodeEvaluatorTest {
                     )
                     .build()
             )
+        assertThat(onlineCodeEvaluator.requireAttachments()).contains(true)
     }
 
     @Test
@@ -74,6 +76,7 @@ internal class OnlineCodeEvaluatorTest {
                         )
                         .build()
                 )
+                .requireAttachments(true)
                 .build()
 
         val roundtrippedOnlineCodeEvaluator =

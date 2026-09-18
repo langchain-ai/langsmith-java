@@ -48,6 +48,7 @@ internal class OnlineEvaluatorServiceTest {
                                     )
                                     .build()
                             )
+                            .requireAttachments(true)
                             .build()
                     )
                     .llmEvaluator(
@@ -112,6 +113,7 @@ internal class OnlineEvaluatorServiceTest {
                                             )
                                             .build()
                                     )
+                                    .requireAttachments(true)
                                     .build()
                             )
                             .llmEvaluator(

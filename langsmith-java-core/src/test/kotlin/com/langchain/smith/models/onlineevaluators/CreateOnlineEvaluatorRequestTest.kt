@@ -31,6 +31,7 @@ internal class CreateOnlineEvaluatorRequestTest {
                                 )
                                 .build()
                         )
+                        .requireAttachments(true)
                         .build()
                 )
                 .llmEvaluator(
@@ -63,6 +64,7 @@ internal class CreateOnlineEvaluatorRequestTest {
                             )
                             .build()
                     )
+                    .requireAttachments(true)
                     .build()
             )
         assertThat(createOnlineEvaluatorRequest.llmEvaluator())
@@ -100,6 +102,7 @@ internal class CreateOnlineEvaluatorRequestTest {
                                 )
                                 .build()
                         )
+                        .requireAttachments(true)
                         .build()
                 )
                 .llmEvaluator(

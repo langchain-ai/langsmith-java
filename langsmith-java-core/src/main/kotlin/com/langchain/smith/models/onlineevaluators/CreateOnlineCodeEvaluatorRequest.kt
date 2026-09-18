@@ -26,6 +26,7 @@ private constructor(
     private val language: JsonField<String>,
     private val managedCodeEvaluatorKey: JsonField<String>,
     private val managedCodeEvaluatorSettings: JsonField<ManagedCodeEvaluatorSettings>,
+    private val requireAttachments: JsonField<Boolean>,
     private val additionalProperties: MutableMap<String, JsonValue>,
 ) {
 
@@ -45,6 +46,9 @@ private constructor(
         @JsonProperty("managed_code_evaluator_settings")
         @ExcludeMissing
         managedCodeEvaluatorSettings: JsonField<ManagedCodeEvaluatorSettings> = JsonMissing.of(),
+        @JsonProperty("require_attachments")
+        @ExcludeMissing
+        requireAttachments: JsonField<Boolean> = JsonMissing.of(),
     ) : this(
         advancedFeaturesEnabled,
         code,
@@ -52,6 +56,7 @@ private constructor(
         language,
         managedCodeEvaluatorKey,
         managedCodeEvaluatorSettings,
+        requireAttachments,
         mutableMapOf(),
     )
 
@@ -95,6 +100,16 @@ private constructor(
      */
     fun managedCodeEvaluatorSettings(): Optional<ManagedCodeEvaluatorSettings> =
         managedCodeEvaluatorSettings.getOptional("managed_code_evaluator_settings")
+
+    /**
+     * RequireAttachments opts the evaluator into selecting/presigning run attachments (s3_urls) at
+     * evaluation time. Default false.
+     *
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
+    fun requireAttachments(): Optional<Boolean> =
+        requireAttachments.getOptional("require_attachments")
 
     /**
      * Returns the raw JSON value of [advancedFeaturesEnabled].
@@ -150,6 +165,16 @@ private constructor(
     fun _managedCodeEvaluatorSettings(): JsonField<ManagedCodeEvaluatorSettings> =
         managedCodeEvaluatorSettings
 
+    /**
+     * Returns the raw JSON value of [requireAttachments].
+     *
+     * Unlike [requireAttachments], this method doesn't throw if the JSON field has an unexpected
+     * type.
+     */
+    @JsonProperty("require_attachments")
+    @ExcludeMissing
+    fun _requireAttachments(): JsonField<Boolean> = requireAttachments
+
     @JsonAnySetter
     private fun putAdditionalProperty(key: String, value: JsonValue) {
         additionalProperties.put(key, value)
@@ -181,6 +206,7 @@ private constructor(
         private var managedCodeEvaluatorKey: JsonField<String> = JsonMissing.of()
         private var managedCodeEvaluatorSettings: JsonField<ManagedCodeEvaluatorSettings> =
             JsonMissing.of()
+        private var requireAttachments: JsonField<Boolean> = JsonMissing.of()
         private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
 
         @JvmSynthetic
@@ -193,6 +219,7 @@ private constructor(
                 managedCodeEvaluatorKey = createOnlineCodeEvaluatorRequest.managedCodeEvaluatorKey
                 managedCodeEvaluatorSettings =
                     createOnlineCodeEvaluatorRequest.managedCodeEvaluatorSettings
+                requireAttachments = createOnlineCodeEvaluatorRequest.requireAttachments
                 additionalProperties =
                     createOnlineCodeEvaluatorRequest.additionalProperties.toMutableMap()
             }
@@ -277,6 +304,24 @@ private constructor(
             managedCodeEvaluatorSettings: JsonField<ManagedCodeEvaluatorSettings>
         ) = apply { this.managedCodeEvaluatorSettings = managedCodeEvaluatorSettings }
 
+        /**
+         * RequireAttachments opts the evaluator into selecting/presigning run attachments (s3_urls)
+         * at evaluation time. Default false.
+         */
+        fun requireAttachments(requireAttachments: Boolean) =
+            requireAttachments(JsonField.of(requireAttachments))
+
+        /**
+         * Sets [Builder.requireAttachments] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.requireAttachments] with a well-typed [Boolean] value
+         * instead. This method is primarily for setting the field to an undocumented or not yet
+         * supported value.
+         */
+        fun requireAttachments(requireAttachments: JsonField<Boolean>) = apply {
+            this.requireAttachments = requireAttachments
+        }
+
         fun additionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
             this.additionalProperties.clear()
             putAllAdditionalProperties(additionalProperties)
@@ -309,6 +354,7 @@ private constructor(
                 language,
                 managedCodeEvaluatorKey,
                 managedCodeEvaluatorSettings,
+                requireAttachments,
                 additionalProperties.toMutableMap(),
             )
     }
@@ -334,6 +380,7 @@ private constructor(
         language()
         managedCodeEvaluatorKey()
         managedCodeEvaluatorSettings().ifPresent { it.validate() }
+        requireAttachments()
         validated = true
     }
 
@@ -357,7 +404,8 @@ private constructor(
             (if (dependencies.asKnown().isPresent) 1 else 0) +
             (if (language.asKnown().isPresent) 1 else 0) +
             (if (managedCodeEvaluatorKey.asKnown().isPresent) 1 else 0) +
-            (managedCodeEvaluatorSettings.asKnown().getOrNull()?.validity() ?: 0)
+            (managedCodeEvaluatorSettings.asKnown().getOrNull()?.validity() ?: 0) +
+            (if (requireAttachments.asKnown().isPresent) 1 else 0)
 
     class ManagedCodeEvaluatorSettings
     @JsonCreator
@@ -486,6 +534,7 @@ private constructor(
             language == other.language &&
             managedCodeEvaluatorKey == other.managedCodeEvaluatorKey &&
             managedCodeEvaluatorSettings == other.managedCodeEvaluatorSettings &&
+            requireAttachments == other.requireAttachments &&
             additionalProperties == other.additionalProperties
     }
 
@@ -497,6 +546,7 @@ private constructor(
             language,
             managedCodeEvaluatorKey,
             managedCodeEvaluatorSettings,
+            requireAttachments,
             additionalProperties,
         )
     }
@@ -504,5 +554,5 @@ private constructor(
     override fun hashCode(): Int = hashCode
 
     override fun toString() =
-        "CreateOnlineCodeEvaluatorRequest{advancedFeaturesEnabled=$advancedFeaturesEnabled, code=$code, dependencies=$dependencies, language=$language, managedCodeEvaluatorKey=$managedCodeEvaluatorKey, managedCodeEvaluatorSettings=$managedCodeEvaluatorSettings, additionalProperties=$additionalProperties}"
+        "CreateOnlineCodeEvaluatorRequest{advancedFeaturesEnabled=$advancedFeaturesEnabled, code=$code, dependencies=$dependencies, language=$language, managedCodeEvaluatorKey=$managedCodeEvaluatorKey, managedCodeEvaluatorSettings=$managedCodeEvaluatorSettings, requireAttachments=$requireAttachments, additionalProperties=$additionalProperties}"
 }

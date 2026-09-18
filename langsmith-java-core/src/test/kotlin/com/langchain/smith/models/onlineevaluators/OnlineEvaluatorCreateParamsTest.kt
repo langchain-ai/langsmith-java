@@ -31,6 +31,7 @@ internal class OnlineEvaluatorCreateParamsTest {
                                     )
                                     .build()
                             )
+                            .requireAttachments(true)
                             .build()
                     )
                     .llmEvaluator(
@@ -75,6 +76,7 @@ internal class OnlineEvaluatorCreateParamsTest {
                                         )
                                         .build()
                                 )
+                                .requireAttachments(true)
                                 .build()
                         )
                         .llmEvaluator(
@@ -114,6 +116,7 @@ internal class OnlineEvaluatorCreateParamsTest {
                                     )
                                     .build()
                             )
+                            .requireAttachments(true)
                             .build()
                     )
                     .llmEvaluator(

@@ -27,6 +27,7 @@ internal class CreateOnlineCodeEvaluatorRequestTest {
                         )
                         .build()
                 )
+                .requireAttachments(true)
                 .build()
 
         assertThat(createOnlineCodeEvaluatorRequest.advancedFeaturesEnabled()).contains(true)
@@ -44,6 +45,7 @@ internal class CreateOnlineCodeEvaluatorRequestTest {
                     )
                     .build()
             )
+        assertThat(createOnlineCodeEvaluatorRequest.requireAttachments()).contains(true)
     }
 
     @Test
@@ -64,6 +66,7 @@ internal class CreateOnlineCodeEvaluatorRequestTest {
                         )
                         .build()
                 )
+                .requireAttachments(true)
                 .build()
 
         val roundtrippedCreateOnlineCodeEvaluatorRequest =
