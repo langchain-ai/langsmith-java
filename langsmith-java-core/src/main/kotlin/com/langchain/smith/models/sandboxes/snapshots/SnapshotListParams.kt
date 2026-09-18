@@ -11,10 +11,10 @@ import java.util.Optional
 import kotlin.jvm.optionals.getOrNull
 
 /**
- * List sandbox snapshots for the authenticated tenant, with optional filtering, sorting, and
- * pagination. Page with page_size and cursor: replay the response's next_cursor until it comes back
- * null, which is the only signal that no pages remain. Cursors are opaque and only valid on this
- * endpoint; do not parse or construct one.
+ * List workspace and published system snapshots, with optional filtering, sorting, and pagination.
+ * Page with page_size and cursor: replay the response's next_cursor until it comes back null, which
+ * is the only signal that no pages remain. Cursors are opaque and only valid on this endpoint; do
+ * not parse or construct one.
  */
 class SnapshotListParams
 private constructor(

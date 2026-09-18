@@ -21,7 +21,10 @@ import java.util.Objects
 import java.util.Optional
 import kotlin.jvm.optionals.getOrNull
 
-/** Create a snapshot from a Docker image (async build). */
+/**
+ * Create a snapshot from a Docker image (async build). Names use lowercase registry-style
+ * components separated by slashes, up to 255 characters. The system/ namespace is read-only.
+ */
 class SnapshotCreateParams
 private constructor(
     private val body: Body,
