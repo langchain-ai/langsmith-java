@@ -12,6 +12,12 @@ internal class BoxCreateParamsTest {
     @Test
     fun create() {
         BoxCreateParams.builder()
+            .accessDelegation(
+                BoxCreateParams.AccessDelegation.builder()
+                    .mode(BoxCreateParams.AccessDelegation.Mode.INHERIT)
+                    .addPermission("string")
+                    .build()
+            )
             .cpuMillicores(0L)
             .deleteAfterStopSeconds(0L)
             .envVars(
@@ -230,6 +236,12 @@ internal class BoxCreateParamsTest {
     fun body() {
         val params =
             BoxCreateParams.builder()
+                .accessDelegation(
+                    BoxCreateParams.AccessDelegation.builder()
+                        .mode(BoxCreateParams.AccessDelegation.Mode.INHERIT)
+                        .addPermission("string")
+                        .build()
+                )
                 .cpuMillicores(0L)
                 .deleteAfterStopSeconds(0L)
                 .envVars(
@@ -451,6 +463,13 @@ internal class BoxCreateParamsTest {
 
         val body = params._body()
 
+        assertThat(body.accessDelegation())
+            .contains(
+                BoxCreateParams.AccessDelegation.builder()
+                    .mode(BoxCreateParams.AccessDelegation.Mode.INHERIT)
+                    .addPermission("string")
+                    .build()
+            )
         assertThat(body.cpuMillicores()).contains(0L)
         assertThat(body.deleteAfterStopSeconds()).contains(0L)
         assertThat(body.envVars())

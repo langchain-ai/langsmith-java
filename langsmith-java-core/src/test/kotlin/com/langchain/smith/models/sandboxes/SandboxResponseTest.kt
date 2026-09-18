@@ -15,6 +15,12 @@ internal class SandboxResponseTest {
         val sandboxResponse =
             SandboxResponse.builder()
                 .id("id")
+                .accessDelegation(
+                    SandboxResponse.AccessDelegation.builder()
+                        .mode(SandboxResponse.AccessDelegation.Mode.INHERIT)
+                        .addPermission("string")
+                        .build()
+                )
                 .cpuMillicores(0L)
                 .createdAt("created_at")
                 .createdBy("created_by")
@@ -235,6 +241,13 @@ internal class SandboxResponseTest {
                 .build()
 
         assertThat(sandboxResponse.id()).contains("id")
+        assertThat(sandboxResponse.accessDelegation())
+            .contains(
+                SandboxResponse.AccessDelegation.builder()
+                    .mode(SandboxResponse.AccessDelegation.Mode.INHERIT)
+                    .addPermission("string")
+                    .build()
+            )
         assertThat(sandboxResponse.cpuMillicores()).contains(0L)
         assertThat(sandboxResponse.createdAt()).contains("created_at")
         assertThat(sandboxResponse.createdBy()).contains("created_by")
@@ -458,6 +471,12 @@ internal class SandboxResponseTest {
         val sandboxResponse =
             SandboxResponse.builder()
                 .id("id")
+                .accessDelegation(
+                    SandboxResponse.AccessDelegation.builder()
+                        .mode(SandboxResponse.AccessDelegation.Mode.INHERIT)
+                        .addPermission("string")
+                        .build()
+                )
                 .cpuMillicores(0L)
                 .createdAt("created_at")
                 .createdBy("created_by")

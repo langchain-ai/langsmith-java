@@ -35,6 +35,7 @@ class SandboxResponse
 @JsonCreator(mode = JsonCreator.Mode.DISABLED)
 private constructor(
     private val id: JsonField<String>,
+    private val accessDelegation: JsonField<AccessDelegation>,
     private val cpuMillicores: JsonField<Long>,
     private val createdAt: JsonField<String>,
     private val createdBy: JsonField<String>,
@@ -63,6 +64,9 @@ private constructor(
     @JsonCreator
     private constructor(
         @JsonProperty("id") @ExcludeMissing id: JsonField<String> = JsonMissing.of(),
+        @JsonProperty("access_delegation")
+        @ExcludeMissing
+        accessDelegation: JsonField<AccessDelegation> = JsonMissing.of(),
         @JsonProperty("cpu_millicores")
         @ExcludeMissing
         cpuMillicores: JsonField<Long> = JsonMissing.of(),
@@ -109,6 +113,7 @@ private constructor(
         @JsonProperty("vcpus") @ExcludeMissing vcpus: JsonField<Long> = JsonMissing.of(),
     ) : this(
         id,
+        accessDelegation,
         cpuMillicores,
         createdAt,
         createdBy,
@@ -139,6 +144,18 @@ private constructor(
      *   server responded with an unexpected value).
      */
     fun id(): Optional<String> = id.getOptional("id")
+
+    /**
+     * AccessDelegation is the LangSmith access this sandbox was granted, absent when it has none.
+     * Either mode can appear: a grant is reported as requested, except that INHERIT requested by a
+     * creator who is itself delegated is stored as EXPLICIT carrying that creator's own ceiling, so
+     * the value always describes what this sandbox can reach rather than what was asked for.
+     *
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
+    fun accessDelegation(): Optional<AccessDelegation> =
+        accessDelegation.getOptional("access_delegation")
 
     /**
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
@@ -283,6 +300,16 @@ private constructor(
      * Unlike [id], this method doesn't throw if the JSON field has an unexpected type.
      */
     @JsonProperty("id") @ExcludeMissing fun _id(): JsonField<String> = id
+
+    /**
+     * Returns the raw JSON value of [accessDelegation].
+     *
+     * Unlike [accessDelegation], this method doesn't throw if the JSON field has an unexpected
+     * type.
+     */
+    @JsonProperty("access_delegation")
+    @ExcludeMissing
+    fun _accessDelegation(): JsonField<AccessDelegation> = accessDelegation
 
     /**
      * Returns the raw JSON value of [cpuMillicores].
@@ -480,6 +507,7 @@ private constructor(
     class Builder internal constructor() {
 
         private var id: JsonField<String> = JsonMissing.of()
+        private var accessDelegation: JsonField<AccessDelegation> = JsonMissing.of()
         private var cpuMillicores: JsonField<Long> = JsonMissing.of()
         private var createdAt: JsonField<String> = JsonMissing.of()
         private var createdBy: JsonField<String> = JsonMissing.of()
@@ -507,6 +535,7 @@ private constructor(
         @JvmSynthetic
         internal fun from(sandboxResponse: SandboxResponse) = apply {
             id = sandboxResponse.id
+            accessDelegation = sandboxResponse.accessDelegation
             cpuMillicores = sandboxResponse.cpuMillicores
             createdAt = sandboxResponse.createdAt
             createdBy = sandboxResponse.createdBy
@@ -541,6 +570,27 @@ private constructor(
          * method is primarily for setting the field to an undocumented or not yet supported value.
          */
         fun id(id: JsonField<String>) = apply { this.id = id }
+
+        /**
+         * AccessDelegation is the LangSmith access this sandbox was granted, absent when it has
+         * none. Either mode can appear: a grant is reported as requested, except that INHERIT
+         * requested by a creator who is itself delegated is stored as EXPLICIT carrying that
+         * creator's own ceiling, so the value always describes what this sandbox can reach rather
+         * than what was asked for.
+         */
+        fun accessDelegation(accessDelegation: AccessDelegation) =
+            accessDelegation(JsonField.of(accessDelegation))
+
+        /**
+         * Sets [Builder.accessDelegation] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.accessDelegation] with a well-typed [AccessDelegation]
+         * value instead. This method is primarily for setting the field to an undocumented or not
+         * yet supported value.
+         */
+        fun accessDelegation(accessDelegation: JsonField<AccessDelegation>) = apply {
+            this.accessDelegation = accessDelegation
+        }
 
         fun cpuMillicores(cpuMillicores: Long) = cpuMillicores(JsonField.of(cpuMillicores))
 
@@ -830,6 +880,7 @@ private constructor(
         fun build(): SandboxResponse =
             SandboxResponse(
                 id,
+                accessDelegation,
                 cpuMillicores,
                 createdAt,
                 createdBy,
@@ -872,6 +923,7 @@ private constructor(
         }
 
         id()
+        accessDelegation().ifPresent { it.validate() }
         cpuMillicores()
         createdAt()
         createdBy()
@@ -913,6 +965,7 @@ private constructor(
     @JvmSynthetic
     internal fun validity(): Int =
         (if (id.asKnown().isPresent) 1 else 0) +
+            (accessDelegation.asKnown().getOrNull()?.validity() ?: 0) +
             (if (cpuMillicores.asKnown().isPresent) 1 else 0) +
             (if (createdAt.asKnown().isPresent) 1 else 0) +
             (if (createdBy.asKnown().isPresent) 1 else 0) +
@@ -935,6 +988,366 @@ private constructor(
             (if (updatedAt.asKnown().isPresent) 1 else 0) +
             (if (updatedBy.asKnown().isPresent) 1 else 0) +
             (if (vcpus.asKnown().isPresent) 1 else 0)
+
+    /**
+     * AccessDelegation is the LangSmith access this sandbox was granted, absent when it has none.
+     * Either mode can appear: a grant is reported as requested, except that INHERIT requested by a
+     * creator who is itself delegated is stored as EXPLICIT carrying that creator's own ceiling, so
+     * the value always describes what this sandbox can reach rather than what was asked for.
+     */
+    class AccessDelegation
+    @JsonCreator(mode = JsonCreator.Mode.DISABLED)
+    private constructor(
+        private val mode: JsonField<Mode>,
+        private val permissions: JsonField<List<String>>,
+        private val additionalProperties: MutableMap<String, JsonValue>,
+    ) {
+
+        @JsonCreator
+        private constructor(
+            @JsonProperty("mode") @ExcludeMissing mode: JsonField<Mode> = JsonMissing.of(),
+            @JsonProperty("permissions")
+            @ExcludeMissing
+            permissions: JsonField<List<String>> = JsonMissing.of(),
+        ) : this(mode, permissions, mutableMapOf())
+
+        /**
+         * @throws LangChainInvalidDataException if the JSON field has an unexpected type or is
+         *   unexpectedly missing or null (e.g. if the server responded with an unexpected value).
+         */
+        fun mode(): Mode = mode.getRequired("mode")
+
+        /**
+         * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
+         *   the server responded with an unexpected value).
+         */
+        fun permissions(): Optional<List<String>> = permissions.getOptional("permissions")
+
+        /**
+         * Returns the raw JSON value of [mode].
+         *
+         * Unlike [mode], this method doesn't throw if the JSON field has an unexpected type.
+         */
+        @JsonProperty("mode") @ExcludeMissing fun _mode(): JsonField<Mode> = mode
+
+        /**
+         * Returns the raw JSON value of [permissions].
+         *
+         * Unlike [permissions], this method doesn't throw if the JSON field has an unexpected type.
+         */
+        @JsonProperty("permissions")
+        @ExcludeMissing
+        fun _permissions(): JsonField<List<String>> = permissions
+
+        @JsonAnySetter
+        private fun putAdditionalProperty(key: String, value: JsonValue) {
+            additionalProperties.put(key, value)
+        }
+
+        @JsonAnyGetter
+        @ExcludeMissing
+        fun _additionalProperties(): Map<String, JsonValue> =
+            Collections.unmodifiableMap(additionalProperties)
+
+        fun toBuilder() = Builder().from(this)
+
+        companion object {
+
+            /**
+             * Returns a mutable builder for constructing an instance of [AccessDelegation].
+             *
+             * The following fields are required:
+             * ```java
+             * .mode()
+             * ```
+             */
+            @JvmStatic fun builder() = Builder()
+        }
+
+        /** A builder for [AccessDelegation]. */
+        class Builder internal constructor() {
+
+            private var mode: JsonField<Mode>? = null
+            private var permissions: JsonField<MutableList<String>>? = null
+            private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
+
+            @JvmSynthetic
+            internal fun from(accessDelegation: AccessDelegation) = apply {
+                mode = accessDelegation.mode
+                permissions = accessDelegation.permissions.map { it.toMutableList() }
+                additionalProperties = accessDelegation.additionalProperties.toMutableMap()
+            }
+
+            fun mode(mode: Mode) = mode(JsonField.of(mode))
+
+            /**
+             * Sets [Builder.mode] to an arbitrary JSON value.
+             *
+             * You should usually call [Builder.mode] with a well-typed [Mode] value instead. This
+             * method is primarily for setting the field to an undocumented or not yet supported
+             * value.
+             */
+            fun mode(mode: JsonField<Mode>) = apply { this.mode = mode }
+
+            fun permissions(permissions: List<String>) = permissions(JsonField.of(permissions))
+
+            /**
+             * Sets [Builder.permissions] to an arbitrary JSON value.
+             *
+             * You should usually call [Builder.permissions] with a well-typed `List<String>` value
+             * instead. This method is primarily for setting the field to an undocumented or not yet
+             * supported value.
+             */
+            fun permissions(permissions: JsonField<List<String>>) = apply {
+                this.permissions = permissions.map { it.toMutableList() }
+            }
+
+            /**
+             * Adds a single [String] to [permissions].
+             *
+             * @throws IllegalStateException if the field was previously set to a non-list.
+             */
+            fun addPermission(permission: String) = apply {
+                permissions =
+                    (permissions ?: JsonField.of(mutableListOf())).also {
+                        checkKnown("permissions", it).add(permission)
+                    }
+            }
+
+            fun additionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
+                this.additionalProperties.clear()
+                putAllAdditionalProperties(additionalProperties)
+            }
+
+            fun putAdditionalProperty(key: String, value: JsonValue) = apply {
+                additionalProperties.put(key, value)
+            }
+
+            fun putAllAdditionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
+                this.additionalProperties.putAll(additionalProperties)
+            }
+
+            fun removeAdditionalProperty(key: String) = apply { additionalProperties.remove(key) }
+
+            fun removeAllAdditionalProperties(keys: Set<String>) = apply {
+                keys.forEach(::removeAdditionalProperty)
+            }
+
+            /**
+             * Returns an immutable instance of [AccessDelegation].
+             *
+             * Further updates to this [Builder] will not mutate the returned instance.
+             *
+             * The following fields are required:
+             * ```java
+             * .mode()
+             * ```
+             *
+             * @throws IllegalStateException if any required field is unset.
+             */
+            fun build(): AccessDelegation =
+                AccessDelegation(
+                    checkRequired("mode", mode),
+                    (permissions ?: JsonMissing.of()).map { it.toImmutable() },
+                    additionalProperties.toMutableMap(),
+                )
+        }
+
+        private var validated: Boolean = false
+
+        /**
+         * Validates that the types of all values in this object match their expected types
+         * recursively.
+         *
+         * This method is _not_ forwards compatible with new types from the API for existing fields.
+         *
+         * @throws LangChainInvalidDataException if any value type in this object doesn't match its
+         *   expected type.
+         */
+        fun validate(): AccessDelegation = apply {
+            if (validated) {
+                return@apply
+            }
+
+            mode().validate()
+            permissions()
+            validated = true
+        }
+
+        fun isValid(): Boolean =
+            try {
+                validate()
+                true
+            } catch (e: LangChainInvalidDataException) {
+                false
+            }
+
+        /**
+         * Returns a score indicating how many valid values are contained in this object
+         * recursively.
+         *
+         * Used for best match union deserialization.
+         */
+        @JvmSynthetic
+        internal fun validity(): Int =
+            (mode.asKnown().getOrNull()?.validity() ?: 0) +
+                (permissions.asKnown().getOrNull()?.size ?: 0)
+
+        class Mode @JsonCreator private constructor(private val value: JsonField<String>) : Enum {
+
+            /**
+             * Returns this class instance's raw value.
+             *
+             * This is usually only useful if this instance was deserialized from data that doesn't
+             * match any known member, and you want to know that value. For example, if the SDK is
+             * on an older version than the API, then the API may respond with new members that the
+             * SDK is unaware of.
+             */
+            @com.fasterxml.jackson.annotation.JsonValue fun _value(): JsonField<String> = value
+
+            companion object {
+
+                @JvmField val INHERIT = of("INHERIT")
+
+                @JvmField val EXPLICIT = of("EXPLICIT")
+
+                @JvmStatic fun of(value: String) = Mode(JsonField.of(value))
+            }
+
+            /** An enum containing [Mode]'s known values. */
+            enum class Known {
+                INHERIT,
+                EXPLICIT,
+            }
+
+            /**
+             * An enum containing [Mode]'s known values, as well as an [_UNKNOWN] member.
+             *
+             * An instance of [Mode] can contain an unknown value in a couple of cases:
+             * - It was deserialized from data that doesn't match any known member. For example, if
+             *   the SDK is on an older version than the API, then the API may respond with new
+             *   members that the SDK is unaware of.
+             * - It was constructed with an arbitrary value using the [of] method.
+             */
+            enum class Value {
+                INHERIT,
+                EXPLICIT,
+                /** An enum member indicating that [Mode] was instantiated with an unknown value. */
+                _UNKNOWN,
+            }
+
+            /**
+             * Returns an enum member corresponding to this class instance's value, or
+             * [Value._UNKNOWN] if the class was instantiated with an unknown value.
+             *
+             * Use the [known] method instead if you're certain the value is always known or if you
+             * want to throw for the unknown case.
+             */
+            fun value(): Value =
+                when (this) {
+                    INHERIT -> Value.INHERIT
+                    EXPLICIT -> Value.EXPLICIT
+                    else -> Value._UNKNOWN
+                }
+
+            /**
+             * Returns an enum member corresponding to this class instance's value.
+             *
+             * Use the [value] method instead if you're uncertain the value is always known and
+             * don't want to throw for the unknown case.
+             *
+             * @throws LangChainInvalidDataException if this class instance's value is a not a known
+             *   member.
+             */
+            fun known(): Known =
+                when (this) {
+                    INHERIT -> Known.INHERIT
+                    EXPLICIT -> Known.EXPLICIT
+                    else -> throw LangChainInvalidDataException("Unknown Mode: $value")
+                }
+
+            /**
+             * Returns this class instance's primitive wire representation.
+             *
+             * This differs from the [toString] method because that method is primarily for
+             * debugging and generally doesn't throw.
+             *
+             * @throws LangChainInvalidDataException if this class instance's value does not have
+             *   the expected primitive type.
+             */
+            fun asString(): String =
+                _value().asString().orElseThrow {
+                    LangChainInvalidDataException("Value is not a String")
+                }
+
+            private var validated: Boolean = false
+
+            /**
+             * Validates that the types of all values in this object match their expected types
+             * recursively.
+             *
+             * This method is _not_ forwards compatible with new types from the API for existing
+             * fields.
+             *
+             * @throws LangChainInvalidDataException if any value type in this object doesn't match
+             *   its expected type.
+             */
+            fun validate(): Mode = apply {
+                if (validated) {
+                    return@apply
+                }
+
+                known()
+                validated = true
+            }
+
+            fun isValid(): Boolean =
+                try {
+                    validate()
+                    true
+                } catch (e: LangChainInvalidDataException) {
+                    false
+                }
+
+            /**
+             * Returns a score indicating how many valid values are contained in this object
+             * recursively.
+             *
+             * Used for best match union deserialization.
+             */
+            @JvmSynthetic internal fun validity(): Int = if (value() == Value._UNKNOWN) 0 else 1
+
+            override fun equals(other: Any?): Boolean {
+                if (this === other) {
+                    return true
+                }
+
+                return other is Mode && value == other.value
+            }
+
+            override fun hashCode() = value.hashCode()
+
+            override fun toString() = value.toString()
+        }
+
+        override fun equals(other: Any?): Boolean {
+            if (this === other) {
+                return true
+            }
+
+            return other is AccessDelegation &&
+                mode == other.mode &&
+                permissions == other.permissions &&
+                additionalProperties == other.additionalProperties
+        }
+
+        private val hashCode: Int by lazy { Objects.hash(mode, permissions, additionalProperties) }
+
+        override fun hashCode(): Int = hashCode
+
+        override fun toString() =
+            "AccessDelegation{mode=$mode, permissions=$permissions, additionalProperties=$additionalProperties}"
+    }
 
     class Labels
     @JsonCreator
@@ -18425,6 +18838,7 @@ private constructor(
 
         return other is SandboxResponse &&
             id == other.id &&
+            accessDelegation == other.accessDelegation &&
             cpuMillicores == other.cpuMillicores &&
             createdAt == other.createdAt &&
             createdBy == other.createdBy &&
@@ -18453,6 +18867,7 @@ private constructor(
     private val hashCode: Int by lazy {
         Objects.hash(
             id,
+            accessDelegation,
             cpuMillicores,
             createdAt,
             createdBy,
@@ -18482,5 +18897,5 @@ private constructor(
     override fun hashCode(): Int = hashCode
 
     override fun toString() =
-        "SandboxResponse{id=$id, cpuMillicores=$cpuMillicores, createdAt=$createdAt, createdBy=$createdBy, dataplaneUrl=$dataplaneUrl, deleteAfterStopSeconds=$deleteAfterStopSeconds, fsCapacityBytes=$fsCapacityBytes, idleTtlSeconds=$idleTtlSeconds, labels=$labels, memBytes=$memBytes, mountConfig=$mountConfig, name=$name, preserveMemoryOnStop=$preserveMemoryOnStop, proxyConfig=$proxyConfig, runConfig=$runConfig, sizeClass=$sizeClass, snapshotId=$snapshotId, status=$status, statusMessage=$statusMessage, stoppedAt=$stoppedAt, updatedAt=$updatedAt, updatedBy=$updatedBy, vcpus=$vcpus, additionalProperties=$additionalProperties}"
+        "SandboxResponse{id=$id, accessDelegation=$accessDelegation, cpuMillicores=$cpuMillicores, createdAt=$createdAt, createdBy=$createdBy, dataplaneUrl=$dataplaneUrl, deleteAfterStopSeconds=$deleteAfterStopSeconds, fsCapacityBytes=$fsCapacityBytes, idleTtlSeconds=$idleTtlSeconds, labels=$labels, memBytes=$memBytes, mountConfig=$mountConfig, name=$name, preserveMemoryOnStop=$preserveMemoryOnStop, proxyConfig=$proxyConfig, runConfig=$runConfig, sizeClass=$sizeClass, snapshotId=$snapshotId, status=$status, statusMessage=$statusMessage, stoppedAt=$stoppedAt, updatedAt=$updatedAt, updatedBy=$updatedBy, vcpus=$vcpus, additionalProperties=$additionalProperties}"
 }

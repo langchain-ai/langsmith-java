@@ -27,6 +27,12 @@ internal class BoxServiceAsyncTest {
         val sandboxResponseFuture =
             boxServiceAsync.create(
                 BoxCreateParams.builder()
+                    .accessDelegation(
+                        BoxCreateParams.AccessDelegation.builder()
+                            .mode(BoxCreateParams.AccessDelegation.Mode.INHERIT)
+                            .addPermission("string")
+                            .build()
+                    )
                     .cpuMillicores(0L)
                     .deleteAfterStopSeconds(0L)
                     .envVars(

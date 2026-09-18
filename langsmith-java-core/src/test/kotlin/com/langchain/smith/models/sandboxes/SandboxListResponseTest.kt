@@ -18,6 +18,12 @@ internal class SandboxListResponseTest {
                 .addItem(
                     SandboxResponse.builder()
                         .id("id")
+                        .accessDelegation(
+                            SandboxResponse.AccessDelegation.builder()
+                                .mode(SandboxResponse.AccessDelegation.Mode.INHERIT)
+                                .addPermission("string")
+                                .build()
+                        )
                         .cpuMillicores(0L)
                         .createdAt("created_at")
                         .createdBy("created_by")
@@ -260,6 +266,12 @@ internal class SandboxListResponseTest {
                 .addSandbox(
                     SandboxResponse.builder()
                         .id("id")
+                        .accessDelegation(
+                            SandboxResponse.AccessDelegation.builder()
+                                .mode(SandboxResponse.AccessDelegation.Mode.INHERIT)
+                                .addPermission("string")
+                                .build()
+                        )
                         .cpuMillicores(0L)
                         .createdAt("created_at")
                         .createdBy("created_by")
@@ -503,6 +515,12 @@ internal class SandboxListResponseTest {
             .containsExactly(
                 SandboxResponse.builder()
                     .id("id")
+                    .accessDelegation(
+                        SandboxResponse.AccessDelegation.builder()
+                            .mode(SandboxResponse.AccessDelegation.Mode.INHERIT)
+                            .addPermission("string")
+                            .build()
+                    )
                     .cpuMillicores(0L)
                     .createdAt("created_at")
                     .createdBy("created_by")
@@ -741,6 +759,12 @@ internal class SandboxListResponseTest {
             .containsExactly(
                 SandboxResponse.builder()
                     .id("id")
+                    .accessDelegation(
+                        SandboxResponse.AccessDelegation.builder()
+                            .mode(SandboxResponse.AccessDelegation.Mode.INHERIT)
+                            .addPermission("string")
+                            .build()
+                    )
                     .cpuMillicores(0L)
                     .createdAt("created_at")
                     .createdBy("created_by")
@@ -983,6 +1007,12 @@ internal class SandboxListResponseTest {
                 .addItem(
                     SandboxResponse.builder()
                         .id("id")
+                        .accessDelegation(
+                            SandboxResponse.AccessDelegation.builder()
+                                .mode(SandboxResponse.AccessDelegation.Mode.INHERIT)
+                                .addPermission("string")
+                                .build()
+                        )
                         .cpuMillicores(0L)
                         .createdAt("created_at")
                         .createdBy("created_by")
@@ -1225,6 +1255,12 @@ internal class SandboxListResponseTest {
                 .addSandbox(
                     SandboxResponse.builder()
                         .id("id")
+                        .accessDelegation(
+                            SandboxResponse.AccessDelegation.builder()
+                                .mode(SandboxResponse.AccessDelegation.Mode.INHERIT)
+                                .addPermission("string")
+                                .build()
+                        )
                         .cpuMillicores(0L)
                         .createdAt("created_at")
                         .createdBy("created_by")
