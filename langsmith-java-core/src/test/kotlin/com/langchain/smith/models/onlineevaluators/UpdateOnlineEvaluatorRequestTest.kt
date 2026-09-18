@@ -20,6 +20,16 @@ internal class UpdateOnlineEvaluatorRequestTest {
                         .code("code")
                         .dependencies("dependencies")
                         .language("language")
+                        .managedCodeEvaluatorSettings(
+                            UpdateOnlineCodeEvaluatorRequest.ManagedCodeEvaluatorSettings.builder()
+                                .putAdditionalProperty(
+                                    "foo",
+                                    JsonValue.from(
+                                        mapOf("is_enabled" to true, "key_name" to "key_name")
+                                    ),
+                                )
+                                .build()
+                        )
                         .build()
                 )
                 .llmEvaluator(
@@ -42,6 +52,16 @@ internal class UpdateOnlineEvaluatorRequestTest {
                     .code("code")
                     .dependencies("dependencies")
                     .language("language")
+                    .managedCodeEvaluatorSettings(
+                        UpdateOnlineCodeEvaluatorRequest.ManagedCodeEvaluatorSettings.builder()
+                            .putAdditionalProperty(
+                                "foo",
+                                JsonValue.from(
+                                    mapOf("is_enabled" to true, "key_name" to "key_name")
+                                ),
+                            )
+                            .build()
+                    )
                     .build()
             )
         assertThat(updateOnlineEvaluatorRequest.llmEvaluator())
@@ -69,6 +89,16 @@ internal class UpdateOnlineEvaluatorRequestTest {
                         .code("code")
                         .dependencies("dependencies")
                         .language("language")
+                        .managedCodeEvaluatorSettings(
+                            UpdateOnlineCodeEvaluatorRequest.ManagedCodeEvaluatorSettings.builder()
+                                .putAdditionalProperty(
+                                    "foo",
+                                    JsonValue.from(
+                                        mapOf("is_enabled" to true, "key_name" to "key_name")
+                                    ),
+                                )
+                                .build()
+                        )
                         .build()
                 )
                 .llmEvaluator(

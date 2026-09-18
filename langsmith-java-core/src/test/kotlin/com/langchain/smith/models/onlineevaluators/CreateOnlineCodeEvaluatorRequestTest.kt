@@ -3,6 +3,7 @@
 package com.langchain.smith.models.onlineevaluators
 
 import com.fasterxml.jackson.module.kotlin.jacksonTypeRef
+import com.langchain.smith.core.JsonValue
 import com.langchain.smith.core.jsonMapper
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
@@ -17,12 +18,32 @@ internal class CreateOnlineCodeEvaluatorRequestTest {
                 .code("code")
                 .dependencies("dependencies")
                 .language("language")
+                .managedCodeEvaluatorKey("managed_code_evaluator_key")
+                .managedCodeEvaluatorSettings(
+                    CreateOnlineCodeEvaluatorRequest.ManagedCodeEvaluatorSettings.builder()
+                        .putAdditionalProperty(
+                            "foo",
+                            JsonValue.from(mapOf("is_enabled" to true, "key_name" to "key_name")),
+                        )
+                        .build()
+                )
                 .build()
 
         assertThat(createOnlineCodeEvaluatorRequest.advancedFeaturesEnabled()).contains(true)
         assertThat(createOnlineCodeEvaluatorRequest.code()).contains("code")
         assertThat(createOnlineCodeEvaluatorRequest.dependencies()).contains("dependencies")
         assertThat(createOnlineCodeEvaluatorRequest.language()).contains("language")
+        assertThat(createOnlineCodeEvaluatorRequest.managedCodeEvaluatorKey())
+            .contains("managed_code_evaluator_key")
+        assertThat(createOnlineCodeEvaluatorRequest.managedCodeEvaluatorSettings())
+            .contains(
+                CreateOnlineCodeEvaluatorRequest.ManagedCodeEvaluatorSettings.builder()
+                    .putAdditionalProperty(
+                        "foo",
+                        JsonValue.from(mapOf("is_enabled" to true, "key_name" to "key_name")),
+                    )
+                    .build()
+            )
     }
 
     @Test
@@ -34,6 +55,15 @@ internal class CreateOnlineCodeEvaluatorRequestTest {
                 .code("code")
                 .dependencies("dependencies")
                 .language("language")
+                .managedCodeEvaluatorKey("managed_code_evaluator_key")
+                .managedCodeEvaluatorSettings(
+                    CreateOnlineCodeEvaluatorRequest.ManagedCodeEvaluatorSettings.builder()
+                        .putAdditionalProperty(
+                            "foo",
+                            JsonValue.from(mapOf("is_enabled" to true, "key_name" to "key_name")),
+                        )
+                        .build()
+                )
                 .build()
 
         val roundtrippedCreateOnlineCodeEvaluatorRequest =

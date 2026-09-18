@@ -25,6 +25,17 @@ internal class OnlineEvaluatorTest {
                         .evaluatorBuildStatus(OnlineCodeEvaluator.EvaluatorBuildStatus.ENQUEUED)
                         .evaluatorId("evaluator_id")
                         .language("language")
+                        .managedCodeEvaluatorKey("managed_code_evaluator_key")
+                        .managedCodeEvaluatorSettings(
+                            OnlineCodeEvaluator.ManagedCodeEvaluatorSettings.builder()
+                                .putAdditionalProperty(
+                                    "foo",
+                                    JsonValue.from(
+                                        mapOf("is_enabled" to true, "key_name" to "key_name")
+                                    ),
+                                )
+                                .build()
+                        )
                         .build()
                 )
                 .createdAt("created_at")
@@ -83,6 +94,17 @@ internal class OnlineEvaluatorTest {
                     .evaluatorBuildStatus(OnlineCodeEvaluator.EvaluatorBuildStatus.ENQUEUED)
                     .evaluatorId("evaluator_id")
                     .language("language")
+                    .managedCodeEvaluatorKey("managed_code_evaluator_key")
+                    .managedCodeEvaluatorSettings(
+                        OnlineCodeEvaluator.ManagedCodeEvaluatorSettings.builder()
+                            .putAdditionalProperty(
+                                "foo",
+                                JsonValue.from(
+                                    mapOf("is_enabled" to true, "key_name" to "key_name")
+                                ),
+                            )
+                            .build()
+                    )
                     .build()
             )
         assertThat(onlineEvaluator.createdAt()).contains("created_at")
@@ -147,6 +169,17 @@ internal class OnlineEvaluatorTest {
                         .evaluatorBuildStatus(OnlineCodeEvaluator.EvaluatorBuildStatus.ENQUEUED)
                         .evaluatorId("evaluator_id")
                         .language("language")
+                        .managedCodeEvaluatorKey("managed_code_evaluator_key")
+                        .managedCodeEvaluatorSettings(
+                            OnlineCodeEvaluator.ManagedCodeEvaluatorSettings.builder()
+                                .putAdditionalProperty(
+                                    "foo",
+                                    JsonValue.from(
+                                        mapOf("is_enabled" to true, "key_name" to "key_name")
+                                    ),
+                                )
+                                .build()
+                        )
                         .build()
                 )
                 .createdAt("created_at")

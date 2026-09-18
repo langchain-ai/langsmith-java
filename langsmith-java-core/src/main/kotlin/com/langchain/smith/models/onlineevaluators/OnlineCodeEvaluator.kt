@@ -11,6 +11,7 @@ import com.langchain.smith.core.ExcludeMissing
 import com.langchain.smith.core.JsonField
 import com.langchain.smith.core.JsonMissing
 import com.langchain.smith.core.JsonValue
+import com.langchain.smith.core.toImmutable
 import com.langchain.smith.errors.LangChainInvalidDataException
 import java.util.Collections
 import java.util.Objects
@@ -27,6 +28,8 @@ private constructor(
     private val evaluatorBuildStatus: JsonField<EvaluatorBuildStatus>,
     private val evaluatorId: JsonField<String>,
     private val language: JsonField<String>,
+    private val managedCodeEvaluatorKey: JsonField<String>,
+    private val managedCodeEvaluatorSettings: JsonField<ManagedCodeEvaluatorSettings>,
     private val additionalProperties: MutableMap<String, JsonValue>,
 ) {
 
@@ -49,6 +52,12 @@ private constructor(
         @ExcludeMissing
         evaluatorId: JsonField<String> = JsonMissing.of(),
         @JsonProperty("language") @ExcludeMissing language: JsonField<String> = JsonMissing.of(),
+        @JsonProperty("managed_code_evaluator_key")
+        @ExcludeMissing
+        managedCodeEvaluatorKey: JsonField<String> = JsonMissing.of(),
+        @JsonProperty("managed_code_evaluator_settings")
+        @ExcludeMissing
+        managedCodeEvaluatorSettings: JsonField<ManagedCodeEvaluatorSettings> = JsonMissing.of(),
     ) : this(
         advancedFeaturesEnabled,
         code,
@@ -57,6 +66,8 @@ private constructor(
         evaluatorBuildStatus,
         evaluatorId,
         language,
+        managedCodeEvaluatorKey,
+        managedCodeEvaluatorSettings,
         mutableMapOf(),
     )
 
@@ -106,6 +117,20 @@ private constructor(
      *   server responded with an unexpected value).
      */
     fun language(): Optional<String> = language.getOptional("language")
+
+    /**
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
+    fun managedCodeEvaluatorKey(): Optional<String> =
+        managedCodeEvaluatorKey.getOptional("managed_code_evaluator_key")
+
+    /**
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
+    fun managedCodeEvaluatorSettings(): Optional<ManagedCodeEvaluatorSettings> =
+        managedCodeEvaluatorSettings.getOptional("managed_code_evaluator_settings")
 
     /**
      * Returns the raw JSON value of [advancedFeaturesEnabled].
@@ -169,6 +194,27 @@ private constructor(
      */
     @JsonProperty("language") @ExcludeMissing fun _language(): JsonField<String> = language
 
+    /**
+     * Returns the raw JSON value of [managedCodeEvaluatorKey].
+     *
+     * Unlike [managedCodeEvaluatorKey], this method doesn't throw if the JSON field has an
+     * unexpected type.
+     */
+    @JsonProperty("managed_code_evaluator_key")
+    @ExcludeMissing
+    fun _managedCodeEvaluatorKey(): JsonField<String> = managedCodeEvaluatorKey
+
+    /**
+     * Returns the raw JSON value of [managedCodeEvaluatorSettings].
+     *
+     * Unlike [managedCodeEvaluatorSettings], this method doesn't throw if the JSON field has an
+     * unexpected type.
+     */
+    @JsonProperty("managed_code_evaluator_settings")
+    @ExcludeMissing
+    fun _managedCodeEvaluatorSettings(): JsonField<ManagedCodeEvaluatorSettings> =
+        managedCodeEvaluatorSettings
+
     @JsonAnySetter
     private fun putAdditionalProperty(key: String, value: JsonValue) {
         additionalProperties.put(key, value)
@@ -197,6 +243,9 @@ private constructor(
         private var evaluatorBuildStatus: JsonField<EvaluatorBuildStatus> = JsonMissing.of()
         private var evaluatorId: JsonField<String> = JsonMissing.of()
         private var language: JsonField<String> = JsonMissing.of()
+        private var managedCodeEvaluatorKey: JsonField<String> = JsonMissing.of()
+        private var managedCodeEvaluatorSettings: JsonField<ManagedCodeEvaluatorSettings> =
+            JsonMissing.of()
         private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
 
         @JvmSynthetic
@@ -208,6 +257,8 @@ private constructor(
             evaluatorBuildStatus = onlineCodeEvaluator.evaluatorBuildStatus
             evaluatorId = onlineCodeEvaluator.evaluatorId
             language = onlineCodeEvaluator.language
+            managedCodeEvaluatorKey = onlineCodeEvaluator.managedCodeEvaluatorKey
+            managedCodeEvaluatorSettings = onlineCodeEvaluator.managedCodeEvaluatorSettings
             additionalProperties = onlineCodeEvaluator.additionalProperties.toMutableMap()
         }
 
@@ -298,6 +349,35 @@ private constructor(
          */
         fun language(language: JsonField<String>) = apply { this.language = language }
 
+        fun managedCodeEvaluatorKey(managedCodeEvaluatorKey: String) =
+            managedCodeEvaluatorKey(JsonField.of(managedCodeEvaluatorKey))
+
+        /**
+         * Sets [Builder.managedCodeEvaluatorKey] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.managedCodeEvaluatorKey] with a well-typed [String]
+         * value instead. This method is primarily for setting the field to an undocumented or not
+         * yet supported value.
+         */
+        fun managedCodeEvaluatorKey(managedCodeEvaluatorKey: JsonField<String>) = apply {
+            this.managedCodeEvaluatorKey = managedCodeEvaluatorKey
+        }
+
+        fun managedCodeEvaluatorSettings(
+            managedCodeEvaluatorSettings: ManagedCodeEvaluatorSettings
+        ) = managedCodeEvaluatorSettings(JsonField.of(managedCodeEvaluatorSettings))
+
+        /**
+         * Sets [Builder.managedCodeEvaluatorSettings] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.managedCodeEvaluatorSettings] with a well-typed
+         * [ManagedCodeEvaluatorSettings] value instead. This method is primarily for setting the
+         * field to an undocumented or not yet supported value.
+         */
+        fun managedCodeEvaluatorSettings(
+            managedCodeEvaluatorSettings: JsonField<ManagedCodeEvaluatorSettings>
+        ) = apply { this.managedCodeEvaluatorSettings = managedCodeEvaluatorSettings }
+
         fun additionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
             this.additionalProperties.clear()
             putAllAdditionalProperties(additionalProperties)
@@ -331,6 +411,8 @@ private constructor(
                 evaluatorBuildStatus,
                 evaluatorId,
                 language,
+                managedCodeEvaluatorKey,
+                managedCodeEvaluatorSettings,
                 additionalProperties.toMutableMap(),
             )
     }
@@ -357,6 +439,8 @@ private constructor(
         evaluatorBuildStatus().ifPresent { it.validate() }
         evaluatorId()
         language()
+        managedCodeEvaluatorKey()
+        managedCodeEvaluatorSettings().ifPresent { it.validate() }
         validated = true
     }
 
@@ -381,7 +465,9 @@ private constructor(
             (if (evaluatorBuildError.asKnown().isPresent) 1 else 0) +
             (evaluatorBuildStatus.asKnown().getOrNull()?.validity() ?: 0) +
             (if (evaluatorId.asKnown().isPresent) 1 else 0) +
-            (if (language.asKnown().isPresent) 1 else 0)
+            (if (language.asKnown().isPresent) 1 else 0) +
+            (if (managedCodeEvaluatorKey.asKnown().isPresent) 1 else 0) +
+            (managedCodeEvaluatorSettings.asKnown().getOrNull()?.validity() ?: 0)
 
     class EvaluatorBuildStatus
     @JsonCreator
@@ -537,6 +623,121 @@ private constructor(
         override fun toString() = value.toString()
     }
 
+    class ManagedCodeEvaluatorSettings
+    @JsonCreator
+    private constructor(
+        @com.fasterxml.jackson.annotation.JsonValue
+        private val additionalProperties: Map<String, JsonValue>
+    ) {
+
+        @JsonAnyGetter
+        @ExcludeMissing
+        fun _additionalProperties(): Map<String, JsonValue> = additionalProperties
+
+        fun toBuilder() = Builder().from(this)
+
+        companion object {
+
+            /**
+             * Returns a mutable builder for constructing an instance of
+             * [ManagedCodeEvaluatorSettings].
+             */
+            @JvmStatic fun builder() = Builder()
+        }
+
+        /** A builder for [ManagedCodeEvaluatorSettings]. */
+        class Builder internal constructor() {
+
+            private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
+
+            @JvmSynthetic
+            internal fun from(managedCodeEvaluatorSettings: ManagedCodeEvaluatorSettings) = apply {
+                additionalProperties =
+                    managedCodeEvaluatorSettings.additionalProperties.toMutableMap()
+            }
+
+            fun additionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
+                this.additionalProperties.clear()
+                putAllAdditionalProperties(additionalProperties)
+            }
+
+            fun putAdditionalProperty(key: String, value: JsonValue) = apply {
+                additionalProperties.put(key, value)
+            }
+
+            fun putAllAdditionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
+                this.additionalProperties.putAll(additionalProperties)
+            }
+
+            fun removeAdditionalProperty(key: String) = apply { additionalProperties.remove(key) }
+
+            fun removeAllAdditionalProperties(keys: Set<String>) = apply {
+                keys.forEach(::removeAdditionalProperty)
+            }
+
+            /**
+             * Returns an immutable instance of [ManagedCodeEvaluatorSettings].
+             *
+             * Further updates to this [Builder] will not mutate the returned instance.
+             */
+            fun build(): ManagedCodeEvaluatorSettings =
+                ManagedCodeEvaluatorSettings(additionalProperties.toImmutable())
+        }
+
+        private var validated: Boolean = false
+
+        /**
+         * Validates that the types of all values in this object match their expected types
+         * recursively.
+         *
+         * This method is _not_ forwards compatible with new types from the API for existing fields.
+         *
+         * @throws LangChainInvalidDataException if any value type in this object doesn't match its
+         *   expected type.
+         */
+        fun validate(): ManagedCodeEvaluatorSettings = apply {
+            if (validated) {
+                return@apply
+            }
+
+            validated = true
+        }
+
+        fun isValid(): Boolean =
+            try {
+                validate()
+                true
+            } catch (e: LangChainInvalidDataException) {
+                false
+            }
+
+        /**
+         * Returns a score indicating how many valid values are contained in this object
+         * recursively.
+         *
+         * Used for best match union deserialization.
+         */
+        @JvmSynthetic
+        internal fun validity(): Int =
+            additionalProperties.count { (_, value) -> !value.isNull() && !value.isMissing() }
+
+        override fun equals(other: Any?): Boolean {
+            if (this === other) {
+                return true
+            }
+
+            return other is ManagedCodeEvaluatorSettings &&
+                additionalProperties == other.additionalProperties
+        }
+
+        private val hashCode: Int by lazy { Objects.hash(additionalProperties) }
+
+        override fun hashCode(): Int = hashCode
+
+        override fun toString() =
+            "ManagedCodeEvaluatorSettings{additionalProperties=$additionalProperties}"
+    }
+
     override fun equals(other: Any?): Boolean {
         if (this === other) {
             return true
@@ -550,6 +751,8 @@ private constructor(
             evaluatorBuildStatus == other.evaluatorBuildStatus &&
             evaluatorId == other.evaluatorId &&
             language == other.language &&
+            managedCodeEvaluatorKey == other.managedCodeEvaluatorKey &&
+            managedCodeEvaluatorSettings == other.managedCodeEvaluatorSettings &&
             additionalProperties == other.additionalProperties
     }
 
@@ -562,6 +765,8 @@ private constructor(
             evaluatorBuildStatus,
             evaluatorId,
             language,
+            managedCodeEvaluatorKey,
+            managedCodeEvaluatorSettings,
             additionalProperties,
         )
     }
@@ -569,5 +774,5 @@ private constructor(
     override fun hashCode(): Int = hashCode
 
     override fun toString() =
-        "OnlineCodeEvaluator{advancedFeaturesEnabled=$advancedFeaturesEnabled, code=$code, dependencies=$dependencies, evaluatorBuildError=$evaluatorBuildError, evaluatorBuildStatus=$evaluatorBuildStatus, evaluatorId=$evaluatorId, language=$language, additionalProperties=$additionalProperties}"
+        "OnlineCodeEvaluator{advancedFeaturesEnabled=$advancedFeaturesEnabled, code=$code, dependencies=$dependencies, evaluatorBuildError=$evaluatorBuildError, evaluatorBuildStatus=$evaluatorBuildStatus, evaluatorId=$evaluatorId, language=$language, managedCodeEvaluatorKey=$managedCodeEvaluatorKey, managedCodeEvaluatorSettings=$managedCodeEvaluatorSettings, additionalProperties=$additionalProperties}"
 }

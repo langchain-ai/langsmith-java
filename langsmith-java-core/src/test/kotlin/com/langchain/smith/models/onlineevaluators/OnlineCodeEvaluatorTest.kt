@@ -3,6 +3,7 @@
 package com.langchain.smith.models.onlineevaluators
 
 import com.fasterxml.jackson.module.kotlin.jacksonTypeRef
+import com.langchain.smith.core.JsonValue
 import com.langchain.smith.core.jsonMapper
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
@@ -20,6 +21,15 @@ internal class OnlineCodeEvaluatorTest {
                 .evaluatorBuildStatus(OnlineCodeEvaluator.EvaluatorBuildStatus.ENQUEUED)
                 .evaluatorId("evaluator_id")
                 .language("language")
+                .managedCodeEvaluatorKey("managed_code_evaluator_key")
+                .managedCodeEvaluatorSettings(
+                    OnlineCodeEvaluator.ManagedCodeEvaluatorSettings.builder()
+                        .putAdditionalProperty(
+                            "foo",
+                            JsonValue.from(mapOf("is_enabled" to true, "key_name" to "key_name")),
+                        )
+                        .build()
+                )
                 .build()
 
         assertThat(onlineCodeEvaluator.advancedFeaturesEnabled()).contains(true)
@@ -30,6 +40,17 @@ internal class OnlineCodeEvaluatorTest {
             .contains(OnlineCodeEvaluator.EvaluatorBuildStatus.ENQUEUED)
         assertThat(onlineCodeEvaluator.evaluatorId()).contains("evaluator_id")
         assertThat(onlineCodeEvaluator.language()).contains("language")
+        assertThat(onlineCodeEvaluator.managedCodeEvaluatorKey())
+            .contains("managed_code_evaluator_key")
+        assertThat(onlineCodeEvaluator.managedCodeEvaluatorSettings())
+            .contains(
+                OnlineCodeEvaluator.ManagedCodeEvaluatorSettings.builder()
+                    .putAdditionalProperty(
+                        "foo",
+                        JsonValue.from(mapOf("is_enabled" to true, "key_name" to "key_name")),
+                    )
+                    .build()
+            )
     }
 
     @Test
@@ -44,6 +65,15 @@ internal class OnlineCodeEvaluatorTest {
                 .evaluatorBuildStatus(OnlineCodeEvaluator.EvaluatorBuildStatus.ENQUEUED)
                 .evaluatorId("evaluator_id")
                 .language("language")
+                .managedCodeEvaluatorKey("managed_code_evaluator_key")
+                .managedCodeEvaluatorSettings(
+                    OnlineCodeEvaluator.ManagedCodeEvaluatorSettings.builder()
+                        .putAdditionalProperty(
+                            "foo",
+                            JsonValue.from(mapOf("is_enabled" to true, "key_name" to "key_name")),
+                        )
+                        .build()
+                )
                 .build()
 
         val roundtrippedOnlineCodeEvaluator =
