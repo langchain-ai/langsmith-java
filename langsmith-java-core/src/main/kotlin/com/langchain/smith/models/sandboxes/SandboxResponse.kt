@@ -147,9 +147,7 @@ private constructor(
 
     /**
      * AccessDelegation is the LangSmith access this sandbox was granted, absent when it has none.
-     * Either mode can appear: a grant is reported as requested, except that INHERIT requested by a
-     * creator who is itself delegated is stored as EXPLICIT carrying that creator's own ceiling, so
-     * the value always describes what this sandbox can reach rather than what was asked for.
+     * It is reported exactly as it was requested at create.
      *
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
@@ -573,10 +571,7 @@ private constructor(
 
         /**
          * AccessDelegation is the LangSmith access this sandbox was granted, absent when it has
-         * none. Either mode can appear: a grant is reported as requested, except that INHERIT
-         * requested by a creator who is itself delegated is stored as EXPLICIT carrying that
-         * creator's own ceiling, so the value always describes what this sandbox can reach rather
-         * than what was asked for.
+         * none. It is reported exactly as it was requested at create.
          */
         fun accessDelegation(accessDelegation: AccessDelegation) =
             accessDelegation(JsonField.of(accessDelegation))
@@ -991,9 +986,7 @@ private constructor(
 
     /**
      * AccessDelegation is the LangSmith access this sandbox was granted, absent when it has none.
-     * Either mode can appear: a grant is reported as requested, except that INHERIT requested by a
-     * creator who is itself delegated is stored as EXPLICIT carrying that creator's own ceiling, so
-     * the value always describes what this sandbox can reach rather than what was asked for.
+     * It is reported exactly as it was requested at create.
      */
     class AccessDelegation
     @JsonCreator(mode = JsonCreator.Mode.DISABLED)
