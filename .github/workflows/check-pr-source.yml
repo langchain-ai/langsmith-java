@@ -1,0 +1,45 @@
+name: Check PR source
+
+# Production only receives code through the stlc promotion PR (head
+# `stainless/release`, built from the staging repo's main) and the
+# release-please PR it triggers. Anything merged to production main by another
+# route is invisible to code generation and reorders history under
+# release-please, which then drops the promoted commits from the changelog.
+# Dependency bumps included: they land in the staging repo and ride the
+# promotion like everything else.
+#
+# Escape hatch for an urgent production fix: add the `skip-pr-source-check`
+# label. Afterwards run "stlc: sync from production" in the staging repo so
+# staging catches up before the next promotion.
+
+on:
+  pull_request:
+    branches: [main]
+    types: [opened, synchronize, reopened, labeled, unlabeled]
+
+permissions: {}
+
+jobs:
+  check:
+    name: PR comes from staging
+    if: github.repository == 'langchain-ai/langsmith-java'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check the head branch
+        env:
+          HEAD: ${{ github.head_ref }}
+          # A fork can name its branch anything, so the head must be in this repo.
+          SAME_REPO: ${{ github.event.pull_request.head.repo.full_name == github.repository }}
+          SKIP: ${{ contains(github.event.pull_request.labels.*.name, 'skip-pr-source-check') }}
+        run: |
+          if [ "$SKIP" = "true" ]; then
+            echo "::warning::skip-pr-source-check label present. After merging, run 'stlc: sync from production' in langsmith-java-staging so staging catches up."
+            exit 0
+          fi
+          if [ "$SAME_REPO" = "true" ]; then
+            case "$HEAD" in
+              stainless/release|release-please--branches--main) exit 0 ;;
+            esac
+          fi
+          echo "::error::PRs to main must come from stainless/release. Open the change against langsmith-java-staging instead, or add the skip-pr-source-check label for an urgent production fix."
+          exit 1
