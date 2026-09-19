@@ -18,6 +18,7 @@ internal class OnlineEvaluatorSpendParamsTest {
             .groupBy("group_by")
             .addResourceId("string")
             .sessionId("session_id")
+            .addTagValueId("string")
             .type("type")
             .build()
     }
@@ -33,6 +34,7 @@ internal class OnlineEvaluatorSpendParamsTest {
                 .groupBy("group_by")
                 .addResourceId("string")
                 .sessionId("session_id")
+                .addTagValueId("string")
                 .type("type")
                 .build()
 
@@ -48,6 +50,7 @@ internal class OnlineEvaluatorSpendParamsTest {
                     .put("group_by", "group_by")
                     .put("resource_id", "string")
                     .put("session_id", "session_id")
+                    .put("tag_value_id", "string")
                     .put("type", "type")
                     .build()
             )

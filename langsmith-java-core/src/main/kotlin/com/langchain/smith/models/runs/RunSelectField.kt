@@ -110,6 +110,8 @@ class RunSelectField @JsonCreator private constructor(private val value: JsonFie
 
         @JvmField val FEEDBACK_STATS = of("FEEDBACK_STATS")
 
+        @JvmField val LS_USER_ID = of("LS_USER_ID")
+
         @JvmStatic fun of(value: String) = RunSelectField(JsonField.of(value))
     }
 
@@ -160,6 +162,7 @@ class RunSelectField @JsonCreator private constructor(private val value: JsonFie
         LAST_QUEUED_AT,
         SHARE_URL,
         FEEDBACK_STATS,
+        LS_USER_ID,
     }
 
     /**
@@ -217,6 +220,7 @@ class RunSelectField @JsonCreator private constructor(private val value: JsonFie
         LAST_QUEUED_AT,
         SHARE_URL,
         FEEDBACK_STATS,
+        LS_USER_ID,
         /**
          * An enum member indicating that [RunSelectField] was instantiated with an unknown value.
          */
@@ -277,6 +281,7 @@ class RunSelectField @JsonCreator private constructor(private val value: JsonFie
             LAST_QUEUED_AT -> Value.LAST_QUEUED_AT
             SHARE_URL -> Value.SHARE_URL
             FEEDBACK_STATS -> Value.FEEDBACK_STATS
+            LS_USER_ID -> Value.LS_USER_ID
             else -> Value._UNKNOWN
         }
 
@@ -335,6 +340,7 @@ class RunSelectField @JsonCreator private constructor(private val value: JsonFie
             LAST_QUEUED_AT -> Known.LAST_QUEUED_AT
             SHARE_URL -> Known.SHARE_URL
             FEEDBACK_STATS -> Known.FEEDBACK_STATS
+            LS_USER_ID -> Known.LS_USER_ID
             else -> throw LangChainInvalidDataException("Unknown RunSelectField: $value")
         }
 

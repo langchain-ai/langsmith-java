@@ -19,7 +19,7 @@ import java.util.Objects
 import java.util.Optional
 import kotlin.jvm.optionals.getOrNull
 
-/** Session cluster job */
+/** An Insights job. */
 class InsightListResponse
 @JsonCreator(mode = JsonCreator.Mode.DISABLED)
 private constructor(

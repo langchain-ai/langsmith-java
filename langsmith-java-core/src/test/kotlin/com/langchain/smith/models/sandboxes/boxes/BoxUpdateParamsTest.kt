@@ -46,37 +46,18 @@ internal class BoxUpdateParamsTest {
                             )
                             .build()
                     )
+                    .description("description")
                     .addNoProxy("string")
                     .addRule(
                         BoxUpdateParams.ProxyConfig.Rule.builder()
                             .bodyName("name")
                             .aws(
-                                BoxUpdateParams.ProxyConfig.Rule.Aws.builder()
-                                    .accessKeyId(
-                                        BoxUpdateParams.ProxyConfig.Rule.Aws.AccessKeyId.builder()
-                                            .type(
-                                                BoxUpdateParams.ProxyConfig.Rule.Aws.AccessKeyId
-                                                    .Type
-                                                    .PLAINTEXT
-                                            )
-                                            .isSet(true)
-                                            .value("value")
-                                            .build()
-                                    )
-                                    .secretAccessKey(
-                                        BoxUpdateParams.ProxyConfig.Rule.Aws.SecretAccessKey
-                                            .builder()
-                                            .type(
-                                                BoxUpdateParams.ProxyConfig.Rule.Aws.SecretAccessKey
-                                                    .Type
-                                                    .PLAINTEXT
-                                            )
-                                            .isSet(true)
-                                            .value("value")
-                                            .build()
-                                    )
+                                BoxUpdateParams.ProxyConfig.Rule.Aws.SandboxesProxyAwsRoleConfig
+                                    .builder()
+                                    .roleArn("x")
                                     .build()
                             )
+                            .description("description")
                             .enabled(true)
                             .envVars(
                                 BoxUpdateParams.ProxyConfig.Rule.EnvVars.builder()
@@ -114,6 +95,17 @@ internal class BoxUpdateParamsTest {
                             .type("type")
                             .build()
                     )
+                    .build()
+            )
+            .runConfig(
+                BoxUpdateParams.RunConfig.builder()
+                    .envVars(
+                        BoxUpdateParams.RunConfig.EnvVars.builder()
+                            .putAdditionalProperty("foo", JsonValue.from("string"))
+                            .build()
+                    )
+                    .user("user")
+                    .workDir("work_dir")
                     .build()
             )
             .addTagValueId("string")
@@ -168,39 +160,18 @@ internal class BoxUpdateParamsTest {
                                 )
                                 .build()
                         )
+                        .description("description")
                         .addNoProxy("string")
                         .addRule(
                             BoxUpdateParams.ProxyConfig.Rule.builder()
                                 .bodyName("name")
                                 .aws(
-                                    BoxUpdateParams.ProxyConfig.Rule.Aws.builder()
-                                        .accessKeyId(
-                                            BoxUpdateParams.ProxyConfig.Rule.Aws.AccessKeyId
-                                                .builder()
-                                                .type(
-                                                    BoxUpdateParams.ProxyConfig.Rule.Aws.AccessKeyId
-                                                        .Type
-                                                        .PLAINTEXT
-                                                )
-                                                .isSet(true)
-                                                .value("value")
-                                                .build()
-                                        )
-                                        .secretAccessKey(
-                                            BoxUpdateParams.ProxyConfig.Rule.Aws.SecretAccessKey
-                                                .builder()
-                                                .type(
-                                                    BoxUpdateParams.ProxyConfig.Rule.Aws
-                                                        .SecretAccessKey
-                                                        .Type
-                                                        .PLAINTEXT
-                                                )
-                                                .isSet(true)
-                                                .value("value")
-                                                .build()
-                                        )
+                                    BoxUpdateParams.ProxyConfig.Rule.Aws.SandboxesProxyAwsRoleConfig
+                                        .builder()
+                                        .roleArn("x")
                                         .build()
                                 )
+                                .description("description")
                                 .enabled(true)
                                 .envVars(
                                     BoxUpdateParams.ProxyConfig.Rule.EnvVars.builder()
@@ -240,6 +211,17 @@ internal class BoxUpdateParamsTest {
                                 .type("type")
                                 .build()
                         )
+                        .build()
+                )
+                .runConfig(
+                    BoxUpdateParams.RunConfig.builder()
+                        .envVars(
+                            BoxUpdateParams.RunConfig.EnvVars.builder()
+                                .putAdditionalProperty("foo", JsonValue.from("string"))
+                                .build()
+                        )
+                        .user("user")
+                        .workDir("work_dir")
                         .build()
                 )
                 .addTagValueId("string")
@@ -282,37 +264,18 @@ internal class BoxUpdateParamsTest {
                             )
                             .build()
                     )
+                    .description("description")
                     .addNoProxy("string")
                     .addRule(
                         BoxUpdateParams.ProxyConfig.Rule.builder()
                             .bodyName("name")
                             .aws(
-                                BoxUpdateParams.ProxyConfig.Rule.Aws.builder()
-                                    .accessKeyId(
-                                        BoxUpdateParams.ProxyConfig.Rule.Aws.AccessKeyId.builder()
-                                            .type(
-                                                BoxUpdateParams.ProxyConfig.Rule.Aws.AccessKeyId
-                                                    .Type
-                                                    .PLAINTEXT
-                                            )
-                                            .isSet(true)
-                                            .value("value")
-                                            .build()
-                                    )
-                                    .secretAccessKey(
-                                        BoxUpdateParams.ProxyConfig.Rule.Aws.SecretAccessKey
-                                            .builder()
-                                            .type(
-                                                BoxUpdateParams.ProxyConfig.Rule.Aws.SecretAccessKey
-                                                    .Type
-                                                    .PLAINTEXT
-                                            )
-                                            .isSet(true)
-                                            .value("value")
-                                            .build()
-                                    )
+                                BoxUpdateParams.ProxyConfig.Rule.Aws.SandboxesProxyAwsRoleConfig
+                                    .builder()
+                                    .roleArn("x")
                                     .build()
                             )
+                            .description("description")
                             .enabled(true)
                             .envVars(
                                 BoxUpdateParams.ProxyConfig.Rule.EnvVars.builder()
@@ -350,6 +313,18 @@ internal class BoxUpdateParamsTest {
                             .type("type")
                             .build()
                     )
+                    .build()
+            )
+        assertThat(body.runConfig())
+            .contains(
+                BoxUpdateParams.RunConfig.builder()
+                    .envVars(
+                        BoxUpdateParams.RunConfig.EnvVars.builder()
+                            .putAdditionalProperty("foo", JsonValue.from("string"))
+                            .build()
+                    )
+                    .user("user")
+                    .workDir("work_dir")
                     .build()
             )
         assertThat(body.tagValueIds().getOrNull()).containsExactly("string")

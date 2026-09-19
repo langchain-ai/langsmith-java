@@ -121,6 +121,7 @@ internal class ExampleWithRunsChTest {
                 .sourceRunId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                 .sourceRunStartTime(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
                 .sourceSessionId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                .sourceThreadId("source_thread_id")
                 .sourceTraceId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                 .build()
 
@@ -238,6 +239,7 @@ internal class ExampleWithRunsChTest {
             .contains(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
         assertThat(exampleWithRunsCh.sourceSessionId())
             .contains("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+        assertThat(exampleWithRunsCh.sourceThreadId()).contains("source_thread_id")
         assertThat(exampleWithRunsCh.sourceTraceId())
             .contains("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
     }
@@ -352,6 +354,7 @@ internal class ExampleWithRunsChTest {
                 .sourceRunId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                 .sourceRunStartTime(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
                 .sourceSessionId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                .sourceThreadId("source_thread_id")
                 .sourceTraceId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                 .build()
 

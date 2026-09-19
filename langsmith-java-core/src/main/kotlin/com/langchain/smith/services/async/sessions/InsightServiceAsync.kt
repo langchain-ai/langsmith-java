@@ -17,6 +17,7 @@ import com.langchain.smith.models.sessions.insights.InsightRetrieveRunsParams
 import com.langchain.smith.models.sessions.insights.InsightRetrieveRunsResponse
 import com.langchain.smith.models.sessions.insights.InsightUpdateParams
 import com.langchain.smith.models.sessions.insights.InsightUpdateResponse
+import com.langchain.smith.services.async.sessions.insights.ConfigServiceAsync
 import java.util.concurrent.CompletableFuture
 import java.util.function.Consumer
 
@@ -34,7 +35,9 @@ interface InsightServiceAsync {
      */
     fun withOptions(modifier: Consumer<ClientOptions.Builder>): InsightServiceAsync
 
-    /** Create an insights job. */
+    fun configs(): ConfigServiceAsync
+
+    /** Create an Insights job for a project. */
     fun create(
         sessionId: String,
         params: InsightCreateParams,
@@ -58,7 +61,7 @@ interface InsightServiceAsync {
         requestOptions: RequestOptions = RequestOptions.none(),
     ): CompletableFuture<InsightCreateResponse>
 
-    /** Update a session cluster job. */
+    /** Update an Insights job for a project. */
     fun update(
         jobId: String,
         params: InsightUpdateParams,
@@ -82,7 +85,7 @@ interface InsightServiceAsync {
         requestOptions: RequestOptions = RequestOptions.none(),
     ): CompletableFuture<InsightUpdateResponse>
 
-    /** Get all clusters for a session. */
+    /** List Insights jobs for a project. */
     fun list(sessionId: String): CompletableFuture<InsightListPageAsync> =
         list(sessionId, InsightListParams.none())
 
@@ -117,7 +120,7 @@ interface InsightServiceAsync {
     ): CompletableFuture<InsightListPageAsync> =
         list(sessionId, InsightListParams.none(), requestOptions)
 
-    /** Delete a session cluster job. */
+    /** Delete an Insights job for a project. */
     fun delete(
         jobId: String,
         params: InsightDeleteParams,
@@ -141,7 +144,7 @@ interface InsightServiceAsync {
         requestOptions: RequestOptions = RequestOptions.none(),
     ): CompletableFuture<InsightDeleteResponse>
 
-    /** Get a specific cluster job for a session. */
+    /** Get an Insights job for a project. */
     fun retrieveJob(
         jobId: String,
         params: InsightRetrieveJobParams,
@@ -167,7 +170,7 @@ interface InsightServiceAsync {
         requestOptions: RequestOptions = RequestOptions.none(),
     ): CompletableFuture<InsightRetrieveJobResponse>
 
-    /** Get all runs for a cluster job, optionally filtered by cluster. */
+    /** List runs analyzed by an Insights job, optionally filtered by report cluster. */
     fun retrieveRuns(
         jobId: String,
         params: InsightRetrieveRunsParams,
@@ -206,6 +209,8 @@ interface InsightServiceAsync {
         fun withOptions(
             modifier: Consumer<ClientOptions.Builder>
         ): InsightServiceAsync.WithRawResponse
+
+        fun configs(): ConfigServiceAsync.WithRawResponse
 
         /**
          * Returns a raw HTTP response for `post /api/v1/sessions/{session_id}/insights`, but is

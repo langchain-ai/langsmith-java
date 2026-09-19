@@ -130,6 +130,8 @@ internal class ItemServiceTest {
                     .queueId("queue_id")
                     .status("status")
                     .endTime("end_time")
+                    .maxStartTime(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
+                    .minStartTime(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
                     .startTime("start_time")
                     .build()
             )

@@ -35,8 +35,23 @@ internal class OnlineEvaluatorServiceAsyncTest {
                 CreateOnlineEvaluatorRequest.builder()
                     .codeEvaluator(
                         CreateOnlineCodeEvaluatorRequest.builder()
+                            .advancedFeaturesEnabled(true)
                             .code("code")
+                            .dependencies("dependencies")
                             .language("language")
+                            .managedCodeEvaluatorKey("managed_code_evaluator_key")
+                            .managedCodeEvaluatorSettings(
+                                CreateOnlineCodeEvaluatorRequest.ManagedCodeEvaluatorSettings
+                                    .builder()
+                                    .putAdditionalProperty(
+                                        "foo",
+                                        JsonValue.from(
+                                            mapOf("is_enabled" to true, "key_name" to "key_name")
+                                        ),
+                                    )
+                                    .build()
+                            )
+                            .requireAttachments(true)
                             .build()
                     )
                     .llmEvaluator(
@@ -90,8 +105,26 @@ internal class OnlineEvaluatorServiceAsyncTest {
                         UpdateOnlineEvaluatorRequest.builder()
                             .codeEvaluator(
                                 UpdateOnlineCodeEvaluatorRequest.builder()
+                                    .advancedFeaturesEnabled(true)
                                     .code("code")
+                                    .dependencies("dependencies")
                                     .language("language")
+                                    .managedCodeEvaluatorSettings(
+                                        UpdateOnlineCodeEvaluatorRequest
+                                            .ManagedCodeEvaluatorSettings
+                                            .builder()
+                                            .putAdditionalProperty(
+                                                "foo",
+                                                JsonValue.from(
+                                                    mapOf(
+                                                        "is_enabled" to true,
+                                                        "key_name" to "key_name",
+                                                    )
+                                                ),
+                                            )
+                                            .build()
+                                    )
+                                    .requireAttachments(true)
                                     .build()
                             )
                             .llmEvaluator(
@@ -193,6 +226,7 @@ internal class OnlineEvaluatorServiceAsyncTest {
                     .groupBy("group_by")
                     .addResourceId("string")
                     .sessionId("session_id")
+                    .addTagValueId("string")
                     .type("type")
                     .build()
             )

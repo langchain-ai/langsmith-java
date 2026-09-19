@@ -12,7 +12,7 @@ import java.util.Objects
 import java.util.Optional
 import kotlin.jvm.optionals.getOrNull
 
-/** Delete a session cluster job. */
+/** Delete an Insights job for a project. */
 class InsightDeleteParams
 private constructor(
     private val sessionId: String,

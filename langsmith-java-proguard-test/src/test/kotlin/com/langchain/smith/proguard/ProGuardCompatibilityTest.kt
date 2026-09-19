@@ -52,6 +52,8 @@ internal class ProGuardCompatibilityTest {
             LangsmithOkHttpClient.builder().apiKey("My API Key").tenantId("My Tenant ID").build()
 
         assertThat(client).isNotNull()
+        assertThat(client.productFeedback()).isNotNull()
+        assertThat(client.fleet()).isNotNull()
         assertThat(client.sessions()).isNotNull()
         assertThat(client.examples()).isNotNull()
         assertThat(client.datasets()).isNotNull()

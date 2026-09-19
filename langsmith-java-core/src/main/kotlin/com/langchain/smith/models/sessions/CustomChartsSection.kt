@@ -258,10 +258,14 @@ private constructor(
 
         /**
          * Alias for calling [addChart] with
-         * `Chart.ofSingleCustomChartResponse(singleCustomChartResponse)`.
+         * `Chart.ofSingleCustomChartResponseSerialized(singleCustomChartResponseSerialized)`.
          */
-        fun addChart(singleCustomChartResponse: Chart.SingleCustomChartResponse) =
-            addChart(Chart.ofSingleCustomChartResponse(singleCustomChartResponse))
+        fun addChart(
+            singleCustomChartResponseSerialized: Chart.SingleCustomChartResponseSerialized
+        ) =
+            addChart(
+                Chart.ofSingleCustomChartResponseSerialized(singleCustomChartResponseSerialized)
+            )
 
         /** Alias for calling [addChart] with `Chart.ofText(text)`. */
         fun addChart(text: Chart.Text) = addChart(Chart.ofText(text))
@@ -468,22 +472,24 @@ private constructor(
     @JsonSerialize(using = Chart.Serializer::class)
     class Chart
     private constructor(
-        private val singleCustomChartResponse: SingleCustomChartResponse? = null,
+        private val singleCustomChartResponseSerialized: SingleCustomChartResponseSerialized? =
+            null,
         private val text: Text? = null,
         private val _json: JsonValue? = null,
     ) {
 
-        fun singleCustomChartResponse(): Optional<SingleCustomChartResponse> =
-            Optional.ofNullable(singleCustomChartResponse)
+        fun singleCustomChartResponseSerialized(): Optional<SingleCustomChartResponseSerialized> =
+            Optional.ofNullable(singleCustomChartResponseSerialized)
 
         fun text(): Optional<Text> = Optional.ofNullable(text)
 
-        fun isSingleCustomChartResponse(): Boolean = singleCustomChartResponse != null
+        fun isSingleCustomChartResponseSerialized(): Boolean =
+            singleCustomChartResponseSerialized != null
 
         fun isText(): Boolean = text != null
 
-        fun asSingleCustomChartResponse(): SingleCustomChartResponse =
-            singleCustomChartResponse.getOrThrow("singleCustomChartResponse")
+        fun asSingleCustomChartResponseSerialized(): SingleCustomChartResponseSerialized =
+            singleCustomChartResponseSerialized.getOrThrow("singleCustomChartResponseSerialized")
 
         fun asText(): Text = text.getOrThrow("text")
 
@@ -501,8 +507,8 @@ private constructor(
          *
          * Optional<String> result = chart.accept(new Chart.Visitor<Optional<String>>() {
          *     @Override
-         *     public Optional<String> visitSingleCustomChartResponse(SingleCustomChartResponse singleCustomChartResponse) {
-         *         return Optional.of(singleCustomChartResponse.toString());
+         *     public Optional<String> visitSingleCustomChartResponseSerialized(SingleCustomChartResponseSerialized singleCustomChartResponseSerialized) {
+         *         return Optional.of(singleCustomChartResponseSerialized.toString());
          *     }
          *
          *     // ...
@@ -520,8 +526,10 @@ private constructor(
          */
         fun <T> accept(visitor: Visitor<T>): T =
             when {
-                singleCustomChartResponse != null ->
-                    visitor.visitSingleCustomChartResponse(singleCustomChartResponse)
+                singleCustomChartResponseSerialized != null ->
+                    visitor.visitSingleCustomChartResponseSerialized(
+                        singleCustomChartResponseSerialized
+                    )
                 text != null -> visitor.visitText(text)
                 else -> visitor.unknown(_json)
             }
@@ -544,10 +552,10 @@ private constructor(
 
             accept(
                 object : Visitor<Unit> {
-                    override fun visitSingleCustomChartResponse(
-                        singleCustomChartResponse: SingleCustomChartResponse
+                    override fun visitSingleCustomChartResponseSerialized(
+                        singleCustomChartResponseSerialized: SingleCustomChartResponseSerialized
                     ) {
-                        singleCustomChartResponse.validate()
+                        singleCustomChartResponseSerialized.validate()
                     }
 
                     override fun visitText(text: Text) {
@@ -576,9 +584,9 @@ private constructor(
         internal fun validity(): Int =
             accept(
                 object : Visitor<Int> {
-                    override fun visitSingleCustomChartResponse(
-                        singleCustomChartResponse: SingleCustomChartResponse
-                    ) = singleCustomChartResponse.validity()
+                    override fun visitSingleCustomChartResponseSerialized(
+                        singleCustomChartResponseSerialized: SingleCustomChartResponseSerialized
+                    ) = singleCustomChartResponseSerialized.validity()
 
                     override fun visitText(text: Text) = text.validity()
 
@@ -592,16 +600,16 @@ private constructor(
             }
 
             return other is Chart &&
-                singleCustomChartResponse == other.singleCustomChartResponse &&
+                singleCustomChartResponseSerialized == other.singleCustomChartResponseSerialized &&
                 text == other.text
         }
 
-        override fun hashCode(): Int = Objects.hash(singleCustomChartResponse, text)
+        override fun hashCode(): Int = Objects.hash(singleCustomChartResponseSerialized, text)
 
         override fun toString(): String =
             when {
-                singleCustomChartResponse != null ->
-                    "Chart{singleCustomChartResponse=$singleCustomChartResponse}"
+                singleCustomChartResponseSerialized != null ->
+                    "Chart{singleCustomChartResponseSerialized=$singleCustomChartResponseSerialized}"
                 text != null -> "Chart{text=$text}"
                 _json != null -> "Chart{_unknown=$_json}"
                 else -> throw IllegalStateException("Invalid Chart")
@@ -610,8 +618,9 @@ private constructor(
         companion object {
 
             @JvmStatic
-            fun ofSingleCustomChartResponse(singleCustomChartResponse: SingleCustomChartResponse) =
-                Chart(singleCustomChartResponse = singleCustomChartResponse)
+            fun ofSingleCustomChartResponseSerialized(
+                singleCustomChartResponseSerialized: SingleCustomChartResponseSerialized
+            ) = Chart(singleCustomChartResponseSerialized = singleCustomChartResponseSerialized)
 
             @JvmStatic fun ofText(text: Text) = Chart(text = text)
         }
@@ -619,8 +628,8 @@ private constructor(
         /** An interface that defines how to map each variant of [Chart] to a value of type [T]. */
         interface Visitor<out T> {
 
-            fun visitSingleCustomChartResponse(
-                singleCustomChartResponse: SingleCustomChartResponse
+            fun visitSingleCustomChartResponseSerialized(
+                singleCustomChartResponseSerialized: SingleCustomChartResponseSerialized
             ): T
 
             fun visitText(text: Text): T
@@ -653,9 +662,9 @@ private constructor(
                     } ?: Chart(_json = json)
                 }
 
-                return tryDeserialize(node, jacksonTypeRef<SingleCustomChartResponse>())?.let {
-                    Chart(singleCustomChartResponse = it, _json = json)
-                } ?: Chart(_json = json)
+                return tryDeserialize(node, jacksonTypeRef<SingleCustomChartResponseSerialized>())
+                    ?.let { Chart(singleCustomChartResponseSerialized = it, _json = json) }
+                    ?: Chart(_json = json)
             }
         }
 
@@ -667,8 +676,8 @@ private constructor(
                 provider: SerializerProvider,
             ) {
                 when {
-                    value.singleCustomChartResponse != null ->
-                        generator.writeObject(value.singleCustomChartResponse)
+                    value.singleCustomChartResponseSerialized != null ->
+                        generator.writeObject(value.singleCustomChartResponseSerialized)
                     value.text != null -> generator.writeObject(value.text)
                     value._json != null -> generator.writeObject(value._json)
                     else -> throw IllegalStateException("Invalid Chart")
@@ -676,7 +685,7 @@ private constructor(
             }
         }
 
-        class SingleCustomChartResponse
+        class SingleCustomChartResponseSerialized
         @JsonCreator(mode = JsonCreator.Mode.DISABLED)
         private constructor(
             private val id: JsonField<String>,
@@ -879,7 +888,7 @@ private constructor(
 
                 /**
                  * Returns a mutable builder for constructing an instance of
-                 * [SingleCustomChartResponse].
+                 * [SingleCustomChartResponseSerialized].
                  *
                  * The following fields are required:
                  * ```java
@@ -894,7 +903,7 @@ private constructor(
                 @JvmStatic fun builder() = Builder()
             }
 
-            /** A builder for [SingleCustomChartResponse]. */
+            /** A builder for [SingleCustomChartResponseSerialized]. */
             class Builder internal constructor() {
 
                 private var id: JsonField<String>? = null
@@ -909,18 +918,20 @@ private constructor(
                 private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
 
                 @JvmSynthetic
-                internal fun from(singleCustomChartResponse: SingleCustomChartResponse) = apply {
-                    id = singleCustomChartResponse.id
-                    chartType = singleCustomChartResponse.chartType
-                    data = singleCustomChartResponse.data.map { it.toMutableList() }
-                    index = singleCustomChartResponse.index
-                    series = singleCustomChartResponse.series.map { it.toMutableList() }
-                    title = singleCustomChartResponse.title
-                    commonFilters = singleCustomChartResponse.commonFilters
-                    description = singleCustomChartResponse.description
-                    metadata = singleCustomChartResponse.metadata
+                internal fun from(
+                    singleCustomChartResponseSerialized: SingleCustomChartResponseSerialized
+                ) = apply {
+                    id = singleCustomChartResponseSerialized.id
+                    chartType = singleCustomChartResponseSerialized.chartType
+                    data = singleCustomChartResponseSerialized.data.map { it.toMutableList() }
+                    index = singleCustomChartResponseSerialized.index
+                    series = singleCustomChartResponseSerialized.series.map { it.toMutableList() }
+                    title = singleCustomChartResponseSerialized.title
+                    commonFilters = singleCustomChartResponseSerialized.commonFilters
+                    description = singleCustomChartResponseSerialized.description
+                    metadata = singleCustomChartResponseSerialized.metadata
                     additionalProperties =
-                        singleCustomChartResponse.additionalProperties.toMutableMap()
+                        singleCustomChartResponseSerialized.additionalProperties.toMutableMap()
                 }
 
                 fun id(id: String) = id(JsonField.of(id))
@@ -1092,7 +1103,7 @@ private constructor(
                 }
 
                 /**
-                 * Returns an immutable instance of [SingleCustomChartResponse].
+                 * Returns an immutable instance of [SingleCustomChartResponseSerialized].
                  *
                  * Further updates to this [Builder] will not mutate the returned instance.
                  *
@@ -1108,8 +1119,8 @@ private constructor(
                  *
                  * @throws IllegalStateException if any required field is unset.
                  */
-                fun build(): SingleCustomChartResponse =
-                    SingleCustomChartResponse(
+                fun build(): SingleCustomChartResponseSerialized =
+                    SingleCustomChartResponseSerialized(
                         checkRequired("id", id),
                         checkRequired("chartType", chartType),
                         checkRequired("data", data).map { it.toImmutable() },
@@ -1135,7 +1146,7 @@ private constructor(
              * @throws LangChainInvalidDataException if any value type in this object doesn't match
              *   its expected type.
              */
-            fun validate(): SingleCustomChartResponse = apply {
+            fun validate(): SingleCustomChartResponseSerialized = apply {
                 if (validated) {
                     return@apply
                 }
@@ -2550,6 +2561,20 @@ private constructor(
 
                     /**
                      * Alias for calling [metricDefinition] with
+                     * `MetricDefinition.ofCustomChartFeedbackCountMetric(customChartFeedbackCountMetric)`.
+                     */
+                    fun metricDefinition(
+                        customChartFeedbackCountMetric:
+                            MetricDefinition.CustomChartFeedbackCountMetric
+                    ) =
+                        metricDefinition(
+                            MetricDefinition.ofCustomChartFeedbackCountMetric(
+                                customChartFeedbackCountMetric
+                            )
+                        )
+
+                    /**
+                     * Alias for calling [metricDefinition] with
                      * `MetricDefinition.ofCustomChartMetricCount(customChartMetricCount)`.
                      */
                     fun metricDefinition(
@@ -2582,6 +2607,20 @@ private constructor(
                     ) =
                         metricDefinition(
                             MetricDefinition.ofCustomChartMetricScalar(customChartMetricScalar)
+                        )
+
+                    /**
+                     * Alias for calling [metricDefinition] with
+                     * `MetricDefinition.ofCustomChartFeedbackScoreMetricPercentile(customChartFeedbackScoreMetricPercentile)`.
+                     */
+                    fun metricDefinition(
+                        customChartFeedbackScoreMetricPercentile:
+                            MetricDefinition.CustomChartFeedbackScoreMetricPercentile
+                    ) =
+                        metricDefinition(
+                            MetricDefinition.ofCustomChartFeedbackScoreMetricPercentile(
+                                customChartFeedbackScoreMetricPercentile
+                            )
                         )
 
                     /**
@@ -6020,15 +6059,23 @@ private constructor(
                 @JsonSerialize(using = MetricDefinition.Serializer::class)
                 class MetricDefinition
                 private constructor(
+                    private val customChartFeedbackCountMetric: CustomChartFeedbackCountMetric? =
+                        null,
                     private val customChartMetricCount: CustomChartMetricCount? = null,
                     private val customChartFeedbackScoreMetricScalar:
                         CustomChartFeedbackScoreMetricScalar? =
                         null,
                     private val customChartMetricScalar: CustomChartMetricScalar? = null,
+                    private val customChartFeedbackScoreMetricPercentile:
+                        CustomChartFeedbackScoreMetricPercentile? =
+                        null,
                     private val customChartMetricPercentile: CustomChartMetricPercentile? = null,
                     private val customChartMetricRatioOutput: CustomChartMetricRatioOutput? = null,
                     private val _json: JsonValue? = null,
                 ) {
+
+                    fun customChartFeedbackCountMetric(): Optional<CustomChartFeedbackCountMetric> =
+                        Optional.ofNullable(customChartFeedbackCountMetric)
 
                     fun customChartMetricCount(): Optional<CustomChartMetricCount> =
                         Optional.ofNullable(customChartMetricCount)
@@ -6040,11 +6087,18 @@ private constructor(
                     fun customChartMetricScalar(): Optional<CustomChartMetricScalar> =
                         Optional.ofNullable(customChartMetricScalar)
 
+                    fun customChartFeedbackScoreMetricPercentile():
+                        Optional<CustomChartFeedbackScoreMetricPercentile> =
+                        Optional.ofNullable(customChartFeedbackScoreMetricPercentile)
+
                     fun customChartMetricPercentile(): Optional<CustomChartMetricPercentile> =
                         Optional.ofNullable(customChartMetricPercentile)
 
                     fun customChartMetricRatioOutput(): Optional<CustomChartMetricRatioOutput> =
                         Optional.ofNullable(customChartMetricRatioOutput)
+
+                    fun isCustomChartFeedbackCountMetric(): Boolean =
+                        customChartFeedbackCountMetric != null
 
                     fun isCustomChartMetricCount(): Boolean = customChartMetricCount != null
 
@@ -6053,11 +6107,17 @@ private constructor(
 
                     fun isCustomChartMetricScalar(): Boolean = customChartMetricScalar != null
 
+                    fun isCustomChartFeedbackScoreMetricPercentile(): Boolean =
+                        customChartFeedbackScoreMetricPercentile != null
+
                     fun isCustomChartMetricPercentile(): Boolean =
                         customChartMetricPercentile != null
 
                     fun isCustomChartMetricRatioOutput(): Boolean =
                         customChartMetricRatioOutput != null
+
+                    fun asCustomChartFeedbackCountMetric(): CustomChartFeedbackCountMetric =
+                        customChartFeedbackCountMetric.getOrThrow("customChartFeedbackCountMetric")
 
                     fun asCustomChartMetricCount(): CustomChartMetricCount =
                         customChartMetricCount.getOrThrow("customChartMetricCount")
@@ -6070,6 +6130,12 @@ private constructor(
 
                     fun asCustomChartMetricScalar(): CustomChartMetricScalar =
                         customChartMetricScalar.getOrThrow("customChartMetricScalar")
+
+                    fun asCustomChartFeedbackScoreMetricPercentile():
+                        CustomChartFeedbackScoreMetricPercentile =
+                        customChartFeedbackScoreMetricPercentile.getOrThrow(
+                            "customChartFeedbackScoreMetricPercentile"
+                        )
 
                     fun asCustomChartMetricPercentile(): CustomChartMetricPercentile =
                         customChartMetricPercentile.getOrThrow("customChartMetricPercentile")
@@ -6093,8 +6159,8 @@ private constructor(
                      *
                      * Optional<String> result = metricDefinition.accept(new MetricDefinition.Visitor<Optional<String>>() {
                      *     @Override
-                     *     public Optional<String> visitCustomChartMetricCount(CustomChartMetricCount customChartMetricCount) {
-                     *         return Optional.of(customChartMetricCount.toString());
+                     *     public Optional<String> visitCustomChartFeedbackCountMetric(CustomChartFeedbackCountMetric customChartFeedbackCountMetric) {
+                     *         return Optional.of(customChartFeedbackCountMetric.toString());
                      *     }
                      *
                      *     // ...
@@ -6112,6 +6178,10 @@ private constructor(
                      */
                     fun <T> accept(visitor: Visitor<T>): T =
                         when {
+                            customChartFeedbackCountMetric != null ->
+                                visitor.visitCustomChartFeedbackCountMetric(
+                                    customChartFeedbackCountMetric
+                                )
                             customChartMetricCount != null ->
                                 visitor.visitCustomChartMetricCount(customChartMetricCount)
                             customChartFeedbackScoreMetricScalar != null ->
@@ -6120,6 +6190,10 @@ private constructor(
                                 )
                             customChartMetricScalar != null ->
                                 visitor.visitCustomChartMetricScalar(customChartMetricScalar)
+                            customChartFeedbackScoreMetricPercentile != null ->
+                                visitor.visitCustomChartFeedbackScoreMetricPercentile(
+                                    customChartFeedbackScoreMetricPercentile
+                                )
                             customChartMetricPercentile != null ->
                                 visitor.visitCustomChartMetricPercentile(
                                     customChartMetricPercentile
@@ -6150,6 +6224,12 @@ private constructor(
 
                         accept(
                             object : Visitor<Unit> {
+                                override fun visitCustomChartFeedbackCountMetric(
+                                    customChartFeedbackCountMetric: CustomChartFeedbackCountMetric
+                                ) {
+                                    customChartFeedbackCountMetric.validate()
+                                }
+
                                 override fun visitCustomChartMetricCount(
                                     customChartMetricCount: CustomChartMetricCount
                                 ) {
@@ -6167,6 +6247,13 @@ private constructor(
                                     customChartMetricScalar: CustomChartMetricScalar
                                 ) {
                                     customChartMetricScalar.validate()
+                                }
+
+                                override fun visitCustomChartFeedbackScoreMetricPercentile(
+                                    customChartFeedbackScoreMetricPercentile:
+                                        CustomChartFeedbackScoreMetricPercentile
+                                ) {
+                                    customChartFeedbackScoreMetricPercentile.validate()
                                 }
 
                                 override fun visitCustomChartMetricPercentile(
@@ -6203,6 +6290,10 @@ private constructor(
                     internal fun validity(): Int =
                         accept(
                             object : Visitor<Int> {
+                                override fun visitCustomChartFeedbackCountMetric(
+                                    customChartFeedbackCountMetric: CustomChartFeedbackCountMetric
+                                ) = customChartFeedbackCountMetric.validity()
+
                                 override fun visitCustomChartMetricCount(
                                     customChartMetricCount: CustomChartMetricCount
                                 ) = customChartMetricCount.validity()
@@ -6215,6 +6306,11 @@ private constructor(
                                 override fun visitCustomChartMetricScalar(
                                     customChartMetricScalar: CustomChartMetricScalar
                                 ) = customChartMetricScalar.validity()
+
+                                override fun visitCustomChartFeedbackScoreMetricPercentile(
+                                    customChartFeedbackScoreMetricPercentile:
+                                        CustomChartFeedbackScoreMetricPercentile
+                                ) = customChartFeedbackScoreMetricPercentile.validity()
 
                                 override fun visitCustomChartMetricPercentile(
                                     customChartMetricPercentile: CustomChartMetricPercentile
@@ -6234,31 +6330,41 @@ private constructor(
                         }
 
                         return other is MetricDefinition &&
+                            customChartFeedbackCountMetric ==
+                                other.customChartFeedbackCountMetric &&
                             customChartMetricCount == other.customChartMetricCount &&
                             customChartFeedbackScoreMetricScalar ==
                                 other.customChartFeedbackScoreMetricScalar &&
                             customChartMetricScalar == other.customChartMetricScalar &&
+                            customChartFeedbackScoreMetricPercentile ==
+                                other.customChartFeedbackScoreMetricPercentile &&
                             customChartMetricPercentile == other.customChartMetricPercentile &&
                             customChartMetricRatioOutput == other.customChartMetricRatioOutput
                     }
 
                     override fun hashCode(): Int =
                         Objects.hash(
+                            customChartFeedbackCountMetric,
                             customChartMetricCount,
                             customChartFeedbackScoreMetricScalar,
                             customChartMetricScalar,
+                            customChartFeedbackScoreMetricPercentile,
                             customChartMetricPercentile,
                             customChartMetricRatioOutput,
                         )
 
                     override fun toString(): String =
                         when {
+                            customChartFeedbackCountMetric != null ->
+                                "MetricDefinition{customChartFeedbackCountMetric=$customChartFeedbackCountMetric}"
                             customChartMetricCount != null ->
                                 "MetricDefinition{customChartMetricCount=$customChartMetricCount}"
                             customChartFeedbackScoreMetricScalar != null ->
                                 "MetricDefinition{customChartFeedbackScoreMetricScalar=$customChartFeedbackScoreMetricScalar}"
                             customChartMetricScalar != null ->
                                 "MetricDefinition{customChartMetricScalar=$customChartMetricScalar}"
+                            customChartFeedbackScoreMetricPercentile != null ->
+                                "MetricDefinition{customChartFeedbackScoreMetricPercentile=$customChartFeedbackScoreMetricPercentile}"
                             customChartMetricPercentile != null ->
                                 "MetricDefinition{customChartMetricPercentile=$customChartMetricPercentile}"
                             customChartMetricRatioOutput != null ->
@@ -6268,6 +6374,14 @@ private constructor(
                         }
 
                     companion object {
+
+                        @JvmStatic
+                        fun ofCustomChartFeedbackCountMetric(
+                            customChartFeedbackCountMetric: CustomChartFeedbackCountMetric
+                        ) =
+                            MetricDefinition(
+                                customChartFeedbackCountMetric = customChartFeedbackCountMetric
+                            )
 
                         @JvmStatic
                         fun ofCustomChartMetricCount(
@@ -6288,6 +6402,16 @@ private constructor(
                         fun ofCustomChartMetricScalar(
                             customChartMetricScalar: CustomChartMetricScalar
                         ) = MetricDefinition(customChartMetricScalar = customChartMetricScalar)
+
+                        @JvmStatic
+                        fun ofCustomChartFeedbackScoreMetricPercentile(
+                            customChartFeedbackScoreMetricPercentile:
+                                CustomChartFeedbackScoreMetricPercentile
+                        ) =
+                            MetricDefinition(
+                                customChartFeedbackScoreMetricPercentile =
+                                    customChartFeedbackScoreMetricPercentile
+                            )
 
                         @JvmStatic
                         fun ofCustomChartMetricPercentile(
@@ -6312,6 +6436,10 @@ private constructor(
                      */
                     interface Visitor<out T> {
 
+                        fun visitCustomChartFeedbackCountMetric(
+                            customChartFeedbackCountMetric: CustomChartFeedbackCountMetric
+                        ): T
+
                         fun visitCustomChartMetricCount(
                             customChartMetricCount: CustomChartMetricCount
                         ): T
@@ -6323,6 +6451,11 @@ private constructor(
 
                         fun visitCustomChartMetricScalar(
                             customChartMetricScalar: CustomChartMetricScalar
+                        ): T
+
+                        fun visitCustomChartFeedbackScoreMetricPercentile(
+                            customChartFeedbackScoreMetricPercentile:
+                                CustomChartFeedbackScoreMetricPercentile
                         ): T
 
                         fun visitCustomChartMetricPercentile(
@@ -6358,6 +6491,16 @@ private constructor(
                                 sequenceOf(
                                         tryDeserialize(
                                                 node,
+                                                jacksonTypeRef<CustomChartFeedbackCountMetric>(),
+                                            )
+                                            ?.let {
+                                                MetricDefinition(
+                                                    customChartFeedbackCountMetric = it,
+                                                    _json = json,
+                                                )
+                                            },
+                                        tryDeserialize(
+                                                node,
                                                 jacksonTypeRef<CustomChartMetricCount>(),
                                             )
                                             ?.let {
@@ -6385,6 +6528,18 @@ private constructor(
                                             ?.let {
                                                 MetricDefinition(
                                                     customChartMetricScalar = it,
+                                                    _json = json,
+                                                )
+                                            },
+                                        tryDeserialize(
+                                                node,
+                                                jacksonTypeRef<
+                                                    CustomChartFeedbackScoreMetricPercentile
+                                                >(),
+                                            )
+                                            ?.let {
+                                                MetricDefinition(
+                                                    customChartFeedbackScoreMetricPercentile = it,
                                                     _json = json,
                                                 )
                                             },
@@ -6436,6 +6591,8 @@ private constructor(
                             provider: SerializerProvider,
                         ) {
                             when {
+                                value.customChartFeedbackCountMetric != null ->
+                                    generator.writeObject(value.customChartFeedbackCountMetric)
                                 value.customChartMetricCount != null ->
                                     generator.writeObject(value.customChartMetricCount)
                                 value.customChartFeedbackScoreMetricScalar != null ->
@@ -6444,6 +6601,10 @@ private constructor(
                                     )
                                 value.customChartMetricScalar != null ->
                                     generator.writeObject(value.customChartMetricScalar)
+                                value.customChartFeedbackScoreMetricPercentile != null ->
+                                    generator.writeObject(
+                                        value.customChartFeedbackScoreMetricPercentile
+                                    )
                                 value.customChartMetricPercentile != null ->
                                     generator.writeObject(value.customChartMetricPercentile)
                                 value.customChartMetricRatioOutput != null ->
@@ -6452,6 +6613,637 @@ private constructor(
                                 else -> throw IllegalStateException("Invalid MetricDefinition")
                             }
                         }
+                    }
+
+                    class CustomChartFeedbackCountMetric
+                    @JsonCreator(mode = JsonCreator.Mode.DISABLED)
+                    private constructor(
+                        private val entity: JsonValue,
+                        private val params: JsonField<Params>,
+                        private val filter: JsonField<String>,
+                        private val type: JsonField<Type>,
+                        private val additionalProperties: MutableMap<String, JsonValue>,
+                    ) {
+
+                        @JsonCreator
+                        private constructor(
+                            @JsonProperty("entity")
+                            @ExcludeMissing
+                            entity: JsonValue = JsonMissing.of(),
+                            @JsonProperty("params")
+                            @ExcludeMissing
+                            params: JsonField<Params> = JsonMissing.of(),
+                            @JsonProperty("filter")
+                            @ExcludeMissing
+                            filter: JsonField<String> = JsonMissing.of(),
+                            @JsonProperty("type")
+                            @ExcludeMissing
+                            type: JsonField<Type> = JsonMissing.of(),
+                        ) : this(entity, params, filter, type, mutableMapOf())
+
+                        /**
+                         * Expected to always return the following:
+                         * ```java
+                         * JsonValue.from("feedback")
+                         * ```
+                         *
+                         * However, this method can be useful for debugging and logging (e.g. if the
+                         * server responded with an unexpected value).
+                         */
+                        @JsonProperty("entity") @ExcludeMissing fun _entity(): JsonValue = entity
+
+                        /**
+                         * @throws LangChainInvalidDataException if the JSON field has an unexpected
+                         *   type or is unexpectedly missing or null (e.g. if the server responded
+                         *   with an unexpected value).
+                         */
+                        fun params(): Params = params.getRequired("params")
+
+                        /**
+                         * @throws LangChainInvalidDataException if the JSON field has an unexpected
+                         *   type (e.g. if the server responded with an unexpected value).
+                         */
+                        fun filter(): Optional<String> = filter.getOptional("filter")
+
+                        /**
+                         * @throws LangChainInvalidDataException if the JSON field has an unexpected
+                         *   type (e.g. if the server responded with an unexpected value).
+                         */
+                        fun type(): Optional<Type> = type.getOptional("type")
+
+                        /**
+                         * Returns the raw JSON value of [params].
+                         *
+                         * Unlike [params], this method doesn't throw if the JSON field has an
+                         * unexpected type.
+                         */
+                        @JsonProperty("params")
+                        @ExcludeMissing
+                        fun _params(): JsonField<Params> = params
+
+                        /**
+                         * Returns the raw JSON value of [filter].
+                         *
+                         * Unlike [filter], this method doesn't throw if the JSON field has an
+                         * unexpected type.
+                         */
+                        @JsonProperty("filter")
+                        @ExcludeMissing
+                        fun _filter(): JsonField<String> = filter
+
+                        /**
+                         * Returns the raw JSON value of [type].
+                         *
+                         * Unlike [type], this method doesn't throw if the JSON field has an
+                         * unexpected type.
+                         */
+                        @JsonProperty("type") @ExcludeMissing fun _type(): JsonField<Type> = type
+
+                        @JsonAnySetter
+                        private fun putAdditionalProperty(key: String, value: JsonValue) {
+                            additionalProperties.put(key, value)
+                        }
+
+                        @JsonAnyGetter
+                        @ExcludeMissing
+                        fun _additionalProperties(): Map<String, JsonValue> =
+                            Collections.unmodifiableMap(additionalProperties)
+
+                        fun toBuilder() = Builder().from(this)
+
+                        companion object {
+
+                            /**
+                             * Returns a mutable builder for constructing an instance of
+                             * [CustomChartFeedbackCountMetric].
+                             *
+                             * The following fields are required:
+                             * ```java
+                             * .params()
+                             * ```
+                             */
+                            @JvmStatic fun builder() = Builder()
+                        }
+
+                        /** A builder for [CustomChartFeedbackCountMetric]. */
+                        class Builder internal constructor() {
+
+                            private var entity: JsonValue = JsonValue.from("feedback")
+                            private var params: JsonField<Params>? = null
+                            private var filter: JsonField<String> = JsonMissing.of()
+                            private var type: JsonField<Type> = JsonMissing.of()
+                            private var additionalProperties: MutableMap<String, JsonValue> =
+                                mutableMapOf()
+
+                            @JvmSynthetic
+                            internal fun from(
+                                customChartFeedbackCountMetric: CustomChartFeedbackCountMetric
+                            ) = apply {
+                                entity = customChartFeedbackCountMetric.entity
+                                params = customChartFeedbackCountMetric.params
+                                filter = customChartFeedbackCountMetric.filter
+                                type = customChartFeedbackCountMetric.type
+                                additionalProperties =
+                                    customChartFeedbackCountMetric.additionalProperties
+                                        .toMutableMap()
+                            }
+
+                            /**
+                             * Sets the field to an arbitrary JSON value.
+                             *
+                             * It is usually unnecessary to call this method because the field
+                             * defaults to the following:
+                             * ```java
+                             * JsonValue.from("feedback")
+                             * ```
+                             *
+                             * This method is primarily for setting the field to an undocumented or
+                             * not yet supported value.
+                             */
+                            fun entity(entity: JsonValue) = apply { this.entity = entity }
+
+                            fun params(params: Params) = params(JsonField.of(params))
+
+                            /**
+                             * Sets [Builder.params] to an arbitrary JSON value.
+                             *
+                             * You should usually call [Builder.params] with a well-typed [Params]
+                             * value instead. This method is primarily for setting the field to an
+                             * undocumented or not yet supported value.
+                             */
+                            fun params(params: JsonField<Params>) = apply { this.params = params }
+
+                            fun filter(filter: String?) = filter(JsonField.ofNullable(filter))
+
+                            /** Alias for calling [Builder.filter] with `filter.orElse(null)`. */
+                            fun filter(filter: Optional<String>) = filter(filter.getOrNull())
+
+                            /**
+                             * Sets [Builder.filter] to an arbitrary JSON value.
+                             *
+                             * You should usually call [Builder.filter] with a well-typed [String]
+                             * value instead. This method is primarily for setting the field to an
+                             * undocumented or not yet supported value.
+                             */
+                            fun filter(filter: JsonField<String>) = apply { this.filter = filter }
+
+                            fun type(type: Type) = type(JsonField.of(type))
+
+                            /**
+                             * Sets [Builder.type] to an arbitrary JSON value.
+                             *
+                             * You should usually call [Builder.type] with a well-typed [Type] value
+                             * instead. This method is primarily for setting the field to an
+                             * undocumented or not yet supported value.
+                             */
+                            fun type(type: JsonField<Type>) = apply { this.type = type }
+
+                            fun additionalProperties(additionalProperties: Map<String, JsonValue>) =
+                                apply {
+                                    this.additionalProperties.clear()
+                                    putAllAdditionalProperties(additionalProperties)
+                                }
+
+                            fun putAdditionalProperty(key: String, value: JsonValue) = apply {
+                                additionalProperties.put(key, value)
+                            }
+
+                            fun putAllAdditionalProperties(
+                                additionalProperties: Map<String, JsonValue>
+                            ) = apply { this.additionalProperties.putAll(additionalProperties) }
+
+                            fun removeAdditionalProperty(key: String) = apply {
+                                additionalProperties.remove(key)
+                            }
+
+                            fun removeAllAdditionalProperties(keys: Set<String>) = apply {
+                                keys.forEach(::removeAdditionalProperty)
+                            }
+
+                            /**
+                             * Returns an immutable instance of [CustomChartFeedbackCountMetric].
+                             *
+                             * Further updates to this [Builder] will not mutate the returned
+                             * instance.
+                             *
+                             * The following fields are required:
+                             * ```java
+                             * .params()
+                             * ```
+                             *
+                             * @throws IllegalStateException if any required field is unset.
+                             */
+                            fun build(): CustomChartFeedbackCountMetric =
+                                CustomChartFeedbackCountMetric(
+                                    entity,
+                                    checkRequired("params", params),
+                                    filter,
+                                    type,
+                                    additionalProperties.toMutableMap(),
+                                )
+                        }
+
+                        private var validated: Boolean = false
+
+                        /**
+                         * Validates that the types of all values in this object match their
+                         * expected types recursively.
+                         *
+                         * This method is _not_ forwards compatible with new types from the API for
+                         * existing fields.
+                         *
+                         * @throws LangChainInvalidDataException if any value type in this object
+                         *   doesn't match its expected type.
+                         */
+                        fun validate(): CustomChartFeedbackCountMetric = apply {
+                            if (validated) {
+                                return@apply
+                            }
+
+                            _entity().let {
+                                if (it != JsonValue.from("feedback")) {
+                                    throw LangChainInvalidDataException(
+                                        "'entity' is invalid, received $it"
+                                    )
+                                }
+                            }
+                            params().validate()
+                            filter()
+                            type().ifPresent { it.validate() }
+                            validated = true
+                        }
+
+                        fun isValid(): Boolean =
+                            try {
+                                validate()
+                                true
+                            } catch (e: LangChainInvalidDataException) {
+                                false
+                            }
+
+                        /**
+                         * Returns a score indicating how many valid values are contained in this
+                         * object recursively.
+                         *
+                         * Used for best match union deserialization.
+                         */
+                        @JvmSynthetic
+                        internal fun validity(): Int =
+                            entity.let { if (it == JsonValue.from("feedback")) 1 else 0 } +
+                                (params.asKnown().getOrNull()?.validity() ?: 0) +
+                                (if (filter.asKnown().isPresent) 1 else 0) +
+                                (type.asKnown().getOrNull()?.validity() ?: 0)
+
+                        class Params
+                        @JsonCreator(mode = JsonCreator.Mode.DISABLED)
+                        private constructor(
+                            private val feedbackKey: JsonField<String>,
+                            private val additionalProperties: MutableMap<String, JsonValue>,
+                        ) {
+
+                            @JsonCreator
+                            private constructor(
+                                @JsonProperty("feedback_key")
+                                @ExcludeMissing
+                                feedbackKey: JsonField<String> = JsonMissing.of()
+                            ) : this(feedbackKey, mutableMapOf())
+
+                            /**
+                             * @throws LangChainInvalidDataException if the JSON field has an
+                             *   unexpected type or is unexpectedly missing or null (e.g. if the
+                             *   server responded with an unexpected value).
+                             */
+                            fun feedbackKey(): String = feedbackKey.getRequired("feedback_key")
+
+                            /**
+                             * Returns the raw JSON value of [feedbackKey].
+                             *
+                             * Unlike [feedbackKey], this method doesn't throw if the JSON field has
+                             * an unexpected type.
+                             */
+                            @JsonProperty("feedback_key")
+                            @ExcludeMissing
+                            fun _feedbackKey(): JsonField<String> = feedbackKey
+
+                            @JsonAnySetter
+                            private fun putAdditionalProperty(key: String, value: JsonValue) {
+                                additionalProperties.put(key, value)
+                            }
+
+                            @JsonAnyGetter
+                            @ExcludeMissing
+                            fun _additionalProperties(): Map<String, JsonValue> =
+                                Collections.unmodifiableMap(additionalProperties)
+
+                            fun toBuilder() = Builder().from(this)
+
+                            companion object {
+
+                                /**
+                                 * Returns a mutable builder for constructing an instance of
+                                 * [Params].
+                                 *
+                                 * The following fields are required:
+                                 * ```java
+                                 * .feedbackKey()
+                                 * ```
+                                 */
+                                @JvmStatic fun builder() = Builder()
+                            }
+
+                            /** A builder for [Params]. */
+                            class Builder internal constructor() {
+
+                                private var feedbackKey: JsonField<String>? = null
+                                private var additionalProperties: MutableMap<String, JsonValue> =
+                                    mutableMapOf()
+
+                                @JvmSynthetic
+                                internal fun from(params: Params) = apply {
+                                    feedbackKey = params.feedbackKey
+                                    additionalProperties =
+                                        params.additionalProperties.toMutableMap()
+                                }
+
+                                fun feedbackKey(feedbackKey: String) =
+                                    feedbackKey(JsonField.of(feedbackKey))
+
+                                /**
+                                 * Sets [Builder.feedbackKey] to an arbitrary JSON value.
+                                 *
+                                 * You should usually call [Builder.feedbackKey] with a well-typed
+                                 * [String] value instead. This method is primarily for setting the
+                                 * field to an undocumented or not yet supported value.
+                                 */
+                                fun feedbackKey(feedbackKey: JsonField<String>) = apply {
+                                    this.feedbackKey = feedbackKey
+                                }
+
+                                fun additionalProperties(
+                                    additionalProperties: Map<String, JsonValue>
+                                ) = apply {
+                                    this.additionalProperties.clear()
+                                    putAllAdditionalProperties(additionalProperties)
+                                }
+
+                                fun putAdditionalProperty(key: String, value: JsonValue) = apply {
+                                    additionalProperties.put(key, value)
+                                }
+
+                                fun putAllAdditionalProperties(
+                                    additionalProperties: Map<String, JsonValue>
+                                ) = apply { this.additionalProperties.putAll(additionalProperties) }
+
+                                fun removeAdditionalProperty(key: String) = apply {
+                                    additionalProperties.remove(key)
+                                }
+
+                                fun removeAllAdditionalProperties(keys: Set<String>) = apply {
+                                    keys.forEach(::removeAdditionalProperty)
+                                }
+
+                                /**
+                                 * Returns an immutable instance of [Params].
+                                 *
+                                 * Further updates to this [Builder] will not mutate the returned
+                                 * instance.
+                                 *
+                                 * The following fields are required:
+                                 * ```java
+                                 * .feedbackKey()
+                                 * ```
+                                 *
+                                 * @throws IllegalStateException if any required field is unset.
+                                 */
+                                fun build(): Params =
+                                    Params(
+                                        checkRequired("feedbackKey", feedbackKey),
+                                        additionalProperties.toMutableMap(),
+                                    )
+                            }
+
+                            private var validated: Boolean = false
+
+                            /**
+                             * Validates that the types of all values in this object match their
+                             * expected types recursively.
+                             *
+                             * This method is _not_ forwards compatible with new types from the API
+                             * for existing fields.
+                             *
+                             * @throws LangChainInvalidDataException if any value type in this
+                             *   object doesn't match its expected type.
+                             */
+                            fun validate(): Params = apply {
+                                if (validated) {
+                                    return@apply
+                                }
+
+                                feedbackKey()
+                                validated = true
+                            }
+
+                            fun isValid(): Boolean =
+                                try {
+                                    validate()
+                                    true
+                                } catch (e: LangChainInvalidDataException) {
+                                    false
+                                }
+
+                            /**
+                             * Returns a score indicating how many valid values are contained in
+                             * this object recursively.
+                             *
+                             * Used for best match union deserialization.
+                             */
+                            @JvmSynthetic
+                            internal fun validity(): Int =
+                                (if (feedbackKey.asKnown().isPresent) 1 else 0)
+
+                            override fun equals(other: Any?): Boolean {
+                                if (this === other) {
+                                    return true
+                                }
+
+                                return other is Params &&
+                                    feedbackKey == other.feedbackKey &&
+                                    additionalProperties == other.additionalProperties
+                            }
+
+                            private val hashCode: Int by lazy {
+                                Objects.hash(feedbackKey, additionalProperties)
+                            }
+
+                            override fun hashCode(): Int = hashCode
+
+                            override fun toString() =
+                                "Params{feedbackKey=$feedbackKey, additionalProperties=$additionalProperties}"
+                        }
+
+                        class Type
+                        @JsonCreator
+                        private constructor(private val value: JsonField<String>) : Enum {
+
+                            /**
+                             * Returns this class instance's raw value.
+                             *
+                             * This is usually only useful if this instance was deserialized from
+                             * data that doesn't match any known member, and you want to know that
+                             * value. For example, if the SDK is on an older version than the API,
+                             * then the API may respond with new members that the SDK is unaware of.
+                             */
+                            @com.fasterxml.jackson.annotation.JsonValue
+                            fun _value(): JsonField<String> = value
+
+                            companion object {
+
+                                @JvmField val COUNT = of("count")
+
+                                @JvmStatic fun of(value: String) = Type(JsonField.of(value))
+                            }
+
+                            /** An enum containing [Type]'s known values. */
+                            enum class Known {
+                                COUNT
+                            }
+
+                            /**
+                             * An enum containing [Type]'s known values, as well as an [_UNKNOWN]
+                             * member.
+                             *
+                             * An instance of [Type] can contain an unknown value in a couple of
+                             * cases:
+                             * - It was deserialized from data that doesn't match any known member.
+                             *   For example, if the SDK is on an older version than the API, then
+                             *   the API may respond with new members that the SDK is unaware of.
+                             * - It was constructed with an arbitrary value using the [of] method.
+                             */
+                            enum class Value {
+                                COUNT,
+                                /**
+                                 * An enum member indicating that [Type] was instantiated with an
+                                 * unknown value.
+                                 */
+                                _UNKNOWN,
+                            }
+
+                            /**
+                             * Returns an enum member corresponding to this class instance's value,
+                             * or [Value._UNKNOWN] if the class was instantiated with an unknown
+                             * value.
+                             *
+                             * Use the [known] method instead if you're certain the value is always
+                             * known or if you want to throw for the unknown case.
+                             */
+                            fun value(): Value =
+                                when (this) {
+                                    COUNT -> Value.COUNT
+                                    else -> Value._UNKNOWN
+                                }
+
+                            /**
+                             * Returns an enum member corresponding to this class instance's value.
+                             *
+                             * Use the [value] method instead if you're uncertain the value is
+                             * always known and don't want to throw for the unknown case.
+                             *
+                             * @throws LangChainInvalidDataException if this class instance's value
+                             *   is a not a known member.
+                             */
+                            fun known(): Known =
+                                when (this) {
+                                    COUNT -> Known.COUNT
+                                    else ->
+                                        throw LangChainInvalidDataException("Unknown Type: $value")
+                                }
+
+                            /**
+                             * Returns this class instance's primitive wire representation.
+                             *
+                             * This differs from the [toString] method because that method is
+                             * primarily for debugging and generally doesn't throw.
+                             *
+                             * @throws LangChainInvalidDataException if this class instance's value
+                             *   does not have the expected primitive type.
+                             */
+                            fun asString(): String =
+                                _value().asString().orElseThrow {
+                                    LangChainInvalidDataException("Value is not a String")
+                                }
+
+                            private var validated: Boolean = false
+
+                            /**
+                             * Validates that the types of all values in this object match their
+                             * expected types recursively.
+                             *
+                             * This method is _not_ forwards compatible with new types from the API
+                             * for existing fields.
+                             *
+                             * @throws LangChainInvalidDataException if any value type in this
+                             *   object doesn't match its expected type.
+                             */
+                            fun validate(): Type = apply {
+                                if (validated) {
+                                    return@apply
+                                }
+
+                                known()
+                                validated = true
+                            }
+
+                            fun isValid(): Boolean =
+                                try {
+                                    validate()
+                                    true
+                                } catch (e: LangChainInvalidDataException) {
+                                    false
+                                }
+
+                            /**
+                             * Returns a score indicating how many valid values are contained in
+                             * this object recursively.
+                             *
+                             * Used for best match union deserialization.
+                             */
+                            @JvmSynthetic
+                            internal fun validity(): Int = if (value() == Value._UNKNOWN) 0 else 1
+
+                            override fun equals(other: Any?): Boolean {
+                                if (this === other) {
+                                    return true
+                                }
+
+                                return other is Type && value == other.value
+                            }
+
+                            override fun hashCode() = value.hashCode()
+
+                            override fun toString() = value.toString()
+                        }
+
+                        override fun equals(other: Any?): Boolean {
+                            if (this === other) {
+                                return true
+                            }
+
+                            return other is CustomChartFeedbackCountMetric &&
+                                entity == other.entity &&
+                                params == other.params &&
+                                filter == other.filter &&
+                                type == other.type &&
+                                additionalProperties == other.additionalProperties
+                        }
+
+                        private val hashCode: Int by lazy {
+                            Objects.hash(entity, params, filter, type, additionalProperties)
+                        }
+
+                        override fun hashCode(): Int = hashCode
+
+                        override fun toString() =
+                            "CustomChartFeedbackCountMetric{entity=$entity, params=$params, filter=$filter, type=$type, additionalProperties=$additionalProperties}"
                     }
 
                     class CustomChartMetricCount
@@ -7293,6 +8085,8 @@ private constructor(
 
                             companion object {
 
+                                @JvmField val SUM = of("sum")
+
                                 @JvmField val MAX = of("max")
 
                                 @JvmField val MIN = of("min")
@@ -7304,6 +8098,7 @@ private constructor(
 
                             /** An enum containing [Type]'s known values. */
                             enum class Known {
+                                SUM,
                                 MAX,
                                 MIN,
                                 AVG,
@@ -7321,6 +8116,7 @@ private constructor(
                              * - It was constructed with an arbitrary value using the [of] method.
                              */
                             enum class Value {
+                                SUM,
                                 MAX,
                                 MIN,
                                 AVG,
@@ -7341,6 +8137,7 @@ private constructor(
                              */
                             fun value(): Value =
                                 when (this) {
+                                    SUM -> Value.SUM
                                     MAX -> Value.MAX
                                     MIN -> Value.MIN
                                     AVG -> Value.AVG
@@ -7358,6 +8155,7 @@ private constructor(
                              */
                             fun known(): Known =
                                 when (this) {
+                                    SUM -> Known.SUM
                                     MAX -> Known.MAX
                                     MIN -> Known.MIN
                                     AVG -> Known.AVG
@@ -8063,6 +8861,541 @@ private constructor(
 
                         override fun toString() =
                             "CustomChartMetricScalar{field=$field, type=$type, filter=$filter, additionalProperties=$additionalProperties}"
+                    }
+
+                    class CustomChartFeedbackScoreMetricPercentile
+                    @JsonCreator(mode = JsonCreator.Mode.DISABLED)
+                    private constructor(
+                        private val field: JsonValue,
+                        private val params: JsonField<Params>,
+                        private val type: JsonValue,
+                        private val filter: JsonField<String>,
+                        private val additionalProperties: MutableMap<String, JsonValue>,
+                    ) {
+
+                        @JsonCreator
+                        private constructor(
+                            @JsonProperty("field")
+                            @ExcludeMissing
+                            field: JsonValue = JsonMissing.of(),
+                            @JsonProperty("params")
+                            @ExcludeMissing
+                            params: JsonField<Params> = JsonMissing.of(),
+                            @JsonProperty("type")
+                            @ExcludeMissing
+                            type: JsonValue = JsonMissing.of(),
+                            @JsonProperty("filter")
+                            @ExcludeMissing
+                            filter: JsonField<String> = JsonMissing.of(),
+                        ) : this(field, params, type, filter, mutableMapOf())
+
+                        /**
+                         * Expected to always return the following:
+                         * ```java
+                         * JsonValue.from("feedback_score")
+                         * ```
+                         *
+                         * However, this method can be useful for debugging and logging (e.g. if the
+                         * server responded with an unexpected value).
+                         */
+                        @JsonProperty("field") @ExcludeMissing fun _field(): JsonValue = field
+
+                        /**
+                         * @throws LangChainInvalidDataException if the JSON field has an unexpected
+                         *   type or is unexpectedly missing or null (e.g. if the server responded
+                         *   with an unexpected value).
+                         */
+                        fun params(): Params = params.getRequired("params")
+
+                        /**
+                         * Expected to always return the following:
+                         * ```java
+                         * JsonValue.from("percentile")
+                         * ```
+                         *
+                         * However, this method can be useful for debugging and logging (e.g. if the
+                         * server responded with an unexpected value).
+                         */
+                        @JsonProperty("type") @ExcludeMissing fun _type(): JsonValue = type
+
+                        /**
+                         * @throws LangChainInvalidDataException if the JSON field has an unexpected
+                         *   type (e.g. if the server responded with an unexpected value).
+                         */
+                        fun filter(): Optional<String> = filter.getOptional("filter")
+
+                        /**
+                         * Returns the raw JSON value of [params].
+                         *
+                         * Unlike [params], this method doesn't throw if the JSON field has an
+                         * unexpected type.
+                         */
+                        @JsonProperty("params")
+                        @ExcludeMissing
+                        fun _params(): JsonField<Params> = params
+
+                        /**
+                         * Returns the raw JSON value of [filter].
+                         *
+                         * Unlike [filter], this method doesn't throw if the JSON field has an
+                         * unexpected type.
+                         */
+                        @JsonProperty("filter")
+                        @ExcludeMissing
+                        fun _filter(): JsonField<String> = filter
+
+                        @JsonAnySetter
+                        private fun putAdditionalProperty(key: String, value: JsonValue) {
+                            additionalProperties.put(key, value)
+                        }
+
+                        @JsonAnyGetter
+                        @ExcludeMissing
+                        fun _additionalProperties(): Map<String, JsonValue> =
+                            Collections.unmodifiableMap(additionalProperties)
+
+                        fun toBuilder() = Builder().from(this)
+
+                        companion object {
+
+                            /**
+                             * Returns a mutable builder for constructing an instance of
+                             * [CustomChartFeedbackScoreMetricPercentile].
+                             *
+                             * The following fields are required:
+                             * ```java
+                             * .params()
+                             * ```
+                             */
+                            @JvmStatic fun builder() = Builder()
+                        }
+
+                        /** A builder for [CustomChartFeedbackScoreMetricPercentile]. */
+                        class Builder internal constructor() {
+
+                            private var field: JsonValue = JsonValue.from("feedback_score")
+                            private var params: JsonField<Params>? = null
+                            private var type: JsonValue = JsonValue.from("percentile")
+                            private var filter: JsonField<String> = JsonMissing.of()
+                            private var additionalProperties: MutableMap<String, JsonValue> =
+                                mutableMapOf()
+
+                            @JvmSynthetic
+                            internal fun from(
+                                customChartFeedbackScoreMetricPercentile:
+                                    CustomChartFeedbackScoreMetricPercentile
+                            ) = apply {
+                                field = customChartFeedbackScoreMetricPercentile.field
+                                params = customChartFeedbackScoreMetricPercentile.params
+                                type = customChartFeedbackScoreMetricPercentile.type
+                                filter = customChartFeedbackScoreMetricPercentile.filter
+                                additionalProperties =
+                                    customChartFeedbackScoreMetricPercentile.additionalProperties
+                                        .toMutableMap()
+                            }
+
+                            /**
+                             * Sets the field to an arbitrary JSON value.
+                             *
+                             * It is usually unnecessary to call this method because the field
+                             * defaults to the following:
+                             * ```java
+                             * JsonValue.from("feedback_score")
+                             * ```
+                             *
+                             * This method is primarily for setting the field to an undocumented or
+                             * not yet supported value.
+                             */
+                            fun field(field: JsonValue) = apply { this.field = field }
+
+                            fun params(params: Params) = params(JsonField.of(params))
+
+                            /**
+                             * Sets [Builder.params] to an arbitrary JSON value.
+                             *
+                             * You should usually call [Builder.params] with a well-typed [Params]
+                             * value instead. This method is primarily for setting the field to an
+                             * undocumented or not yet supported value.
+                             */
+                            fun params(params: JsonField<Params>) = apply { this.params = params }
+
+                            /**
+                             * Sets the field to an arbitrary JSON value.
+                             *
+                             * It is usually unnecessary to call this method because the field
+                             * defaults to the following:
+                             * ```java
+                             * JsonValue.from("percentile")
+                             * ```
+                             *
+                             * This method is primarily for setting the field to an undocumented or
+                             * not yet supported value.
+                             */
+                            fun type(type: JsonValue) = apply { this.type = type }
+
+                            fun filter(filter: String?) = filter(JsonField.ofNullable(filter))
+
+                            /** Alias for calling [Builder.filter] with `filter.orElse(null)`. */
+                            fun filter(filter: Optional<String>) = filter(filter.getOrNull())
+
+                            /**
+                             * Sets [Builder.filter] to an arbitrary JSON value.
+                             *
+                             * You should usually call [Builder.filter] with a well-typed [String]
+                             * value instead. This method is primarily for setting the field to an
+                             * undocumented or not yet supported value.
+                             */
+                            fun filter(filter: JsonField<String>) = apply { this.filter = filter }
+
+                            fun additionalProperties(additionalProperties: Map<String, JsonValue>) =
+                                apply {
+                                    this.additionalProperties.clear()
+                                    putAllAdditionalProperties(additionalProperties)
+                                }
+
+                            fun putAdditionalProperty(key: String, value: JsonValue) = apply {
+                                additionalProperties.put(key, value)
+                            }
+
+                            fun putAllAdditionalProperties(
+                                additionalProperties: Map<String, JsonValue>
+                            ) = apply { this.additionalProperties.putAll(additionalProperties) }
+
+                            fun removeAdditionalProperty(key: String) = apply {
+                                additionalProperties.remove(key)
+                            }
+
+                            fun removeAllAdditionalProperties(keys: Set<String>) = apply {
+                                keys.forEach(::removeAdditionalProperty)
+                            }
+
+                            /**
+                             * Returns an immutable instance of
+                             * [CustomChartFeedbackScoreMetricPercentile].
+                             *
+                             * Further updates to this [Builder] will not mutate the returned
+                             * instance.
+                             *
+                             * The following fields are required:
+                             * ```java
+                             * .params()
+                             * ```
+                             *
+                             * @throws IllegalStateException if any required field is unset.
+                             */
+                            fun build(): CustomChartFeedbackScoreMetricPercentile =
+                                CustomChartFeedbackScoreMetricPercentile(
+                                    field,
+                                    checkRequired("params", params),
+                                    type,
+                                    filter,
+                                    additionalProperties.toMutableMap(),
+                                )
+                        }
+
+                        private var validated: Boolean = false
+
+                        /**
+                         * Validates that the types of all values in this object match their
+                         * expected types recursively.
+                         *
+                         * This method is _not_ forwards compatible with new types from the API for
+                         * existing fields.
+                         *
+                         * @throws LangChainInvalidDataException if any value type in this object
+                         *   doesn't match its expected type.
+                         */
+                        fun validate(): CustomChartFeedbackScoreMetricPercentile = apply {
+                            if (validated) {
+                                return@apply
+                            }
+
+                            _field().let {
+                                if (it != JsonValue.from("feedback_score")) {
+                                    throw LangChainInvalidDataException(
+                                        "'field' is invalid, received $it"
+                                    )
+                                }
+                            }
+                            params().validate()
+                            _type().let {
+                                if (it != JsonValue.from("percentile")) {
+                                    throw LangChainInvalidDataException(
+                                        "'type' is invalid, received $it"
+                                    )
+                                }
+                            }
+                            filter()
+                            validated = true
+                        }
+
+                        fun isValid(): Boolean =
+                            try {
+                                validate()
+                                true
+                            } catch (e: LangChainInvalidDataException) {
+                                false
+                            }
+
+                        /**
+                         * Returns a score indicating how many valid values are contained in this
+                         * object recursively.
+                         *
+                         * Used for best match union deserialization.
+                         */
+                        @JvmSynthetic
+                        internal fun validity(): Int =
+                            field.let { if (it == JsonValue.from("feedback_score")) 1 else 0 } +
+                                (params.asKnown().getOrNull()?.validity() ?: 0) +
+                                type.let { if (it == JsonValue.from("percentile")) 1 else 0 } +
+                                (if (filter.asKnown().isPresent) 1 else 0)
+
+                        class Params
+                        @JsonCreator(mode = JsonCreator.Mode.DISABLED)
+                        private constructor(
+                            private val feedbackKey: JsonField<String>,
+                            private val p: JsonField<Double>,
+                            private val additionalProperties: MutableMap<String, JsonValue>,
+                        ) {
+
+                            @JsonCreator
+                            private constructor(
+                                @JsonProperty("feedback_key")
+                                @ExcludeMissing
+                                feedbackKey: JsonField<String> = JsonMissing.of(),
+                                @JsonProperty("p")
+                                @ExcludeMissing
+                                p: JsonField<Double> = JsonMissing.of(),
+                            ) : this(feedbackKey, p, mutableMapOf())
+
+                            /**
+                             * @throws LangChainInvalidDataException if the JSON field has an
+                             *   unexpected type or is unexpectedly missing or null (e.g. if the
+                             *   server responded with an unexpected value).
+                             */
+                            fun feedbackKey(): String = feedbackKey.getRequired("feedback_key")
+
+                            /**
+                             * @throws LangChainInvalidDataException if the JSON field has an
+                             *   unexpected type or is unexpectedly missing or null (e.g. if the
+                             *   server responded with an unexpected value).
+                             */
+                            fun p(): Double = p.getRequired("p")
+
+                            /**
+                             * Returns the raw JSON value of [feedbackKey].
+                             *
+                             * Unlike [feedbackKey], this method doesn't throw if the JSON field has
+                             * an unexpected type.
+                             */
+                            @JsonProperty("feedback_key")
+                            @ExcludeMissing
+                            fun _feedbackKey(): JsonField<String> = feedbackKey
+
+                            /**
+                             * Returns the raw JSON value of [p].
+                             *
+                             * Unlike [p], this method doesn't throw if the JSON field has an
+                             * unexpected type.
+                             */
+                            @JsonProperty("p") @ExcludeMissing fun _p(): JsonField<Double> = p
+
+                            @JsonAnySetter
+                            private fun putAdditionalProperty(key: String, value: JsonValue) {
+                                additionalProperties.put(key, value)
+                            }
+
+                            @JsonAnyGetter
+                            @ExcludeMissing
+                            fun _additionalProperties(): Map<String, JsonValue> =
+                                Collections.unmodifiableMap(additionalProperties)
+
+                            fun toBuilder() = Builder().from(this)
+
+                            companion object {
+
+                                /**
+                                 * Returns a mutable builder for constructing an instance of
+                                 * [Params].
+                                 *
+                                 * The following fields are required:
+                                 * ```java
+                                 * .feedbackKey()
+                                 * .p()
+                                 * ```
+                                 */
+                                @JvmStatic fun builder() = Builder()
+                            }
+
+                            /** A builder for [Params]. */
+                            class Builder internal constructor() {
+
+                                private var feedbackKey: JsonField<String>? = null
+                                private var p: JsonField<Double>? = null
+                                private var additionalProperties: MutableMap<String, JsonValue> =
+                                    mutableMapOf()
+
+                                @JvmSynthetic
+                                internal fun from(params: Params) = apply {
+                                    feedbackKey = params.feedbackKey
+                                    p = params.p
+                                    additionalProperties =
+                                        params.additionalProperties.toMutableMap()
+                                }
+
+                                fun feedbackKey(feedbackKey: String) =
+                                    feedbackKey(JsonField.of(feedbackKey))
+
+                                /**
+                                 * Sets [Builder.feedbackKey] to an arbitrary JSON value.
+                                 *
+                                 * You should usually call [Builder.feedbackKey] with a well-typed
+                                 * [String] value instead. This method is primarily for setting the
+                                 * field to an undocumented or not yet supported value.
+                                 */
+                                fun feedbackKey(feedbackKey: JsonField<String>) = apply {
+                                    this.feedbackKey = feedbackKey
+                                }
+
+                                fun p(p: Double) = p(JsonField.of(p))
+
+                                /**
+                                 * Sets [Builder.p] to an arbitrary JSON value.
+                                 *
+                                 * You should usually call [Builder.p] with a well-typed [Double]
+                                 * value instead. This method is primarily for setting the field to
+                                 * an undocumented or not yet supported value.
+                                 */
+                                fun p(p: JsonField<Double>) = apply { this.p = p }
+
+                                fun additionalProperties(
+                                    additionalProperties: Map<String, JsonValue>
+                                ) = apply {
+                                    this.additionalProperties.clear()
+                                    putAllAdditionalProperties(additionalProperties)
+                                }
+
+                                fun putAdditionalProperty(key: String, value: JsonValue) = apply {
+                                    additionalProperties.put(key, value)
+                                }
+
+                                fun putAllAdditionalProperties(
+                                    additionalProperties: Map<String, JsonValue>
+                                ) = apply { this.additionalProperties.putAll(additionalProperties) }
+
+                                fun removeAdditionalProperty(key: String) = apply {
+                                    additionalProperties.remove(key)
+                                }
+
+                                fun removeAllAdditionalProperties(keys: Set<String>) = apply {
+                                    keys.forEach(::removeAdditionalProperty)
+                                }
+
+                                /**
+                                 * Returns an immutable instance of [Params].
+                                 *
+                                 * Further updates to this [Builder] will not mutate the returned
+                                 * instance.
+                                 *
+                                 * The following fields are required:
+                                 * ```java
+                                 * .feedbackKey()
+                                 * .p()
+                                 * ```
+                                 *
+                                 * @throws IllegalStateException if any required field is unset.
+                                 */
+                                fun build(): Params =
+                                    Params(
+                                        checkRequired("feedbackKey", feedbackKey),
+                                        checkRequired("p", p),
+                                        additionalProperties.toMutableMap(),
+                                    )
+                            }
+
+                            private var validated: Boolean = false
+
+                            /**
+                             * Validates that the types of all values in this object match their
+                             * expected types recursively.
+                             *
+                             * This method is _not_ forwards compatible with new types from the API
+                             * for existing fields.
+                             *
+                             * @throws LangChainInvalidDataException if any value type in this
+                             *   object doesn't match its expected type.
+                             */
+                            fun validate(): Params = apply {
+                                if (validated) {
+                                    return@apply
+                                }
+
+                                feedbackKey()
+                                p()
+                                validated = true
+                            }
+
+                            fun isValid(): Boolean =
+                                try {
+                                    validate()
+                                    true
+                                } catch (e: LangChainInvalidDataException) {
+                                    false
+                                }
+
+                            /**
+                             * Returns a score indicating how many valid values are contained in
+                             * this object recursively.
+                             *
+                             * Used for best match union deserialization.
+                             */
+                            @JvmSynthetic
+                            internal fun validity(): Int =
+                                (if (feedbackKey.asKnown().isPresent) 1 else 0) +
+                                    (if (p.asKnown().isPresent) 1 else 0)
+
+                            override fun equals(other: Any?): Boolean {
+                                if (this === other) {
+                                    return true
+                                }
+
+                                return other is Params &&
+                                    feedbackKey == other.feedbackKey &&
+                                    p == other.p &&
+                                    additionalProperties == other.additionalProperties
+                            }
+
+                            private val hashCode: Int by lazy {
+                                Objects.hash(feedbackKey, p, additionalProperties)
+                            }
+
+                            override fun hashCode(): Int = hashCode
+
+                            override fun toString() =
+                                "Params{feedbackKey=$feedbackKey, p=$p, additionalProperties=$additionalProperties}"
+                        }
+
+                        override fun equals(other: Any?): Boolean {
+                            if (this === other) {
+                                return true
+                            }
+
+                            return other is CustomChartFeedbackScoreMetricPercentile &&
+                                field == other.field &&
+                                params == other.params &&
+                                type == other.type &&
+                                filter == other.filter &&
+                                additionalProperties == other.additionalProperties
+                        }
+
+                        private val hashCode: Int by lazy {
+                            Objects.hash(field, params, type, filter, additionalProperties)
+                        }
+
+                        override fun hashCode(): Int = hashCode
+
+                        override fun toString() =
+                            "CustomChartFeedbackScoreMetricPercentile{field=$field, params=$params, type=$type, filter=$filter, additionalProperties=$additionalProperties}"
                     }
 
                     class CustomChartMetricPercentile
@@ -8870,6 +10203,20 @@ private constructor(
 
                             /**
                              * Alias for calling [denominator] with
+                             * `Denominator.ofCustomChartFeedbackCountMetric(customChartFeedbackCountMetric)`.
+                             */
+                            fun denominator(
+                                customChartFeedbackCountMetric:
+                                    Denominator.CustomChartFeedbackCountMetric
+                            ) =
+                                denominator(
+                                    Denominator.ofCustomChartFeedbackCountMetric(
+                                        customChartFeedbackCountMetric
+                                    )
+                                )
+
+                            /**
+                             * Alias for calling [denominator] with
                              * `Denominator.ofCustomChartMetricCount(customChartMetricCount)`.
                              */
                             fun denominator(
@@ -8906,6 +10253,20 @@ private constructor(
 
                             /**
                              * Alias for calling [denominator] with
+                             * `Denominator.ofCustomChartFeedbackScoreMetricPercentile(customChartFeedbackScoreMetricPercentile)`.
+                             */
+                            fun denominator(
+                                customChartFeedbackScoreMetricPercentile:
+                                    Denominator.CustomChartFeedbackScoreMetricPercentile
+                            ) =
+                                denominator(
+                                    Denominator.ofCustomChartFeedbackScoreMetricPercentile(
+                                        customChartFeedbackScoreMetricPercentile
+                                    )
+                                )
+
+                            /**
+                             * Alias for calling [denominator] with
                              * `Denominator.ofCustomChartMetricPercentile(customChartMetricPercentile)`.
                              */
                             fun denominator(
@@ -8929,6 +10290,20 @@ private constructor(
                             fun numerator(numerator: JsonField<Numerator>) = apply {
                                 this.numerator = numerator
                             }
+
+                            /**
+                             * Alias for calling [numerator] with
+                             * `Numerator.ofCustomChartFeedbackCountMetric(customChartFeedbackCountMetric)`.
+                             */
+                            fun numerator(
+                                customChartFeedbackCountMetric:
+                                    Numerator.CustomChartFeedbackCountMetric
+                            ) =
+                                numerator(
+                                    Numerator.ofCustomChartFeedbackCountMetric(
+                                        customChartFeedbackCountMetric
+                                    )
+                                )
 
                             /**
                              * Alias for calling [numerator] with
@@ -8964,6 +10339,20 @@ private constructor(
                             ) =
                                 numerator(
                                     Numerator.ofCustomChartMetricScalar(customChartMetricScalar)
+                                )
+
+                            /**
+                             * Alias for calling [numerator] with
+                             * `Numerator.ofCustomChartFeedbackScoreMetricPercentile(customChartFeedbackScoreMetricPercentile)`.
+                             */
+                            fun numerator(
+                                customChartFeedbackScoreMetricPercentile:
+                                    Numerator.CustomChartFeedbackScoreMetricPercentile
+                            ) =
+                                numerator(
+                                    Numerator.ofCustomChartFeedbackScoreMetricPercentile(
+                                        customChartFeedbackScoreMetricPercentile
+                                    )
                                 )
 
                             /**
@@ -9091,15 +10480,25 @@ private constructor(
                         @JsonSerialize(using = Denominator.Serializer::class)
                         class Denominator
                         private constructor(
+                            private val customChartFeedbackCountMetric:
+                                CustomChartFeedbackCountMetric? =
+                                null,
                             private val customChartMetricCount: CustomChartMetricCount? = null,
                             private val customChartFeedbackScoreMetricScalar:
                                 CustomChartFeedbackScoreMetricScalar? =
                                 null,
                             private val customChartMetricScalar: CustomChartMetricScalar? = null,
+                            private val customChartFeedbackScoreMetricPercentile:
+                                CustomChartFeedbackScoreMetricPercentile? =
+                                null,
                             private val customChartMetricPercentile: CustomChartMetricPercentile? =
                                 null,
                             private val _json: JsonValue? = null,
                         ) {
+
+                            fun customChartFeedbackCountMetric():
+                                Optional<CustomChartFeedbackCountMetric> =
+                                Optional.ofNullable(customChartFeedbackCountMetric)
 
                             fun customChartMetricCount(): Optional<CustomChartMetricCount> =
                                 Optional.ofNullable(customChartMetricCount)
@@ -9111,9 +10510,16 @@ private constructor(
                             fun customChartMetricScalar(): Optional<CustomChartMetricScalar> =
                                 Optional.ofNullable(customChartMetricScalar)
 
+                            fun customChartFeedbackScoreMetricPercentile():
+                                Optional<CustomChartFeedbackScoreMetricPercentile> =
+                                Optional.ofNullable(customChartFeedbackScoreMetricPercentile)
+
                             fun customChartMetricPercentile():
                                 Optional<CustomChartMetricPercentile> =
                                 Optional.ofNullable(customChartMetricPercentile)
+
+                            fun isCustomChartFeedbackCountMetric(): Boolean =
+                                customChartFeedbackCountMetric != null
 
                             fun isCustomChartMetricCount(): Boolean = customChartMetricCount != null
 
@@ -9123,8 +10529,16 @@ private constructor(
                             fun isCustomChartMetricScalar(): Boolean =
                                 customChartMetricScalar != null
 
+                            fun isCustomChartFeedbackScoreMetricPercentile(): Boolean =
+                                customChartFeedbackScoreMetricPercentile != null
+
                             fun isCustomChartMetricPercentile(): Boolean =
                                 customChartMetricPercentile != null
+
+                            fun asCustomChartFeedbackCountMetric(): CustomChartFeedbackCountMetric =
+                                customChartFeedbackCountMetric.getOrThrow(
+                                    "customChartFeedbackCountMetric"
+                                )
 
                             fun asCustomChartMetricCount(): CustomChartMetricCount =
                                 customChartMetricCount.getOrThrow("customChartMetricCount")
@@ -9137,6 +10551,12 @@ private constructor(
 
                             fun asCustomChartMetricScalar(): CustomChartMetricScalar =
                                 customChartMetricScalar.getOrThrow("customChartMetricScalar")
+
+                            fun asCustomChartFeedbackScoreMetricPercentile():
+                                CustomChartFeedbackScoreMetricPercentile =
+                                customChartFeedbackScoreMetricPercentile.getOrThrow(
+                                    "customChartFeedbackScoreMetricPercentile"
+                                )
 
                             fun asCustomChartMetricPercentile(): CustomChartMetricPercentile =
                                 customChartMetricPercentile.getOrThrow(
@@ -9159,8 +10579,8 @@ private constructor(
                              *
                              * Optional<String> result = denominator.accept(new Denominator.Visitor<Optional<String>>() {
                              *     @Override
-                             *     public Optional<String> visitCustomChartMetricCount(CustomChartMetricCount customChartMetricCount) {
-                             *         return Optional.of(customChartMetricCount.toString());
+                             *     public Optional<String> visitCustomChartFeedbackCountMetric(CustomChartFeedbackCountMetric customChartFeedbackCountMetric) {
+                             *         return Optional.of(customChartFeedbackCountMetric.toString());
                              *     }
                              *
                              *     // ...
@@ -9178,6 +10598,10 @@ private constructor(
                              */
                             fun <T> accept(visitor: Visitor<T>): T =
                                 when {
+                                    customChartFeedbackCountMetric != null ->
+                                        visitor.visitCustomChartFeedbackCountMetric(
+                                            customChartFeedbackCountMetric
+                                        )
                                     customChartMetricCount != null ->
                                         visitor.visitCustomChartMetricCount(customChartMetricCount)
                                     customChartFeedbackScoreMetricScalar != null ->
@@ -9187,6 +10611,10 @@ private constructor(
                                     customChartMetricScalar != null ->
                                         visitor.visitCustomChartMetricScalar(
                                             customChartMetricScalar
+                                        )
+                                    customChartFeedbackScoreMetricPercentile != null ->
+                                        visitor.visitCustomChartFeedbackScoreMetricPercentile(
+                                            customChartFeedbackScoreMetricPercentile
                                         )
                                     customChartMetricPercentile != null ->
                                         visitor.visitCustomChartMetricPercentile(
@@ -9214,6 +10642,13 @@ private constructor(
 
                                 accept(
                                     object : Visitor<Unit> {
+                                        override fun visitCustomChartFeedbackCountMetric(
+                                            customChartFeedbackCountMetric:
+                                                CustomChartFeedbackCountMetric
+                                        ) {
+                                            customChartFeedbackCountMetric.validate()
+                                        }
+
                                         override fun visitCustomChartMetricCount(
                                             customChartMetricCount: CustomChartMetricCount
                                         ) {
@@ -9231,6 +10666,13 @@ private constructor(
                                             customChartMetricScalar: CustomChartMetricScalar
                                         ) {
                                             customChartMetricScalar.validate()
+                                        }
+
+                                        override fun visitCustomChartFeedbackScoreMetricPercentile(
+                                            customChartFeedbackScoreMetricPercentile:
+                                                CustomChartFeedbackScoreMetricPercentile
+                                        ) {
+                                            customChartFeedbackScoreMetricPercentile.validate()
                                         }
 
                                         override fun visitCustomChartMetricPercentile(
@@ -9261,6 +10703,11 @@ private constructor(
                             internal fun validity(): Int =
                                 accept(
                                     object : Visitor<Int> {
+                                        override fun visitCustomChartFeedbackCountMetric(
+                                            customChartFeedbackCountMetric:
+                                                CustomChartFeedbackCountMetric
+                                        ) = customChartFeedbackCountMetric.validity()
+
                                         override fun visitCustomChartMetricCount(
                                             customChartMetricCount: CustomChartMetricCount
                                         ) = customChartMetricCount.validity()
@@ -9273,6 +10720,11 @@ private constructor(
                                         override fun visitCustomChartMetricScalar(
                                             customChartMetricScalar: CustomChartMetricScalar
                                         ) = customChartMetricScalar.validity()
+
+                                        override fun visitCustomChartFeedbackScoreMetricPercentile(
+                                            customChartFeedbackScoreMetricPercentile:
+                                                CustomChartFeedbackScoreMetricPercentile
+                                        ) = customChartFeedbackScoreMetricPercentile.validity()
 
                                         override fun visitCustomChartMetricPercentile(
                                             customChartMetricPercentile: CustomChartMetricPercentile
@@ -9288,29 +10740,39 @@ private constructor(
                                 }
 
                                 return other is Denominator &&
+                                    customChartFeedbackCountMetric ==
+                                        other.customChartFeedbackCountMetric &&
                                     customChartMetricCount == other.customChartMetricCount &&
                                     customChartFeedbackScoreMetricScalar ==
                                         other.customChartFeedbackScoreMetricScalar &&
                                     customChartMetricScalar == other.customChartMetricScalar &&
+                                    customChartFeedbackScoreMetricPercentile ==
+                                        other.customChartFeedbackScoreMetricPercentile &&
                                     customChartMetricPercentile == other.customChartMetricPercentile
                             }
 
                             override fun hashCode(): Int =
                                 Objects.hash(
+                                    customChartFeedbackCountMetric,
                                     customChartMetricCount,
                                     customChartFeedbackScoreMetricScalar,
                                     customChartMetricScalar,
+                                    customChartFeedbackScoreMetricPercentile,
                                     customChartMetricPercentile,
                                 )
 
                             override fun toString(): String =
                                 when {
+                                    customChartFeedbackCountMetric != null ->
+                                        "Denominator{customChartFeedbackCountMetric=$customChartFeedbackCountMetric}"
                                     customChartMetricCount != null ->
                                         "Denominator{customChartMetricCount=$customChartMetricCount}"
                                     customChartFeedbackScoreMetricScalar != null ->
                                         "Denominator{customChartFeedbackScoreMetricScalar=$customChartFeedbackScoreMetricScalar}"
                                     customChartMetricScalar != null ->
                                         "Denominator{customChartMetricScalar=$customChartMetricScalar}"
+                                    customChartFeedbackScoreMetricPercentile != null ->
+                                        "Denominator{customChartFeedbackScoreMetricPercentile=$customChartFeedbackScoreMetricPercentile}"
                                     customChartMetricPercentile != null ->
                                         "Denominator{customChartMetricPercentile=$customChartMetricPercentile}"
                                     _json != null -> "Denominator{_unknown=$_json}"
@@ -9318,6 +10780,15 @@ private constructor(
                                 }
 
                             companion object {
+
+                                @JvmStatic
+                                fun ofCustomChartFeedbackCountMetric(
+                                    customChartFeedbackCountMetric: CustomChartFeedbackCountMetric
+                                ) =
+                                    Denominator(
+                                        customChartFeedbackCountMetric =
+                                            customChartFeedbackCountMetric
+                                    )
 
                                 @JvmStatic
                                 fun ofCustomChartMetricCount(
@@ -9340,6 +10811,16 @@ private constructor(
                                 ) = Denominator(customChartMetricScalar = customChartMetricScalar)
 
                                 @JvmStatic
+                                fun ofCustomChartFeedbackScoreMetricPercentile(
+                                    customChartFeedbackScoreMetricPercentile:
+                                        CustomChartFeedbackScoreMetricPercentile
+                                ) =
+                                    Denominator(
+                                        customChartFeedbackScoreMetricPercentile =
+                                            customChartFeedbackScoreMetricPercentile
+                                    )
+
+                                @JvmStatic
                                 fun ofCustomChartMetricPercentile(
                                     customChartMetricPercentile: CustomChartMetricPercentile
                                 ) =
@@ -9354,6 +10835,10 @@ private constructor(
                              */
                             interface Visitor<out T> {
 
+                                fun visitCustomChartFeedbackCountMetric(
+                                    customChartFeedbackCountMetric: CustomChartFeedbackCountMetric
+                                ): T
+
                                 fun visitCustomChartMetricCount(
                                     customChartMetricCount: CustomChartMetricCount
                                 ): T
@@ -9365,6 +10850,11 @@ private constructor(
 
                                 fun visitCustomChartMetricScalar(
                                     customChartMetricScalar: CustomChartMetricScalar
+                                ): T
+
+                                fun visitCustomChartFeedbackScoreMetricPercentile(
+                                    customChartFeedbackScoreMetricPercentile:
+                                        CustomChartFeedbackScoreMetricPercentile
                                 ): T
 
                                 fun visitCustomChartMetricPercentile(
@@ -9399,6 +10889,18 @@ private constructor(
                                         sequenceOf(
                                                 tryDeserialize(
                                                         node,
+                                                        jacksonTypeRef<
+                                                            CustomChartFeedbackCountMetric
+                                                        >(),
+                                                    )
+                                                    ?.let {
+                                                        Denominator(
+                                                            customChartFeedbackCountMetric = it,
+                                                            _json = json,
+                                                        )
+                                                    },
+                                                tryDeserialize(
+                                                        node,
                                                         jacksonTypeRef<CustomChartMetricCount>(),
                                                     )
                                                     ?.let {
@@ -9427,6 +10929,19 @@ private constructor(
                                                     ?.let {
                                                         Denominator(
                                                             customChartMetricScalar = it,
+                                                            _json = json,
+                                                        )
+                                                    },
+                                                tryDeserialize(
+                                                        node,
+                                                        jacksonTypeRef<
+                                                            CustomChartFeedbackScoreMetricPercentile
+                                                        >(),
+                                                    )
+                                                    ?.let {
+                                                        Denominator(
+                                                            customChartFeedbackScoreMetricPercentile =
+                                                                it,
                                                             _json = json,
                                                         )
                                                     },
@@ -9471,6 +10986,10 @@ private constructor(
                                     provider: SerializerProvider,
                                 ) {
                                     when {
+                                        value.customChartFeedbackCountMetric != null ->
+                                            generator.writeObject(
+                                                value.customChartFeedbackCountMetric
+                                            )
                                         value.customChartMetricCount != null ->
                                             generator.writeObject(value.customChartMetricCount)
                                         value.customChartFeedbackScoreMetricScalar != null ->
@@ -9479,12 +10998,687 @@ private constructor(
                                             )
                                         value.customChartMetricScalar != null ->
                                             generator.writeObject(value.customChartMetricScalar)
+                                        value.customChartFeedbackScoreMetricPercentile != null ->
+                                            generator.writeObject(
+                                                value.customChartFeedbackScoreMetricPercentile
+                                            )
                                         value.customChartMetricPercentile != null ->
                                             generator.writeObject(value.customChartMetricPercentile)
                                         value._json != null -> generator.writeObject(value._json)
                                         else -> throw IllegalStateException("Invalid Denominator")
                                     }
                                 }
+                            }
+
+                            class CustomChartFeedbackCountMetric
+                            @JsonCreator(mode = JsonCreator.Mode.DISABLED)
+                            private constructor(
+                                private val entity: JsonValue,
+                                private val params: JsonField<Params>,
+                                private val filter: JsonField<String>,
+                                private val type: JsonField<Type>,
+                                private val additionalProperties: MutableMap<String, JsonValue>,
+                            ) {
+
+                                @JsonCreator
+                                private constructor(
+                                    @JsonProperty("entity")
+                                    @ExcludeMissing
+                                    entity: JsonValue = JsonMissing.of(),
+                                    @JsonProperty("params")
+                                    @ExcludeMissing
+                                    params: JsonField<Params> = JsonMissing.of(),
+                                    @JsonProperty("filter")
+                                    @ExcludeMissing
+                                    filter: JsonField<String> = JsonMissing.of(),
+                                    @JsonProperty("type")
+                                    @ExcludeMissing
+                                    type: JsonField<Type> = JsonMissing.of(),
+                                ) : this(entity, params, filter, type, mutableMapOf())
+
+                                /**
+                                 * Expected to always return the following:
+                                 * ```java
+                                 * JsonValue.from("feedback")
+                                 * ```
+                                 *
+                                 * However, this method can be useful for debugging and logging
+                                 * (e.g. if the server responded with an unexpected value).
+                                 */
+                                @JsonProperty("entity")
+                                @ExcludeMissing
+                                fun _entity(): JsonValue = entity
+
+                                /**
+                                 * @throws LangChainInvalidDataException if the JSON field has an
+                                 *   unexpected type or is unexpectedly missing or null (e.g. if the
+                                 *   server responded with an unexpected value).
+                                 */
+                                fun params(): Params = params.getRequired("params")
+
+                                /**
+                                 * @throws LangChainInvalidDataException if the JSON field has an
+                                 *   unexpected type (e.g. if the server responded with an
+                                 *   unexpected value).
+                                 */
+                                fun filter(): Optional<String> = filter.getOptional("filter")
+
+                                /**
+                                 * @throws LangChainInvalidDataException if the JSON field has an
+                                 *   unexpected type (e.g. if the server responded with an
+                                 *   unexpected value).
+                                 */
+                                fun type(): Optional<Type> = type.getOptional("type")
+
+                                /**
+                                 * Returns the raw JSON value of [params].
+                                 *
+                                 * Unlike [params], this method doesn't throw if the JSON field has
+                                 * an unexpected type.
+                                 */
+                                @JsonProperty("params")
+                                @ExcludeMissing
+                                fun _params(): JsonField<Params> = params
+
+                                /**
+                                 * Returns the raw JSON value of [filter].
+                                 *
+                                 * Unlike [filter], this method doesn't throw if the JSON field has
+                                 * an unexpected type.
+                                 */
+                                @JsonProperty("filter")
+                                @ExcludeMissing
+                                fun _filter(): JsonField<String> = filter
+
+                                /**
+                                 * Returns the raw JSON value of [type].
+                                 *
+                                 * Unlike [type], this method doesn't throw if the JSON field has an
+                                 * unexpected type.
+                                 */
+                                @JsonProperty("type")
+                                @ExcludeMissing
+                                fun _type(): JsonField<Type> = type
+
+                                @JsonAnySetter
+                                private fun putAdditionalProperty(key: String, value: JsonValue) {
+                                    additionalProperties.put(key, value)
+                                }
+
+                                @JsonAnyGetter
+                                @ExcludeMissing
+                                fun _additionalProperties(): Map<String, JsonValue> =
+                                    Collections.unmodifiableMap(additionalProperties)
+
+                                fun toBuilder() = Builder().from(this)
+
+                                companion object {
+
+                                    /**
+                                     * Returns a mutable builder for constructing an instance of
+                                     * [CustomChartFeedbackCountMetric].
+                                     *
+                                     * The following fields are required:
+                                     * ```java
+                                     * .params()
+                                     * ```
+                                     */
+                                    @JvmStatic fun builder() = Builder()
+                                }
+
+                                /** A builder for [CustomChartFeedbackCountMetric]. */
+                                class Builder internal constructor() {
+
+                                    private var entity: JsonValue = JsonValue.from("feedback")
+                                    private var params: JsonField<Params>? = null
+                                    private var filter: JsonField<String> = JsonMissing.of()
+                                    private var type: JsonField<Type> = JsonMissing.of()
+                                    private var additionalProperties:
+                                        MutableMap<String, JsonValue> =
+                                        mutableMapOf()
+
+                                    @JvmSynthetic
+                                    internal fun from(
+                                        customChartFeedbackCountMetric:
+                                            CustomChartFeedbackCountMetric
+                                    ) = apply {
+                                        entity = customChartFeedbackCountMetric.entity
+                                        params = customChartFeedbackCountMetric.params
+                                        filter = customChartFeedbackCountMetric.filter
+                                        type = customChartFeedbackCountMetric.type
+                                        additionalProperties =
+                                            customChartFeedbackCountMetric.additionalProperties
+                                                .toMutableMap()
+                                    }
+
+                                    /**
+                                     * Sets the field to an arbitrary JSON value.
+                                     *
+                                     * It is usually unnecessary to call this method because the
+                                     * field defaults to the following:
+                                     * ```java
+                                     * JsonValue.from("feedback")
+                                     * ```
+                                     *
+                                     * This method is primarily for setting the field to an
+                                     * undocumented or not yet supported value.
+                                     */
+                                    fun entity(entity: JsonValue) = apply { this.entity = entity }
+
+                                    fun params(params: Params) = params(JsonField.of(params))
+
+                                    /**
+                                     * Sets [Builder.params] to an arbitrary JSON value.
+                                     *
+                                     * You should usually call [Builder.params] with a well-typed
+                                     * [Params] value instead. This method is primarily for setting
+                                     * the field to an undocumented or not yet supported value.
+                                     */
+                                    fun params(params: JsonField<Params>) = apply {
+                                        this.params = params
+                                    }
+
+                                    fun filter(filter: String?) =
+                                        filter(JsonField.ofNullable(filter))
+
+                                    /**
+                                     * Alias for calling [Builder.filter] with
+                                     * `filter.orElse(null)`.
+                                     */
+                                    fun filter(filter: Optional<String>) =
+                                        filter(filter.getOrNull())
+
+                                    /**
+                                     * Sets [Builder.filter] to an arbitrary JSON value.
+                                     *
+                                     * You should usually call [Builder.filter] with a well-typed
+                                     * [String] value instead. This method is primarily for setting
+                                     * the field to an undocumented or not yet supported value.
+                                     */
+                                    fun filter(filter: JsonField<String>) = apply {
+                                        this.filter = filter
+                                    }
+
+                                    fun type(type: Type) = type(JsonField.of(type))
+
+                                    /**
+                                     * Sets [Builder.type] to an arbitrary JSON value.
+                                     *
+                                     * You should usually call [Builder.type] with a well-typed
+                                     * [Type] value instead. This method is primarily for setting
+                                     * the field to an undocumented or not yet supported value.
+                                     */
+                                    fun type(type: JsonField<Type>) = apply { this.type = type }
+
+                                    fun additionalProperties(
+                                        additionalProperties: Map<String, JsonValue>
+                                    ) = apply {
+                                        this.additionalProperties.clear()
+                                        putAllAdditionalProperties(additionalProperties)
+                                    }
+
+                                    fun putAdditionalProperty(key: String, value: JsonValue) =
+                                        apply {
+                                            additionalProperties.put(key, value)
+                                        }
+
+                                    fun putAllAdditionalProperties(
+                                        additionalProperties: Map<String, JsonValue>
+                                    ) = apply {
+                                        this.additionalProperties.putAll(additionalProperties)
+                                    }
+
+                                    fun removeAdditionalProperty(key: String) = apply {
+                                        additionalProperties.remove(key)
+                                    }
+
+                                    fun removeAllAdditionalProperties(keys: Set<String>) = apply {
+                                        keys.forEach(::removeAdditionalProperty)
+                                    }
+
+                                    /**
+                                     * Returns an immutable instance of
+                                     * [CustomChartFeedbackCountMetric].
+                                     *
+                                     * Further updates to this [Builder] will not mutate the
+                                     * returned instance.
+                                     *
+                                     * The following fields are required:
+                                     * ```java
+                                     * .params()
+                                     * ```
+                                     *
+                                     * @throws IllegalStateException if any required field is unset.
+                                     */
+                                    fun build(): CustomChartFeedbackCountMetric =
+                                        CustomChartFeedbackCountMetric(
+                                            entity,
+                                            checkRequired("params", params),
+                                            filter,
+                                            type,
+                                            additionalProperties.toMutableMap(),
+                                        )
+                                }
+
+                                private var validated: Boolean = false
+
+                                /**
+                                 * Validates that the types of all values in this object match their
+                                 * expected types recursively.
+                                 *
+                                 * This method is _not_ forwards compatible with new types from the
+                                 * API for existing fields.
+                                 *
+                                 * @throws LangChainInvalidDataException if any value type in this
+                                 *   object doesn't match its expected type.
+                                 */
+                                fun validate(): CustomChartFeedbackCountMetric = apply {
+                                    if (validated) {
+                                        return@apply
+                                    }
+
+                                    _entity().let {
+                                        if (it != JsonValue.from("feedback")) {
+                                            throw LangChainInvalidDataException(
+                                                "'entity' is invalid, received $it"
+                                            )
+                                        }
+                                    }
+                                    params().validate()
+                                    filter()
+                                    type().ifPresent { it.validate() }
+                                    validated = true
+                                }
+
+                                fun isValid(): Boolean =
+                                    try {
+                                        validate()
+                                        true
+                                    } catch (e: LangChainInvalidDataException) {
+                                        false
+                                    }
+
+                                /**
+                                 * Returns a score indicating how many valid values are contained in
+                                 * this object recursively.
+                                 *
+                                 * Used for best match union deserialization.
+                                 */
+                                @JvmSynthetic
+                                internal fun validity(): Int =
+                                    entity.let { if (it == JsonValue.from("feedback")) 1 else 0 } +
+                                        (params.asKnown().getOrNull()?.validity() ?: 0) +
+                                        (if (filter.asKnown().isPresent) 1 else 0) +
+                                        (type.asKnown().getOrNull()?.validity() ?: 0)
+
+                                class Params
+                                @JsonCreator(mode = JsonCreator.Mode.DISABLED)
+                                private constructor(
+                                    private val feedbackKey: JsonField<String>,
+                                    private val additionalProperties: MutableMap<String, JsonValue>,
+                                ) {
+
+                                    @JsonCreator
+                                    private constructor(
+                                        @JsonProperty("feedback_key")
+                                        @ExcludeMissing
+                                        feedbackKey: JsonField<String> = JsonMissing.of()
+                                    ) : this(feedbackKey, mutableMapOf())
+
+                                    /**
+                                     * @throws LangChainInvalidDataException if the JSON field has
+                                     *   an unexpected type or is unexpectedly missing or null (e.g.
+                                     *   if the server responded with an unexpected value).
+                                     */
+                                    fun feedbackKey(): String =
+                                        feedbackKey.getRequired("feedback_key")
+
+                                    /**
+                                     * Returns the raw JSON value of [feedbackKey].
+                                     *
+                                     * Unlike [feedbackKey], this method doesn't throw if the JSON
+                                     * field has an unexpected type.
+                                     */
+                                    @JsonProperty("feedback_key")
+                                    @ExcludeMissing
+                                    fun _feedbackKey(): JsonField<String> = feedbackKey
+
+                                    @JsonAnySetter
+                                    private fun putAdditionalProperty(
+                                        key: String,
+                                        value: JsonValue,
+                                    ) {
+                                        additionalProperties.put(key, value)
+                                    }
+
+                                    @JsonAnyGetter
+                                    @ExcludeMissing
+                                    fun _additionalProperties(): Map<String, JsonValue> =
+                                        Collections.unmodifiableMap(additionalProperties)
+
+                                    fun toBuilder() = Builder().from(this)
+
+                                    companion object {
+
+                                        /**
+                                         * Returns a mutable builder for constructing an instance of
+                                         * [Params].
+                                         *
+                                         * The following fields are required:
+                                         * ```java
+                                         * .feedbackKey()
+                                         * ```
+                                         */
+                                        @JvmStatic fun builder() = Builder()
+                                    }
+
+                                    /** A builder for [Params]. */
+                                    class Builder internal constructor() {
+
+                                        private var feedbackKey: JsonField<String>? = null
+                                        private var additionalProperties:
+                                            MutableMap<String, JsonValue> =
+                                            mutableMapOf()
+
+                                        @JvmSynthetic
+                                        internal fun from(params: Params) = apply {
+                                            feedbackKey = params.feedbackKey
+                                            additionalProperties =
+                                                params.additionalProperties.toMutableMap()
+                                        }
+
+                                        fun feedbackKey(feedbackKey: String) =
+                                            feedbackKey(JsonField.of(feedbackKey))
+
+                                        /**
+                                         * Sets [Builder.feedbackKey] to an arbitrary JSON value.
+                                         *
+                                         * You should usually call [Builder.feedbackKey] with a
+                                         * well-typed [String] value instead. This method is
+                                         * primarily for setting the field to an undocumented or not
+                                         * yet supported value.
+                                         */
+                                        fun feedbackKey(feedbackKey: JsonField<String>) = apply {
+                                            this.feedbackKey = feedbackKey
+                                        }
+
+                                        fun additionalProperties(
+                                            additionalProperties: Map<String, JsonValue>
+                                        ) = apply {
+                                            this.additionalProperties.clear()
+                                            putAllAdditionalProperties(additionalProperties)
+                                        }
+
+                                        fun putAdditionalProperty(key: String, value: JsonValue) =
+                                            apply {
+                                                additionalProperties.put(key, value)
+                                            }
+
+                                        fun putAllAdditionalProperties(
+                                            additionalProperties: Map<String, JsonValue>
+                                        ) = apply {
+                                            this.additionalProperties.putAll(additionalProperties)
+                                        }
+
+                                        fun removeAdditionalProperty(key: String) = apply {
+                                            additionalProperties.remove(key)
+                                        }
+
+                                        fun removeAllAdditionalProperties(keys: Set<String>) =
+                                            apply {
+                                                keys.forEach(::removeAdditionalProperty)
+                                            }
+
+                                        /**
+                                         * Returns an immutable instance of [Params].
+                                         *
+                                         * Further updates to this [Builder] will not mutate the
+                                         * returned instance.
+                                         *
+                                         * The following fields are required:
+                                         * ```java
+                                         * .feedbackKey()
+                                         * ```
+                                         *
+                                         * @throws IllegalStateException if any required field is
+                                         *   unset.
+                                         */
+                                        fun build(): Params =
+                                            Params(
+                                                checkRequired("feedbackKey", feedbackKey),
+                                                additionalProperties.toMutableMap(),
+                                            )
+                                    }
+
+                                    private var validated: Boolean = false
+
+                                    /**
+                                     * Validates that the types of all values in this object match
+                                     * their expected types recursively.
+                                     *
+                                     * This method is _not_ forwards compatible with new types from
+                                     * the API for existing fields.
+                                     *
+                                     * @throws LangChainInvalidDataException if any value type in
+                                     *   this object doesn't match its expected type.
+                                     */
+                                    fun validate(): Params = apply {
+                                        if (validated) {
+                                            return@apply
+                                        }
+
+                                        feedbackKey()
+                                        validated = true
+                                    }
+
+                                    fun isValid(): Boolean =
+                                        try {
+                                            validate()
+                                            true
+                                        } catch (e: LangChainInvalidDataException) {
+                                            false
+                                        }
+
+                                    /**
+                                     * Returns a score indicating how many valid values are
+                                     * contained in this object recursively.
+                                     *
+                                     * Used for best match union deserialization.
+                                     */
+                                    @JvmSynthetic
+                                    internal fun validity(): Int =
+                                        (if (feedbackKey.asKnown().isPresent) 1 else 0)
+
+                                    override fun equals(other: Any?): Boolean {
+                                        if (this === other) {
+                                            return true
+                                        }
+
+                                        return other is Params &&
+                                            feedbackKey == other.feedbackKey &&
+                                            additionalProperties == other.additionalProperties
+                                    }
+
+                                    private val hashCode: Int by lazy {
+                                        Objects.hash(feedbackKey, additionalProperties)
+                                    }
+
+                                    override fun hashCode(): Int = hashCode
+
+                                    override fun toString() =
+                                        "Params{feedbackKey=$feedbackKey, additionalProperties=$additionalProperties}"
+                                }
+
+                                class Type
+                                @JsonCreator
+                                private constructor(private val value: JsonField<String>) : Enum {
+
+                                    /**
+                                     * Returns this class instance's raw value.
+                                     *
+                                     * This is usually only useful if this instance was deserialized
+                                     * from data that doesn't match any known member, and you want
+                                     * to know that value. For example, if the SDK is on an older
+                                     * version than the API, then the API may respond with new
+                                     * members that the SDK is unaware of.
+                                     */
+                                    @com.fasterxml.jackson.annotation.JsonValue
+                                    fun _value(): JsonField<String> = value
+
+                                    companion object {
+
+                                        @JvmField val COUNT = of("count")
+
+                                        @JvmStatic fun of(value: String) = Type(JsonField.of(value))
+                                    }
+
+                                    /** An enum containing [Type]'s known values. */
+                                    enum class Known {
+                                        COUNT
+                                    }
+
+                                    /**
+                                     * An enum containing [Type]'s known values, as well as an
+                                     * [_UNKNOWN] member.
+                                     *
+                                     * An instance of [Type] can contain an unknown value in a
+                                     * couple of cases:
+                                     * - It was deserialized from data that doesn't match any known
+                                     *   member. For example, if the SDK is on an older version than
+                                     *   the API, then the API may respond with new members that the
+                                     *   SDK is unaware of.
+                                     * - It was constructed with an arbitrary value using the [of]
+                                     *   method.
+                                     */
+                                    enum class Value {
+                                        COUNT,
+                                        /**
+                                         * An enum member indicating that [Type] was instantiated
+                                         * with an unknown value.
+                                         */
+                                        _UNKNOWN,
+                                    }
+
+                                    /**
+                                     * Returns an enum member corresponding to this class instance's
+                                     * value, or [Value._UNKNOWN] if the class was instantiated with
+                                     * an unknown value.
+                                     *
+                                     * Use the [known] method instead if you're certain the value is
+                                     * always known or if you want to throw for the unknown case.
+                                     */
+                                    fun value(): Value =
+                                        when (this) {
+                                            COUNT -> Value.COUNT
+                                            else -> Value._UNKNOWN
+                                        }
+
+                                    /**
+                                     * Returns an enum member corresponding to this class instance's
+                                     * value.
+                                     *
+                                     * Use the [value] method instead if you're uncertain the value
+                                     * is always known and don't want to throw for the unknown case.
+                                     *
+                                     * @throws LangChainInvalidDataException if this class
+                                     *   instance's value is a not a known member.
+                                     */
+                                    fun known(): Known =
+                                        when (this) {
+                                            COUNT -> Known.COUNT
+                                            else ->
+                                                throw LangChainInvalidDataException(
+                                                    "Unknown Type: $value"
+                                                )
+                                        }
+
+                                    /**
+                                     * Returns this class instance's primitive wire representation.
+                                     *
+                                     * This differs from the [toString] method because that method
+                                     * is primarily for debugging and generally doesn't throw.
+                                     *
+                                     * @throws LangChainInvalidDataException if this class
+                                     *   instance's value does not have the expected primitive type.
+                                     */
+                                    fun asString(): String =
+                                        _value().asString().orElseThrow {
+                                            LangChainInvalidDataException("Value is not a String")
+                                        }
+
+                                    private var validated: Boolean = false
+
+                                    /**
+                                     * Validates that the types of all values in this object match
+                                     * their expected types recursively.
+                                     *
+                                     * This method is _not_ forwards compatible with new types from
+                                     * the API for existing fields.
+                                     *
+                                     * @throws LangChainInvalidDataException if any value type in
+                                     *   this object doesn't match its expected type.
+                                     */
+                                    fun validate(): Type = apply {
+                                        if (validated) {
+                                            return@apply
+                                        }
+
+                                        known()
+                                        validated = true
+                                    }
+
+                                    fun isValid(): Boolean =
+                                        try {
+                                            validate()
+                                            true
+                                        } catch (e: LangChainInvalidDataException) {
+                                            false
+                                        }
+
+                                    /**
+                                     * Returns a score indicating how many valid values are
+                                     * contained in this object recursively.
+                                     *
+                                     * Used for best match union deserialization.
+                                     */
+                                    @JvmSynthetic
+                                    internal fun validity(): Int =
+                                        if (value() == Value._UNKNOWN) 0 else 1
+
+                                    override fun equals(other: Any?): Boolean {
+                                        if (this === other) {
+                                            return true
+                                        }
+
+                                        return other is Type && value == other.value
+                                    }
+
+                                    override fun hashCode() = value.hashCode()
+
+                                    override fun toString() = value.toString()
+                                }
+
+                                override fun equals(other: Any?): Boolean {
+                                    if (this === other) {
+                                        return true
+                                    }
+
+                                    return other is CustomChartFeedbackCountMetric &&
+                                        entity == other.entity &&
+                                        params == other.params &&
+                                        filter == other.filter &&
+                                        type == other.type &&
+                                        additionalProperties == other.additionalProperties
+                                }
+
+                                private val hashCode: Int by lazy {
+                                    Objects.hash(entity, params, filter, type, additionalProperties)
+                                }
+
+                                override fun hashCode(): Int = hashCode
+
+                                override fun toString() =
+                                    "CustomChartFeedbackCountMetric{entity=$entity, params=$params, filter=$filter, type=$type, additionalProperties=$additionalProperties}"
                             }
 
                             class CustomChartMetricCount
@@ -10385,6 +12579,8 @@ private constructor(
 
                                     companion object {
 
+                                        @JvmField val SUM = of("sum")
+
                                         @JvmField val MAX = of("max")
 
                                         @JvmField val MIN = of("min")
@@ -10396,6 +12592,7 @@ private constructor(
 
                                     /** An enum containing [Type]'s known values. */
                                     enum class Known {
+                                        SUM,
                                         MAX,
                                         MIN,
                                         AVG,
@@ -10415,6 +12612,7 @@ private constructor(
                                      *   method.
                                      */
                                     enum class Value {
+                                        SUM,
                                         MAX,
                                         MIN,
                                         AVG,
@@ -10435,6 +12633,7 @@ private constructor(
                                      */
                                     fun value(): Value =
                                         when (this) {
+                                            SUM -> Value.SUM
                                             MAX -> Value.MAX
                                             MIN -> Value.MIN
                                             AVG -> Value.AVG
@@ -10453,6 +12652,7 @@ private constructor(
                                      */
                                     fun known(): Known =
                                         when (this) {
+                                            SUM -> Known.SUM
                                             MAX -> Known.MAX
                                             MIN -> Known.MIN
                                             AVG -> Known.AVG
@@ -11196,6 +13396,577 @@ private constructor(
 
                                 override fun toString() =
                                     "CustomChartMetricScalar{field=$field, type=$type, filter=$filter, additionalProperties=$additionalProperties}"
+                            }
+
+                            class CustomChartFeedbackScoreMetricPercentile
+                            @JsonCreator(mode = JsonCreator.Mode.DISABLED)
+                            private constructor(
+                                private val field: JsonValue,
+                                private val params: JsonField<Params>,
+                                private val type: JsonValue,
+                                private val filter: JsonField<String>,
+                                private val additionalProperties: MutableMap<String, JsonValue>,
+                            ) {
+
+                                @JsonCreator
+                                private constructor(
+                                    @JsonProperty("field")
+                                    @ExcludeMissing
+                                    field: JsonValue = JsonMissing.of(),
+                                    @JsonProperty("params")
+                                    @ExcludeMissing
+                                    params: JsonField<Params> = JsonMissing.of(),
+                                    @JsonProperty("type")
+                                    @ExcludeMissing
+                                    type: JsonValue = JsonMissing.of(),
+                                    @JsonProperty("filter")
+                                    @ExcludeMissing
+                                    filter: JsonField<String> = JsonMissing.of(),
+                                ) : this(field, params, type, filter, mutableMapOf())
+
+                                /**
+                                 * Expected to always return the following:
+                                 * ```java
+                                 * JsonValue.from("feedback_score")
+                                 * ```
+                                 *
+                                 * However, this method can be useful for debugging and logging
+                                 * (e.g. if the server responded with an unexpected value).
+                                 */
+                                @JsonProperty("field")
+                                @ExcludeMissing
+                                fun _field(): JsonValue = field
+
+                                /**
+                                 * @throws LangChainInvalidDataException if the JSON field has an
+                                 *   unexpected type or is unexpectedly missing or null (e.g. if the
+                                 *   server responded with an unexpected value).
+                                 */
+                                fun params(): Params = params.getRequired("params")
+
+                                /**
+                                 * Expected to always return the following:
+                                 * ```java
+                                 * JsonValue.from("percentile")
+                                 * ```
+                                 *
+                                 * However, this method can be useful for debugging and logging
+                                 * (e.g. if the server responded with an unexpected value).
+                                 */
+                                @JsonProperty("type") @ExcludeMissing fun _type(): JsonValue = type
+
+                                /**
+                                 * @throws LangChainInvalidDataException if the JSON field has an
+                                 *   unexpected type (e.g. if the server responded with an
+                                 *   unexpected value).
+                                 */
+                                fun filter(): Optional<String> = filter.getOptional("filter")
+
+                                /**
+                                 * Returns the raw JSON value of [params].
+                                 *
+                                 * Unlike [params], this method doesn't throw if the JSON field has
+                                 * an unexpected type.
+                                 */
+                                @JsonProperty("params")
+                                @ExcludeMissing
+                                fun _params(): JsonField<Params> = params
+
+                                /**
+                                 * Returns the raw JSON value of [filter].
+                                 *
+                                 * Unlike [filter], this method doesn't throw if the JSON field has
+                                 * an unexpected type.
+                                 */
+                                @JsonProperty("filter")
+                                @ExcludeMissing
+                                fun _filter(): JsonField<String> = filter
+
+                                @JsonAnySetter
+                                private fun putAdditionalProperty(key: String, value: JsonValue) {
+                                    additionalProperties.put(key, value)
+                                }
+
+                                @JsonAnyGetter
+                                @ExcludeMissing
+                                fun _additionalProperties(): Map<String, JsonValue> =
+                                    Collections.unmodifiableMap(additionalProperties)
+
+                                fun toBuilder() = Builder().from(this)
+
+                                companion object {
+
+                                    /**
+                                     * Returns a mutable builder for constructing an instance of
+                                     * [CustomChartFeedbackScoreMetricPercentile].
+                                     *
+                                     * The following fields are required:
+                                     * ```java
+                                     * .params()
+                                     * ```
+                                     */
+                                    @JvmStatic fun builder() = Builder()
+                                }
+
+                                /** A builder for [CustomChartFeedbackScoreMetricPercentile]. */
+                                class Builder internal constructor() {
+
+                                    private var field: JsonValue = JsonValue.from("feedback_score")
+                                    private var params: JsonField<Params>? = null
+                                    private var type: JsonValue = JsonValue.from("percentile")
+                                    private var filter: JsonField<String> = JsonMissing.of()
+                                    private var additionalProperties:
+                                        MutableMap<String, JsonValue> =
+                                        mutableMapOf()
+
+                                    @JvmSynthetic
+                                    internal fun from(
+                                        customChartFeedbackScoreMetricPercentile:
+                                            CustomChartFeedbackScoreMetricPercentile
+                                    ) = apply {
+                                        field = customChartFeedbackScoreMetricPercentile.field
+                                        params = customChartFeedbackScoreMetricPercentile.params
+                                        type = customChartFeedbackScoreMetricPercentile.type
+                                        filter = customChartFeedbackScoreMetricPercentile.filter
+                                        additionalProperties =
+                                            customChartFeedbackScoreMetricPercentile
+                                                .additionalProperties
+                                                .toMutableMap()
+                                    }
+
+                                    /**
+                                     * Sets the field to an arbitrary JSON value.
+                                     *
+                                     * It is usually unnecessary to call this method because the
+                                     * field defaults to the following:
+                                     * ```java
+                                     * JsonValue.from("feedback_score")
+                                     * ```
+                                     *
+                                     * This method is primarily for setting the field to an
+                                     * undocumented or not yet supported value.
+                                     */
+                                    fun field(field: JsonValue) = apply { this.field = field }
+
+                                    fun params(params: Params) = params(JsonField.of(params))
+
+                                    /**
+                                     * Sets [Builder.params] to an arbitrary JSON value.
+                                     *
+                                     * You should usually call [Builder.params] with a well-typed
+                                     * [Params] value instead. This method is primarily for setting
+                                     * the field to an undocumented or not yet supported value.
+                                     */
+                                    fun params(params: JsonField<Params>) = apply {
+                                        this.params = params
+                                    }
+
+                                    /**
+                                     * Sets the field to an arbitrary JSON value.
+                                     *
+                                     * It is usually unnecessary to call this method because the
+                                     * field defaults to the following:
+                                     * ```java
+                                     * JsonValue.from("percentile")
+                                     * ```
+                                     *
+                                     * This method is primarily for setting the field to an
+                                     * undocumented or not yet supported value.
+                                     */
+                                    fun type(type: JsonValue) = apply { this.type = type }
+
+                                    fun filter(filter: String?) =
+                                        filter(JsonField.ofNullable(filter))
+
+                                    /**
+                                     * Alias for calling [Builder.filter] with
+                                     * `filter.orElse(null)`.
+                                     */
+                                    fun filter(filter: Optional<String>) =
+                                        filter(filter.getOrNull())
+
+                                    /**
+                                     * Sets [Builder.filter] to an arbitrary JSON value.
+                                     *
+                                     * You should usually call [Builder.filter] with a well-typed
+                                     * [String] value instead. This method is primarily for setting
+                                     * the field to an undocumented or not yet supported value.
+                                     */
+                                    fun filter(filter: JsonField<String>) = apply {
+                                        this.filter = filter
+                                    }
+
+                                    fun additionalProperties(
+                                        additionalProperties: Map<String, JsonValue>
+                                    ) = apply {
+                                        this.additionalProperties.clear()
+                                        putAllAdditionalProperties(additionalProperties)
+                                    }
+
+                                    fun putAdditionalProperty(key: String, value: JsonValue) =
+                                        apply {
+                                            additionalProperties.put(key, value)
+                                        }
+
+                                    fun putAllAdditionalProperties(
+                                        additionalProperties: Map<String, JsonValue>
+                                    ) = apply {
+                                        this.additionalProperties.putAll(additionalProperties)
+                                    }
+
+                                    fun removeAdditionalProperty(key: String) = apply {
+                                        additionalProperties.remove(key)
+                                    }
+
+                                    fun removeAllAdditionalProperties(keys: Set<String>) = apply {
+                                        keys.forEach(::removeAdditionalProperty)
+                                    }
+
+                                    /**
+                                     * Returns an immutable instance of
+                                     * [CustomChartFeedbackScoreMetricPercentile].
+                                     *
+                                     * Further updates to this [Builder] will not mutate the
+                                     * returned instance.
+                                     *
+                                     * The following fields are required:
+                                     * ```java
+                                     * .params()
+                                     * ```
+                                     *
+                                     * @throws IllegalStateException if any required field is unset.
+                                     */
+                                    fun build(): CustomChartFeedbackScoreMetricPercentile =
+                                        CustomChartFeedbackScoreMetricPercentile(
+                                            field,
+                                            checkRequired("params", params),
+                                            type,
+                                            filter,
+                                            additionalProperties.toMutableMap(),
+                                        )
+                                }
+
+                                private var validated: Boolean = false
+
+                                /**
+                                 * Validates that the types of all values in this object match their
+                                 * expected types recursively.
+                                 *
+                                 * This method is _not_ forwards compatible with new types from the
+                                 * API for existing fields.
+                                 *
+                                 * @throws LangChainInvalidDataException if any value type in this
+                                 *   object doesn't match its expected type.
+                                 */
+                                fun validate(): CustomChartFeedbackScoreMetricPercentile = apply {
+                                    if (validated) {
+                                        return@apply
+                                    }
+
+                                    _field().let {
+                                        if (it != JsonValue.from("feedback_score")) {
+                                            throw LangChainInvalidDataException(
+                                                "'field' is invalid, received $it"
+                                            )
+                                        }
+                                    }
+                                    params().validate()
+                                    _type().let {
+                                        if (it != JsonValue.from("percentile")) {
+                                            throw LangChainInvalidDataException(
+                                                "'type' is invalid, received $it"
+                                            )
+                                        }
+                                    }
+                                    filter()
+                                    validated = true
+                                }
+
+                                fun isValid(): Boolean =
+                                    try {
+                                        validate()
+                                        true
+                                    } catch (e: LangChainInvalidDataException) {
+                                        false
+                                    }
+
+                                /**
+                                 * Returns a score indicating how many valid values are contained in
+                                 * this object recursively.
+                                 *
+                                 * Used for best match union deserialization.
+                                 */
+                                @JvmSynthetic
+                                internal fun validity(): Int =
+                                    field.let {
+                                        if (it == JsonValue.from("feedback_score")) 1 else 0
+                                    } +
+                                        (params.asKnown().getOrNull()?.validity() ?: 0) +
+                                        type.let {
+                                            if (it == JsonValue.from("percentile")) 1 else 0
+                                        } +
+                                        (if (filter.asKnown().isPresent) 1 else 0)
+
+                                class Params
+                                @JsonCreator(mode = JsonCreator.Mode.DISABLED)
+                                private constructor(
+                                    private val feedbackKey: JsonField<String>,
+                                    private val p: JsonField<Double>,
+                                    private val additionalProperties: MutableMap<String, JsonValue>,
+                                ) {
+
+                                    @JsonCreator
+                                    private constructor(
+                                        @JsonProperty("feedback_key")
+                                        @ExcludeMissing
+                                        feedbackKey: JsonField<String> = JsonMissing.of(),
+                                        @JsonProperty("p")
+                                        @ExcludeMissing
+                                        p: JsonField<Double> = JsonMissing.of(),
+                                    ) : this(feedbackKey, p, mutableMapOf())
+
+                                    /**
+                                     * @throws LangChainInvalidDataException if the JSON field has
+                                     *   an unexpected type or is unexpectedly missing or null (e.g.
+                                     *   if the server responded with an unexpected value).
+                                     */
+                                    fun feedbackKey(): String =
+                                        feedbackKey.getRequired("feedback_key")
+
+                                    /**
+                                     * @throws LangChainInvalidDataException if the JSON field has
+                                     *   an unexpected type or is unexpectedly missing or null (e.g.
+                                     *   if the server responded with an unexpected value).
+                                     */
+                                    fun p(): Double = p.getRequired("p")
+
+                                    /**
+                                     * Returns the raw JSON value of [feedbackKey].
+                                     *
+                                     * Unlike [feedbackKey], this method doesn't throw if the JSON
+                                     * field has an unexpected type.
+                                     */
+                                    @JsonProperty("feedback_key")
+                                    @ExcludeMissing
+                                    fun _feedbackKey(): JsonField<String> = feedbackKey
+
+                                    /**
+                                     * Returns the raw JSON value of [p].
+                                     *
+                                     * Unlike [p], this method doesn't throw if the JSON field has
+                                     * an unexpected type.
+                                     */
+                                    @JsonProperty("p")
+                                    @ExcludeMissing
+                                    fun _p(): JsonField<Double> = p
+
+                                    @JsonAnySetter
+                                    private fun putAdditionalProperty(
+                                        key: String,
+                                        value: JsonValue,
+                                    ) {
+                                        additionalProperties.put(key, value)
+                                    }
+
+                                    @JsonAnyGetter
+                                    @ExcludeMissing
+                                    fun _additionalProperties(): Map<String, JsonValue> =
+                                        Collections.unmodifiableMap(additionalProperties)
+
+                                    fun toBuilder() = Builder().from(this)
+
+                                    companion object {
+
+                                        /**
+                                         * Returns a mutable builder for constructing an instance of
+                                         * [Params].
+                                         *
+                                         * The following fields are required:
+                                         * ```java
+                                         * .feedbackKey()
+                                         * .p()
+                                         * ```
+                                         */
+                                        @JvmStatic fun builder() = Builder()
+                                    }
+
+                                    /** A builder for [Params]. */
+                                    class Builder internal constructor() {
+
+                                        private var feedbackKey: JsonField<String>? = null
+                                        private var p: JsonField<Double>? = null
+                                        private var additionalProperties:
+                                            MutableMap<String, JsonValue> =
+                                            mutableMapOf()
+
+                                        @JvmSynthetic
+                                        internal fun from(params: Params) = apply {
+                                            feedbackKey = params.feedbackKey
+                                            p = params.p
+                                            additionalProperties =
+                                                params.additionalProperties.toMutableMap()
+                                        }
+
+                                        fun feedbackKey(feedbackKey: String) =
+                                            feedbackKey(JsonField.of(feedbackKey))
+
+                                        /**
+                                         * Sets [Builder.feedbackKey] to an arbitrary JSON value.
+                                         *
+                                         * You should usually call [Builder.feedbackKey] with a
+                                         * well-typed [String] value instead. This method is
+                                         * primarily for setting the field to an undocumented or not
+                                         * yet supported value.
+                                         */
+                                        fun feedbackKey(feedbackKey: JsonField<String>) = apply {
+                                            this.feedbackKey = feedbackKey
+                                        }
+
+                                        fun p(p: Double) = p(JsonField.of(p))
+
+                                        /**
+                                         * Sets [Builder.p] to an arbitrary JSON value.
+                                         *
+                                         * You should usually call [Builder.p] with a well-typed
+                                         * [Double] value instead. This method is primarily for
+                                         * setting the field to an undocumented or not yet supported
+                                         * value.
+                                         */
+                                        fun p(p: JsonField<Double>) = apply { this.p = p }
+
+                                        fun additionalProperties(
+                                            additionalProperties: Map<String, JsonValue>
+                                        ) = apply {
+                                            this.additionalProperties.clear()
+                                            putAllAdditionalProperties(additionalProperties)
+                                        }
+
+                                        fun putAdditionalProperty(key: String, value: JsonValue) =
+                                            apply {
+                                                additionalProperties.put(key, value)
+                                            }
+
+                                        fun putAllAdditionalProperties(
+                                            additionalProperties: Map<String, JsonValue>
+                                        ) = apply {
+                                            this.additionalProperties.putAll(additionalProperties)
+                                        }
+
+                                        fun removeAdditionalProperty(key: String) = apply {
+                                            additionalProperties.remove(key)
+                                        }
+
+                                        fun removeAllAdditionalProperties(keys: Set<String>) =
+                                            apply {
+                                                keys.forEach(::removeAdditionalProperty)
+                                            }
+
+                                        /**
+                                         * Returns an immutable instance of [Params].
+                                         *
+                                         * Further updates to this [Builder] will not mutate the
+                                         * returned instance.
+                                         *
+                                         * The following fields are required:
+                                         * ```java
+                                         * .feedbackKey()
+                                         * .p()
+                                         * ```
+                                         *
+                                         * @throws IllegalStateException if any required field is
+                                         *   unset.
+                                         */
+                                        fun build(): Params =
+                                            Params(
+                                                checkRequired("feedbackKey", feedbackKey),
+                                                checkRequired("p", p),
+                                                additionalProperties.toMutableMap(),
+                                            )
+                                    }
+
+                                    private var validated: Boolean = false
+
+                                    /**
+                                     * Validates that the types of all values in this object match
+                                     * their expected types recursively.
+                                     *
+                                     * This method is _not_ forwards compatible with new types from
+                                     * the API for existing fields.
+                                     *
+                                     * @throws LangChainInvalidDataException if any value type in
+                                     *   this object doesn't match its expected type.
+                                     */
+                                    fun validate(): Params = apply {
+                                        if (validated) {
+                                            return@apply
+                                        }
+
+                                        feedbackKey()
+                                        p()
+                                        validated = true
+                                    }
+
+                                    fun isValid(): Boolean =
+                                        try {
+                                            validate()
+                                            true
+                                        } catch (e: LangChainInvalidDataException) {
+                                            false
+                                        }
+
+                                    /**
+                                     * Returns a score indicating how many valid values are
+                                     * contained in this object recursively.
+                                     *
+                                     * Used for best match union deserialization.
+                                     */
+                                    @JvmSynthetic
+                                    internal fun validity(): Int =
+                                        (if (feedbackKey.asKnown().isPresent) 1 else 0) +
+                                            (if (p.asKnown().isPresent) 1 else 0)
+
+                                    override fun equals(other: Any?): Boolean {
+                                        if (this === other) {
+                                            return true
+                                        }
+
+                                        return other is Params &&
+                                            feedbackKey == other.feedbackKey &&
+                                            p == other.p &&
+                                            additionalProperties == other.additionalProperties
+                                    }
+
+                                    private val hashCode: Int by lazy {
+                                        Objects.hash(feedbackKey, p, additionalProperties)
+                                    }
+
+                                    override fun hashCode(): Int = hashCode
+
+                                    override fun toString() =
+                                        "Params{feedbackKey=$feedbackKey, p=$p, additionalProperties=$additionalProperties}"
+                                }
+
+                                override fun equals(other: Any?): Boolean {
+                                    if (this === other) {
+                                        return true
+                                    }
+
+                                    return other is CustomChartFeedbackScoreMetricPercentile &&
+                                        field == other.field &&
+                                        params == other.params &&
+                                        type == other.type &&
+                                        filter == other.filter &&
+                                        additionalProperties == other.additionalProperties
+                                }
+
+                                private val hashCode: Int by lazy {
+                                    Objects.hash(field, params, type, filter, additionalProperties)
+                                }
+
+                                override fun hashCode(): Int = hashCode
+
+                                override fun toString() =
+                                    "CustomChartFeedbackScoreMetricPercentile{field=$field, params=$params, type=$type, filter=$filter, additionalProperties=$additionalProperties}"
                             }
 
                             class CustomChartMetricPercentile
@@ -11923,15 +14694,25 @@ private constructor(
                         @JsonSerialize(using = Numerator.Serializer::class)
                         class Numerator
                         private constructor(
+                            private val customChartFeedbackCountMetric:
+                                CustomChartFeedbackCountMetric? =
+                                null,
                             private val customChartMetricCount: CustomChartMetricCount? = null,
                             private val customChartFeedbackScoreMetricScalar:
                                 CustomChartFeedbackScoreMetricScalar? =
                                 null,
                             private val customChartMetricScalar: CustomChartMetricScalar? = null,
+                            private val customChartFeedbackScoreMetricPercentile:
+                                CustomChartFeedbackScoreMetricPercentile? =
+                                null,
                             private val customChartMetricPercentile: CustomChartMetricPercentile? =
                                 null,
                             private val _json: JsonValue? = null,
                         ) {
+
+                            fun customChartFeedbackCountMetric():
+                                Optional<CustomChartFeedbackCountMetric> =
+                                Optional.ofNullable(customChartFeedbackCountMetric)
 
                             fun customChartMetricCount(): Optional<CustomChartMetricCount> =
                                 Optional.ofNullable(customChartMetricCount)
@@ -11943,9 +14724,16 @@ private constructor(
                             fun customChartMetricScalar(): Optional<CustomChartMetricScalar> =
                                 Optional.ofNullable(customChartMetricScalar)
 
+                            fun customChartFeedbackScoreMetricPercentile():
+                                Optional<CustomChartFeedbackScoreMetricPercentile> =
+                                Optional.ofNullable(customChartFeedbackScoreMetricPercentile)
+
                             fun customChartMetricPercentile():
                                 Optional<CustomChartMetricPercentile> =
                                 Optional.ofNullable(customChartMetricPercentile)
+
+                            fun isCustomChartFeedbackCountMetric(): Boolean =
+                                customChartFeedbackCountMetric != null
 
                             fun isCustomChartMetricCount(): Boolean = customChartMetricCount != null
 
@@ -11955,8 +14743,16 @@ private constructor(
                             fun isCustomChartMetricScalar(): Boolean =
                                 customChartMetricScalar != null
 
+                            fun isCustomChartFeedbackScoreMetricPercentile(): Boolean =
+                                customChartFeedbackScoreMetricPercentile != null
+
                             fun isCustomChartMetricPercentile(): Boolean =
                                 customChartMetricPercentile != null
+
+                            fun asCustomChartFeedbackCountMetric(): CustomChartFeedbackCountMetric =
+                                customChartFeedbackCountMetric.getOrThrow(
+                                    "customChartFeedbackCountMetric"
+                                )
 
                             fun asCustomChartMetricCount(): CustomChartMetricCount =
                                 customChartMetricCount.getOrThrow("customChartMetricCount")
@@ -11969,6 +14765,12 @@ private constructor(
 
                             fun asCustomChartMetricScalar(): CustomChartMetricScalar =
                                 customChartMetricScalar.getOrThrow("customChartMetricScalar")
+
+                            fun asCustomChartFeedbackScoreMetricPercentile():
+                                CustomChartFeedbackScoreMetricPercentile =
+                                customChartFeedbackScoreMetricPercentile.getOrThrow(
+                                    "customChartFeedbackScoreMetricPercentile"
+                                )
 
                             fun asCustomChartMetricPercentile(): CustomChartMetricPercentile =
                                 customChartMetricPercentile.getOrThrow(
@@ -11991,8 +14793,8 @@ private constructor(
                              *
                              * Optional<String> result = numerator.accept(new Numerator.Visitor<Optional<String>>() {
                              *     @Override
-                             *     public Optional<String> visitCustomChartMetricCount(CustomChartMetricCount customChartMetricCount) {
-                             *         return Optional.of(customChartMetricCount.toString());
+                             *     public Optional<String> visitCustomChartFeedbackCountMetric(CustomChartFeedbackCountMetric customChartFeedbackCountMetric) {
+                             *         return Optional.of(customChartFeedbackCountMetric.toString());
                              *     }
                              *
                              *     // ...
@@ -12010,6 +14812,10 @@ private constructor(
                              */
                             fun <T> accept(visitor: Visitor<T>): T =
                                 when {
+                                    customChartFeedbackCountMetric != null ->
+                                        visitor.visitCustomChartFeedbackCountMetric(
+                                            customChartFeedbackCountMetric
+                                        )
                                     customChartMetricCount != null ->
                                         visitor.visitCustomChartMetricCount(customChartMetricCount)
                                     customChartFeedbackScoreMetricScalar != null ->
@@ -12019,6 +14825,10 @@ private constructor(
                                     customChartMetricScalar != null ->
                                         visitor.visitCustomChartMetricScalar(
                                             customChartMetricScalar
+                                        )
+                                    customChartFeedbackScoreMetricPercentile != null ->
+                                        visitor.visitCustomChartFeedbackScoreMetricPercentile(
+                                            customChartFeedbackScoreMetricPercentile
                                         )
                                     customChartMetricPercentile != null ->
                                         visitor.visitCustomChartMetricPercentile(
@@ -12046,6 +14856,13 @@ private constructor(
 
                                 accept(
                                     object : Visitor<Unit> {
+                                        override fun visitCustomChartFeedbackCountMetric(
+                                            customChartFeedbackCountMetric:
+                                                CustomChartFeedbackCountMetric
+                                        ) {
+                                            customChartFeedbackCountMetric.validate()
+                                        }
+
                                         override fun visitCustomChartMetricCount(
                                             customChartMetricCount: CustomChartMetricCount
                                         ) {
@@ -12063,6 +14880,13 @@ private constructor(
                                             customChartMetricScalar: CustomChartMetricScalar
                                         ) {
                                             customChartMetricScalar.validate()
+                                        }
+
+                                        override fun visitCustomChartFeedbackScoreMetricPercentile(
+                                            customChartFeedbackScoreMetricPercentile:
+                                                CustomChartFeedbackScoreMetricPercentile
+                                        ) {
+                                            customChartFeedbackScoreMetricPercentile.validate()
                                         }
 
                                         override fun visitCustomChartMetricPercentile(
@@ -12093,6 +14917,11 @@ private constructor(
                             internal fun validity(): Int =
                                 accept(
                                     object : Visitor<Int> {
+                                        override fun visitCustomChartFeedbackCountMetric(
+                                            customChartFeedbackCountMetric:
+                                                CustomChartFeedbackCountMetric
+                                        ) = customChartFeedbackCountMetric.validity()
+
                                         override fun visitCustomChartMetricCount(
                                             customChartMetricCount: CustomChartMetricCount
                                         ) = customChartMetricCount.validity()
@@ -12105,6 +14934,11 @@ private constructor(
                                         override fun visitCustomChartMetricScalar(
                                             customChartMetricScalar: CustomChartMetricScalar
                                         ) = customChartMetricScalar.validity()
+
+                                        override fun visitCustomChartFeedbackScoreMetricPercentile(
+                                            customChartFeedbackScoreMetricPercentile:
+                                                CustomChartFeedbackScoreMetricPercentile
+                                        ) = customChartFeedbackScoreMetricPercentile.validity()
 
                                         override fun visitCustomChartMetricPercentile(
                                             customChartMetricPercentile: CustomChartMetricPercentile
@@ -12120,29 +14954,39 @@ private constructor(
                                 }
 
                                 return other is Numerator &&
+                                    customChartFeedbackCountMetric ==
+                                        other.customChartFeedbackCountMetric &&
                                     customChartMetricCount == other.customChartMetricCount &&
                                     customChartFeedbackScoreMetricScalar ==
                                         other.customChartFeedbackScoreMetricScalar &&
                                     customChartMetricScalar == other.customChartMetricScalar &&
+                                    customChartFeedbackScoreMetricPercentile ==
+                                        other.customChartFeedbackScoreMetricPercentile &&
                                     customChartMetricPercentile == other.customChartMetricPercentile
                             }
 
                             override fun hashCode(): Int =
                                 Objects.hash(
+                                    customChartFeedbackCountMetric,
                                     customChartMetricCount,
                                     customChartFeedbackScoreMetricScalar,
                                     customChartMetricScalar,
+                                    customChartFeedbackScoreMetricPercentile,
                                     customChartMetricPercentile,
                                 )
 
                             override fun toString(): String =
                                 when {
+                                    customChartFeedbackCountMetric != null ->
+                                        "Numerator{customChartFeedbackCountMetric=$customChartFeedbackCountMetric}"
                                     customChartMetricCount != null ->
                                         "Numerator{customChartMetricCount=$customChartMetricCount}"
                                     customChartFeedbackScoreMetricScalar != null ->
                                         "Numerator{customChartFeedbackScoreMetricScalar=$customChartFeedbackScoreMetricScalar}"
                                     customChartMetricScalar != null ->
                                         "Numerator{customChartMetricScalar=$customChartMetricScalar}"
+                                    customChartFeedbackScoreMetricPercentile != null ->
+                                        "Numerator{customChartFeedbackScoreMetricPercentile=$customChartFeedbackScoreMetricPercentile}"
                                     customChartMetricPercentile != null ->
                                         "Numerator{customChartMetricPercentile=$customChartMetricPercentile}"
                                     _json != null -> "Numerator{_unknown=$_json}"
@@ -12150,6 +14994,15 @@ private constructor(
                                 }
 
                             companion object {
+
+                                @JvmStatic
+                                fun ofCustomChartFeedbackCountMetric(
+                                    customChartFeedbackCountMetric: CustomChartFeedbackCountMetric
+                                ) =
+                                    Numerator(
+                                        customChartFeedbackCountMetric =
+                                            customChartFeedbackCountMetric
+                                    )
 
                                 @JvmStatic
                                 fun ofCustomChartMetricCount(
@@ -12172,6 +15025,16 @@ private constructor(
                                 ) = Numerator(customChartMetricScalar = customChartMetricScalar)
 
                                 @JvmStatic
+                                fun ofCustomChartFeedbackScoreMetricPercentile(
+                                    customChartFeedbackScoreMetricPercentile:
+                                        CustomChartFeedbackScoreMetricPercentile
+                                ) =
+                                    Numerator(
+                                        customChartFeedbackScoreMetricPercentile =
+                                            customChartFeedbackScoreMetricPercentile
+                                    )
+
+                                @JvmStatic
                                 fun ofCustomChartMetricPercentile(
                                     customChartMetricPercentile: CustomChartMetricPercentile
                                 ) =
@@ -12186,6 +15049,10 @@ private constructor(
                              */
                             interface Visitor<out T> {
 
+                                fun visitCustomChartFeedbackCountMetric(
+                                    customChartFeedbackCountMetric: CustomChartFeedbackCountMetric
+                                ): T
+
                                 fun visitCustomChartMetricCount(
                                     customChartMetricCount: CustomChartMetricCount
                                 ): T
@@ -12197,6 +15064,11 @@ private constructor(
 
                                 fun visitCustomChartMetricScalar(
                                     customChartMetricScalar: CustomChartMetricScalar
+                                ): T
+
+                                fun visitCustomChartFeedbackScoreMetricPercentile(
+                                    customChartFeedbackScoreMetricPercentile:
+                                        CustomChartFeedbackScoreMetricPercentile
                                 ): T
 
                                 fun visitCustomChartMetricPercentile(
@@ -12229,6 +15101,18 @@ private constructor(
                                         sequenceOf(
                                                 tryDeserialize(
                                                         node,
+                                                        jacksonTypeRef<
+                                                            CustomChartFeedbackCountMetric
+                                                        >(),
+                                                    )
+                                                    ?.let {
+                                                        Numerator(
+                                                            customChartFeedbackCountMetric = it,
+                                                            _json = json,
+                                                        )
+                                                    },
+                                                tryDeserialize(
+                                                        node,
                                                         jacksonTypeRef<CustomChartMetricCount>(),
                                                     )
                                                     ?.let {
@@ -12257,6 +15141,19 @@ private constructor(
                                                     ?.let {
                                                         Numerator(
                                                             customChartMetricScalar = it,
+                                                            _json = json,
+                                                        )
+                                                    },
+                                                tryDeserialize(
+                                                        node,
+                                                        jacksonTypeRef<
+                                                            CustomChartFeedbackScoreMetricPercentile
+                                                        >(),
+                                                    )
+                                                    ?.let {
+                                                        Numerator(
+                                                            customChartFeedbackScoreMetricPercentile =
+                                                                it,
                                                             _json = json,
                                                         )
                                                     },
@@ -12301,6 +15198,10 @@ private constructor(
                                     provider: SerializerProvider,
                                 ) {
                                     when {
+                                        value.customChartFeedbackCountMetric != null ->
+                                            generator.writeObject(
+                                                value.customChartFeedbackCountMetric
+                                            )
                                         value.customChartMetricCount != null ->
                                             generator.writeObject(value.customChartMetricCount)
                                         value.customChartFeedbackScoreMetricScalar != null ->
@@ -12309,12 +15210,687 @@ private constructor(
                                             )
                                         value.customChartMetricScalar != null ->
                                             generator.writeObject(value.customChartMetricScalar)
+                                        value.customChartFeedbackScoreMetricPercentile != null ->
+                                            generator.writeObject(
+                                                value.customChartFeedbackScoreMetricPercentile
+                                            )
                                         value.customChartMetricPercentile != null ->
                                             generator.writeObject(value.customChartMetricPercentile)
                                         value._json != null -> generator.writeObject(value._json)
                                         else -> throw IllegalStateException("Invalid Numerator")
                                     }
                                 }
+                            }
+
+                            class CustomChartFeedbackCountMetric
+                            @JsonCreator(mode = JsonCreator.Mode.DISABLED)
+                            private constructor(
+                                private val entity: JsonValue,
+                                private val params: JsonField<Params>,
+                                private val filter: JsonField<String>,
+                                private val type: JsonField<Type>,
+                                private val additionalProperties: MutableMap<String, JsonValue>,
+                            ) {
+
+                                @JsonCreator
+                                private constructor(
+                                    @JsonProperty("entity")
+                                    @ExcludeMissing
+                                    entity: JsonValue = JsonMissing.of(),
+                                    @JsonProperty("params")
+                                    @ExcludeMissing
+                                    params: JsonField<Params> = JsonMissing.of(),
+                                    @JsonProperty("filter")
+                                    @ExcludeMissing
+                                    filter: JsonField<String> = JsonMissing.of(),
+                                    @JsonProperty("type")
+                                    @ExcludeMissing
+                                    type: JsonField<Type> = JsonMissing.of(),
+                                ) : this(entity, params, filter, type, mutableMapOf())
+
+                                /**
+                                 * Expected to always return the following:
+                                 * ```java
+                                 * JsonValue.from("feedback")
+                                 * ```
+                                 *
+                                 * However, this method can be useful for debugging and logging
+                                 * (e.g. if the server responded with an unexpected value).
+                                 */
+                                @JsonProperty("entity")
+                                @ExcludeMissing
+                                fun _entity(): JsonValue = entity
+
+                                /**
+                                 * @throws LangChainInvalidDataException if the JSON field has an
+                                 *   unexpected type or is unexpectedly missing or null (e.g. if the
+                                 *   server responded with an unexpected value).
+                                 */
+                                fun params(): Params = params.getRequired("params")
+
+                                /**
+                                 * @throws LangChainInvalidDataException if the JSON field has an
+                                 *   unexpected type (e.g. if the server responded with an
+                                 *   unexpected value).
+                                 */
+                                fun filter(): Optional<String> = filter.getOptional("filter")
+
+                                /**
+                                 * @throws LangChainInvalidDataException if the JSON field has an
+                                 *   unexpected type (e.g. if the server responded with an
+                                 *   unexpected value).
+                                 */
+                                fun type(): Optional<Type> = type.getOptional("type")
+
+                                /**
+                                 * Returns the raw JSON value of [params].
+                                 *
+                                 * Unlike [params], this method doesn't throw if the JSON field has
+                                 * an unexpected type.
+                                 */
+                                @JsonProperty("params")
+                                @ExcludeMissing
+                                fun _params(): JsonField<Params> = params
+
+                                /**
+                                 * Returns the raw JSON value of [filter].
+                                 *
+                                 * Unlike [filter], this method doesn't throw if the JSON field has
+                                 * an unexpected type.
+                                 */
+                                @JsonProperty("filter")
+                                @ExcludeMissing
+                                fun _filter(): JsonField<String> = filter
+
+                                /**
+                                 * Returns the raw JSON value of [type].
+                                 *
+                                 * Unlike [type], this method doesn't throw if the JSON field has an
+                                 * unexpected type.
+                                 */
+                                @JsonProperty("type")
+                                @ExcludeMissing
+                                fun _type(): JsonField<Type> = type
+
+                                @JsonAnySetter
+                                private fun putAdditionalProperty(key: String, value: JsonValue) {
+                                    additionalProperties.put(key, value)
+                                }
+
+                                @JsonAnyGetter
+                                @ExcludeMissing
+                                fun _additionalProperties(): Map<String, JsonValue> =
+                                    Collections.unmodifiableMap(additionalProperties)
+
+                                fun toBuilder() = Builder().from(this)
+
+                                companion object {
+
+                                    /**
+                                     * Returns a mutable builder for constructing an instance of
+                                     * [CustomChartFeedbackCountMetric].
+                                     *
+                                     * The following fields are required:
+                                     * ```java
+                                     * .params()
+                                     * ```
+                                     */
+                                    @JvmStatic fun builder() = Builder()
+                                }
+
+                                /** A builder for [CustomChartFeedbackCountMetric]. */
+                                class Builder internal constructor() {
+
+                                    private var entity: JsonValue = JsonValue.from("feedback")
+                                    private var params: JsonField<Params>? = null
+                                    private var filter: JsonField<String> = JsonMissing.of()
+                                    private var type: JsonField<Type> = JsonMissing.of()
+                                    private var additionalProperties:
+                                        MutableMap<String, JsonValue> =
+                                        mutableMapOf()
+
+                                    @JvmSynthetic
+                                    internal fun from(
+                                        customChartFeedbackCountMetric:
+                                            CustomChartFeedbackCountMetric
+                                    ) = apply {
+                                        entity = customChartFeedbackCountMetric.entity
+                                        params = customChartFeedbackCountMetric.params
+                                        filter = customChartFeedbackCountMetric.filter
+                                        type = customChartFeedbackCountMetric.type
+                                        additionalProperties =
+                                            customChartFeedbackCountMetric.additionalProperties
+                                                .toMutableMap()
+                                    }
+
+                                    /**
+                                     * Sets the field to an arbitrary JSON value.
+                                     *
+                                     * It is usually unnecessary to call this method because the
+                                     * field defaults to the following:
+                                     * ```java
+                                     * JsonValue.from("feedback")
+                                     * ```
+                                     *
+                                     * This method is primarily for setting the field to an
+                                     * undocumented or not yet supported value.
+                                     */
+                                    fun entity(entity: JsonValue) = apply { this.entity = entity }
+
+                                    fun params(params: Params) = params(JsonField.of(params))
+
+                                    /**
+                                     * Sets [Builder.params] to an arbitrary JSON value.
+                                     *
+                                     * You should usually call [Builder.params] with a well-typed
+                                     * [Params] value instead. This method is primarily for setting
+                                     * the field to an undocumented or not yet supported value.
+                                     */
+                                    fun params(params: JsonField<Params>) = apply {
+                                        this.params = params
+                                    }
+
+                                    fun filter(filter: String?) =
+                                        filter(JsonField.ofNullable(filter))
+
+                                    /**
+                                     * Alias for calling [Builder.filter] with
+                                     * `filter.orElse(null)`.
+                                     */
+                                    fun filter(filter: Optional<String>) =
+                                        filter(filter.getOrNull())
+
+                                    /**
+                                     * Sets [Builder.filter] to an arbitrary JSON value.
+                                     *
+                                     * You should usually call [Builder.filter] with a well-typed
+                                     * [String] value instead. This method is primarily for setting
+                                     * the field to an undocumented or not yet supported value.
+                                     */
+                                    fun filter(filter: JsonField<String>) = apply {
+                                        this.filter = filter
+                                    }
+
+                                    fun type(type: Type) = type(JsonField.of(type))
+
+                                    /**
+                                     * Sets [Builder.type] to an arbitrary JSON value.
+                                     *
+                                     * You should usually call [Builder.type] with a well-typed
+                                     * [Type] value instead. This method is primarily for setting
+                                     * the field to an undocumented or not yet supported value.
+                                     */
+                                    fun type(type: JsonField<Type>) = apply { this.type = type }
+
+                                    fun additionalProperties(
+                                        additionalProperties: Map<String, JsonValue>
+                                    ) = apply {
+                                        this.additionalProperties.clear()
+                                        putAllAdditionalProperties(additionalProperties)
+                                    }
+
+                                    fun putAdditionalProperty(key: String, value: JsonValue) =
+                                        apply {
+                                            additionalProperties.put(key, value)
+                                        }
+
+                                    fun putAllAdditionalProperties(
+                                        additionalProperties: Map<String, JsonValue>
+                                    ) = apply {
+                                        this.additionalProperties.putAll(additionalProperties)
+                                    }
+
+                                    fun removeAdditionalProperty(key: String) = apply {
+                                        additionalProperties.remove(key)
+                                    }
+
+                                    fun removeAllAdditionalProperties(keys: Set<String>) = apply {
+                                        keys.forEach(::removeAdditionalProperty)
+                                    }
+
+                                    /**
+                                     * Returns an immutable instance of
+                                     * [CustomChartFeedbackCountMetric].
+                                     *
+                                     * Further updates to this [Builder] will not mutate the
+                                     * returned instance.
+                                     *
+                                     * The following fields are required:
+                                     * ```java
+                                     * .params()
+                                     * ```
+                                     *
+                                     * @throws IllegalStateException if any required field is unset.
+                                     */
+                                    fun build(): CustomChartFeedbackCountMetric =
+                                        CustomChartFeedbackCountMetric(
+                                            entity,
+                                            checkRequired("params", params),
+                                            filter,
+                                            type,
+                                            additionalProperties.toMutableMap(),
+                                        )
+                                }
+
+                                private var validated: Boolean = false
+
+                                /**
+                                 * Validates that the types of all values in this object match their
+                                 * expected types recursively.
+                                 *
+                                 * This method is _not_ forwards compatible with new types from the
+                                 * API for existing fields.
+                                 *
+                                 * @throws LangChainInvalidDataException if any value type in this
+                                 *   object doesn't match its expected type.
+                                 */
+                                fun validate(): CustomChartFeedbackCountMetric = apply {
+                                    if (validated) {
+                                        return@apply
+                                    }
+
+                                    _entity().let {
+                                        if (it != JsonValue.from("feedback")) {
+                                            throw LangChainInvalidDataException(
+                                                "'entity' is invalid, received $it"
+                                            )
+                                        }
+                                    }
+                                    params().validate()
+                                    filter()
+                                    type().ifPresent { it.validate() }
+                                    validated = true
+                                }
+
+                                fun isValid(): Boolean =
+                                    try {
+                                        validate()
+                                        true
+                                    } catch (e: LangChainInvalidDataException) {
+                                        false
+                                    }
+
+                                /**
+                                 * Returns a score indicating how many valid values are contained in
+                                 * this object recursively.
+                                 *
+                                 * Used for best match union deserialization.
+                                 */
+                                @JvmSynthetic
+                                internal fun validity(): Int =
+                                    entity.let { if (it == JsonValue.from("feedback")) 1 else 0 } +
+                                        (params.asKnown().getOrNull()?.validity() ?: 0) +
+                                        (if (filter.asKnown().isPresent) 1 else 0) +
+                                        (type.asKnown().getOrNull()?.validity() ?: 0)
+
+                                class Params
+                                @JsonCreator(mode = JsonCreator.Mode.DISABLED)
+                                private constructor(
+                                    private val feedbackKey: JsonField<String>,
+                                    private val additionalProperties: MutableMap<String, JsonValue>,
+                                ) {
+
+                                    @JsonCreator
+                                    private constructor(
+                                        @JsonProperty("feedback_key")
+                                        @ExcludeMissing
+                                        feedbackKey: JsonField<String> = JsonMissing.of()
+                                    ) : this(feedbackKey, mutableMapOf())
+
+                                    /**
+                                     * @throws LangChainInvalidDataException if the JSON field has
+                                     *   an unexpected type or is unexpectedly missing or null (e.g.
+                                     *   if the server responded with an unexpected value).
+                                     */
+                                    fun feedbackKey(): String =
+                                        feedbackKey.getRequired("feedback_key")
+
+                                    /**
+                                     * Returns the raw JSON value of [feedbackKey].
+                                     *
+                                     * Unlike [feedbackKey], this method doesn't throw if the JSON
+                                     * field has an unexpected type.
+                                     */
+                                    @JsonProperty("feedback_key")
+                                    @ExcludeMissing
+                                    fun _feedbackKey(): JsonField<String> = feedbackKey
+
+                                    @JsonAnySetter
+                                    private fun putAdditionalProperty(
+                                        key: String,
+                                        value: JsonValue,
+                                    ) {
+                                        additionalProperties.put(key, value)
+                                    }
+
+                                    @JsonAnyGetter
+                                    @ExcludeMissing
+                                    fun _additionalProperties(): Map<String, JsonValue> =
+                                        Collections.unmodifiableMap(additionalProperties)
+
+                                    fun toBuilder() = Builder().from(this)
+
+                                    companion object {
+
+                                        /**
+                                         * Returns a mutable builder for constructing an instance of
+                                         * [Params].
+                                         *
+                                         * The following fields are required:
+                                         * ```java
+                                         * .feedbackKey()
+                                         * ```
+                                         */
+                                        @JvmStatic fun builder() = Builder()
+                                    }
+
+                                    /** A builder for [Params]. */
+                                    class Builder internal constructor() {
+
+                                        private var feedbackKey: JsonField<String>? = null
+                                        private var additionalProperties:
+                                            MutableMap<String, JsonValue> =
+                                            mutableMapOf()
+
+                                        @JvmSynthetic
+                                        internal fun from(params: Params) = apply {
+                                            feedbackKey = params.feedbackKey
+                                            additionalProperties =
+                                                params.additionalProperties.toMutableMap()
+                                        }
+
+                                        fun feedbackKey(feedbackKey: String) =
+                                            feedbackKey(JsonField.of(feedbackKey))
+
+                                        /**
+                                         * Sets [Builder.feedbackKey] to an arbitrary JSON value.
+                                         *
+                                         * You should usually call [Builder.feedbackKey] with a
+                                         * well-typed [String] value instead. This method is
+                                         * primarily for setting the field to an undocumented or not
+                                         * yet supported value.
+                                         */
+                                        fun feedbackKey(feedbackKey: JsonField<String>) = apply {
+                                            this.feedbackKey = feedbackKey
+                                        }
+
+                                        fun additionalProperties(
+                                            additionalProperties: Map<String, JsonValue>
+                                        ) = apply {
+                                            this.additionalProperties.clear()
+                                            putAllAdditionalProperties(additionalProperties)
+                                        }
+
+                                        fun putAdditionalProperty(key: String, value: JsonValue) =
+                                            apply {
+                                                additionalProperties.put(key, value)
+                                            }
+
+                                        fun putAllAdditionalProperties(
+                                            additionalProperties: Map<String, JsonValue>
+                                        ) = apply {
+                                            this.additionalProperties.putAll(additionalProperties)
+                                        }
+
+                                        fun removeAdditionalProperty(key: String) = apply {
+                                            additionalProperties.remove(key)
+                                        }
+
+                                        fun removeAllAdditionalProperties(keys: Set<String>) =
+                                            apply {
+                                                keys.forEach(::removeAdditionalProperty)
+                                            }
+
+                                        /**
+                                         * Returns an immutable instance of [Params].
+                                         *
+                                         * Further updates to this [Builder] will not mutate the
+                                         * returned instance.
+                                         *
+                                         * The following fields are required:
+                                         * ```java
+                                         * .feedbackKey()
+                                         * ```
+                                         *
+                                         * @throws IllegalStateException if any required field is
+                                         *   unset.
+                                         */
+                                        fun build(): Params =
+                                            Params(
+                                                checkRequired("feedbackKey", feedbackKey),
+                                                additionalProperties.toMutableMap(),
+                                            )
+                                    }
+
+                                    private var validated: Boolean = false
+
+                                    /**
+                                     * Validates that the types of all values in this object match
+                                     * their expected types recursively.
+                                     *
+                                     * This method is _not_ forwards compatible with new types from
+                                     * the API for existing fields.
+                                     *
+                                     * @throws LangChainInvalidDataException if any value type in
+                                     *   this object doesn't match its expected type.
+                                     */
+                                    fun validate(): Params = apply {
+                                        if (validated) {
+                                            return@apply
+                                        }
+
+                                        feedbackKey()
+                                        validated = true
+                                    }
+
+                                    fun isValid(): Boolean =
+                                        try {
+                                            validate()
+                                            true
+                                        } catch (e: LangChainInvalidDataException) {
+                                            false
+                                        }
+
+                                    /**
+                                     * Returns a score indicating how many valid values are
+                                     * contained in this object recursively.
+                                     *
+                                     * Used for best match union deserialization.
+                                     */
+                                    @JvmSynthetic
+                                    internal fun validity(): Int =
+                                        (if (feedbackKey.asKnown().isPresent) 1 else 0)
+
+                                    override fun equals(other: Any?): Boolean {
+                                        if (this === other) {
+                                            return true
+                                        }
+
+                                        return other is Params &&
+                                            feedbackKey == other.feedbackKey &&
+                                            additionalProperties == other.additionalProperties
+                                    }
+
+                                    private val hashCode: Int by lazy {
+                                        Objects.hash(feedbackKey, additionalProperties)
+                                    }
+
+                                    override fun hashCode(): Int = hashCode
+
+                                    override fun toString() =
+                                        "Params{feedbackKey=$feedbackKey, additionalProperties=$additionalProperties}"
+                                }
+
+                                class Type
+                                @JsonCreator
+                                private constructor(private val value: JsonField<String>) : Enum {
+
+                                    /**
+                                     * Returns this class instance's raw value.
+                                     *
+                                     * This is usually only useful if this instance was deserialized
+                                     * from data that doesn't match any known member, and you want
+                                     * to know that value. For example, if the SDK is on an older
+                                     * version than the API, then the API may respond with new
+                                     * members that the SDK is unaware of.
+                                     */
+                                    @com.fasterxml.jackson.annotation.JsonValue
+                                    fun _value(): JsonField<String> = value
+
+                                    companion object {
+
+                                        @JvmField val COUNT = of("count")
+
+                                        @JvmStatic fun of(value: String) = Type(JsonField.of(value))
+                                    }
+
+                                    /** An enum containing [Type]'s known values. */
+                                    enum class Known {
+                                        COUNT
+                                    }
+
+                                    /**
+                                     * An enum containing [Type]'s known values, as well as an
+                                     * [_UNKNOWN] member.
+                                     *
+                                     * An instance of [Type] can contain an unknown value in a
+                                     * couple of cases:
+                                     * - It was deserialized from data that doesn't match any known
+                                     *   member. For example, if the SDK is on an older version than
+                                     *   the API, then the API may respond with new members that the
+                                     *   SDK is unaware of.
+                                     * - It was constructed with an arbitrary value using the [of]
+                                     *   method.
+                                     */
+                                    enum class Value {
+                                        COUNT,
+                                        /**
+                                         * An enum member indicating that [Type] was instantiated
+                                         * with an unknown value.
+                                         */
+                                        _UNKNOWN,
+                                    }
+
+                                    /**
+                                     * Returns an enum member corresponding to this class instance's
+                                     * value, or [Value._UNKNOWN] if the class was instantiated with
+                                     * an unknown value.
+                                     *
+                                     * Use the [known] method instead if you're certain the value is
+                                     * always known or if you want to throw for the unknown case.
+                                     */
+                                    fun value(): Value =
+                                        when (this) {
+                                            COUNT -> Value.COUNT
+                                            else -> Value._UNKNOWN
+                                        }
+
+                                    /**
+                                     * Returns an enum member corresponding to this class instance's
+                                     * value.
+                                     *
+                                     * Use the [value] method instead if you're uncertain the value
+                                     * is always known and don't want to throw for the unknown case.
+                                     *
+                                     * @throws LangChainInvalidDataException if this class
+                                     *   instance's value is a not a known member.
+                                     */
+                                    fun known(): Known =
+                                        when (this) {
+                                            COUNT -> Known.COUNT
+                                            else ->
+                                                throw LangChainInvalidDataException(
+                                                    "Unknown Type: $value"
+                                                )
+                                        }
+
+                                    /**
+                                     * Returns this class instance's primitive wire representation.
+                                     *
+                                     * This differs from the [toString] method because that method
+                                     * is primarily for debugging and generally doesn't throw.
+                                     *
+                                     * @throws LangChainInvalidDataException if this class
+                                     *   instance's value does not have the expected primitive type.
+                                     */
+                                    fun asString(): String =
+                                        _value().asString().orElseThrow {
+                                            LangChainInvalidDataException("Value is not a String")
+                                        }
+
+                                    private var validated: Boolean = false
+
+                                    /**
+                                     * Validates that the types of all values in this object match
+                                     * their expected types recursively.
+                                     *
+                                     * This method is _not_ forwards compatible with new types from
+                                     * the API for existing fields.
+                                     *
+                                     * @throws LangChainInvalidDataException if any value type in
+                                     *   this object doesn't match its expected type.
+                                     */
+                                    fun validate(): Type = apply {
+                                        if (validated) {
+                                            return@apply
+                                        }
+
+                                        known()
+                                        validated = true
+                                    }
+
+                                    fun isValid(): Boolean =
+                                        try {
+                                            validate()
+                                            true
+                                        } catch (e: LangChainInvalidDataException) {
+                                            false
+                                        }
+
+                                    /**
+                                     * Returns a score indicating how many valid values are
+                                     * contained in this object recursively.
+                                     *
+                                     * Used for best match union deserialization.
+                                     */
+                                    @JvmSynthetic
+                                    internal fun validity(): Int =
+                                        if (value() == Value._UNKNOWN) 0 else 1
+
+                                    override fun equals(other: Any?): Boolean {
+                                        if (this === other) {
+                                            return true
+                                        }
+
+                                        return other is Type && value == other.value
+                                    }
+
+                                    override fun hashCode() = value.hashCode()
+
+                                    override fun toString() = value.toString()
+                                }
+
+                                override fun equals(other: Any?): Boolean {
+                                    if (this === other) {
+                                        return true
+                                    }
+
+                                    return other is CustomChartFeedbackCountMetric &&
+                                        entity == other.entity &&
+                                        params == other.params &&
+                                        filter == other.filter &&
+                                        type == other.type &&
+                                        additionalProperties == other.additionalProperties
+                                }
+
+                                private val hashCode: Int by lazy {
+                                    Objects.hash(entity, params, filter, type, additionalProperties)
+                                }
+
+                                override fun hashCode(): Int = hashCode
+
+                                override fun toString() =
+                                    "CustomChartFeedbackCountMetric{entity=$entity, params=$params, filter=$filter, type=$type, additionalProperties=$additionalProperties}"
                             }
 
                             class CustomChartMetricCount
@@ -13215,6 +16791,8 @@ private constructor(
 
                                     companion object {
 
+                                        @JvmField val SUM = of("sum")
+
                                         @JvmField val MAX = of("max")
 
                                         @JvmField val MIN = of("min")
@@ -13226,6 +16804,7 @@ private constructor(
 
                                     /** An enum containing [Type]'s known values. */
                                     enum class Known {
+                                        SUM,
                                         MAX,
                                         MIN,
                                         AVG,
@@ -13245,6 +16824,7 @@ private constructor(
                                      *   method.
                                      */
                                     enum class Value {
+                                        SUM,
                                         MAX,
                                         MIN,
                                         AVG,
@@ -13265,6 +16845,7 @@ private constructor(
                                      */
                                     fun value(): Value =
                                         when (this) {
+                                            SUM -> Value.SUM
                                             MAX -> Value.MAX
                                             MIN -> Value.MIN
                                             AVG -> Value.AVG
@@ -13283,6 +16864,7 @@ private constructor(
                                      */
                                     fun known(): Known =
                                         when (this) {
+                                            SUM -> Known.SUM
                                             MAX -> Known.MAX
                                             MIN -> Known.MIN
                                             AVG -> Known.AVG
@@ -14026,6 +17608,577 @@ private constructor(
 
                                 override fun toString() =
                                     "CustomChartMetricScalar{field=$field, type=$type, filter=$filter, additionalProperties=$additionalProperties}"
+                            }
+
+                            class CustomChartFeedbackScoreMetricPercentile
+                            @JsonCreator(mode = JsonCreator.Mode.DISABLED)
+                            private constructor(
+                                private val field: JsonValue,
+                                private val params: JsonField<Params>,
+                                private val type: JsonValue,
+                                private val filter: JsonField<String>,
+                                private val additionalProperties: MutableMap<String, JsonValue>,
+                            ) {
+
+                                @JsonCreator
+                                private constructor(
+                                    @JsonProperty("field")
+                                    @ExcludeMissing
+                                    field: JsonValue = JsonMissing.of(),
+                                    @JsonProperty("params")
+                                    @ExcludeMissing
+                                    params: JsonField<Params> = JsonMissing.of(),
+                                    @JsonProperty("type")
+                                    @ExcludeMissing
+                                    type: JsonValue = JsonMissing.of(),
+                                    @JsonProperty("filter")
+                                    @ExcludeMissing
+                                    filter: JsonField<String> = JsonMissing.of(),
+                                ) : this(field, params, type, filter, mutableMapOf())
+
+                                /**
+                                 * Expected to always return the following:
+                                 * ```java
+                                 * JsonValue.from("feedback_score")
+                                 * ```
+                                 *
+                                 * However, this method can be useful for debugging and logging
+                                 * (e.g. if the server responded with an unexpected value).
+                                 */
+                                @JsonProperty("field")
+                                @ExcludeMissing
+                                fun _field(): JsonValue = field
+
+                                /**
+                                 * @throws LangChainInvalidDataException if the JSON field has an
+                                 *   unexpected type or is unexpectedly missing or null (e.g. if the
+                                 *   server responded with an unexpected value).
+                                 */
+                                fun params(): Params = params.getRequired("params")
+
+                                /**
+                                 * Expected to always return the following:
+                                 * ```java
+                                 * JsonValue.from("percentile")
+                                 * ```
+                                 *
+                                 * However, this method can be useful for debugging and logging
+                                 * (e.g. if the server responded with an unexpected value).
+                                 */
+                                @JsonProperty("type") @ExcludeMissing fun _type(): JsonValue = type
+
+                                /**
+                                 * @throws LangChainInvalidDataException if the JSON field has an
+                                 *   unexpected type (e.g. if the server responded with an
+                                 *   unexpected value).
+                                 */
+                                fun filter(): Optional<String> = filter.getOptional("filter")
+
+                                /**
+                                 * Returns the raw JSON value of [params].
+                                 *
+                                 * Unlike [params], this method doesn't throw if the JSON field has
+                                 * an unexpected type.
+                                 */
+                                @JsonProperty("params")
+                                @ExcludeMissing
+                                fun _params(): JsonField<Params> = params
+
+                                /**
+                                 * Returns the raw JSON value of [filter].
+                                 *
+                                 * Unlike [filter], this method doesn't throw if the JSON field has
+                                 * an unexpected type.
+                                 */
+                                @JsonProperty("filter")
+                                @ExcludeMissing
+                                fun _filter(): JsonField<String> = filter
+
+                                @JsonAnySetter
+                                private fun putAdditionalProperty(key: String, value: JsonValue) {
+                                    additionalProperties.put(key, value)
+                                }
+
+                                @JsonAnyGetter
+                                @ExcludeMissing
+                                fun _additionalProperties(): Map<String, JsonValue> =
+                                    Collections.unmodifiableMap(additionalProperties)
+
+                                fun toBuilder() = Builder().from(this)
+
+                                companion object {
+
+                                    /**
+                                     * Returns a mutable builder for constructing an instance of
+                                     * [CustomChartFeedbackScoreMetricPercentile].
+                                     *
+                                     * The following fields are required:
+                                     * ```java
+                                     * .params()
+                                     * ```
+                                     */
+                                    @JvmStatic fun builder() = Builder()
+                                }
+
+                                /** A builder for [CustomChartFeedbackScoreMetricPercentile]. */
+                                class Builder internal constructor() {
+
+                                    private var field: JsonValue = JsonValue.from("feedback_score")
+                                    private var params: JsonField<Params>? = null
+                                    private var type: JsonValue = JsonValue.from("percentile")
+                                    private var filter: JsonField<String> = JsonMissing.of()
+                                    private var additionalProperties:
+                                        MutableMap<String, JsonValue> =
+                                        mutableMapOf()
+
+                                    @JvmSynthetic
+                                    internal fun from(
+                                        customChartFeedbackScoreMetricPercentile:
+                                            CustomChartFeedbackScoreMetricPercentile
+                                    ) = apply {
+                                        field = customChartFeedbackScoreMetricPercentile.field
+                                        params = customChartFeedbackScoreMetricPercentile.params
+                                        type = customChartFeedbackScoreMetricPercentile.type
+                                        filter = customChartFeedbackScoreMetricPercentile.filter
+                                        additionalProperties =
+                                            customChartFeedbackScoreMetricPercentile
+                                                .additionalProperties
+                                                .toMutableMap()
+                                    }
+
+                                    /**
+                                     * Sets the field to an arbitrary JSON value.
+                                     *
+                                     * It is usually unnecessary to call this method because the
+                                     * field defaults to the following:
+                                     * ```java
+                                     * JsonValue.from("feedback_score")
+                                     * ```
+                                     *
+                                     * This method is primarily for setting the field to an
+                                     * undocumented or not yet supported value.
+                                     */
+                                    fun field(field: JsonValue) = apply { this.field = field }
+
+                                    fun params(params: Params) = params(JsonField.of(params))
+
+                                    /**
+                                     * Sets [Builder.params] to an arbitrary JSON value.
+                                     *
+                                     * You should usually call [Builder.params] with a well-typed
+                                     * [Params] value instead. This method is primarily for setting
+                                     * the field to an undocumented or not yet supported value.
+                                     */
+                                    fun params(params: JsonField<Params>) = apply {
+                                        this.params = params
+                                    }
+
+                                    /**
+                                     * Sets the field to an arbitrary JSON value.
+                                     *
+                                     * It is usually unnecessary to call this method because the
+                                     * field defaults to the following:
+                                     * ```java
+                                     * JsonValue.from("percentile")
+                                     * ```
+                                     *
+                                     * This method is primarily for setting the field to an
+                                     * undocumented or not yet supported value.
+                                     */
+                                    fun type(type: JsonValue) = apply { this.type = type }
+
+                                    fun filter(filter: String?) =
+                                        filter(JsonField.ofNullable(filter))
+
+                                    /**
+                                     * Alias for calling [Builder.filter] with
+                                     * `filter.orElse(null)`.
+                                     */
+                                    fun filter(filter: Optional<String>) =
+                                        filter(filter.getOrNull())
+
+                                    /**
+                                     * Sets [Builder.filter] to an arbitrary JSON value.
+                                     *
+                                     * You should usually call [Builder.filter] with a well-typed
+                                     * [String] value instead. This method is primarily for setting
+                                     * the field to an undocumented or not yet supported value.
+                                     */
+                                    fun filter(filter: JsonField<String>) = apply {
+                                        this.filter = filter
+                                    }
+
+                                    fun additionalProperties(
+                                        additionalProperties: Map<String, JsonValue>
+                                    ) = apply {
+                                        this.additionalProperties.clear()
+                                        putAllAdditionalProperties(additionalProperties)
+                                    }
+
+                                    fun putAdditionalProperty(key: String, value: JsonValue) =
+                                        apply {
+                                            additionalProperties.put(key, value)
+                                        }
+
+                                    fun putAllAdditionalProperties(
+                                        additionalProperties: Map<String, JsonValue>
+                                    ) = apply {
+                                        this.additionalProperties.putAll(additionalProperties)
+                                    }
+
+                                    fun removeAdditionalProperty(key: String) = apply {
+                                        additionalProperties.remove(key)
+                                    }
+
+                                    fun removeAllAdditionalProperties(keys: Set<String>) = apply {
+                                        keys.forEach(::removeAdditionalProperty)
+                                    }
+
+                                    /**
+                                     * Returns an immutable instance of
+                                     * [CustomChartFeedbackScoreMetricPercentile].
+                                     *
+                                     * Further updates to this [Builder] will not mutate the
+                                     * returned instance.
+                                     *
+                                     * The following fields are required:
+                                     * ```java
+                                     * .params()
+                                     * ```
+                                     *
+                                     * @throws IllegalStateException if any required field is unset.
+                                     */
+                                    fun build(): CustomChartFeedbackScoreMetricPercentile =
+                                        CustomChartFeedbackScoreMetricPercentile(
+                                            field,
+                                            checkRequired("params", params),
+                                            type,
+                                            filter,
+                                            additionalProperties.toMutableMap(),
+                                        )
+                                }
+
+                                private var validated: Boolean = false
+
+                                /**
+                                 * Validates that the types of all values in this object match their
+                                 * expected types recursively.
+                                 *
+                                 * This method is _not_ forwards compatible with new types from the
+                                 * API for existing fields.
+                                 *
+                                 * @throws LangChainInvalidDataException if any value type in this
+                                 *   object doesn't match its expected type.
+                                 */
+                                fun validate(): CustomChartFeedbackScoreMetricPercentile = apply {
+                                    if (validated) {
+                                        return@apply
+                                    }
+
+                                    _field().let {
+                                        if (it != JsonValue.from("feedback_score")) {
+                                            throw LangChainInvalidDataException(
+                                                "'field' is invalid, received $it"
+                                            )
+                                        }
+                                    }
+                                    params().validate()
+                                    _type().let {
+                                        if (it != JsonValue.from("percentile")) {
+                                            throw LangChainInvalidDataException(
+                                                "'type' is invalid, received $it"
+                                            )
+                                        }
+                                    }
+                                    filter()
+                                    validated = true
+                                }
+
+                                fun isValid(): Boolean =
+                                    try {
+                                        validate()
+                                        true
+                                    } catch (e: LangChainInvalidDataException) {
+                                        false
+                                    }
+
+                                /**
+                                 * Returns a score indicating how many valid values are contained in
+                                 * this object recursively.
+                                 *
+                                 * Used for best match union deserialization.
+                                 */
+                                @JvmSynthetic
+                                internal fun validity(): Int =
+                                    field.let {
+                                        if (it == JsonValue.from("feedback_score")) 1 else 0
+                                    } +
+                                        (params.asKnown().getOrNull()?.validity() ?: 0) +
+                                        type.let {
+                                            if (it == JsonValue.from("percentile")) 1 else 0
+                                        } +
+                                        (if (filter.asKnown().isPresent) 1 else 0)
+
+                                class Params
+                                @JsonCreator(mode = JsonCreator.Mode.DISABLED)
+                                private constructor(
+                                    private val feedbackKey: JsonField<String>,
+                                    private val p: JsonField<Double>,
+                                    private val additionalProperties: MutableMap<String, JsonValue>,
+                                ) {
+
+                                    @JsonCreator
+                                    private constructor(
+                                        @JsonProperty("feedback_key")
+                                        @ExcludeMissing
+                                        feedbackKey: JsonField<String> = JsonMissing.of(),
+                                        @JsonProperty("p")
+                                        @ExcludeMissing
+                                        p: JsonField<Double> = JsonMissing.of(),
+                                    ) : this(feedbackKey, p, mutableMapOf())
+
+                                    /**
+                                     * @throws LangChainInvalidDataException if the JSON field has
+                                     *   an unexpected type or is unexpectedly missing or null (e.g.
+                                     *   if the server responded with an unexpected value).
+                                     */
+                                    fun feedbackKey(): String =
+                                        feedbackKey.getRequired("feedback_key")
+
+                                    /**
+                                     * @throws LangChainInvalidDataException if the JSON field has
+                                     *   an unexpected type or is unexpectedly missing or null (e.g.
+                                     *   if the server responded with an unexpected value).
+                                     */
+                                    fun p(): Double = p.getRequired("p")
+
+                                    /**
+                                     * Returns the raw JSON value of [feedbackKey].
+                                     *
+                                     * Unlike [feedbackKey], this method doesn't throw if the JSON
+                                     * field has an unexpected type.
+                                     */
+                                    @JsonProperty("feedback_key")
+                                    @ExcludeMissing
+                                    fun _feedbackKey(): JsonField<String> = feedbackKey
+
+                                    /**
+                                     * Returns the raw JSON value of [p].
+                                     *
+                                     * Unlike [p], this method doesn't throw if the JSON field has
+                                     * an unexpected type.
+                                     */
+                                    @JsonProperty("p")
+                                    @ExcludeMissing
+                                    fun _p(): JsonField<Double> = p
+
+                                    @JsonAnySetter
+                                    private fun putAdditionalProperty(
+                                        key: String,
+                                        value: JsonValue,
+                                    ) {
+                                        additionalProperties.put(key, value)
+                                    }
+
+                                    @JsonAnyGetter
+                                    @ExcludeMissing
+                                    fun _additionalProperties(): Map<String, JsonValue> =
+                                        Collections.unmodifiableMap(additionalProperties)
+
+                                    fun toBuilder() = Builder().from(this)
+
+                                    companion object {
+
+                                        /**
+                                         * Returns a mutable builder for constructing an instance of
+                                         * [Params].
+                                         *
+                                         * The following fields are required:
+                                         * ```java
+                                         * .feedbackKey()
+                                         * .p()
+                                         * ```
+                                         */
+                                        @JvmStatic fun builder() = Builder()
+                                    }
+
+                                    /** A builder for [Params]. */
+                                    class Builder internal constructor() {
+
+                                        private var feedbackKey: JsonField<String>? = null
+                                        private var p: JsonField<Double>? = null
+                                        private var additionalProperties:
+                                            MutableMap<String, JsonValue> =
+                                            mutableMapOf()
+
+                                        @JvmSynthetic
+                                        internal fun from(params: Params) = apply {
+                                            feedbackKey = params.feedbackKey
+                                            p = params.p
+                                            additionalProperties =
+                                                params.additionalProperties.toMutableMap()
+                                        }
+
+                                        fun feedbackKey(feedbackKey: String) =
+                                            feedbackKey(JsonField.of(feedbackKey))
+
+                                        /**
+                                         * Sets [Builder.feedbackKey] to an arbitrary JSON value.
+                                         *
+                                         * You should usually call [Builder.feedbackKey] with a
+                                         * well-typed [String] value instead. This method is
+                                         * primarily for setting the field to an undocumented or not
+                                         * yet supported value.
+                                         */
+                                        fun feedbackKey(feedbackKey: JsonField<String>) = apply {
+                                            this.feedbackKey = feedbackKey
+                                        }
+
+                                        fun p(p: Double) = p(JsonField.of(p))
+
+                                        /**
+                                         * Sets [Builder.p] to an arbitrary JSON value.
+                                         *
+                                         * You should usually call [Builder.p] with a well-typed
+                                         * [Double] value instead. This method is primarily for
+                                         * setting the field to an undocumented or not yet supported
+                                         * value.
+                                         */
+                                        fun p(p: JsonField<Double>) = apply { this.p = p }
+
+                                        fun additionalProperties(
+                                            additionalProperties: Map<String, JsonValue>
+                                        ) = apply {
+                                            this.additionalProperties.clear()
+                                            putAllAdditionalProperties(additionalProperties)
+                                        }
+
+                                        fun putAdditionalProperty(key: String, value: JsonValue) =
+                                            apply {
+                                                additionalProperties.put(key, value)
+                                            }
+
+                                        fun putAllAdditionalProperties(
+                                            additionalProperties: Map<String, JsonValue>
+                                        ) = apply {
+                                            this.additionalProperties.putAll(additionalProperties)
+                                        }
+
+                                        fun removeAdditionalProperty(key: String) = apply {
+                                            additionalProperties.remove(key)
+                                        }
+
+                                        fun removeAllAdditionalProperties(keys: Set<String>) =
+                                            apply {
+                                                keys.forEach(::removeAdditionalProperty)
+                                            }
+
+                                        /**
+                                         * Returns an immutable instance of [Params].
+                                         *
+                                         * Further updates to this [Builder] will not mutate the
+                                         * returned instance.
+                                         *
+                                         * The following fields are required:
+                                         * ```java
+                                         * .feedbackKey()
+                                         * .p()
+                                         * ```
+                                         *
+                                         * @throws IllegalStateException if any required field is
+                                         *   unset.
+                                         */
+                                        fun build(): Params =
+                                            Params(
+                                                checkRequired("feedbackKey", feedbackKey),
+                                                checkRequired("p", p),
+                                                additionalProperties.toMutableMap(),
+                                            )
+                                    }
+
+                                    private var validated: Boolean = false
+
+                                    /**
+                                     * Validates that the types of all values in this object match
+                                     * their expected types recursively.
+                                     *
+                                     * This method is _not_ forwards compatible with new types from
+                                     * the API for existing fields.
+                                     *
+                                     * @throws LangChainInvalidDataException if any value type in
+                                     *   this object doesn't match its expected type.
+                                     */
+                                    fun validate(): Params = apply {
+                                        if (validated) {
+                                            return@apply
+                                        }
+
+                                        feedbackKey()
+                                        p()
+                                        validated = true
+                                    }
+
+                                    fun isValid(): Boolean =
+                                        try {
+                                            validate()
+                                            true
+                                        } catch (e: LangChainInvalidDataException) {
+                                            false
+                                        }
+
+                                    /**
+                                     * Returns a score indicating how many valid values are
+                                     * contained in this object recursively.
+                                     *
+                                     * Used for best match union deserialization.
+                                     */
+                                    @JvmSynthetic
+                                    internal fun validity(): Int =
+                                        (if (feedbackKey.asKnown().isPresent) 1 else 0) +
+                                            (if (p.asKnown().isPresent) 1 else 0)
+
+                                    override fun equals(other: Any?): Boolean {
+                                        if (this === other) {
+                                            return true
+                                        }
+
+                                        return other is Params &&
+                                            feedbackKey == other.feedbackKey &&
+                                            p == other.p &&
+                                            additionalProperties == other.additionalProperties
+                                    }
+
+                                    private val hashCode: Int by lazy {
+                                        Objects.hash(feedbackKey, p, additionalProperties)
+                                    }
+
+                                    override fun hashCode(): Int = hashCode
+
+                                    override fun toString() =
+                                        "Params{feedbackKey=$feedbackKey, p=$p, additionalProperties=$additionalProperties}"
+                                }
+
+                                override fun equals(other: Any?): Boolean {
+                                    if (this === other) {
+                                        return true
+                                    }
+
+                                    return other is CustomChartFeedbackScoreMetricPercentile &&
+                                        field == other.field &&
+                                        params == other.params &&
+                                        type == other.type &&
+                                        filter == other.filter &&
+                                        additionalProperties == other.additionalProperties
+                                }
+
+                                private val hashCode: Int by lazy {
+                                    Objects.hash(field, params, type, filter, additionalProperties)
+                                }
+
+                                override fun hashCode(): Int = hashCode
+
+                                override fun toString() =
+                                    "CustomChartFeedbackScoreMetricPercentile{field=$field, params=$params, type=$type, filter=$filter, additionalProperties=$additionalProperties}"
                             }
 
                             class CustomChartMetricPercentile
@@ -15447,7 +19600,7 @@ private constructor(
                     return true
                 }
 
-                return other is SingleCustomChartResponse &&
+                return other is SingleCustomChartResponseSerialized &&
                     id == other.id &&
                     chartType == other.chartType &&
                     data == other.data &&
@@ -15478,7 +19631,7 @@ private constructor(
             override fun hashCode(): Int = hashCode
 
             override fun toString() =
-                "SingleCustomChartResponse{id=$id, chartType=$chartType, data=$data, index=$index, series=$series, title=$title, commonFilters=$commonFilters, description=$description, metadata=$metadata, additionalProperties=$additionalProperties}"
+                "SingleCustomChartResponseSerialized{id=$id, chartType=$chartType, data=$data, index=$index, series=$series, title=$title, commonFilters=$commonFilters, description=$description, metadata=$metadata, additionalProperties=$additionalProperties}"
         }
 
         class Text
@@ -19817,6 +23970,20 @@ private constructor(
 
                     /**
                      * Alias for calling [metricDefinition] with
+                     * `MetricDefinition.ofCustomChartFeedbackCountMetric(customChartFeedbackCountMetric)`.
+                     */
+                    fun metricDefinition(
+                        customChartFeedbackCountMetric:
+                            MetricDefinition.CustomChartFeedbackCountMetric
+                    ) =
+                        metricDefinition(
+                            MetricDefinition.ofCustomChartFeedbackCountMetric(
+                                customChartFeedbackCountMetric
+                            )
+                        )
+
+                    /**
+                     * Alias for calling [metricDefinition] with
                      * `MetricDefinition.ofCustomChartMetricCount(customChartMetricCount)`.
                      */
                     fun metricDefinition(
@@ -19849,6 +24016,20 @@ private constructor(
                     ) =
                         metricDefinition(
                             MetricDefinition.ofCustomChartMetricScalar(customChartMetricScalar)
+                        )
+
+                    /**
+                     * Alias for calling [metricDefinition] with
+                     * `MetricDefinition.ofCustomChartFeedbackScoreMetricPercentile(customChartFeedbackScoreMetricPercentile)`.
+                     */
+                    fun metricDefinition(
+                        customChartFeedbackScoreMetricPercentile:
+                            MetricDefinition.CustomChartFeedbackScoreMetricPercentile
+                    ) =
+                        metricDefinition(
+                            MetricDefinition.ofCustomChartFeedbackScoreMetricPercentile(
+                                customChartFeedbackScoreMetricPercentile
+                            )
                         )
 
                     /**
@@ -23287,15 +27468,23 @@ private constructor(
                 @JsonSerialize(using = MetricDefinition.Serializer::class)
                 class MetricDefinition
                 private constructor(
+                    private val customChartFeedbackCountMetric: CustomChartFeedbackCountMetric? =
+                        null,
                     private val customChartMetricCount: CustomChartMetricCount? = null,
                     private val customChartFeedbackScoreMetricScalar:
                         CustomChartFeedbackScoreMetricScalar? =
                         null,
                     private val customChartMetricScalar: CustomChartMetricScalar? = null,
+                    private val customChartFeedbackScoreMetricPercentile:
+                        CustomChartFeedbackScoreMetricPercentile? =
+                        null,
                     private val customChartMetricPercentile: CustomChartMetricPercentile? = null,
                     private val customChartMetricRatioOutput: CustomChartMetricRatioOutput? = null,
                     private val _json: JsonValue? = null,
                 ) {
+
+                    fun customChartFeedbackCountMetric(): Optional<CustomChartFeedbackCountMetric> =
+                        Optional.ofNullable(customChartFeedbackCountMetric)
 
                     fun customChartMetricCount(): Optional<CustomChartMetricCount> =
                         Optional.ofNullable(customChartMetricCount)
@@ -23307,11 +27496,18 @@ private constructor(
                     fun customChartMetricScalar(): Optional<CustomChartMetricScalar> =
                         Optional.ofNullable(customChartMetricScalar)
 
+                    fun customChartFeedbackScoreMetricPercentile():
+                        Optional<CustomChartFeedbackScoreMetricPercentile> =
+                        Optional.ofNullable(customChartFeedbackScoreMetricPercentile)
+
                     fun customChartMetricPercentile(): Optional<CustomChartMetricPercentile> =
                         Optional.ofNullable(customChartMetricPercentile)
 
                     fun customChartMetricRatioOutput(): Optional<CustomChartMetricRatioOutput> =
                         Optional.ofNullable(customChartMetricRatioOutput)
+
+                    fun isCustomChartFeedbackCountMetric(): Boolean =
+                        customChartFeedbackCountMetric != null
 
                     fun isCustomChartMetricCount(): Boolean = customChartMetricCount != null
 
@@ -23320,11 +27516,17 @@ private constructor(
 
                     fun isCustomChartMetricScalar(): Boolean = customChartMetricScalar != null
 
+                    fun isCustomChartFeedbackScoreMetricPercentile(): Boolean =
+                        customChartFeedbackScoreMetricPercentile != null
+
                     fun isCustomChartMetricPercentile(): Boolean =
                         customChartMetricPercentile != null
 
                     fun isCustomChartMetricRatioOutput(): Boolean =
                         customChartMetricRatioOutput != null
+
+                    fun asCustomChartFeedbackCountMetric(): CustomChartFeedbackCountMetric =
+                        customChartFeedbackCountMetric.getOrThrow("customChartFeedbackCountMetric")
 
                     fun asCustomChartMetricCount(): CustomChartMetricCount =
                         customChartMetricCount.getOrThrow("customChartMetricCount")
@@ -23337,6 +27539,12 @@ private constructor(
 
                     fun asCustomChartMetricScalar(): CustomChartMetricScalar =
                         customChartMetricScalar.getOrThrow("customChartMetricScalar")
+
+                    fun asCustomChartFeedbackScoreMetricPercentile():
+                        CustomChartFeedbackScoreMetricPercentile =
+                        customChartFeedbackScoreMetricPercentile.getOrThrow(
+                            "customChartFeedbackScoreMetricPercentile"
+                        )
 
                     fun asCustomChartMetricPercentile(): CustomChartMetricPercentile =
                         customChartMetricPercentile.getOrThrow("customChartMetricPercentile")
@@ -23360,8 +27568,8 @@ private constructor(
                      *
                      * Optional<String> result = metricDefinition.accept(new MetricDefinition.Visitor<Optional<String>>() {
                      *     @Override
-                     *     public Optional<String> visitCustomChartMetricCount(CustomChartMetricCount customChartMetricCount) {
-                     *         return Optional.of(customChartMetricCount.toString());
+                     *     public Optional<String> visitCustomChartFeedbackCountMetric(CustomChartFeedbackCountMetric customChartFeedbackCountMetric) {
+                     *         return Optional.of(customChartFeedbackCountMetric.toString());
                      *     }
                      *
                      *     // ...
@@ -23379,6 +27587,10 @@ private constructor(
                      */
                     fun <T> accept(visitor: Visitor<T>): T =
                         when {
+                            customChartFeedbackCountMetric != null ->
+                                visitor.visitCustomChartFeedbackCountMetric(
+                                    customChartFeedbackCountMetric
+                                )
                             customChartMetricCount != null ->
                                 visitor.visitCustomChartMetricCount(customChartMetricCount)
                             customChartFeedbackScoreMetricScalar != null ->
@@ -23387,6 +27599,10 @@ private constructor(
                                 )
                             customChartMetricScalar != null ->
                                 visitor.visitCustomChartMetricScalar(customChartMetricScalar)
+                            customChartFeedbackScoreMetricPercentile != null ->
+                                visitor.visitCustomChartFeedbackScoreMetricPercentile(
+                                    customChartFeedbackScoreMetricPercentile
+                                )
                             customChartMetricPercentile != null ->
                                 visitor.visitCustomChartMetricPercentile(
                                     customChartMetricPercentile
@@ -23417,6 +27633,12 @@ private constructor(
 
                         accept(
                             object : Visitor<Unit> {
+                                override fun visitCustomChartFeedbackCountMetric(
+                                    customChartFeedbackCountMetric: CustomChartFeedbackCountMetric
+                                ) {
+                                    customChartFeedbackCountMetric.validate()
+                                }
+
                                 override fun visitCustomChartMetricCount(
                                     customChartMetricCount: CustomChartMetricCount
                                 ) {
@@ -23434,6 +27656,13 @@ private constructor(
                                     customChartMetricScalar: CustomChartMetricScalar
                                 ) {
                                     customChartMetricScalar.validate()
+                                }
+
+                                override fun visitCustomChartFeedbackScoreMetricPercentile(
+                                    customChartFeedbackScoreMetricPercentile:
+                                        CustomChartFeedbackScoreMetricPercentile
+                                ) {
+                                    customChartFeedbackScoreMetricPercentile.validate()
                                 }
 
                                 override fun visitCustomChartMetricPercentile(
@@ -23470,6 +27699,10 @@ private constructor(
                     internal fun validity(): Int =
                         accept(
                             object : Visitor<Int> {
+                                override fun visitCustomChartFeedbackCountMetric(
+                                    customChartFeedbackCountMetric: CustomChartFeedbackCountMetric
+                                ) = customChartFeedbackCountMetric.validity()
+
                                 override fun visitCustomChartMetricCount(
                                     customChartMetricCount: CustomChartMetricCount
                                 ) = customChartMetricCount.validity()
@@ -23482,6 +27715,11 @@ private constructor(
                                 override fun visitCustomChartMetricScalar(
                                     customChartMetricScalar: CustomChartMetricScalar
                                 ) = customChartMetricScalar.validity()
+
+                                override fun visitCustomChartFeedbackScoreMetricPercentile(
+                                    customChartFeedbackScoreMetricPercentile:
+                                        CustomChartFeedbackScoreMetricPercentile
+                                ) = customChartFeedbackScoreMetricPercentile.validity()
 
                                 override fun visitCustomChartMetricPercentile(
                                     customChartMetricPercentile: CustomChartMetricPercentile
@@ -23501,31 +27739,41 @@ private constructor(
                         }
 
                         return other is MetricDefinition &&
+                            customChartFeedbackCountMetric ==
+                                other.customChartFeedbackCountMetric &&
                             customChartMetricCount == other.customChartMetricCount &&
                             customChartFeedbackScoreMetricScalar ==
                                 other.customChartFeedbackScoreMetricScalar &&
                             customChartMetricScalar == other.customChartMetricScalar &&
+                            customChartFeedbackScoreMetricPercentile ==
+                                other.customChartFeedbackScoreMetricPercentile &&
                             customChartMetricPercentile == other.customChartMetricPercentile &&
                             customChartMetricRatioOutput == other.customChartMetricRatioOutput
                     }
 
                     override fun hashCode(): Int =
                         Objects.hash(
+                            customChartFeedbackCountMetric,
                             customChartMetricCount,
                             customChartFeedbackScoreMetricScalar,
                             customChartMetricScalar,
+                            customChartFeedbackScoreMetricPercentile,
                             customChartMetricPercentile,
                             customChartMetricRatioOutput,
                         )
 
                     override fun toString(): String =
                         when {
+                            customChartFeedbackCountMetric != null ->
+                                "MetricDefinition{customChartFeedbackCountMetric=$customChartFeedbackCountMetric}"
                             customChartMetricCount != null ->
                                 "MetricDefinition{customChartMetricCount=$customChartMetricCount}"
                             customChartFeedbackScoreMetricScalar != null ->
                                 "MetricDefinition{customChartFeedbackScoreMetricScalar=$customChartFeedbackScoreMetricScalar}"
                             customChartMetricScalar != null ->
                                 "MetricDefinition{customChartMetricScalar=$customChartMetricScalar}"
+                            customChartFeedbackScoreMetricPercentile != null ->
+                                "MetricDefinition{customChartFeedbackScoreMetricPercentile=$customChartFeedbackScoreMetricPercentile}"
                             customChartMetricPercentile != null ->
                                 "MetricDefinition{customChartMetricPercentile=$customChartMetricPercentile}"
                             customChartMetricRatioOutput != null ->
@@ -23535,6 +27783,14 @@ private constructor(
                         }
 
                     companion object {
+
+                        @JvmStatic
+                        fun ofCustomChartFeedbackCountMetric(
+                            customChartFeedbackCountMetric: CustomChartFeedbackCountMetric
+                        ) =
+                            MetricDefinition(
+                                customChartFeedbackCountMetric = customChartFeedbackCountMetric
+                            )
 
                         @JvmStatic
                         fun ofCustomChartMetricCount(
@@ -23555,6 +27811,16 @@ private constructor(
                         fun ofCustomChartMetricScalar(
                             customChartMetricScalar: CustomChartMetricScalar
                         ) = MetricDefinition(customChartMetricScalar = customChartMetricScalar)
+
+                        @JvmStatic
+                        fun ofCustomChartFeedbackScoreMetricPercentile(
+                            customChartFeedbackScoreMetricPercentile:
+                                CustomChartFeedbackScoreMetricPercentile
+                        ) =
+                            MetricDefinition(
+                                customChartFeedbackScoreMetricPercentile =
+                                    customChartFeedbackScoreMetricPercentile
+                            )
 
                         @JvmStatic
                         fun ofCustomChartMetricPercentile(
@@ -23579,6 +27845,10 @@ private constructor(
                      */
                     interface Visitor<out T> {
 
+                        fun visitCustomChartFeedbackCountMetric(
+                            customChartFeedbackCountMetric: CustomChartFeedbackCountMetric
+                        ): T
+
                         fun visitCustomChartMetricCount(
                             customChartMetricCount: CustomChartMetricCount
                         ): T
@@ -23590,6 +27860,11 @@ private constructor(
 
                         fun visitCustomChartMetricScalar(
                             customChartMetricScalar: CustomChartMetricScalar
+                        ): T
+
+                        fun visitCustomChartFeedbackScoreMetricPercentile(
+                            customChartFeedbackScoreMetricPercentile:
+                                CustomChartFeedbackScoreMetricPercentile
                         ): T
 
                         fun visitCustomChartMetricPercentile(
@@ -23625,6 +27900,16 @@ private constructor(
                                 sequenceOf(
                                         tryDeserialize(
                                                 node,
+                                                jacksonTypeRef<CustomChartFeedbackCountMetric>(),
+                                            )
+                                            ?.let {
+                                                MetricDefinition(
+                                                    customChartFeedbackCountMetric = it,
+                                                    _json = json,
+                                                )
+                                            },
+                                        tryDeserialize(
+                                                node,
                                                 jacksonTypeRef<CustomChartMetricCount>(),
                                             )
                                             ?.let {
@@ -23652,6 +27937,18 @@ private constructor(
                                             ?.let {
                                                 MetricDefinition(
                                                     customChartMetricScalar = it,
+                                                    _json = json,
+                                                )
+                                            },
+                                        tryDeserialize(
+                                                node,
+                                                jacksonTypeRef<
+                                                    CustomChartFeedbackScoreMetricPercentile
+                                                >(),
+                                            )
+                                            ?.let {
+                                                MetricDefinition(
+                                                    customChartFeedbackScoreMetricPercentile = it,
                                                     _json = json,
                                                 )
                                             },
@@ -23703,6 +28000,8 @@ private constructor(
                             provider: SerializerProvider,
                         ) {
                             when {
+                                value.customChartFeedbackCountMetric != null ->
+                                    generator.writeObject(value.customChartFeedbackCountMetric)
                                 value.customChartMetricCount != null ->
                                     generator.writeObject(value.customChartMetricCount)
                                 value.customChartFeedbackScoreMetricScalar != null ->
@@ -23711,6 +28010,10 @@ private constructor(
                                     )
                                 value.customChartMetricScalar != null ->
                                     generator.writeObject(value.customChartMetricScalar)
+                                value.customChartFeedbackScoreMetricPercentile != null ->
+                                    generator.writeObject(
+                                        value.customChartFeedbackScoreMetricPercentile
+                                    )
                                 value.customChartMetricPercentile != null ->
                                     generator.writeObject(value.customChartMetricPercentile)
                                 value.customChartMetricRatioOutput != null ->
@@ -23719,6 +28022,637 @@ private constructor(
                                 else -> throw IllegalStateException("Invalid MetricDefinition")
                             }
                         }
+                    }
+
+                    class CustomChartFeedbackCountMetric
+                    @JsonCreator(mode = JsonCreator.Mode.DISABLED)
+                    private constructor(
+                        private val entity: JsonValue,
+                        private val params: JsonField<Params>,
+                        private val filter: JsonField<String>,
+                        private val type: JsonField<Type>,
+                        private val additionalProperties: MutableMap<String, JsonValue>,
+                    ) {
+
+                        @JsonCreator
+                        private constructor(
+                            @JsonProperty("entity")
+                            @ExcludeMissing
+                            entity: JsonValue = JsonMissing.of(),
+                            @JsonProperty("params")
+                            @ExcludeMissing
+                            params: JsonField<Params> = JsonMissing.of(),
+                            @JsonProperty("filter")
+                            @ExcludeMissing
+                            filter: JsonField<String> = JsonMissing.of(),
+                            @JsonProperty("type")
+                            @ExcludeMissing
+                            type: JsonField<Type> = JsonMissing.of(),
+                        ) : this(entity, params, filter, type, mutableMapOf())
+
+                        /**
+                         * Expected to always return the following:
+                         * ```java
+                         * JsonValue.from("feedback")
+                         * ```
+                         *
+                         * However, this method can be useful for debugging and logging (e.g. if the
+                         * server responded with an unexpected value).
+                         */
+                        @JsonProperty("entity") @ExcludeMissing fun _entity(): JsonValue = entity
+
+                        /**
+                         * @throws LangChainInvalidDataException if the JSON field has an unexpected
+                         *   type or is unexpectedly missing or null (e.g. if the server responded
+                         *   with an unexpected value).
+                         */
+                        fun params(): Params = params.getRequired("params")
+
+                        /**
+                         * @throws LangChainInvalidDataException if the JSON field has an unexpected
+                         *   type (e.g. if the server responded with an unexpected value).
+                         */
+                        fun filter(): Optional<String> = filter.getOptional("filter")
+
+                        /**
+                         * @throws LangChainInvalidDataException if the JSON field has an unexpected
+                         *   type (e.g. if the server responded with an unexpected value).
+                         */
+                        fun type(): Optional<Type> = type.getOptional("type")
+
+                        /**
+                         * Returns the raw JSON value of [params].
+                         *
+                         * Unlike [params], this method doesn't throw if the JSON field has an
+                         * unexpected type.
+                         */
+                        @JsonProperty("params")
+                        @ExcludeMissing
+                        fun _params(): JsonField<Params> = params
+
+                        /**
+                         * Returns the raw JSON value of [filter].
+                         *
+                         * Unlike [filter], this method doesn't throw if the JSON field has an
+                         * unexpected type.
+                         */
+                        @JsonProperty("filter")
+                        @ExcludeMissing
+                        fun _filter(): JsonField<String> = filter
+
+                        /**
+                         * Returns the raw JSON value of [type].
+                         *
+                         * Unlike [type], this method doesn't throw if the JSON field has an
+                         * unexpected type.
+                         */
+                        @JsonProperty("type") @ExcludeMissing fun _type(): JsonField<Type> = type
+
+                        @JsonAnySetter
+                        private fun putAdditionalProperty(key: String, value: JsonValue) {
+                            additionalProperties.put(key, value)
+                        }
+
+                        @JsonAnyGetter
+                        @ExcludeMissing
+                        fun _additionalProperties(): Map<String, JsonValue> =
+                            Collections.unmodifiableMap(additionalProperties)
+
+                        fun toBuilder() = Builder().from(this)
+
+                        companion object {
+
+                            /**
+                             * Returns a mutable builder for constructing an instance of
+                             * [CustomChartFeedbackCountMetric].
+                             *
+                             * The following fields are required:
+                             * ```java
+                             * .params()
+                             * ```
+                             */
+                            @JvmStatic fun builder() = Builder()
+                        }
+
+                        /** A builder for [CustomChartFeedbackCountMetric]. */
+                        class Builder internal constructor() {
+
+                            private var entity: JsonValue = JsonValue.from("feedback")
+                            private var params: JsonField<Params>? = null
+                            private var filter: JsonField<String> = JsonMissing.of()
+                            private var type: JsonField<Type> = JsonMissing.of()
+                            private var additionalProperties: MutableMap<String, JsonValue> =
+                                mutableMapOf()
+
+                            @JvmSynthetic
+                            internal fun from(
+                                customChartFeedbackCountMetric: CustomChartFeedbackCountMetric
+                            ) = apply {
+                                entity = customChartFeedbackCountMetric.entity
+                                params = customChartFeedbackCountMetric.params
+                                filter = customChartFeedbackCountMetric.filter
+                                type = customChartFeedbackCountMetric.type
+                                additionalProperties =
+                                    customChartFeedbackCountMetric.additionalProperties
+                                        .toMutableMap()
+                            }
+
+                            /**
+                             * Sets the field to an arbitrary JSON value.
+                             *
+                             * It is usually unnecessary to call this method because the field
+                             * defaults to the following:
+                             * ```java
+                             * JsonValue.from("feedback")
+                             * ```
+                             *
+                             * This method is primarily for setting the field to an undocumented or
+                             * not yet supported value.
+                             */
+                            fun entity(entity: JsonValue) = apply { this.entity = entity }
+
+                            fun params(params: Params) = params(JsonField.of(params))
+
+                            /**
+                             * Sets [Builder.params] to an arbitrary JSON value.
+                             *
+                             * You should usually call [Builder.params] with a well-typed [Params]
+                             * value instead. This method is primarily for setting the field to an
+                             * undocumented or not yet supported value.
+                             */
+                            fun params(params: JsonField<Params>) = apply { this.params = params }
+
+                            fun filter(filter: String?) = filter(JsonField.ofNullable(filter))
+
+                            /** Alias for calling [Builder.filter] with `filter.orElse(null)`. */
+                            fun filter(filter: Optional<String>) = filter(filter.getOrNull())
+
+                            /**
+                             * Sets [Builder.filter] to an arbitrary JSON value.
+                             *
+                             * You should usually call [Builder.filter] with a well-typed [String]
+                             * value instead. This method is primarily for setting the field to an
+                             * undocumented or not yet supported value.
+                             */
+                            fun filter(filter: JsonField<String>) = apply { this.filter = filter }
+
+                            fun type(type: Type) = type(JsonField.of(type))
+
+                            /**
+                             * Sets [Builder.type] to an arbitrary JSON value.
+                             *
+                             * You should usually call [Builder.type] with a well-typed [Type] value
+                             * instead. This method is primarily for setting the field to an
+                             * undocumented or not yet supported value.
+                             */
+                            fun type(type: JsonField<Type>) = apply { this.type = type }
+
+                            fun additionalProperties(additionalProperties: Map<String, JsonValue>) =
+                                apply {
+                                    this.additionalProperties.clear()
+                                    putAllAdditionalProperties(additionalProperties)
+                                }
+
+                            fun putAdditionalProperty(key: String, value: JsonValue) = apply {
+                                additionalProperties.put(key, value)
+                            }
+
+                            fun putAllAdditionalProperties(
+                                additionalProperties: Map<String, JsonValue>
+                            ) = apply { this.additionalProperties.putAll(additionalProperties) }
+
+                            fun removeAdditionalProperty(key: String) = apply {
+                                additionalProperties.remove(key)
+                            }
+
+                            fun removeAllAdditionalProperties(keys: Set<String>) = apply {
+                                keys.forEach(::removeAdditionalProperty)
+                            }
+
+                            /**
+                             * Returns an immutable instance of [CustomChartFeedbackCountMetric].
+                             *
+                             * Further updates to this [Builder] will not mutate the returned
+                             * instance.
+                             *
+                             * The following fields are required:
+                             * ```java
+                             * .params()
+                             * ```
+                             *
+                             * @throws IllegalStateException if any required field is unset.
+                             */
+                            fun build(): CustomChartFeedbackCountMetric =
+                                CustomChartFeedbackCountMetric(
+                                    entity,
+                                    checkRequired("params", params),
+                                    filter,
+                                    type,
+                                    additionalProperties.toMutableMap(),
+                                )
+                        }
+
+                        private var validated: Boolean = false
+
+                        /**
+                         * Validates that the types of all values in this object match their
+                         * expected types recursively.
+                         *
+                         * This method is _not_ forwards compatible with new types from the API for
+                         * existing fields.
+                         *
+                         * @throws LangChainInvalidDataException if any value type in this object
+                         *   doesn't match its expected type.
+                         */
+                        fun validate(): CustomChartFeedbackCountMetric = apply {
+                            if (validated) {
+                                return@apply
+                            }
+
+                            _entity().let {
+                                if (it != JsonValue.from("feedback")) {
+                                    throw LangChainInvalidDataException(
+                                        "'entity' is invalid, received $it"
+                                    )
+                                }
+                            }
+                            params().validate()
+                            filter()
+                            type().ifPresent { it.validate() }
+                            validated = true
+                        }
+
+                        fun isValid(): Boolean =
+                            try {
+                                validate()
+                                true
+                            } catch (e: LangChainInvalidDataException) {
+                                false
+                            }
+
+                        /**
+                         * Returns a score indicating how many valid values are contained in this
+                         * object recursively.
+                         *
+                         * Used for best match union deserialization.
+                         */
+                        @JvmSynthetic
+                        internal fun validity(): Int =
+                            entity.let { if (it == JsonValue.from("feedback")) 1 else 0 } +
+                                (params.asKnown().getOrNull()?.validity() ?: 0) +
+                                (if (filter.asKnown().isPresent) 1 else 0) +
+                                (type.asKnown().getOrNull()?.validity() ?: 0)
+
+                        class Params
+                        @JsonCreator(mode = JsonCreator.Mode.DISABLED)
+                        private constructor(
+                            private val feedbackKey: JsonField<String>,
+                            private val additionalProperties: MutableMap<String, JsonValue>,
+                        ) {
+
+                            @JsonCreator
+                            private constructor(
+                                @JsonProperty("feedback_key")
+                                @ExcludeMissing
+                                feedbackKey: JsonField<String> = JsonMissing.of()
+                            ) : this(feedbackKey, mutableMapOf())
+
+                            /**
+                             * @throws LangChainInvalidDataException if the JSON field has an
+                             *   unexpected type or is unexpectedly missing or null (e.g. if the
+                             *   server responded with an unexpected value).
+                             */
+                            fun feedbackKey(): String = feedbackKey.getRequired("feedback_key")
+
+                            /**
+                             * Returns the raw JSON value of [feedbackKey].
+                             *
+                             * Unlike [feedbackKey], this method doesn't throw if the JSON field has
+                             * an unexpected type.
+                             */
+                            @JsonProperty("feedback_key")
+                            @ExcludeMissing
+                            fun _feedbackKey(): JsonField<String> = feedbackKey
+
+                            @JsonAnySetter
+                            private fun putAdditionalProperty(key: String, value: JsonValue) {
+                                additionalProperties.put(key, value)
+                            }
+
+                            @JsonAnyGetter
+                            @ExcludeMissing
+                            fun _additionalProperties(): Map<String, JsonValue> =
+                                Collections.unmodifiableMap(additionalProperties)
+
+                            fun toBuilder() = Builder().from(this)
+
+                            companion object {
+
+                                /**
+                                 * Returns a mutable builder for constructing an instance of
+                                 * [Params].
+                                 *
+                                 * The following fields are required:
+                                 * ```java
+                                 * .feedbackKey()
+                                 * ```
+                                 */
+                                @JvmStatic fun builder() = Builder()
+                            }
+
+                            /** A builder for [Params]. */
+                            class Builder internal constructor() {
+
+                                private var feedbackKey: JsonField<String>? = null
+                                private var additionalProperties: MutableMap<String, JsonValue> =
+                                    mutableMapOf()
+
+                                @JvmSynthetic
+                                internal fun from(params: Params) = apply {
+                                    feedbackKey = params.feedbackKey
+                                    additionalProperties =
+                                        params.additionalProperties.toMutableMap()
+                                }
+
+                                fun feedbackKey(feedbackKey: String) =
+                                    feedbackKey(JsonField.of(feedbackKey))
+
+                                /**
+                                 * Sets [Builder.feedbackKey] to an arbitrary JSON value.
+                                 *
+                                 * You should usually call [Builder.feedbackKey] with a well-typed
+                                 * [String] value instead. This method is primarily for setting the
+                                 * field to an undocumented or not yet supported value.
+                                 */
+                                fun feedbackKey(feedbackKey: JsonField<String>) = apply {
+                                    this.feedbackKey = feedbackKey
+                                }
+
+                                fun additionalProperties(
+                                    additionalProperties: Map<String, JsonValue>
+                                ) = apply {
+                                    this.additionalProperties.clear()
+                                    putAllAdditionalProperties(additionalProperties)
+                                }
+
+                                fun putAdditionalProperty(key: String, value: JsonValue) = apply {
+                                    additionalProperties.put(key, value)
+                                }
+
+                                fun putAllAdditionalProperties(
+                                    additionalProperties: Map<String, JsonValue>
+                                ) = apply { this.additionalProperties.putAll(additionalProperties) }
+
+                                fun removeAdditionalProperty(key: String) = apply {
+                                    additionalProperties.remove(key)
+                                }
+
+                                fun removeAllAdditionalProperties(keys: Set<String>) = apply {
+                                    keys.forEach(::removeAdditionalProperty)
+                                }
+
+                                /**
+                                 * Returns an immutable instance of [Params].
+                                 *
+                                 * Further updates to this [Builder] will not mutate the returned
+                                 * instance.
+                                 *
+                                 * The following fields are required:
+                                 * ```java
+                                 * .feedbackKey()
+                                 * ```
+                                 *
+                                 * @throws IllegalStateException if any required field is unset.
+                                 */
+                                fun build(): Params =
+                                    Params(
+                                        checkRequired("feedbackKey", feedbackKey),
+                                        additionalProperties.toMutableMap(),
+                                    )
+                            }
+
+                            private var validated: Boolean = false
+
+                            /**
+                             * Validates that the types of all values in this object match their
+                             * expected types recursively.
+                             *
+                             * This method is _not_ forwards compatible with new types from the API
+                             * for existing fields.
+                             *
+                             * @throws LangChainInvalidDataException if any value type in this
+                             *   object doesn't match its expected type.
+                             */
+                            fun validate(): Params = apply {
+                                if (validated) {
+                                    return@apply
+                                }
+
+                                feedbackKey()
+                                validated = true
+                            }
+
+                            fun isValid(): Boolean =
+                                try {
+                                    validate()
+                                    true
+                                } catch (e: LangChainInvalidDataException) {
+                                    false
+                                }
+
+                            /**
+                             * Returns a score indicating how many valid values are contained in
+                             * this object recursively.
+                             *
+                             * Used for best match union deserialization.
+                             */
+                            @JvmSynthetic
+                            internal fun validity(): Int =
+                                (if (feedbackKey.asKnown().isPresent) 1 else 0)
+
+                            override fun equals(other: Any?): Boolean {
+                                if (this === other) {
+                                    return true
+                                }
+
+                                return other is Params &&
+                                    feedbackKey == other.feedbackKey &&
+                                    additionalProperties == other.additionalProperties
+                            }
+
+                            private val hashCode: Int by lazy {
+                                Objects.hash(feedbackKey, additionalProperties)
+                            }
+
+                            override fun hashCode(): Int = hashCode
+
+                            override fun toString() =
+                                "Params{feedbackKey=$feedbackKey, additionalProperties=$additionalProperties}"
+                        }
+
+                        class Type
+                        @JsonCreator
+                        private constructor(private val value: JsonField<String>) : Enum {
+
+                            /**
+                             * Returns this class instance's raw value.
+                             *
+                             * This is usually only useful if this instance was deserialized from
+                             * data that doesn't match any known member, and you want to know that
+                             * value. For example, if the SDK is on an older version than the API,
+                             * then the API may respond with new members that the SDK is unaware of.
+                             */
+                            @com.fasterxml.jackson.annotation.JsonValue
+                            fun _value(): JsonField<String> = value
+
+                            companion object {
+
+                                @JvmField val COUNT = of("count")
+
+                                @JvmStatic fun of(value: String) = Type(JsonField.of(value))
+                            }
+
+                            /** An enum containing [Type]'s known values. */
+                            enum class Known {
+                                COUNT
+                            }
+
+                            /**
+                             * An enum containing [Type]'s known values, as well as an [_UNKNOWN]
+                             * member.
+                             *
+                             * An instance of [Type] can contain an unknown value in a couple of
+                             * cases:
+                             * - It was deserialized from data that doesn't match any known member.
+                             *   For example, if the SDK is on an older version than the API, then
+                             *   the API may respond with new members that the SDK is unaware of.
+                             * - It was constructed with an arbitrary value using the [of] method.
+                             */
+                            enum class Value {
+                                COUNT,
+                                /**
+                                 * An enum member indicating that [Type] was instantiated with an
+                                 * unknown value.
+                                 */
+                                _UNKNOWN,
+                            }
+
+                            /**
+                             * Returns an enum member corresponding to this class instance's value,
+                             * or [Value._UNKNOWN] if the class was instantiated with an unknown
+                             * value.
+                             *
+                             * Use the [known] method instead if you're certain the value is always
+                             * known or if you want to throw for the unknown case.
+                             */
+                            fun value(): Value =
+                                when (this) {
+                                    COUNT -> Value.COUNT
+                                    else -> Value._UNKNOWN
+                                }
+
+                            /**
+                             * Returns an enum member corresponding to this class instance's value.
+                             *
+                             * Use the [value] method instead if you're uncertain the value is
+                             * always known and don't want to throw for the unknown case.
+                             *
+                             * @throws LangChainInvalidDataException if this class instance's value
+                             *   is a not a known member.
+                             */
+                            fun known(): Known =
+                                when (this) {
+                                    COUNT -> Known.COUNT
+                                    else ->
+                                        throw LangChainInvalidDataException("Unknown Type: $value")
+                                }
+
+                            /**
+                             * Returns this class instance's primitive wire representation.
+                             *
+                             * This differs from the [toString] method because that method is
+                             * primarily for debugging and generally doesn't throw.
+                             *
+                             * @throws LangChainInvalidDataException if this class instance's value
+                             *   does not have the expected primitive type.
+                             */
+                            fun asString(): String =
+                                _value().asString().orElseThrow {
+                                    LangChainInvalidDataException("Value is not a String")
+                                }
+
+                            private var validated: Boolean = false
+
+                            /**
+                             * Validates that the types of all values in this object match their
+                             * expected types recursively.
+                             *
+                             * This method is _not_ forwards compatible with new types from the API
+                             * for existing fields.
+                             *
+                             * @throws LangChainInvalidDataException if any value type in this
+                             *   object doesn't match its expected type.
+                             */
+                            fun validate(): Type = apply {
+                                if (validated) {
+                                    return@apply
+                                }
+
+                                known()
+                                validated = true
+                            }
+
+                            fun isValid(): Boolean =
+                                try {
+                                    validate()
+                                    true
+                                } catch (e: LangChainInvalidDataException) {
+                                    false
+                                }
+
+                            /**
+                             * Returns a score indicating how many valid values are contained in
+                             * this object recursively.
+                             *
+                             * Used for best match union deserialization.
+                             */
+                            @JvmSynthetic
+                            internal fun validity(): Int = if (value() == Value._UNKNOWN) 0 else 1
+
+                            override fun equals(other: Any?): Boolean {
+                                if (this === other) {
+                                    return true
+                                }
+
+                                return other is Type && value == other.value
+                            }
+
+                            override fun hashCode() = value.hashCode()
+
+                            override fun toString() = value.toString()
+                        }
+
+                        override fun equals(other: Any?): Boolean {
+                            if (this === other) {
+                                return true
+                            }
+
+                            return other is CustomChartFeedbackCountMetric &&
+                                entity == other.entity &&
+                                params == other.params &&
+                                filter == other.filter &&
+                                type == other.type &&
+                                additionalProperties == other.additionalProperties
+                        }
+
+                        private val hashCode: Int by lazy {
+                            Objects.hash(entity, params, filter, type, additionalProperties)
+                        }
+
+                        override fun hashCode(): Int = hashCode
+
+                        override fun toString() =
+                            "CustomChartFeedbackCountMetric{entity=$entity, params=$params, filter=$filter, type=$type, additionalProperties=$additionalProperties}"
                     }
 
                     class CustomChartMetricCount
@@ -24560,6 +29494,8 @@ private constructor(
 
                             companion object {
 
+                                @JvmField val SUM = of("sum")
+
                                 @JvmField val MAX = of("max")
 
                                 @JvmField val MIN = of("min")
@@ -24571,6 +29507,7 @@ private constructor(
 
                             /** An enum containing [Type]'s known values. */
                             enum class Known {
+                                SUM,
                                 MAX,
                                 MIN,
                                 AVG,
@@ -24588,6 +29525,7 @@ private constructor(
                              * - It was constructed with an arbitrary value using the [of] method.
                              */
                             enum class Value {
+                                SUM,
                                 MAX,
                                 MIN,
                                 AVG,
@@ -24608,6 +29546,7 @@ private constructor(
                              */
                             fun value(): Value =
                                 when (this) {
+                                    SUM -> Value.SUM
                                     MAX -> Value.MAX
                                     MIN -> Value.MIN
                                     AVG -> Value.AVG
@@ -24625,6 +29564,7 @@ private constructor(
                              */
                             fun known(): Known =
                                 when (this) {
+                                    SUM -> Known.SUM
                                     MAX -> Known.MAX
                                     MIN -> Known.MIN
                                     AVG -> Known.AVG
@@ -25330,6 +30270,541 @@ private constructor(
 
                         override fun toString() =
                             "CustomChartMetricScalar{field=$field, type=$type, filter=$filter, additionalProperties=$additionalProperties}"
+                    }
+
+                    class CustomChartFeedbackScoreMetricPercentile
+                    @JsonCreator(mode = JsonCreator.Mode.DISABLED)
+                    private constructor(
+                        private val field: JsonValue,
+                        private val params: JsonField<Params>,
+                        private val type: JsonValue,
+                        private val filter: JsonField<String>,
+                        private val additionalProperties: MutableMap<String, JsonValue>,
+                    ) {
+
+                        @JsonCreator
+                        private constructor(
+                            @JsonProperty("field")
+                            @ExcludeMissing
+                            field: JsonValue = JsonMissing.of(),
+                            @JsonProperty("params")
+                            @ExcludeMissing
+                            params: JsonField<Params> = JsonMissing.of(),
+                            @JsonProperty("type")
+                            @ExcludeMissing
+                            type: JsonValue = JsonMissing.of(),
+                            @JsonProperty("filter")
+                            @ExcludeMissing
+                            filter: JsonField<String> = JsonMissing.of(),
+                        ) : this(field, params, type, filter, mutableMapOf())
+
+                        /**
+                         * Expected to always return the following:
+                         * ```java
+                         * JsonValue.from("feedback_score")
+                         * ```
+                         *
+                         * However, this method can be useful for debugging and logging (e.g. if the
+                         * server responded with an unexpected value).
+                         */
+                        @JsonProperty("field") @ExcludeMissing fun _field(): JsonValue = field
+
+                        /**
+                         * @throws LangChainInvalidDataException if the JSON field has an unexpected
+                         *   type or is unexpectedly missing or null (e.g. if the server responded
+                         *   with an unexpected value).
+                         */
+                        fun params(): Params = params.getRequired("params")
+
+                        /**
+                         * Expected to always return the following:
+                         * ```java
+                         * JsonValue.from("percentile")
+                         * ```
+                         *
+                         * However, this method can be useful for debugging and logging (e.g. if the
+                         * server responded with an unexpected value).
+                         */
+                        @JsonProperty("type") @ExcludeMissing fun _type(): JsonValue = type
+
+                        /**
+                         * @throws LangChainInvalidDataException if the JSON field has an unexpected
+                         *   type (e.g. if the server responded with an unexpected value).
+                         */
+                        fun filter(): Optional<String> = filter.getOptional("filter")
+
+                        /**
+                         * Returns the raw JSON value of [params].
+                         *
+                         * Unlike [params], this method doesn't throw if the JSON field has an
+                         * unexpected type.
+                         */
+                        @JsonProperty("params")
+                        @ExcludeMissing
+                        fun _params(): JsonField<Params> = params
+
+                        /**
+                         * Returns the raw JSON value of [filter].
+                         *
+                         * Unlike [filter], this method doesn't throw if the JSON field has an
+                         * unexpected type.
+                         */
+                        @JsonProperty("filter")
+                        @ExcludeMissing
+                        fun _filter(): JsonField<String> = filter
+
+                        @JsonAnySetter
+                        private fun putAdditionalProperty(key: String, value: JsonValue) {
+                            additionalProperties.put(key, value)
+                        }
+
+                        @JsonAnyGetter
+                        @ExcludeMissing
+                        fun _additionalProperties(): Map<String, JsonValue> =
+                            Collections.unmodifiableMap(additionalProperties)
+
+                        fun toBuilder() = Builder().from(this)
+
+                        companion object {
+
+                            /**
+                             * Returns a mutable builder for constructing an instance of
+                             * [CustomChartFeedbackScoreMetricPercentile].
+                             *
+                             * The following fields are required:
+                             * ```java
+                             * .params()
+                             * ```
+                             */
+                            @JvmStatic fun builder() = Builder()
+                        }
+
+                        /** A builder for [CustomChartFeedbackScoreMetricPercentile]. */
+                        class Builder internal constructor() {
+
+                            private var field: JsonValue = JsonValue.from("feedback_score")
+                            private var params: JsonField<Params>? = null
+                            private var type: JsonValue = JsonValue.from("percentile")
+                            private var filter: JsonField<String> = JsonMissing.of()
+                            private var additionalProperties: MutableMap<String, JsonValue> =
+                                mutableMapOf()
+
+                            @JvmSynthetic
+                            internal fun from(
+                                customChartFeedbackScoreMetricPercentile:
+                                    CustomChartFeedbackScoreMetricPercentile
+                            ) = apply {
+                                field = customChartFeedbackScoreMetricPercentile.field
+                                params = customChartFeedbackScoreMetricPercentile.params
+                                type = customChartFeedbackScoreMetricPercentile.type
+                                filter = customChartFeedbackScoreMetricPercentile.filter
+                                additionalProperties =
+                                    customChartFeedbackScoreMetricPercentile.additionalProperties
+                                        .toMutableMap()
+                            }
+
+                            /**
+                             * Sets the field to an arbitrary JSON value.
+                             *
+                             * It is usually unnecessary to call this method because the field
+                             * defaults to the following:
+                             * ```java
+                             * JsonValue.from("feedback_score")
+                             * ```
+                             *
+                             * This method is primarily for setting the field to an undocumented or
+                             * not yet supported value.
+                             */
+                            fun field(field: JsonValue) = apply { this.field = field }
+
+                            fun params(params: Params) = params(JsonField.of(params))
+
+                            /**
+                             * Sets [Builder.params] to an arbitrary JSON value.
+                             *
+                             * You should usually call [Builder.params] with a well-typed [Params]
+                             * value instead. This method is primarily for setting the field to an
+                             * undocumented or not yet supported value.
+                             */
+                            fun params(params: JsonField<Params>) = apply { this.params = params }
+
+                            /**
+                             * Sets the field to an arbitrary JSON value.
+                             *
+                             * It is usually unnecessary to call this method because the field
+                             * defaults to the following:
+                             * ```java
+                             * JsonValue.from("percentile")
+                             * ```
+                             *
+                             * This method is primarily for setting the field to an undocumented or
+                             * not yet supported value.
+                             */
+                            fun type(type: JsonValue) = apply { this.type = type }
+
+                            fun filter(filter: String?) = filter(JsonField.ofNullable(filter))
+
+                            /** Alias for calling [Builder.filter] with `filter.orElse(null)`. */
+                            fun filter(filter: Optional<String>) = filter(filter.getOrNull())
+
+                            /**
+                             * Sets [Builder.filter] to an arbitrary JSON value.
+                             *
+                             * You should usually call [Builder.filter] with a well-typed [String]
+                             * value instead. This method is primarily for setting the field to an
+                             * undocumented or not yet supported value.
+                             */
+                            fun filter(filter: JsonField<String>) = apply { this.filter = filter }
+
+                            fun additionalProperties(additionalProperties: Map<String, JsonValue>) =
+                                apply {
+                                    this.additionalProperties.clear()
+                                    putAllAdditionalProperties(additionalProperties)
+                                }
+
+                            fun putAdditionalProperty(key: String, value: JsonValue) = apply {
+                                additionalProperties.put(key, value)
+                            }
+
+                            fun putAllAdditionalProperties(
+                                additionalProperties: Map<String, JsonValue>
+                            ) = apply { this.additionalProperties.putAll(additionalProperties) }
+
+                            fun removeAdditionalProperty(key: String) = apply {
+                                additionalProperties.remove(key)
+                            }
+
+                            fun removeAllAdditionalProperties(keys: Set<String>) = apply {
+                                keys.forEach(::removeAdditionalProperty)
+                            }
+
+                            /**
+                             * Returns an immutable instance of
+                             * [CustomChartFeedbackScoreMetricPercentile].
+                             *
+                             * Further updates to this [Builder] will not mutate the returned
+                             * instance.
+                             *
+                             * The following fields are required:
+                             * ```java
+                             * .params()
+                             * ```
+                             *
+                             * @throws IllegalStateException if any required field is unset.
+                             */
+                            fun build(): CustomChartFeedbackScoreMetricPercentile =
+                                CustomChartFeedbackScoreMetricPercentile(
+                                    field,
+                                    checkRequired("params", params),
+                                    type,
+                                    filter,
+                                    additionalProperties.toMutableMap(),
+                                )
+                        }
+
+                        private var validated: Boolean = false
+
+                        /**
+                         * Validates that the types of all values in this object match their
+                         * expected types recursively.
+                         *
+                         * This method is _not_ forwards compatible with new types from the API for
+                         * existing fields.
+                         *
+                         * @throws LangChainInvalidDataException if any value type in this object
+                         *   doesn't match its expected type.
+                         */
+                        fun validate(): CustomChartFeedbackScoreMetricPercentile = apply {
+                            if (validated) {
+                                return@apply
+                            }
+
+                            _field().let {
+                                if (it != JsonValue.from("feedback_score")) {
+                                    throw LangChainInvalidDataException(
+                                        "'field' is invalid, received $it"
+                                    )
+                                }
+                            }
+                            params().validate()
+                            _type().let {
+                                if (it != JsonValue.from("percentile")) {
+                                    throw LangChainInvalidDataException(
+                                        "'type' is invalid, received $it"
+                                    )
+                                }
+                            }
+                            filter()
+                            validated = true
+                        }
+
+                        fun isValid(): Boolean =
+                            try {
+                                validate()
+                                true
+                            } catch (e: LangChainInvalidDataException) {
+                                false
+                            }
+
+                        /**
+                         * Returns a score indicating how many valid values are contained in this
+                         * object recursively.
+                         *
+                         * Used for best match union deserialization.
+                         */
+                        @JvmSynthetic
+                        internal fun validity(): Int =
+                            field.let { if (it == JsonValue.from("feedback_score")) 1 else 0 } +
+                                (params.asKnown().getOrNull()?.validity() ?: 0) +
+                                type.let { if (it == JsonValue.from("percentile")) 1 else 0 } +
+                                (if (filter.asKnown().isPresent) 1 else 0)
+
+                        class Params
+                        @JsonCreator(mode = JsonCreator.Mode.DISABLED)
+                        private constructor(
+                            private val feedbackKey: JsonField<String>,
+                            private val p: JsonField<Double>,
+                            private val additionalProperties: MutableMap<String, JsonValue>,
+                        ) {
+
+                            @JsonCreator
+                            private constructor(
+                                @JsonProperty("feedback_key")
+                                @ExcludeMissing
+                                feedbackKey: JsonField<String> = JsonMissing.of(),
+                                @JsonProperty("p")
+                                @ExcludeMissing
+                                p: JsonField<Double> = JsonMissing.of(),
+                            ) : this(feedbackKey, p, mutableMapOf())
+
+                            /**
+                             * @throws LangChainInvalidDataException if the JSON field has an
+                             *   unexpected type or is unexpectedly missing or null (e.g. if the
+                             *   server responded with an unexpected value).
+                             */
+                            fun feedbackKey(): String = feedbackKey.getRequired("feedback_key")
+
+                            /**
+                             * @throws LangChainInvalidDataException if the JSON field has an
+                             *   unexpected type or is unexpectedly missing or null (e.g. if the
+                             *   server responded with an unexpected value).
+                             */
+                            fun p(): Double = p.getRequired("p")
+
+                            /**
+                             * Returns the raw JSON value of [feedbackKey].
+                             *
+                             * Unlike [feedbackKey], this method doesn't throw if the JSON field has
+                             * an unexpected type.
+                             */
+                            @JsonProperty("feedback_key")
+                            @ExcludeMissing
+                            fun _feedbackKey(): JsonField<String> = feedbackKey
+
+                            /**
+                             * Returns the raw JSON value of [p].
+                             *
+                             * Unlike [p], this method doesn't throw if the JSON field has an
+                             * unexpected type.
+                             */
+                            @JsonProperty("p") @ExcludeMissing fun _p(): JsonField<Double> = p
+
+                            @JsonAnySetter
+                            private fun putAdditionalProperty(key: String, value: JsonValue) {
+                                additionalProperties.put(key, value)
+                            }
+
+                            @JsonAnyGetter
+                            @ExcludeMissing
+                            fun _additionalProperties(): Map<String, JsonValue> =
+                                Collections.unmodifiableMap(additionalProperties)
+
+                            fun toBuilder() = Builder().from(this)
+
+                            companion object {
+
+                                /**
+                                 * Returns a mutable builder for constructing an instance of
+                                 * [Params].
+                                 *
+                                 * The following fields are required:
+                                 * ```java
+                                 * .feedbackKey()
+                                 * .p()
+                                 * ```
+                                 */
+                                @JvmStatic fun builder() = Builder()
+                            }
+
+                            /** A builder for [Params]. */
+                            class Builder internal constructor() {
+
+                                private var feedbackKey: JsonField<String>? = null
+                                private var p: JsonField<Double>? = null
+                                private var additionalProperties: MutableMap<String, JsonValue> =
+                                    mutableMapOf()
+
+                                @JvmSynthetic
+                                internal fun from(params: Params) = apply {
+                                    feedbackKey = params.feedbackKey
+                                    p = params.p
+                                    additionalProperties =
+                                        params.additionalProperties.toMutableMap()
+                                }
+
+                                fun feedbackKey(feedbackKey: String) =
+                                    feedbackKey(JsonField.of(feedbackKey))
+
+                                /**
+                                 * Sets [Builder.feedbackKey] to an arbitrary JSON value.
+                                 *
+                                 * You should usually call [Builder.feedbackKey] with a well-typed
+                                 * [String] value instead. This method is primarily for setting the
+                                 * field to an undocumented or not yet supported value.
+                                 */
+                                fun feedbackKey(feedbackKey: JsonField<String>) = apply {
+                                    this.feedbackKey = feedbackKey
+                                }
+
+                                fun p(p: Double) = p(JsonField.of(p))
+
+                                /**
+                                 * Sets [Builder.p] to an arbitrary JSON value.
+                                 *
+                                 * You should usually call [Builder.p] with a well-typed [Double]
+                                 * value instead. This method is primarily for setting the field to
+                                 * an undocumented or not yet supported value.
+                                 */
+                                fun p(p: JsonField<Double>) = apply { this.p = p }
+
+                                fun additionalProperties(
+                                    additionalProperties: Map<String, JsonValue>
+                                ) = apply {
+                                    this.additionalProperties.clear()
+                                    putAllAdditionalProperties(additionalProperties)
+                                }
+
+                                fun putAdditionalProperty(key: String, value: JsonValue) = apply {
+                                    additionalProperties.put(key, value)
+                                }
+
+                                fun putAllAdditionalProperties(
+                                    additionalProperties: Map<String, JsonValue>
+                                ) = apply { this.additionalProperties.putAll(additionalProperties) }
+
+                                fun removeAdditionalProperty(key: String) = apply {
+                                    additionalProperties.remove(key)
+                                }
+
+                                fun removeAllAdditionalProperties(keys: Set<String>) = apply {
+                                    keys.forEach(::removeAdditionalProperty)
+                                }
+
+                                /**
+                                 * Returns an immutable instance of [Params].
+                                 *
+                                 * Further updates to this [Builder] will not mutate the returned
+                                 * instance.
+                                 *
+                                 * The following fields are required:
+                                 * ```java
+                                 * .feedbackKey()
+                                 * .p()
+                                 * ```
+                                 *
+                                 * @throws IllegalStateException if any required field is unset.
+                                 */
+                                fun build(): Params =
+                                    Params(
+                                        checkRequired("feedbackKey", feedbackKey),
+                                        checkRequired("p", p),
+                                        additionalProperties.toMutableMap(),
+                                    )
+                            }
+
+                            private var validated: Boolean = false
+
+                            /**
+                             * Validates that the types of all values in this object match their
+                             * expected types recursively.
+                             *
+                             * This method is _not_ forwards compatible with new types from the API
+                             * for existing fields.
+                             *
+                             * @throws LangChainInvalidDataException if any value type in this
+                             *   object doesn't match its expected type.
+                             */
+                            fun validate(): Params = apply {
+                                if (validated) {
+                                    return@apply
+                                }
+
+                                feedbackKey()
+                                p()
+                                validated = true
+                            }
+
+                            fun isValid(): Boolean =
+                                try {
+                                    validate()
+                                    true
+                                } catch (e: LangChainInvalidDataException) {
+                                    false
+                                }
+
+                            /**
+                             * Returns a score indicating how many valid values are contained in
+                             * this object recursively.
+                             *
+                             * Used for best match union deserialization.
+                             */
+                            @JvmSynthetic
+                            internal fun validity(): Int =
+                                (if (feedbackKey.asKnown().isPresent) 1 else 0) +
+                                    (if (p.asKnown().isPresent) 1 else 0)
+
+                            override fun equals(other: Any?): Boolean {
+                                if (this === other) {
+                                    return true
+                                }
+
+                                return other is Params &&
+                                    feedbackKey == other.feedbackKey &&
+                                    p == other.p &&
+                                    additionalProperties == other.additionalProperties
+                            }
+
+                            private val hashCode: Int by lazy {
+                                Objects.hash(feedbackKey, p, additionalProperties)
+                            }
+
+                            override fun hashCode(): Int = hashCode
+
+                            override fun toString() =
+                                "Params{feedbackKey=$feedbackKey, p=$p, additionalProperties=$additionalProperties}"
+                        }
+
+                        override fun equals(other: Any?): Boolean {
+                            if (this === other) {
+                                return true
+                            }
+
+                            return other is CustomChartFeedbackScoreMetricPercentile &&
+                                field == other.field &&
+                                params == other.params &&
+                                type == other.type &&
+                                filter == other.filter &&
+                                additionalProperties == other.additionalProperties
+                        }
+
+                        private val hashCode: Int by lazy {
+                            Objects.hash(field, params, type, filter, additionalProperties)
+                        }
+
+                        override fun hashCode(): Int = hashCode
+
+                        override fun toString() =
+                            "CustomChartFeedbackScoreMetricPercentile{field=$field, params=$params, type=$type, filter=$filter, additionalProperties=$additionalProperties}"
                     }
 
                     class CustomChartMetricPercentile
@@ -26137,6 +31612,20 @@ private constructor(
 
                             /**
                              * Alias for calling [denominator] with
+                             * `Denominator.ofCustomChartFeedbackCountMetric(customChartFeedbackCountMetric)`.
+                             */
+                            fun denominator(
+                                customChartFeedbackCountMetric:
+                                    Denominator.CustomChartFeedbackCountMetric
+                            ) =
+                                denominator(
+                                    Denominator.ofCustomChartFeedbackCountMetric(
+                                        customChartFeedbackCountMetric
+                                    )
+                                )
+
+                            /**
+                             * Alias for calling [denominator] with
                              * `Denominator.ofCustomChartMetricCount(customChartMetricCount)`.
                              */
                             fun denominator(
@@ -26173,6 +31662,20 @@ private constructor(
 
                             /**
                              * Alias for calling [denominator] with
+                             * `Denominator.ofCustomChartFeedbackScoreMetricPercentile(customChartFeedbackScoreMetricPercentile)`.
+                             */
+                            fun denominator(
+                                customChartFeedbackScoreMetricPercentile:
+                                    Denominator.CustomChartFeedbackScoreMetricPercentile
+                            ) =
+                                denominator(
+                                    Denominator.ofCustomChartFeedbackScoreMetricPercentile(
+                                        customChartFeedbackScoreMetricPercentile
+                                    )
+                                )
+
+                            /**
+                             * Alias for calling [denominator] with
                              * `Denominator.ofCustomChartMetricPercentile(customChartMetricPercentile)`.
                              */
                             fun denominator(
@@ -26196,6 +31699,20 @@ private constructor(
                             fun numerator(numerator: JsonField<Numerator>) = apply {
                                 this.numerator = numerator
                             }
+
+                            /**
+                             * Alias for calling [numerator] with
+                             * `Numerator.ofCustomChartFeedbackCountMetric(customChartFeedbackCountMetric)`.
+                             */
+                            fun numerator(
+                                customChartFeedbackCountMetric:
+                                    Numerator.CustomChartFeedbackCountMetric
+                            ) =
+                                numerator(
+                                    Numerator.ofCustomChartFeedbackCountMetric(
+                                        customChartFeedbackCountMetric
+                                    )
+                                )
 
                             /**
                              * Alias for calling [numerator] with
@@ -26231,6 +31748,20 @@ private constructor(
                             ) =
                                 numerator(
                                     Numerator.ofCustomChartMetricScalar(customChartMetricScalar)
+                                )
+
+                            /**
+                             * Alias for calling [numerator] with
+                             * `Numerator.ofCustomChartFeedbackScoreMetricPercentile(customChartFeedbackScoreMetricPercentile)`.
+                             */
+                            fun numerator(
+                                customChartFeedbackScoreMetricPercentile:
+                                    Numerator.CustomChartFeedbackScoreMetricPercentile
+                            ) =
+                                numerator(
+                                    Numerator.ofCustomChartFeedbackScoreMetricPercentile(
+                                        customChartFeedbackScoreMetricPercentile
+                                    )
                                 )
 
                             /**
@@ -26358,15 +31889,25 @@ private constructor(
                         @JsonSerialize(using = Denominator.Serializer::class)
                         class Denominator
                         private constructor(
+                            private val customChartFeedbackCountMetric:
+                                CustomChartFeedbackCountMetric? =
+                                null,
                             private val customChartMetricCount: CustomChartMetricCount? = null,
                             private val customChartFeedbackScoreMetricScalar:
                                 CustomChartFeedbackScoreMetricScalar? =
                                 null,
                             private val customChartMetricScalar: CustomChartMetricScalar? = null,
+                            private val customChartFeedbackScoreMetricPercentile:
+                                CustomChartFeedbackScoreMetricPercentile? =
+                                null,
                             private val customChartMetricPercentile: CustomChartMetricPercentile? =
                                 null,
                             private val _json: JsonValue? = null,
                         ) {
+
+                            fun customChartFeedbackCountMetric():
+                                Optional<CustomChartFeedbackCountMetric> =
+                                Optional.ofNullable(customChartFeedbackCountMetric)
 
                             fun customChartMetricCount(): Optional<CustomChartMetricCount> =
                                 Optional.ofNullable(customChartMetricCount)
@@ -26378,9 +31919,16 @@ private constructor(
                             fun customChartMetricScalar(): Optional<CustomChartMetricScalar> =
                                 Optional.ofNullable(customChartMetricScalar)
 
+                            fun customChartFeedbackScoreMetricPercentile():
+                                Optional<CustomChartFeedbackScoreMetricPercentile> =
+                                Optional.ofNullable(customChartFeedbackScoreMetricPercentile)
+
                             fun customChartMetricPercentile():
                                 Optional<CustomChartMetricPercentile> =
                                 Optional.ofNullable(customChartMetricPercentile)
+
+                            fun isCustomChartFeedbackCountMetric(): Boolean =
+                                customChartFeedbackCountMetric != null
 
                             fun isCustomChartMetricCount(): Boolean = customChartMetricCount != null
 
@@ -26390,8 +31938,16 @@ private constructor(
                             fun isCustomChartMetricScalar(): Boolean =
                                 customChartMetricScalar != null
 
+                            fun isCustomChartFeedbackScoreMetricPercentile(): Boolean =
+                                customChartFeedbackScoreMetricPercentile != null
+
                             fun isCustomChartMetricPercentile(): Boolean =
                                 customChartMetricPercentile != null
+
+                            fun asCustomChartFeedbackCountMetric(): CustomChartFeedbackCountMetric =
+                                customChartFeedbackCountMetric.getOrThrow(
+                                    "customChartFeedbackCountMetric"
+                                )
 
                             fun asCustomChartMetricCount(): CustomChartMetricCount =
                                 customChartMetricCount.getOrThrow("customChartMetricCount")
@@ -26404,6 +31960,12 @@ private constructor(
 
                             fun asCustomChartMetricScalar(): CustomChartMetricScalar =
                                 customChartMetricScalar.getOrThrow("customChartMetricScalar")
+
+                            fun asCustomChartFeedbackScoreMetricPercentile():
+                                CustomChartFeedbackScoreMetricPercentile =
+                                customChartFeedbackScoreMetricPercentile.getOrThrow(
+                                    "customChartFeedbackScoreMetricPercentile"
+                                )
 
                             fun asCustomChartMetricPercentile(): CustomChartMetricPercentile =
                                 customChartMetricPercentile.getOrThrow(
@@ -26426,8 +31988,8 @@ private constructor(
                              *
                              * Optional<String> result = denominator.accept(new Denominator.Visitor<Optional<String>>() {
                              *     @Override
-                             *     public Optional<String> visitCustomChartMetricCount(CustomChartMetricCount customChartMetricCount) {
-                             *         return Optional.of(customChartMetricCount.toString());
+                             *     public Optional<String> visitCustomChartFeedbackCountMetric(CustomChartFeedbackCountMetric customChartFeedbackCountMetric) {
+                             *         return Optional.of(customChartFeedbackCountMetric.toString());
                              *     }
                              *
                              *     // ...
@@ -26445,6 +32007,10 @@ private constructor(
                              */
                             fun <T> accept(visitor: Visitor<T>): T =
                                 when {
+                                    customChartFeedbackCountMetric != null ->
+                                        visitor.visitCustomChartFeedbackCountMetric(
+                                            customChartFeedbackCountMetric
+                                        )
                                     customChartMetricCount != null ->
                                         visitor.visitCustomChartMetricCount(customChartMetricCount)
                                     customChartFeedbackScoreMetricScalar != null ->
@@ -26454,6 +32020,10 @@ private constructor(
                                     customChartMetricScalar != null ->
                                         visitor.visitCustomChartMetricScalar(
                                             customChartMetricScalar
+                                        )
+                                    customChartFeedbackScoreMetricPercentile != null ->
+                                        visitor.visitCustomChartFeedbackScoreMetricPercentile(
+                                            customChartFeedbackScoreMetricPercentile
                                         )
                                     customChartMetricPercentile != null ->
                                         visitor.visitCustomChartMetricPercentile(
@@ -26481,6 +32051,13 @@ private constructor(
 
                                 accept(
                                     object : Visitor<Unit> {
+                                        override fun visitCustomChartFeedbackCountMetric(
+                                            customChartFeedbackCountMetric:
+                                                CustomChartFeedbackCountMetric
+                                        ) {
+                                            customChartFeedbackCountMetric.validate()
+                                        }
+
                                         override fun visitCustomChartMetricCount(
                                             customChartMetricCount: CustomChartMetricCount
                                         ) {
@@ -26498,6 +32075,13 @@ private constructor(
                                             customChartMetricScalar: CustomChartMetricScalar
                                         ) {
                                             customChartMetricScalar.validate()
+                                        }
+
+                                        override fun visitCustomChartFeedbackScoreMetricPercentile(
+                                            customChartFeedbackScoreMetricPercentile:
+                                                CustomChartFeedbackScoreMetricPercentile
+                                        ) {
+                                            customChartFeedbackScoreMetricPercentile.validate()
                                         }
 
                                         override fun visitCustomChartMetricPercentile(
@@ -26528,6 +32112,11 @@ private constructor(
                             internal fun validity(): Int =
                                 accept(
                                     object : Visitor<Int> {
+                                        override fun visitCustomChartFeedbackCountMetric(
+                                            customChartFeedbackCountMetric:
+                                                CustomChartFeedbackCountMetric
+                                        ) = customChartFeedbackCountMetric.validity()
+
                                         override fun visitCustomChartMetricCount(
                                             customChartMetricCount: CustomChartMetricCount
                                         ) = customChartMetricCount.validity()
@@ -26540,6 +32129,11 @@ private constructor(
                                         override fun visitCustomChartMetricScalar(
                                             customChartMetricScalar: CustomChartMetricScalar
                                         ) = customChartMetricScalar.validity()
+
+                                        override fun visitCustomChartFeedbackScoreMetricPercentile(
+                                            customChartFeedbackScoreMetricPercentile:
+                                                CustomChartFeedbackScoreMetricPercentile
+                                        ) = customChartFeedbackScoreMetricPercentile.validity()
 
                                         override fun visitCustomChartMetricPercentile(
                                             customChartMetricPercentile: CustomChartMetricPercentile
@@ -26555,29 +32149,39 @@ private constructor(
                                 }
 
                                 return other is Denominator &&
+                                    customChartFeedbackCountMetric ==
+                                        other.customChartFeedbackCountMetric &&
                                     customChartMetricCount == other.customChartMetricCount &&
                                     customChartFeedbackScoreMetricScalar ==
                                         other.customChartFeedbackScoreMetricScalar &&
                                     customChartMetricScalar == other.customChartMetricScalar &&
+                                    customChartFeedbackScoreMetricPercentile ==
+                                        other.customChartFeedbackScoreMetricPercentile &&
                                     customChartMetricPercentile == other.customChartMetricPercentile
                             }
 
                             override fun hashCode(): Int =
                                 Objects.hash(
+                                    customChartFeedbackCountMetric,
                                     customChartMetricCount,
                                     customChartFeedbackScoreMetricScalar,
                                     customChartMetricScalar,
+                                    customChartFeedbackScoreMetricPercentile,
                                     customChartMetricPercentile,
                                 )
 
                             override fun toString(): String =
                                 when {
+                                    customChartFeedbackCountMetric != null ->
+                                        "Denominator{customChartFeedbackCountMetric=$customChartFeedbackCountMetric}"
                                     customChartMetricCount != null ->
                                         "Denominator{customChartMetricCount=$customChartMetricCount}"
                                     customChartFeedbackScoreMetricScalar != null ->
                                         "Denominator{customChartFeedbackScoreMetricScalar=$customChartFeedbackScoreMetricScalar}"
                                     customChartMetricScalar != null ->
                                         "Denominator{customChartMetricScalar=$customChartMetricScalar}"
+                                    customChartFeedbackScoreMetricPercentile != null ->
+                                        "Denominator{customChartFeedbackScoreMetricPercentile=$customChartFeedbackScoreMetricPercentile}"
                                     customChartMetricPercentile != null ->
                                         "Denominator{customChartMetricPercentile=$customChartMetricPercentile}"
                                     _json != null -> "Denominator{_unknown=$_json}"
@@ -26585,6 +32189,15 @@ private constructor(
                                 }
 
                             companion object {
+
+                                @JvmStatic
+                                fun ofCustomChartFeedbackCountMetric(
+                                    customChartFeedbackCountMetric: CustomChartFeedbackCountMetric
+                                ) =
+                                    Denominator(
+                                        customChartFeedbackCountMetric =
+                                            customChartFeedbackCountMetric
+                                    )
 
                                 @JvmStatic
                                 fun ofCustomChartMetricCount(
@@ -26607,6 +32220,16 @@ private constructor(
                                 ) = Denominator(customChartMetricScalar = customChartMetricScalar)
 
                                 @JvmStatic
+                                fun ofCustomChartFeedbackScoreMetricPercentile(
+                                    customChartFeedbackScoreMetricPercentile:
+                                        CustomChartFeedbackScoreMetricPercentile
+                                ) =
+                                    Denominator(
+                                        customChartFeedbackScoreMetricPercentile =
+                                            customChartFeedbackScoreMetricPercentile
+                                    )
+
+                                @JvmStatic
                                 fun ofCustomChartMetricPercentile(
                                     customChartMetricPercentile: CustomChartMetricPercentile
                                 ) =
@@ -26621,6 +32244,10 @@ private constructor(
                              */
                             interface Visitor<out T> {
 
+                                fun visitCustomChartFeedbackCountMetric(
+                                    customChartFeedbackCountMetric: CustomChartFeedbackCountMetric
+                                ): T
+
                                 fun visitCustomChartMetricCount(
                                     customChartMetricCount: CustomChartMetricCount
                                 ): T
@@ -26632,6 +32259,11 @@ private constructor(
 
                                 fun visitCustomChartMetricScalar(
                                     customChartMetricScalar: CustomChartMetricScalar
+                                ): T
+
+                                fun visitCustomChartFeedbackScoreMetricPercentile(
+                                    customChartFeedbackScoreMetricPercentile:
+                                        CustomChartFeedbackScoreMetricPercentile
                                 ): T
 
                                 fun visitCustomChartMetricPercentile(
@@ -26666,6 +32298,18 @@ private constructor(
                                         sequenceOf(
                                                 tryDeserialize(
                                                         node,
+                                                        jacksonTypeRef<
+                                                            CustomChartFeedbackCountMetric
+                                                        >(),
+                                                    )
+                                                    ?.let {
+                                                        Denominator(
+                                                            customChartFeedbackCountMetric = it,
+                                                            _json = json,
+                                                        )
+                                                    },
+                                                tryDeserialize(
+                                                        node,
                                                         jacksonTypeRef<CustomChartMetricCount>(),
                                                     )
                                                     ?.let {
@@ -26694,6 +32338,19 @@ private constructor(
                                                     ?.let {
                                                         Denominator(
                                                             customChartMetricScalar = it,
+                                                            _json = json,
+                                                        )
+                                                    },
+                                                tryDeserialize(
+                                                        node,
+                                                        jacksonTypeRef<
+                                                            CustomChartFeedbackScoreMetricPercentile
+                                                        >(),
+                                                    )
+                                                    ?.let {
+                                                        Denominator(
+                                                            customChartFeedbackScoreMetricPercentile =
+                                                                it,
                                                             _json = json,
                                                         )
                                                     },
@@ -26738,6 +32395,10 @@ private constructor(
                                     provider: SerializerProvider,
                                 ) {
                                     when {
+                                        value.customChartFeedbackCountMetric != null ->
+                                            generator.writeObject(
+                                                value.customChartFeedbackCountMetric
+                                            )
                                         value.customChartMetricCount != null ->
                                             generator.writeObject(value.customChartMetricCount)
                                         value.customChartFeedbackScoreMetricScalar != null ->
@@ -26746,12 +32407,687 @@ private constructor(
                                             )
                                         value.customChartMetricScalar != null ->
                                             generator.writeObject(value.customChartMetricScalar)
+                                        value.customChartFeedbackScoreMetricPercentile != null ->
+                                            generator.writeObject(
+                                                value.customChartFeedbackScoreMetricPercentile
+                                            )
                                         value.customChartMetricPercentile != null ->
                                             generator.writeObject(value.customChartMetricPercentile)
                                         value._json != null -> generator.writeObject(value._json)
                                         else -> throw IllegalStateException("Invalid Denominator")
                                     }
                                 }
+                            }
+
+                            class CustomChartFeedbackCountMetric
+                            @JsonCreator(mode = JsonCreator.Mode.DISABLED)
+                            private constructor(
+                                private val entity: JsonValue,
+                                private val params: JsonField<Params>,
+                                private val filter: JsonField<String>,
+                                private val type: JsonField<Type>,
+                                private val additionalProperties: MutableMap<String, JsonValue>,
+                            ) {
+
+                                @JsonCreator
+                                private constructor(
+                                    @JsonProperty("entity")
+                                    @ExcludeMissing
+                                    entity: JsonValue = JsonMissing.of(),
+                                    @JsonProperty("params")
+                                    @ExcludeMissing
+                                    params: JsonField<Params> = JsonMissing.of(),
+                                    @JsonProperty("filter")
+                                    @ExcludeMissing
+                                    filter: JsonField<String> = JsonMissing.of(),
+                                    @JsonProperty("type")
+                                    @ExcludeMissing
+                                    type: JsonField<Type> = JsonMissing.of(),
+                                ) : this(entity, params, filter, type, mutableMapOf())
+
+                                /**
+                                 * Expected to always return the following:
+                                 * ```java
+                                 * JsonValue.from("feedback")
+                                 * ```
+                                 *
+                                 * However, this method can be useful for debugging and logging
+                                 * (e.g. if the server responded with an unexpected value).
+                                 */
+                                @JsonProperty("entity")
+                                @ExcludeMissing
+                                fun _entity(): JsonValue = entity
+
+                                /**
+                                 * @throws LangChainInvalidDataException if the JSON field has an
+                                 *   unexpected type or is unexpectedly missing or null (e.g. if the
+                                 *   server responded with an unexpected value).
+                                 */
+                                fun params(): Params = params.getRequired("params")
+
+                                /**
+                                 * @throws LangChainInvalidDataException if the JSON field has an
+                                 *   unexpected type (e.g. if the server responded with an
+                                 *   unexpected value).
+                                 */
+                                fun filter(): Optional<String> = filter.getOptional("filter")
+
+                                /**
+                                 * @throws LangChainInvalidDataException if the JSON field has an
+                                 *   unexpected type (e.g. if the server responded with an
+                                 *   unexpected value).
+                                 */
+                                fun type(): Optional<Type> = type.getOptional("type")
+
+                                /**
+                                 * Returns the raw JSON value of [params].
+                                 *
+                                 * Unlike [params], this method doesn't throw if the JSON field has
+                                 * an unexpected type.
+                                 */
+                                @JsonProperty("params")
+                                @ExcludeMissing
+                                fun _params(): JsonField<Params> = params
+
+                                /**
+                                 * Returns the raw JSON value of [filter].
+                                 *
+                                 * Unlike [filter], this method doesn't throw if the JSON field has
+                                 * an unexpected type.
+                                 */
+                                @JsonProperty("filter")
+                                @ExcludeMissing
+                                fun _filter(): JsonField<String> = filter
+
+                                /**
+                                 * Returns the raw JSON value of [type].
+                                 *
+                                 * Unlike [type], this method doesn't throw if the JSON field has an
+                                 * unexpected type.
+                                 */
+                                @JsonProperty("type")
+                                @ExcludeMissing
+                                fun _type(): JsonField<Type> = type
+
+                                @JsonAnySetter
+                                private fun putAdditionalProperty(key: String, value: JsonValue) {
+                                    additionalProperties.put(key, value)
+                                }
+
+                                @JsonAnyGetter
+                                @ExcludeMissing
+                                fun _additionalProperties(): Map<String, JsonValue> =
+                                    Collections.unmodifiableMap(additionalProperties)
+
+                                fun toBuilder() = Builder().from(this)
+
+                                companion object {
+
+                                    /**
+                                     * Returns a mutable builder for constructing an instance of
+                                     * [CustomChartFeedbackCountMetric].
+                                     *
+                                     * The following fields are required:
+                                     * ```java
+                                     * .params()
+                                     * ```
+                                     */
+                                    @JvmStatic fun builder() = Builder()
+                                }
+
+                                /** A builder for [CustomChartFeedbackCountMetric]. */
+                                class Builder internal constructor() {
+
+                                    private var entity: JsonValue = JsonValue.from("feedback")
+                                    private var params: JsonField<Params>? = null
+                                    private var filter: JsonField<String> = JsonMissing.of()
+                                    private var type: JsonField<Type> = JsonMissing.of()
+                                    private var additionalProperties:
+                                        MutableMap<String, JsonValue> =
+                                        mutableMapOf()
+
+                                    @JvmSynthetic
+                                    internal fun from(
+                                        customChartFeedbackCountMetric:
+                                            CustomChartFeedbackCountMetric
+                                    ) = apply {
+                                        entity = customChartFeedbackCountMetric.entity
+                                        params = customChartFeedbackCountMetric.params
+                                        filter = customChartFeedbackCountMetric.filter
+                                        type = customChartFeedbackCountMetric.type
+                                        additionalProperties =
+                                            customChartFeedbackCountMetric.additionalProperties
+                                                .toMutableMap()
+                                    }
+
+                                    /**
+                                     * Sets the field to an arbitrary JSON value.
+                                     *
+                                     * It is usually unnecessary to call this method because the
+                                     * field defaults to the following:
+                                     * ```java
+                                     * JsonValue.from("feedback")
+                                     * ```
+                                     *
+                                     * This method is primarily for setting the field to an
+                                     * undocumented or not yet supported value.
+                                     */
+                                    fun entity(entity: JsonValue) = apply { this.entity = entity }
+
+                                    fun params(params: Params) = params(JsonField.of(params))
+
+                                    /**
+                                     * Sets [Builder.params] to an arbitrary JSON value.
+                                     *
+                                     * You should usually call [Builder.params] with a well-typed
+                                     * [Params] value instead. This method is primarily for setting
+                                     * the field to an undocumented or not yet supported value.
+                                     */
+                                    fun params(params: JsonField<Params>) = apply {
+                                        this.params = params
+                                    }
+
+                                    fun filter(filter: String?) =
+                                        filter(JsonField.ofNullable(filter))
+
+                                    /**
+                                     * Alias for calling [Builder.filter] with
+                                     * `filter.orElse(null)`.
+                                     */
+                                    fun filter(filter: Optional<String>) =
+                                        filter(filter.getOrNull())
+
+                                    /**
+                                     * Sets [Builder.filter] to an arbitrary JSON value.
+                                     *
+                                     * You should usually call [Builder.filter] with a well-typed
+                                     * [String] value instead. This method is primarily for setting
+                                     * the field to an undocumented or not yet supported value.
+                                     */
+                                    fun filter(filter: JsonField<String>) = apply {
+                                        this.filter = filter
+                                    }
+
+                                    fun type(type: Type) = type(JsonField.of(type))
+
+                                    /**
+                                     * Sets [Builder.type] to an arbitrary JSON value.
+                                     *
+                                     * You should usually call [Builder.type] with a well-typed
+                                     * [Type] value instead. This method is primarily for setting
+                                     * the field to an undocumented or not yet supported value.
+                                     */
+                                    fun type(type: JsonField<Type>) = apply { this.type = type }
+
+                                    fun additionalProperties(
+                                        additionalProperties: Map<String, JsonValue>
+                                    ) = apply {
+                                        this.additionalProperties.clear()
+                                        putAllAdditionalProperties(additionalProperties)
+                                    }
+
+                                    fun putAdditionalProperty(key: String, value: JsonValue) =
+                                        apply {
+                                            additionalProperties.put(key, value)
+                                        }
+
+                                    fun putAllAdditionalProperties(
+                                        additionalProperties: Map<String, JsonValue>
+                                    ) = apply {
+                                        this.additionalProperties.putAll(additionalProperties)
+                                    }
+
+                                    fun removeAdditionalProperty(key: String) = apply {
+                                        additionalProperties.remove(key)
+                                    }
+
+                                    fun removeAllAdditionalProperties(keys: Set<String>) = apply {
+                                        keys.forEach(::removeAdditionalProperty)
+                                    }
+
+                                    /**
+                                     * Returns an immutable instance of
+                                     * [CustomChartFeedbackCountMetric].
+                                     *
+                                     * Further updates to this [Builder] will not mutate the
+                                     * returned instance.
+                                     *
+                                     * The following fields are required:
+                                     * ```java
+                                     * .params()
+                                     * ```
+                                     *
+                                     * @throws IllegalStateException if any required field is unset.
+                                     */
+                                    fun build(): CustomChartFeedbackCountMetric =
+                                        CustomChartFeedbackCountMetric(
+                                            entity,
+                                            checkRequired("params", params),
+                                            filter,
+                                            type,
+                                            additionalProperties.toMutableMap(),
+                                        )
+                                }
+
+                                private var validated: Boolean = false
+
+                                /**
+                                 * Validates that the types of all values in this object match their
+                                 * expected types recursively.
+                                 *
+                                 * This method is _not_ forwards compatible with new types from the
+                                 * API for existing fields.
+                                 *
+                                 * @throws LangChainInvalidDataException if any value type in this
+                                 *   object doesn't match its expected type.
+                                 */
+                                fun validate(): CustomChartFeedbackCountMetric = apply {
+                                    if (validated) {
+                                        return@apply
+                                    }
+
+                                    _entity().let {
+                                        if (it != JsonValue.from("feedback")) {
+                                            throw LangChainInvalidDataException(
+                                                "'entity' is invalid, received $it"
+                                            )
+                                        }
+                                    }
+                                    params().validate()
+                                    filter()
+                                    type().ifPresent { it.validate() }
+                                    validated = true
+                                }
+
+                                fun isValid(): Boolean =
+                                    try {
+                                        validate()
+                                        true
+                                    } catch (e: LangChainInvalidDataException) {
+                                        false
+                                    }
+
+                                /**
+                                 * Returns a score indicating how many valid values are contained in
+                                 * this object recursively.
+                                 *
+                                 * Used for best match union deserialization.
+                                 */
+                                @JvmSynthetic
+                                internal fun validity(): Int =
+                                    entity.let { if (it == JsonValue.from("feedback")) 1 else 0 } +
+                                        (params.asKnown().getOrNull()?.validity() ?: 0) +
+                                        (if (filter.asKnown().isPresent) 1 else 0) +
+                                        (type.asKnown().getOrNull()?.validity() ?: 0)
+
+                                class Params
+                                @JsonCreator(mode = JsonCreator.Mode.DISABLED)
+                                private constructor(
+                                    private val feedbackKey: JsonField<String>,
+                                    private val additionalProperties: MutableMap<String, JsonValue>,
+                                ) {
+
+                                    @JsonCreator
+                                    private constructor(
+                                        @JsonProperty("feedback_key")
+                                        @ExcludeMissing
+                                        feedbackKey: JsonField<String> = JsonMissing.of()
+                                    ) : this(feedbackKey, mutableMapOf())
+
+                                    /**
+                                     * @throws LangChainInvalidDataException if the JSON field has
+                                     *   an unexpected type or is unexpectedly missing or null (e.g.
+                                     *   if the server responded with an unexpected value).
+                                     */
+                                    fun feedbackKey(): String =
+                                        feedbackKey.getRequired("feedback_key")
+
+                                    /**
+                                     * Returns the raw JSON value of [feedbackKey].
+                                     *
+                                     * Unlike [feedbackKey], this method doesn't throw if the JSON
+                                     * field has an unexpected type.
+                                     */
+                                    @JsonProperty("feedback_key")
+                                    @ExcludeMissing
+                                    fun _feedbackKey(): JsonField<String> = feedbackKey
+
+                                    @JsonAnySetter
+                                    private fun putAdditionalProperty(
+                                        key: String,
+                                        value: JsonValue,
+                                    ) {
+                                        additionalProperties.put(key, value)
+                                    }
+
+                                    @JsonAnyGetter
+                                    @ExcludeMissing
+                                    fun _additionalProperties(): Map<String, JsonValue> =
+                                        Collections.unmodifiableMap(additionalProperties)
+
+                                    fun toBuilder() = Builder().from(this)
+
+                                    companion object {
+
+                                        /**
+                                         * Returns a mutable builder for constructing an instance of
+                                         * [Params].
+                                         *
+                                         * The following fields are required:
+                                         * ```java
+                                         * .feedbackKey()
+                                         * ```
+                                         */
+                                        @JvmStatic fun builder() = Builder()
+                                    }
+
+                                    /** A builder for [Params]. */
+                                    class Builder internal constructor() {
+
+                                        private var feedbackKey: JsonField<String>? = null
+                                        private var additionalProperties:
+                                            MutableMap<String, JsonValue> =
+                                            mutableMapOf()
+
+                                        @JvmSynthetic
+                                        internal fun from(params: Params) = apply {
+                                            feedbackKey = params.feedbackKey
+                                            additionalProperties =
+                                                params.additionalProperties.toMutableMap()
+                                        }
+
+                                        fun feedbackKey(feedbackKey: String) =
+                                            feedbackKey(JsonField.of(feedbackKey))
+
+                                        /**
+                                         * Sets [Builder.feedbackKey] to an arbitrary JSON value.
+                                         *
+                                         * You should usually call [Builder.feedbackKey] with a
+                                         * well-typed [String] value instead. This method is
+                                         * primarily for setting the field to an undocumented or not
+                                         * yet supported value.
+                                         */
+                                        fun feedbackKey(feedbackKey: JsonField<String>) = apply {
+                                            this.feedbackKey = feedbackKey
+                                        }
+
+                                        fun additionalProperties(
+                                            additionalProperties: Map<String, JsonValue>
+                                        ) = apply {
+                                            this.additionalProperties.clear()
+                                            putAllAdditionalProperties(additionalProperties)
+                                        }
+
+                                        fun putAdditionalProperty(key: String, value: JsonValue) =
+                                            apply {
+                                                additionalProperties.put(key, value)
+                                            }
+
+                                        fun putAllAdditionalProperties(
+                                            additionalProperties: Map<String, JsonValue>
+                                        ) = apply {
+                                            this.additionalProperties.putAll(additionalProperties)
+                                        }
+
+                                        fun removeAdditionalProperty(key: String) = apply {
+                                            additionalProperties.remove(key)
+                                        }
+
+                                        fun removeAllAdditionalProperties(keys: Set<String>) =
+                                            apply {
+                                                keys.forEach(::removeAdditionalProperty)
+                                            }
+
+                                        /**
+                                         * Returns an immutable instance of [Params].
+                                         *
+                                         * Further updates to this [Builder] will not mutate the
+                                         * returned instance.
+                                         *
+                                         * The following fields are required:
+                                         * ```java
+                                         * .feedbackKey()
+                                         * ```
+                                         *
+                                         * @throws IllegalStateException if any required field is
+                                         *   unset.
+                                         */
+                                        fun build(): Params =
+                                            Params(
+                                                checkRequired("feedbackKey", feedbackKey),
+                                                additionalProperties.toMutableMap(),
+                                            )
+                                    }
+
+                                    private var validated: Boolean = false
+
+                                    /**
+                                     * Validates that the types of all values in this object match
+                                     * their expected types recursively.
+                                     *
+                                     * This method is _not_ forwards compatible with new types from
+                                     * the API for existing fields.
+                                     *
+                                     * @throws LangChainInvalidDataException if any value type in
+                                     *   this object doesn't match its expected type.
+                                     */
+                                    fun validate(): Params = apply {
+                                        if (validated) {
+                                            return@apply
+                                        }
+
+                                        feedbackKey()
+                                        validated = true
+                                    }
+
+                                    fun isValid(): Boolean =
+                                        try {
+                                            validate()
+                                            true
+                                        } catch (e: LangChainInvalidDataException) {
+                                            false
+                                        }
+
+                                    /**
+                                     * Returns a score indicating how many valid values are
+                                     * contained in this object recursively.
+                                     *
+                                     * Used for best match union deserialization.
+                                     */
+                                    @JvmSynthetic
+                                    internal fun validity(): Int =
+                                        (if (feedbackKey.asKnown().isPresent) 1 else 0)
+
+                                    override fun equals(other: Any?): Boolean {
+                                        if (this === other) {
+                                            return true
+                                        }
+
+                                        return other is Params &&
+                                            feedbackKey == other.feedbackKey &&
+                                            additionalProperties == other.additionalProperties
+                                    }
+
+                                    private val hashCode: Int by lazy {
+                                        Objects.hash(feedbackKey, additionalProperties)
+                                    }
+
+                                    override fun hashCode(): Int = hashCode
+
+                                    override fun toString() =
+                                        "Params{feedbackKey=$feedbackKey, additionalProperties=$additionalProperties}"
+                                }
+
+                                class Type
+                                @JsonCreator
+                                private constructor(private val value: JsonField<String>) : Enum {
+
+                                    /**
+                                     * Returns this class instance's raw value.
+                                     *
+                                     * This is usually only useful if this instance was deserialized
+                                     * from data that doesn't match any known member, and you want
+                                     * to know that value. For example, if the SDK is on an older
+                                     * version than the API, then the API may respond with new
+                                     * members that the SDK is unaware of.
+                                     */
+                                    @com.fasterxml.jackson.annotation.JsonValue
+                                    fun _value(): JsonField<String> = value
+
+                                    companion object {
+
+                                        @JvmField val COUNT = of("count")
+
+                                        @JvmStatic fun of(value: String) = Type(JsonField.of(value))
+                                    }
+
+                                    /** An enum containing [Type]'s known values. */
+                                    enum class Known {
+                                        COUNT
+                                    }
+
+                                    /**
+                                     * An enum containing [Type]'s known values, as well as an
+                                     * [_UNKNOWN] member.
+                                     *
+                                     * An instance of [Type] can contain an unknown value in a
+                                     * couple of cases:
+                                     * - It was deserialized from data that doesn't match any known
+                                     *   member. For example, if the SDK is on an older version than
+                                     *   the API, then the API may respond with new members that the
+                                     *   SDK is unaware of.
+                                     * - It was constructed with an arbitrary value using the [of]
+                                     *   method.
+                                     */
+                                    enum class Value {
+                                        COUNT,
+                                        /**
+                                         * An enum member indicating that [Type] was instantiated
+                                         * with an unknown value.
+                                         */
+                                        _UNKNOWN,
+                                    }
+
+                                    /**
+                                     * Returns an enum member corresponding to this class instance's
+                                     * value, or [Value._UNKNOWN] if the class was instantiated with
+                                     * an unknown value.
+                                     *
+                                     * Use the [known] method instead if you're certain the value is
+                                     * always known or if you want to throw for the unknown case.
+                                     */
+                                    fun value(): Value =
+                                        when (this) {
+                                            COUNT -> Value.COUNT
+                                            else -> Value._UNKNOWN
+                                        }
+
+                                    /**
+                                     * Returns an enum member corresponding to this class instance's
+                                     * value.
+                                     *
+                                     * Use the [value] method instead if you're uncertain the value
+                                     * is always known and don't want to throw for the unknown case.
+                                     *
+                                     * @throws LangChainInvalidDataException if this class
+                                     *   instance's value is a not a known member.
+                                     */
+                                    fun known(): Known =
+                                        when (this) {
+                                            COUNT -> Known.COUNT
+                                            else ->
+                                                throw LangChainInvalidDataException(
+                                                    "Unknown Type: $value"
+                                                )
+                                        }
+
+                                    /**
+                                     * Returns this class instance's primitive wire representation.
+                                     *
+                                     * This differs from the [toString] method because that method
+                                     * is primarily for debugging and generally doesn't throw.
+                                     *
+                                     * @throws LangChainInvalidDataException if this class
+                                     *   instance's value does not have the expected primitive type.
+                                     */
+                                    fun asString(): String =
+                                        _value().asString().orElseThrow {
+                                            LangChainInvalidDataException("Value is not a String")
+                                        }
+
+                                    private var validated: Boolean = false
+
+                                    /**
+                                     * Validates that the types of all values in this object match
+                                     * their expected types recursively.
+                                     *
+                                     * This method is _not_ forwards compatible with new types from
+                                     * the API for existing fields.
+                                     *
+                                     * @throws LangChainInvalidDataException if any value type in
+                                     *   this object doesn't match its expected type.
+                                     */
+                                    fun validate(): Type = apply {
+                                        if (validated) {
+                                            return@apply
+                                        }
+
+                                        known()
+                                        validated = true
+                                    }
+
+                                    fun isValid(): Boolean =
+                                        try {
+                                            validate()
+                                            true
+                                        } catch (e: LangChainInvalidDataException) {
+                                            false
+                                        }
+
+                                    /**
+                                     * Returns a score indicating how many valid values are
+                                     * contained in this object recursively.
+                                     *
+                                     * Used for best match union deserialization.
+                                     */
+                                    @JvmSynthetic
+                                    internal fun validity(): Int =
+                                        if (value() == Value._UNKNOWN) 0 else 1
+
+                                    override fun equals(other: Any?): Boolean {
+                                        if (this === other) {
+                                            return true
+                                        }
+
+                                        return other is Type && value == other.value
+                                    }
+
+                                    override fun hashCode() = value.hashCode()
+
+                                    override fun toString() = value.toString()
+                                }
+
+                                override fun equals(other: Any?): Boolean {
+                                    if (this === other) {
+                                        return true
+                                    }
+
+                                    return other is CustomChartFeedbackCountMetric &&
+                                        entity == other.entity &&
+                                        params == other.params &&
+                                        filter == other.filter &&
+                                        type == other.type &&
+                                        additionalProperties == other.additionalProperties
+                                }
+
+                                private val hashCode: Int by lazy {
+                                    Objects.hash(entity, params, filter, type, additionalProperties)
+                                }
+
+                                override fun hashCode(): Int = hashCode
+
+                                override fun toString() =
+                                    "CustomChartFeedbackCountMetric{entity=$entity, params=$params, filter=$filter, type=$type, additionalProperties=$additionalProperties}"
                             }
 
                             class CustomChartMetricCount
@@ -27652,6 +33988,8 @@ private constructor(
 
                                     companion object {
 
+                                        @JvmField val SUM = of("sum")
+
                                         @JvmField val MAX = of("max")
 
                                         @JvmField val MIN = of("min")
@@ -27663,6 +34001,7 @@ private constructor(
 
                                     /** An enum containing [Type]'s known values. */
                                     enum class Known {
+                                        SUM,
                                         MAX,
                                         MIN,
                                         AVG,
@@ -27682,6 +34021,7 @@ private constructor(
                                      *   method.
                                      */
                                     enum class Value {
+                                        SUM,
                                         MAX,
                                         MIN,
                                         AVG,
@@ -27702,6 +34042,7 @@ private constructor(
                                      */
                                     fun value(): Value =
                                         when (this) {
+                                            SUM -> Value.SUM
                                             MAX -> Value.MAX
                                             MIN -> Value.MIN
                                             AVG -> Value.AVG
@@ -27720,6 +34061,7 @@ private constructor(
                                      */
                                     fun known(): Known =
                                         when (this) {
+                                            SUM -> Known.SUM
                                             MAX -> Known.MAX
                                             MIN -> Known.MIN
                                             AVG -> Known.AVG
@@ -28463,6 +34805,577 @@ private constructor(
 
                                 override fun toString() =
                                     "CustomChartMetricScalar{field=$field, type=$type, filter=$filter, additionalProperties=$additionalProperties}"
+                            }
+
+                            class CustomChartFeedbackScoreMetricPercentile
+                            @JsonCreator(mode = JsonCreator.Mode.DISABLED)
+                            private constructor(
+                                private val field: JsonValue,
+                                private val params: JsonField<Params>,
+                                private val type: JsonValue,
+                                private val filter: JsonField<String>,
+                                private val additionalProperties: MutableMap<String, JsonValue>,
+                            ) {
+
+                                @JsonCreator
+                                private constructor(
+                                    @JsonProperty("field")
+                                    @ExcludeMissing
+                                    field: JsonValue = JsonMissing.of(),
+                                    @JsonProperty("params")
+                                    @ExcludeMissing
+                                    params: JsonField<Params> = JsonMissing.of(),
+                                    @JsonProperty("type")
+                                    @ExcludeMissing
+                                    type: JsonValue = JsonMissing.of(),
+                                    @JsonProperty("filter")
+                                    @ExcludeMissing
+                                    filter: JsonField<String> = JsonMissing.of(),
+                                ) : this(field, params, type, filter, mutableMapOf())
+
+                                /**
+                                 * Expected to always return the following:
+                                 * ```java
+                                 * JsonValue.from("feedback_score")
+                                 * ```
+                                 *
+                                 * However, this method can be useful for debugging and logging
+                                 * (e.g. if the server responded with an unexpected value).
+                                 */
+                                @JsonProperty("field")
+                                @ExcludeMissing
+                                fun _field(): JsonValue = field
+
+                                /**
+                                 * @throws LangChainInvalidDataException if the JSON field has an
+                                 *   unexpected type or is unexpectedly missing or null (e.g. if the
+                                 *   server responded with an unexpected value).
+                                 */
+                                fun params(): Params = params.getRequired("params")
+
+                                /**
+                                 * Expected to always return the following:
+                                 * ```java
+                                 * JsonValue.from("percentile")
+                                 * ```
+                                 *
+                                 * However, this method can be useful for debugging and logging
+                                 * (e.g. if the server responded with an unexpected value).
+                                 */
+                                @JsonProperty("type") @ExcludeMissing fun _type(): JsonValue = type
+
+                                /**
+                                 * @throws LangChainInvalidDataException if the JSON field has an
+                                 *   unexpected type (e.g. if the server responded with an
+                                 *   unexpected value).
+                                 */
+                                fun filter(): Optional<String> = filter.getOptional("filter")
+
+                                /**
+                                 * Returns the raw JSON value of [params].
+                                 *
+                                 * Unlike [params], this method doesn't throw if the JSON field has
+                                 * an unexpected type.
+                                 */
+                                @JsonProperty("params")
+                                @ExcludeMissing
+                                fun _params(): JsonField<Params> = params
+
+                                /**
+                                 * Returns the raw JSON value of [filter].
+                                 *
+                                 * Unlike [filter], this method doesn't throw if the JSON field has
+                                 * an unexpected type.
+                                 */
+                                @JsonProperty("filter")
+                                @ExcludeMissing
+                                fun _filter(): JsonField<String> = filter
+
+                                @JsonAnySetter
+                                private fun putAdditionalProperty(key: String, value: JsonValue) {
+                                    additionalProperties.put(key, value)
+                                }
+
+                                @JsonAnyGetter
+                                @ExcludeMissing
+                                fun _additionalProperties(): Map<String, JsonValue> =
+                                    Collections.unmodifiableMap(additionalProperties)
+
+                                fun toBuilder() = Builder().from(this)
+
+                                companion object {
+
+                                    /**
+                                     * Returns a mutable builder for constructing an instance of
+                                     * [CustomChartFeedbackScoreMetricPercentile].
+                                     *
+                                     * The following fields are required:
+                                     * ```java
+                                     * .params()
+                                     * ```
+                                     */
+                                    @JvmStatic fun builder() = Builder()
+                                }
+
+                                /** A builder for [CustomChartFeedbackScoreMetricPercentile]. */
+                                class Builder internal constructor() {
+
+                                    private var field: JsonValue = JsonValue.from("feedback_score")
+                                    private var params: JsonField<Params>? = null
+                                    private var type: JsonValue = JsonValue.from("percentile")
+                                    private var filter: JsonField<String> = JsonMissing.of()
+                                    private var additionalProperties:
+                                        MutableMap<String, JsonValue> =
+                                        mutableMapOf()
+
+                                    @JvmSynthetic
+                                    internal fun from(
+                                        customChartFeedbackScoreMetricPercentile:
+                                            CustomChartFeedbackScoreMetricPercentile
+                                    ) = apply {
+                                        field = customChartFeedbackScoreMetricPercentile.field
+                                        params = customChartFeedbackScoreMetricPercentile.params
+                                        type = customChartFeedbackScoreMetricPercentile.type
+                                        filter = customChartFeedbackScoreMetricPercentile.filter
+                                        additionalProperties =
+                                            customChartFeedbackScoreMetricPercentile
+                                                .additionalProperties
+                                                .toMutableMap()
+                                    }
+
+                                    /**
+                                     * Sets the field to an arbitrary JSON value.
+                                     *
+                                     * It is usually unnecessary to call this method because the
+                                     * field defaults to the following:
+                                     * ```java
+                                     * JsonValue.from("feedback_score")
+                                     * ```
+                                     *
+                                     * This method is primarily for setting the field to an
+                                     * undocumented or not yet supported value.
+                                     */
+                                    fun field(field: JsonValue) = apply { this.field = field }
+
+                                    fun params(params: Params) = params(JsonField.of(params))
+
+                                    /**
+                                     * Sets [Builder.params] to an arbitrary JSON value.
+                                     *
+                                     * You should usually call [Builder.params] with a well-typed
+                                     * [Params] value instead. This method is primarily for setting
+                                     * the field to an undocumented or not yet supported value.
+                                     */
+                                    fun params(params: JsonField<Params>) = apply {
+                                        this.params = params
+                                    }
+
+                                    /**
+                                     * Sets the field to an arbitrary JSON value.
+                                     *
+                                     * It is usually unnecessary to call this method because the
+                                     * field defaults to the following:
+                                     * ```java
+                                     * JsonValue.from("percentile")
+                                     * ```
+                                     *
+                                     * This method is primarily for setting the field to an
+                                     * undocumented or not yet supported value.
+                                     */
+                                    fun type(type: JsonValue) = apply { this.type = type }
+
+                                    fun filter(filter: String?) =
+                                        filter(JsonField.ofNullable(filter))
+
+                                    /**
+                                     * Alias for calling [Builder.filter] with
+                                     * `filter.orElse(null)`.
+                                     */
+                                    fun filter(filter: Optional<String>) =
+                                        filter(filter.getOrNull())
+
+                                    /**
+                                     * Sets [Builder.filter] to an arbitrary JSON value.
+                                     *
+                                     * You should usually call [Builder.filter] with a well-typed
+                                     * [String] value instead. This method is primarily for setting
+                                     * the field to an undocumented or not yet supported value.
+                                     */
+                                    fun filter(filter: JsonField<String>) = apply {
+                                        this.filter = filter
+                                    }
+
+                                    fun additionalProperties(
+                                        additionalProperties: Map<String, JsonValue>
+                                    ) = apply {
+                                        this.additionalProperties.clear()
+                                        putAllAdditionalProperties(additionalProperties)
+                                    }
+
+                                    fun putAdditionalProperty(key: String, value: JsonValue) =
+                                        apply {
+                                            additionalProperties.put(key, value)
+                                        }
+
+                                    fun putAllAdditionalProperties(
+                                        additionalProperties: Map<String, JsonValue>
+                                    ) = apply {
+                                        this.additionalProperties.putAll(additionalProperties)
+                                    }
+
+                                    fun removeAdditionalProperty(key: String) = apply {
+                                        additionalProperties.remove(key)
+                                    }
+
+                                    fun removeAllAdditionalProperties(keys: Set<String>) = apply {
+                                        keys.forEach(::removeAdditionalProperty)
+                                    }
+
+                                    /**
+                                     * Returns an immutable instance of
+                                     * [CustomChartFeedbackScoreMetricPercentile].
+                                     *
+                                     * Further updates to this [Builder] will not mutate the
+                                     * returned instance.
+                                     *
+                                     * The following fields are required:
+                                     * ```java
+                                     * .params()
+                                     * ```
+                                     *
+                                     * @throws IllegalStateException if any required field is unset.
+                                     */
+                                    fun build(): CustomChartFeedbackScoreMetricPercentile =
+                                        CustomChartFeedbackScoreMetricPercentile(
+                                            field,
+                                            checkRequired("params", params),
+                                            type,
+                                            filter,
+                                            additionalProperties.toMutableMap(),
+                                        )
+                                }
+
+                                private var validated: Boolean = false
+
+                                /**
+                                 * Validates that the types of all values in this object match their
+                                 * expected types recursively.
+                                 *
+                                 * This method is _not_ forwards compatible with new types from the
+                                 * API for existing fields.
+                                 *
+                                 * @throws LangChainInvalidDataException if any value type in this
+                                 *   object doesn't match its expected type.
+                                 */
+                                fun validate(): CustomChartFeedbackScoreMetricPercentile = apply {
+                                    if (validated) {
+                                        return@apply
+                                    }
+
+                                    _field().let {
+                                        if (it != JsonValue.from("feedback_score")) {
+                                            throw LangChainInvalidDataException(
+                                                "'field' is invalid, received $it"
+                                            )
+                                        }
+                                    }
+                                    params().validate()
+                                    _type().let {
+                                        if (it != JsonValue.from("percentile")) {
+                                            throw LangChainInvalidDataException(
+                                                "'type' is invalid, received $it"
+                                            )
+                                        }
+                                    }
+                                    filter()
+                                    validated = true
+                                }
+
+                                fun isValid(): Boolean =
+                                    try {
+                                        validate()
+                                        true
+                                    } catch (e: LangChainInvalidDataException) {
+                                        false
+                                    }
+
+                                /**
+                                 * Returns a score indicating how many valid values are contained in
+                                 * this object recursively.
+                                 *
+                                 * Used for best match union deserialization.
+                                 */
+                                @JvmSynthetic
+                                internal fun validity(): Int =
+                                    field.let {
+                                        if (it == JsonValue.from("feedback_score")) 1 else 0
+                                    } +
+                                        (params.asKnown().getOrNull()?.validity() ?: 0) +
+                                        type.let {
+                                            if (it == JsonValue.from("percentile")) 1 else 0
+                                        } +
+                                        (if (filter.asKnown().isPresent) 1 else 0)
+
+                                class Params
+                                @JsonCreator(mode = JsonCreator.Mode.DISABLED)
+                                private constructor(
+                                    private val feedbackKey: JsonField<String>,
+                                    private val p: JsonField<Double>,
+                                    private val additionalProperties: MutableMap<String, JsonValue>,
+                                ) {
+
+                                    @JsonCreator
+                                    private constructor(
+                                        @JsonProperty("feedback_key")
+                                        @ExcludeMissing
+                                        feedbackKey: JsonField<String> = JsonMissing.of(),
+                                        @JsonProperty("p")
+                                        @ExcludeMissing
+                                        p: JsonField<Double> = JsonMissing.of(),
+                                    ) : this(feedbackKey, p, mutableMapOf())
+
+                                    /**
+                                     * @throws LangChainInvalidDataException if the JSON field has
+                                     *   an unexpected type or is unexpectedly missing or null (e.g.
+                                     *   if the server responded with an unexpected value).
+                                     */
+                                    fun feedbackKey(): String =
+                                        feedbackKey.getRequired("feedback_key")
+
+                                    /**
+                                     * @throws LangChainInvalidDataException if the JSON field has
+                                     *   an unexpected type or is unexpectedly missing or null (e.g.
+                                     *   if the server responded with an unexpected value).
+                                     */
+                                    fun p(): Double = p.getRequired("p")
+
+                                    /**
+                                     * Returns the raw JSON value of [feedbackKey].
+                                     *
+                                     * Unlike [feedbackKey], this method doesn't throw if the JSON
+                                     * field has an unexpected type.
+                                     */
+                                    @JsonProperty("feedback_key")
+                                    @ExcludeMissing
+                                    fun _feedbackKey(): JsonField<String> = feedbackKey
+
+                                    /**
+                                     * Returns the raw JSON value of [p].
+                                     *
+                                     * Unlike [p], this method doesn't throw if the JSON field has
+                                     * an unexpected type.
+                                     */
+                                    @JsonProperty("p")
+                                    @ExcludeMissing
+                                    fun _p(): JsonField<Double> = p
+
+                                    @JsonAnySetter
+                                    private fun putAdditionalProperty(
+                                        key: String,
+                                        value: JsonValue,
+                                    ) {
+                                        additionalProperties.put(key, value)
+                                    }
+
+                                    @JsonAnyGetter
+                                    @ExcludeMissing
+                                    fun _additionalProperties(): Map<String, JsonValue> =
+                                        Collections.unmodifiableMap(additionalProperties)
+
+                                    fun toBuilder() = Builder().from(this)
+
+                                    companion object {
+
+                                        /**
+                                         * Returns a mutable builder for constructing an instance of
+                                         * [Params].
+                                         *
+                                         * The following fields are required:
+                                         * ```java
+                                         * .feedbackKey()
+                                         * .p()
+                                         * ```
+                                         */
+                                        @JvmStatic fun builder() = Builder()
+                                    }
+
+                                    /** A builder for [Params]. */
+                                    class Builder internal constructor() {
+
+                                        private var feedbackKey: JsonField<String>? = null
+                                        private var p: JsonField<Double>? = null
+                                        private var additionalProperties:
+                                            MutableMap<String, JsonValue> =
+                                            mutableMapOf()
+
+                                        @JvmSynthetic
+                                        internal fun from(params: Params) = apply {
+                                            feedbackKey = params.feedbackKey
+                                            p = params.p
+                                            additionalProperties =
+                                                params.additionalProperties.toMutableMap()
+                                        }
+
+                                        fun feedbackKey(feedbackKey: String) =
+                                            feedbackKey(JsonField.of(feedbackKey))
+
+                                        /**
+                                         * Sets [Builder.feedbackKey] to an arbitrary JSON value.
+                                         *
+                                         * You should usually call [Builder.feedbackKey] with a
+                                         * well-typed [String] value instead. This method is
+                                         * primarily for setting the field to an undocumented or not
+                                         * yet supported value.
+                                         */
+                                        fun feedbackKey(feedbackKey: JsonField<String>) = apply {
+                                            this.feedbackKey = feedbackKey
+                                        }
+
+                                        fun p(p: Double) = p(JsonField.of(p))
+
+                                        /**
+                                         * Sets [Builder.p] to an arbitrary JSON value.
+                                         *
+                                         * You should usually call [Builder.p] with a well-typed
+                                         * [Double] value instead. This method is primarily for
+                                         * setting the field to an undocumented or not yet supported
+                                         * value.
+                                         */
+                                        fun p(p: JsonField<Double>) = apply { this.p = p }
+
+                                        fun additionalProperties(
+                                            additionalProperties: Map<String, JsonValue>
+                                        ) = apply {
+                                            this.additionalProperties.clear()
+                                            putAllAdditionalProperties(additionalProperties)
+                                        }
+
+                                        fun putAdditionalProperty(key: String, value: JsonValue) =
+                                            apply {
+                                                additionalProperties.put(key, value)
+                                            }
+
+                                        fun putAllAdditionalProperties(
+                                            additionalProperties: Map<String, JsonValue>
+                                        ) = apply {
+                                            this.additionalProperties.putAll(additionalProperties)
+                                        }
+
+                                        fun removeAdditionalProperty(key: String) = apply {
+                                            additionalProperties.remove(key)
+                                        }
+
+                                        fun removeAllAdditionalProperties(keys: Set<String>) =
+                                            apply {
+                                                keys.forEach(::removeAdditionalProperty)
+                                            }
+
+                                        /**
+                                         * Returns an immutable instance of [Params].
+                                         *
+                                         * Further updates to this [Builder] will not mutate the
+                                         * returned instance.
+                                         *
+                                         * The following fields are required:
+                                         * ```java
+                                         * .feedbackKey()
+                                         * .p()
+                                         * ```
+                                         *
+                                         * @throws IllegalStateException if any required field is
+                                         *   unset.
+                                         */
+                                        fun build(): Params =
+                                            Params(
+                                                checkRequired("feedbackKey", feedbackKey),
+                                                checkRequired("p", p),
+                                                additionalProperties.toMutableMap(),
+                                            )
+                                    }
+
+                                    private var validated: Boolean = false
+
+                                    /**
+                                     * Validates that the types of all values in this object match
+                                     * their expected types recursively.
+                                     *
+                                     * This method is _not_ forwards compatible with new types from
+                                     * the API for existing fields.
+                                     *
+                                     * @throws LangChainInvalidDataException if any value type in
+                                     *   this object doesn't match its expected type.
+                                     */
+                                    fun validate(): Params = apply {
+                                        if (validated) {
+                                            return@apply
+                                        }
+
+                                        feedbackKey()
+                                        p()
+                                        validated = true
+                                    }
+
+                                    fun isValid(): Boolean =
+                                        try {
+                                            validate()
+                                            true
+                                        } catch (e: LangChainInvalidDataException) {
+                                            false
+                                        }
+
+                                    /**
+                                     * Returns a score indicating how many valid values are
+                                     * contained in this object recursively.
+                                     *
+                                     * Used for best match union deserialization.
+                                     */
+                                    @JvmSynthetic
+                                    internal fun validity(): Int =
+                                        (if (feedbackKey.asKnown().isPresent) 1 else 0) +
+                                            (if (p.asKnown().isPresent) 1 else 0)
+
+                                    override fun equals(other: Any?): Boolean {
+                                        if (this === other) {
+                                            return true
+                                        }
+
+                                        return other is Params &&
+                                            feedbackKey == other.feedbackKey &&
+                                            p == other.p &&
+                                            additionalProperties == other.additionalProperties
+                                    }
+
+                                    private val hashCode: Int by lazy {
+                                        Objects.hash(feedbackKey, p, additionalProperties)
+                                    }
+
+                                    override fun hashCode(): Int = hashCode
+
+                                    override fun toString() =
+                                        "Params{feedbackKey=$feedbackKey, p=$p, additionalProperties=$additionalProperties}"
+                                }
+
+                                override fun equals(other: Any?): Boolean {
+                                    if (this === other) {
+                                        return true
+                                    }
+
+                                    return other is CustomChartFeedbackScoreMetricPercentile &&
+                                        field == other.field &&
+                                        params == other.params &&
+                                        type == other.type &&
+                                        filter == other.filter &&
+                                        additionalProperties == other.additionalProperties
+                                }
+
+                                private val hashCode: Int by lazy {
+                                    Objects.hash(field, params, type, filter, additionalProperties)
+                                }
+
+                                override fun hashCode(): Int = hashCode
+
+                                override fun toString() =
+                                    "CustomChartFeedbackScoreMetricPercentile{field=$field, params=$params, type=$type, filter=$filter, additionalProperties=$additionalProperties}"
                             }
 
                             class CustomChartMetricPercentile
@@ -29190,15 +36103,25 @@ private constructor(
                         @JsonSerialize(using = Numerator.Serializer::class)
                         class Numerator
                         private constructor(
+                            private val customChartFeedbackCountMetric:
+                                CustomChartFeedbackCountMetric? =
+                                null,
                             private val customChartMetricCount: CustomChartMetricCount? = null,
                             private val customChartFeedbackScoreMetricScalar:
                                 CustomChartFeedbackScoreMetricScalar? =
                                 null,
                             private val customChartMetricScalar: CustomChartMetricScalar? = null,
+                            private val customChartFeedbackScoreMetricPercentile:
+                                CustomChartFeedbackScoreMetricPercentile? =
+                                null,
                             private val customChartMetricPercentile: CustomChartMetricPercentile? =
                                 null,
                             private val _json: JsonValue? = null,
                         ) {
+
+                            fun customChartFeedbackCountMetric():
+                                Optional<CustomChartFeedbackCountMetric> =
+                                Optional.ofNullable(customChartFeedbackCountMetric)
 
                             fun customChartMetricCount(): Optional<CustomChartMetricCount> =
                                 Optional.ofNullable(customChartMetricCount)
@@ -29210,9 +36133,16 @@ private constructor(
                             fun customChartMetricScalar(): Optional<CustomChartMetricScalar> =
                                 Optional.ofNullable(customChartMetricScalar)
 
+                            fun customChartFeedbackScoreMetricPercentile():
+                                Optional<CustomChartFeedbackScoreMetricPercentile> =
+                                Optional.ofNullable(customChartFeedbackScoreMetricPercentile)
+
                             fun customChartMetricPercentile():
                                 Optional<CustomChartMetricPercentile> =
                                 Optional.ofNullable(customChartMetricPercentile)
+
+                            fun isCustomChartFeedbackCountMetric(): Boolean =
+                                customChartFeedbackCountMetric != null
 
                             fun isCustomChartMetricCount(): Boolean = customChartMetricCount != null
 
@@ -29222,8 +36152,16 @@ private constructor(
                             fun isCustomChartMetricScalar(): Boolean =
                                 customChartMetricScalar != null
 
+                            fun isCustomChartFeedbackScoreMetricPercentile(): Boolean =
+                                customChartFeedbackScoreMetricPercentile != null
+
                             fun isCustomChartMetricPercentile(): Boolean =
                                 customChartMetricPercentile != null
+
+                            fun asCustomChartFeedbackCountMetric(): CustomChartFeedbackCountMetric =
+                                customChartFeedbackCountMetric.getOrThrow(
+                                    "customChartFeedbackCountMetric"
+                                )
 
                             fun asCustomChartMetricCount(): CustomChartMetricCount =
                                 customChartMetricCount.getOrThrow("customChartMetricCount")
@@ -29236,6 +36174,12 @@ private constructor(
 
                             fun asCustomChartMetricScalar(): CustomChartMetricScalar =
                                 customChartMetricScalar.getOrThrow("customChartMetricScalar")
+
+                            fun asCustomChartFeedbackScoreMetricPercentile():
+                                CustomChartFeedbackScoreMetricPercentile =
+                                customChartFeedbackScoreMetricPercentile.getOrThrow(
+                                    "customChartFeedbackScoreMetricPercentile"
+                                )
 
                             fun asCustomChartMetricPercentile(): CustomChartMetricPercentile =
                                 customChartMetricPercentile.getOrThrow(
@@ -29258,8 +36202,8 @@ private constructor(
                              *
                              * Optional<String> result = numerator.accept(new Numerator.Visitor<Optional<String>>() {
                              *     @Override
-                             *     public Optional<String> visitCustomChartMetricCount(CustomChartMetricCount customChartMetricCount) {
-                             *         return Optional.of(customChartMetricCount.toString());
+                             *     public Optional<String> visitCustomChartFeedbackCountMetric(CustomChartFeedbackCountMetric customChartFeedbackCountMetric) {
+                             *         return Optional.of(customChartFeedbackCountMetric.toString());
                              *     }
                              *
                              *     // ...
@@ -29277,6 +36221,10 @@ private constructor(
                              */
                             fun <T> accept(visitor: Visitor<T>): T =
                                 when {
+                                    customChartFeedbackCountMetric != null ->
+                                        visitor.visitCustomChartFeedbackCountMetric(
+                                            customChartFeedbackCountMetric
+                                        )
                                     customChartMetricCount != null ->
                                         visitor.visitCustomChartMetricCount(customChartMetricCount)
                                     customChartFeedbackScoreMetricScalar != null ->
@@ -29286,6 +36234,10 @@ private constructor(
                                     customChartMetricScalar != null ->
                                         visitor.visitCustomChartMetricScalar(
                                             customChartMetricScalar
+                                        )
+                                    customChartFeedbackScoreMetricPercentile != null ->
+                                        visitor.visitCustomChartFeedbackScoreMetricPercentile(
+                                            customChartFeedbackScoreMetricPercentile
                                         )
                                     customChartMetricPercentile != null ->
                                         visitor.visitCustomChartMetricPercentile(
@@ -29313,6 +36265,13 @@ private constructor(
 
                                 accept(
                                     object : Visitor<Unit> {
+                                        override fun visitCustomChartFeedbackCountMetric(
+                                            customChartFeedbackCountMetric:
+                                                CustomChartFeedbackCountMetric
+                                        ) {
+                                            customChartFeedbackCountMetric.validate()
+                                        }
+
                                         override fun visitCustomChartMetricCount(
                                             customChartMetricCount: CustomChartMetricCount
                                         ) {
@@ -29330,6 +36289,13 @@ private constructor(
                                             customChartMetricScalar: CustomChartMetricScalar
                                         ) {
                                             customChartMetricScalar.validate()
+                                        }
+
+                                        override fun visitCustomChartFeedbackScoreMetricPercentile(
+                                            customChartFeedbackScoreMetricPercentile:
+                                                CustomChartFeedbackScoreMetricPercentile
+                                        ) {
+                                            customChartFeedbackScoreMetricPercentile.validate()
                                         }
 
                                         override fun visitCustomChartMetricPercentile(
@@ -29360,6 +36326,11 @@ private constructor(
                             internal fun validity(): Int =
                                 accept(
                                     object : Visitor<Int> {
+                                        override fun visitCustomChartFeedbackCountMetric(
+                                            customChartFeedbackCountMetric:
+                                                CustomChartFeedbackCountMetric
+                                        ) = customChartFeedbackCountMetric.validity()
+
                                         override fun visitCustomChartMetricCount(
                                             customChartMetricCount: CustomChartMetricCount
                                         ) = customChartMetricCount.validity()
@@ -29372,6 +36343,11 @@ private constructor(
                                         override fun visitCustomChartMetricScalar(
                                             customChartMetricScalar: CustomChartMetricScalar
                                         ) = customChartMetricScalar.validity()
+
+                                        override fun visitCustomChartFeedbackScoreMetricPercentile(
+                                            customChartFeedbackScoreMetricPercentile:
+                                                CustomChartFeedbackScoreMetricPercentile
+                                        ) = customChartFeedbackScoreMetricPercentile.validity()
 
                                         override fun visitCustomChartMetricPercentile(
                                             customChartMetricPercentile: CustomChartMetricPercentile
@@ -29387,29 +36363,39 @@ private constructor(
                                 }
 
                                 return other is Numerator &&
+                                    customChartFeedbackCountMetric ==
+                                        other.customChartFeedbackCountMetric &&
                                     customChartMetricCount == other.customChartMetricCount &&
                                     customChartFeedbackScoreMetricScalar ==
                                         other.customChartFeedbackScoreMetricScalar &&
                                     customChartMetricScalar == other.customChartMetricScalar &&
+                                    customChartFeedbackScoreMetricPercentile ==
+                                        other.customChartFeedbackScoreMetricPercentile &&
                                     customChartMetricPercentile == other.customChartMetricPercentile
                             }
 
                             override fun hashCode(): Int =
                                 Objects.hash(
+                                    customChartFeedbackCountMetric,
                                     customChartMetricCount,
                                     customChartFeedbackScoreMetricScalar,
                                     customChartMetricScalar,
+                                    customChartFeedbackScoreMetricPercentile,
                                     customChartMetricPercentile,
                                 )
 
                             override fun toString(): String =
                                 when {
+                                    customChartFeedbackCountMetric != null ->
+                                        "Numerator{customChartFeedbackCountMetric=$customChartFeedbackCountMetric}"
                                     customChartMetricCount != null ->
                                         "Numerator{customChartMetricCount=$customChartMetricCount}"
                                     customChartFeedbackScoreMetricScalar != null ->
                                         "Numerator{customChartFeedbackScoreMetricScalar=$customChartFeedbackScoreMetricScalar}"
                                     customChartMetricScalar != null ->
                                         "Numerator{customChartMetricScalar=$customChartMetricScalar}"
+                                    customChartFeedbackScoreMetricPercentile != null ->
+                                        "Numerator{customChartFeedbackScoreMetricPercentile=$customChartFeedbackScoreMetricPercentile}"
                                     customChartMetricPercentile != null ->
                                         "Numerator{customChartMetricPercentile=$customChartMetricPercentile}"
                                     _json != null -> "Numerator{_unknown=$_json}"
@@ -29417,6 +36403,15 @@ private constructor(
                                 }
 
                             companion object {
+
+                                @JvmStatic
+                                fun ofCustomChartFeedbackCountMetric(
+                                    customChartFeedbackCountMetric: CustomChartFeedbackCountMetric
+                                ) =
+                                    Numerator(
+                                        customChartFeedbackCountMetric =
+                                            customChartFeedbackCountMetric
+                                    )
 
                                 @JvmStatic
                                 fun ofCustomChartMetricCount(
@@ -29439,6 +36434,16 @@ private constructor(
                                 ) = Numerator(customChartMetricScalar = customChartMetricScalar)
 
                                 @JvmStatic
+                                fun ofCustomChartFeedbackScoreMetricPercentile(
+                                    customChartFeedbackScoreMetricPercentile:
+                                        CustomChartFeedbackScoreMetricPercentile
+                                ) =
+                                    Numerator(
+                                        customChartFeedbackScoreMetricPercentile =
+                                            customChartFeedbackScoreMetricPercentile
+                                    )
+
+                                @JvmStatic
                                 fun ofCustomChartMetricPercentile(
                                     customChartMetricPercentile: CustomChartMetricPercentile
                                 ) =
@@ -29453,6 +36458,10 @@ private constructor(
                              */
                             interface Visitor<out T> {
 
+                                fun visitCustomChartFeedbackCountMetric(
+                                    customChartFeedbackCountMetric: CustomChartFeedbackCountMetric
+                                ): T
+
                                 fun visitCustomChartMetricCount(
                                     customChartMetricCount: CustomChartMetricCount
                                 ): T
@@ -29464,6 +36473,11 @@ private constructor(
 
                                 fun visitCustomChartMetricScalar(
                                     customChartMetricScalar: CustomChartMetricScalar
+                                ): T
+
+                                fun visitCustomChartFeedbackScoreMetricPercentile(
+                                    customChartFeedbackScoreMetricPercentile:
+                                        CustomChartFeedbackScoreMetricPercentile
                                 ): T
 
                                 fun visitCustomChartMetricPercentile(
@@ -29496,6 +36510,18 @@ private constructor(
                                         sequenceOf(
                                                 tryDeserialize(
                                                         node,
+                                                        jacksonTypeRef<
+                                                            CustomChartFeedbackCountMetric
+                                                        >(),
+                                                    )
+                                                    ?.let {
+                                                        Numerator(
+                                                            customChartFeedbackCountMetric = it,
+                                                            _json = json,
+                                                        )
+                                                    },
+                                                tryDeserialize(
+                                                        node,
                                                         jacksonTypeRef<CustomChartMetricCount>(),
                                                     )
                                                     ?.let {
@@ -29524,6 +36550,19 @@ private constructor(
                                                     ?.let {
                                                         Numerator(
                                                             customChartMetricScalar = it,
+                                                            _json = json,
+                                                        )
+                                                    },
+                                                tryDeserialize(
+                                                        node,
+                                                        jacksonTypeRef<
+                                                            CustomChartFeedbackScoreMetricPercentile
+                                                        >(),
+                                                    )
+                                                    ?.let {
+                                                        Numerator(
+                                                            customChartFeedbackScoreMetricPercentile =
+                                                                it,
                                                             _json = json,
                                                         )
                                                     },
@@ -29568,6 +36607,10 @@ private constructor(
                                     provider: SerializerProvider,
                                 ) {
                                     when {
+                                        value.customChartFeedbackCountMetric != null ->
+                                            generator.writeObject(
+                                                value.customChartFeedbackCountMetric
+                                            )
                                         value.customChartMetricCount != null ->
                                             generator.writeObject(value.customChartMetricCount)
                                         value.customChartFeedbackScoreMetricScalar != null ->
@@ -29576,12 +36619,687 @@ private constructor(
                                             )
                                         value.customChartMetricScalar != null ->
                                             generator.writeObject(value.customChartMetricScalar)
+                                        value.customChartFeedbackScoreMetricPercentile != null ->
+                                            generator.writeObject(
+                                                value.customChartFeedbackScoreMetricPercentile
+                                            )
                                         value.customChartMetricPercentile != null ->
                                             generator.writeObject(value.customChartMetricPercentile)
                                         value._json != null -> generator.writeObject(value._json)
                                         else -> throw IllegalStateException("Invalid Numerator")
                                     }
                                 }
+                            }
+
+                            class CustomChartFeedbackCountMetric
+                            @JsonCreator(mode = JsonCreator.Mode.DISABLED)
+                            private constructor(
+                                private val entity: JsonValue,
+                                private val params: JsonField<Params>,
+                                private val filter: JsonField<String>,
+                                private val type: JsonField<Type>,
+                                private val additionalProperties: MutableMap<String, JsonValue>,
+                            ) {
+
+                                @JsonCreator
+                                private constructor(
+                                    @JsonProperty("entity")
+                                    @ExcludeMissing
+                                    entity: JsonValue = JsonMissing.of(),
+                                    @JsonProperty("params")
+                                    @ExcludeMissing
+                                    params: JsonField<Params> = JsonMissing.of(),
+                                    @JsonProperty("filter")
+                                    @ExcludeMissing
+                                    filter: JsonField<String> = JsonMissing.of(),
+                                    @JsonProperty("type")
+                                    @ExcludeMissing
+                                    type: JsonField<Type> = JsonMissing.of(),
+                                ) : this(entity, params, filter, type, mutableMapOf())
+
+                                /**
+                                 * Expected to always return the following:
+                                 * ```java
+                                 * JsonValue.from("feedback")
+                                 * ```
+                                 *
+                                 * However, this method can be useful for debugging and logging
+                                 * (e.g. if the server responded with an unexpected value).
+                                 */
+                                @JsonProperty("entity")
+                                @ExcludeMissing
+                                fun _entity(): JsonValue = entity
+
+                                /**
+                                 * @throws LangChainInvalidDataException if the JSON field has an
+                                 *   unexpected type or is unexpectedly missing or null (e.g. if the
+                                 *   server responded with an unexpected value).
+                                 */
+                                fun params(): Params = params.getRequired("params")
+
+                                /**
+                                 * @throws LangChainInvalidDataException if the JSON field has an
+                                 *   unexpected type (e.g. if the server responded with an
+                                 *   unexpected value).
+                                 */
+                                fun filter(): Optional<String> = filter.getOptional("filter")
+
+                                /**
+                                 * @throws LangChainInvalidDataException if the JSON field has an
+                                 *   unexpected type (e.g. if the server responded with an
+                                 *   unexpected value).
+                                 */
+                                fun type(): Optional<Type> = type.getOptional("type")
+
+                                /**
+                                 * Returns the raw JSON value of [params].
+                                 *
+                                 * Unlike [params], this method doesn't throw if the JSON field has
+                                 * an unexpected type.
+                                 */
+                                @JsonProperty("params")
+                                @ExcludeMissing
+                                fun _params(): JsonField<Params> = params
+
+                                /**
+                                 * Returns the raw JSON value of [filter].
+                                 *
+                                 * Unlike [filter], this method doesn't throw if the JSON field has
+                                 * an unexpected type.
+                                 */
+                                @JsonProperty("filter")
+                                @ExcludeMissing
+                                fun _filter(): JsonField<String> = filter
+
+                                /**
+                                 * Returns the raw JSON value of [type].
+                                 *
+                                 * Unlike [type], this method doesn't throw if the JSON field has an
+                                 * unexpected type.
+                                 */
+                                @JsonProperty("type")
+                                @ExcludeMissing
+                                fun _type(): JsonField<Type> = type
+
+                                @JsonAnySetter
+                                private fun putAdditionalProperty(key: String, value: JsonValue) {
+                                    additionalProperties.put(key, value)
+                                }
+
+                                @JsonAnyGetter
+                                @ExcludeMissing
+                                fun _additionalProperties(): Map<String, JsonValue> =
+                                    Collections.unmodifiableMap(additionalProperties)
+
+                                fun toBuilder() = Builder().from(this)
+
+                                companion object {
+
+                                    /**
+                                     * Returns a mutable builder for constructing an instance of
+                                     * [CustomChartFeedbackCountMetric].
+                                     *
+                                     * The following fields are required:
+                                     * ```java
+                                     * .params()
+                                     * ```
+                                     */
+                                    @JvmStatic fun builder() = Builder()
+                                }
+
+                                /** A builder for [CustomChartFeedbackCountMetric]. */
+                                class Builder internal constructor() {
+
+                                    private var entity: JsonValue = JsonValue.from("feedback")
+                                    private var params: JsonField<Params>? = null
+                                    private var filter: JsonField<String> = JsonMissing.of()
+                                    private var type: JsonField<Type> = JsonMissing.of()
+                                    private var additionalProperties:
+                                        MutableMap<String, JsonValue> =
+                                        mutableMapOf()
+
+                                    @JvmSynthetic
+                                    internal fun from(
+                                        customChartFeedbackCountMetric:
+                                            CustomChartFeedbackCountMetric
+                                    ) = apply {
+                                        entity = customChartFeedbackCountMetric.entity
+                                        params = customChartFeedbackCountMetric.params
+                                        filter = customChartFeedbackCountMetric.filter
+                                        type = customChartFeedbackCountMetric.type
+                                        additionalProperties =
+                                            customChartFeedbackCountMetric.additionalProperties
+                                                .toMutableMap()
+                                    }
+
+                                    /**
+                                     * Sets the field to an arbitrary JSON value.
+                                     *
+                                     * It is usually unnecessary to call this method because the
+                                     * field defaults to the following:
+                                     * ```java
+                                     * JsonValue.from("feedback")
+                                     * ```
+                                     *
+                                     * This method is primarily for setting the field to an
+                                     * undocumented or not yet supported value.
+                                     */
+                                    fun entity(entity: JsonValue) = apply { this.entity = entity }
+
+                                    fun params(params: Params) = params(JsonField.of(params))
+
+                                    /**
+                                     * Sets [Builder.params] to an arbitrary JSON value.
+                                     *
+                                     * You should usually call [Builder.params] with a well-typed
+                                     * [Params] value instead. This method is primarily for setting
+                                     * the field to an undocumented or not yet supported value.
+                                     */
+                                    fun params(params: JsonField<Params>) = apply {
+                                        this.params = params
+                                    }
+
+                                    fun filter(filter: String?) =
+                                        filter(JsonField.ofNullable(filter))
+
+                                    /**
+                                     * Alias for calling [Builder.filter] with
+                                     * `filter.orElse(null)`.
+                                     */
+                                    fun filter(filter: Optional<String>) =
+                                        filter(filter.getOrNull())
+
+                                    /**
+                                     * Sets [Builder.filter] to an arbitrary JSON value.
+                                     *
+                                     * You should usually call [Builder.filter] with a well-typed
+                                     * [String] value instead. This method is primarily for setting
+                                     * the field to an undocumented or not yet supported value.
+                                     */
+                                    fun filter(filter: JsonField<String>) = apply {
+                                        this.filter = filter
+                                    }
+
+                                    fun type(type: Type) = type(JsonField.of(type))
+
+                                    /**
+                                     * Sets [Builder.type] to an arbitrary JSON value.
+                                     *
+                                     * You should usually call [Builder.type] with a well-typed
+                                     * [Type] value instead. This method is primarily for setting
+                                     * the field to an undocumented or not yet supported value.
+                                     */
+                                    fun type(type: JsonField<Type>) = apply { this.type = type }
+
+                                    fun additionalProperties(
+                                        additionalProperties: Map<String, JsonValue>
+                                    ) = apply {
+                                        this.additionalProperties.clear()
+                                        putAllAdditionalProperties(additionalProperties)
+                                    }
+
+                                    fun putAdditionalProperty(key: String, value: JsonValue) =
+                                        apply {
+                                            additionalProperties.put(key, value)
+                                        }
+
+                                    fun putAllAdditionalProperties(
+                                        additionalProperties: Map<String, JsonValue>
+                                    ) = apply {
+                                        this.additionalProperties.putAll(additionalProperties)
+                                    }
+
+                                    fun removeAdditionalProperty(key: String) = apply {
+                                        additionalProperties.remove(key)
+                                    }
+
+                                    fun removeAllAdditionalProperties(keys: Set<String>) = apply {
+                                        keys.forEach(::removeAdditionalProperty)
+                                    }
+
+                                    /**
+                                     * Returns an immutable instance of
+                                     * [CustomChartFeedbackCountMetric].
+                                     *
+                                     * Further updates to this [Builder] will not mutate the
+                                     * returned instance.
+                                     *
+                                     * The following fields are required:
+                                     * ```java
+                                     * .params()
+                                     * ```
+                                     *
+                                     * @throws IllegalStateException if any required field is unset.
+                                     */
+                                    fun build(): CustomChartFeedbackCountMetric =
+                                        CustomChartFeedbackCountMetric(
+                                            entity,
+                                            checkRequired("params", params),
+                                            filter,
+                                            type,
+                                            additionalProperties.toMutableMap(),
+                                        )
+                                }
+
+                                private var validated: Boolean = false
+
+                                /**
+                                 * Validates that the types of all values in this object match their
+                                 * expected types recursively.
+                                 *
+                                 * This method is _not_ forwards compatible with new types from the
+                                 * API for existing fields.
+                                 *
+                                 * @throws LangChainInvalidDataException if any value type in this
+                                 *   object doesn't match its expected type.
+                                 */
+                                fun validate(): CustomChartFeedbackCountMetric = apply {
+                                    if (validated) {
+                                        return@apply
+                                    }
+
+                                    _entity().let {
+                                        if (it != JsonValue.from("feedback")) {
+                                            throw LangChainInvalidDataException(
+                                                "'entity' is invalid, received $it"
+                                            )
+                                        }
+                                    }
+                                    params().validate()
+                                    filter()
+                                    type().ifPresent { it.validate() }
+                                    validated = true
+                                }
+
+                                fun isValid(): Boolean =
+                                    try {
+                                        validate()
+                                        true
+                                    } catch (e: LangChainInvalidDataException) {
+                                        false
+                                    }
+
+                                /**
+                                 * Returns a score indicating how many valid values are contained in
+                                 * this object recursively.
+                                 *
+                                 * Used for best match union deserialization.
+                                 */
+                                @JvmSynthetic
+                                internal fun validity(): Int =
+                                    entity.let { if (it == JsonValue.from("feedback")) 1 else 0 } +
+                                        (params.asKnown().getOrNull()?.validity() ?: 0) +
+                                        (if (filter.asKnown().isPresent) 1 else 0) +
+                                        (type.asKnown().getOrNull()?.validity() ?: 0)
+
+                                class Params
+                                @JsonCreator(mode = JsonCreator.Mode.DISABLED)
+                                private constructor(
+                                    private val feedbackKey: JsonField<String>,
+                                    private val additionalProperties: MutableMap<String, JsonValue>,
+                                ) {
+
+                                    @JsonCreator
+                                    private constructor(
+                                        @JsonProperty("feedback_key")
+                                        @ExcludeMissing
+                                        feedbackKey: JsonField<String> = JsonMissing.of()
+                                    ) : this(feedbackKey, mutableMapOf())
+
+                                    /**
+                                     * @throws LangChainInvalidDataException if the JSON field has
+                                     *   an unexpected type or is unexpectedly missing or null (e.g.
+                                     *   if the server responded with an unexpected value).
+                                     */
+                                    fun feedbackKey(): String =
+                                        feedbackKey.getRequired("feedback_key")
+
+                                    /**
+                                     * Returns the raw JSON value of [feedbackKey].
+                                     *
+                                     * Unlike [feedbackKey], this method doesn't throw if the JSON
+                                     * field has an unexpected type.
+                                     */
+                                    @JsonProperty("feedback_key")
+                                    @ExcludeMissing
+                                    fun _feedbackKey(): JsonField<String> = feedbackKey
+
+                                    @JsonAnySetter
+                                    private fun putAdditionalProperty(
+                                        key: String,
+                                        value: JsonValue,
+                                    ) {
+                                        additionalProperties.put(key, value)
+                                    }
+
+                                    @JsonAnyGetter
+                                    @ExcludeMissing
+                                    fun _additionalProperties(): Map<String, JsonValue> =
+                                        Collections.unmodifiableMap(additionalProperties)
+
+                                    fun toBuilder() = Builder().from(this)
+
+                                    companion object {
+
+                                        /**
+                                         * Returns a mutable builder for constructing an instance of
+                                         * [Params].
+                                         *
+                                         * The following fields are required:
+                                         * ```java
+                                         * .feedbackKey()
+                                         * ```
+                                         */
+                                        @JvmStatic fun builder() = Builder()
+                                    }
+
+                                    /** A builder for [Params]. */
+                                    class Builder internal constructor() {
+
+                                        private var feedbackKey: JsonField<String>? = null
+                                        private var additionalProperties:
+                                            MutableMap<String, JsonValue> =
+                                            mutableMapOf()
+
+                                        @JvmSynthetic
+                                        internal fun from(params: Params) = apply {
+                                            feedbackKey = params.feedbackKey
+                                            additionalProperties =
+                                                params.additionalProperties.toMutableMap()
+                                        }
+
+                                        fun feedbackKey(feedbackKey: String) =
+                                            feedbackKey(JsonField.of(feedbackKey))
+
+                                        /**
+                                         * Sets [Builder.feedbackKey] to an arbitrary JSON value.
+                                         *
+                                         * You should usually call [Builder.feedbackKey] with a
+                                         * well-typed [String] value instead. This method is
+                                         * primarily for setting the field to an undocumented or not
+                                         * yet supported value.
+                                         */
+                                        fun feedbackKey(feedbackKey: JsonField<String>) = apply {
+                                            this.feedbackKey = feedbackKey
+                                        }
+
+                                        fun additionalProperties(
+                                            additionalProperties: Map<String, JsonValue>
+                                        ) = apply {
+                                            this.additionalProperties.clear()
+                                            putAllAdditionalProperties(additionalProperties)
+                                        }
+
+                                        fun putAdditionalProperty(key: String, value: JsonValue) =
+                                            apply {
+                                                additionalProperties.put(key, value)
+                                            }
+
+                                        fun putAllAdditionalProperties(
+                                            additionalProperties: Map<String, JsonValue>
+                                        ) = apply {
+                                            this.additionalProperties.putAll(additionalProperties)
+                                        }
+
+                                        fun removeAdditionalProperty(key: String) = apply {
+                                            additionalProperties.remove(key)
+                                        }
+
+                                        fun removeAllAdditionalProperties(keys: Set<String>) =
+                                            apply {
+                                                keys.forEach(::removeAdditionalProperty)
+                                            }
+
+                                        /**
+                                         * Returns an immutable instance of [Params].
+                                         *
+                                         * Further updates to this [Builder] will not mutate the
+                                         * returned instance.
+                                         *
+                                         * The following fields are required:
+                                         * ```java
+                                         * .feedbackKey()
+                                         * ```
+                                         *
+                                         * @throws IllegalStateException if any required field is
+                                         *   unset.
+                                         */
+                                        fun build(): Params =
+                                            Params(
+                                                checkRequired("feedbackKey", feedbackKey),
+                                                additionalProperties.toMutableMap(),
+                                            )
+                                    }
+
+                                    private var validated: Boolean = false
+
+                                    /**
+                                     * Validates that the types of all values in this object match
+                                     * their expected types recursively.
+                                     *
+                                     * This method is _not_ forwards compatible with new types from
+                                     * the API for existing fields.
+                                     *
+                                     * @throws LangChainInvalidDataException if any value type in
+                                     *   this object doesn't match its expected type.
+                                     */
+                                    fun validate(): Params = apply {
+                                        if (validated) {
+                                            return@apply
+                                        }
+
+                                        feedbackKey()
+                                        validated = true
+                                    }
+
+                                    fun isValid(): Boolean =
+                                        try {
+                                            validate()
+                                            true
+                                        } catch (e: LangChainInvalidDataException) {
+                                            false
+                                        }
+
+                                    /**
+                                     * Returns a score indicating how many valid values are
+                                     * contained in this object recursively.
+                                     *
+                                     * Used for best match union deserialization.
+                                     */
+                                    @JvmSynthetic
+                                    internal fun validity(): Int =
+                                        (if (feedbackKey.asKnown().isPresent) 1 else 0)
+
+                                    override fun equals(other: Any?): Boolean {
+                                        if (this === other) {
+                                            return true
+                                        }
+
+                                        return other is Params &&
+                                            feedbackKey == other.feedbackKey &&
+                                            additionalProperties == other.additionalProperties
+                                    }
+
+                                    private val hashCode: Int by lazy {
+                                        Objects.hash(feedbackKey, additionalProperties)
+                                    }
+
+                                    override fun hashCode(): Int = hashCode
+
+                                    override fun toString() =
+                                        "Params{feedbackKey=$feedbackKey, additionalProperties=$additionalProperties}"
+                                }
+
+                                class Type
+                                @JsonCreator
+                                private constructor(private val value: JsonField<String>) : Enum {
+
+                                    /**
+                                     * Returns this class instance's raw value.
+                                     *
+                                     * This is usually only useful if this instance was deserialized
+                                     * from data that doesn't match any known member, and you want
+                                     * to know that value. For example, if the SDK is on an older
+                                     * version than the API, then the API may respond with new
+                                     * members that the SDK is unaware of.
+                                     */
+                                    @com.fasterxml.jackson.annotation.JsonValue
+                                    fun _value(): JsonField<String> = value
+
+                                    companion object {
+
+                                        @JvmField val COUNT = of("count")
+
+                                        @JvmStatic fun of(value: String) = Type(JsonField.of(value))
+                                    }
+
+                                    /** An enum containing [Type]'s known values. */
+                                    enum class Known {
+                                        COUNT
+                                    }
+
+                                    /**
+                                     * An enum containing [Type]'s known values, as well as an
+                                     * [_UNKNOWN] member.
+                                     *
+                                     * An instance of [Type] can contain an unknown value in a
+                                     * couple of cases:
+                                     * - It was deserialized from data that doesn't match any known
+                                     *   member. For example, if the SDK is on an older version than
+                                     *   the API, then the API may respond with new members that the
+                                     *   SDK is unaware of.
+                                     * - It was constructed with an arbitrary value using the [of]
+                                     *   method.
+                                     */
+                                    enum class Value {
+                                        COUNT,
+                                        /**
+                                         * An enum member indicating that [Type] was instantiated
+                                         * with an unknown value.
+                                         */
+                                        _UNKNOWN,
+                                    }
+
+                                    /**
+                                     * Returns an enum member corresponding to this class instance's
+                                     * value, or [Value._UNKNOWN] if the class was instantiated with
+                                     * an unknown value.
+                                     *
+                                     * Use the [known] method instead if you're certain the value is
+                                     * always known or if you want to throw for the unknown case.
+                                     */
+                                    fun value(): Value =
+                                        when (this) {
+                                            COUNT -> Value.COUNT
+                                            else -> Value._UNKNOWN
+                                        }
+
+                                    /**
+                                     * Returns an enum member corresponding to this class instance's
+                                     * value.
+                                     *
+                                     * Use the [value] method instead if you're uncertain the value
+                                     * is always known and don't want to throw for the unknown case.
+                                     *
+                                     * @throws LangChainInvalidDataException if this class
+                                     *   instance's value is a not a known member.
+                                     */
+                                    fun known(): Known =
+                                        when (this) {
+                                            COUNT -> Known.COUNT
+                                            else ->
+                                                throw LangChainInvalidDataException(
+                                                    "Unknown Type: $value"
+                                                )
+                                        }
+
+                                    /**
+                                     * Returns this class instance's primitive wire representation.
+                                     *
+                                     * This differs from the [toString] method because that method
+                                     * is primarily for debugging and generally doesn't throw.
+                                     *
+                                     * @throws LangChainInvalidDataException if this class
+                                     *   instance's value does not have the expected primitive type.
+                                     */
+                                    fun asString(): String =
+                                        _value().asString().orElseThrow {
+                                            LangChainInvalidDataException("Value is not a String")
+                                        }
+
+                                    private var validated: Boolean = false
+
+                                    /**
+                                     * Validates that the types of all values in this object match
+                                     * their expected types recursively.
+                                     *
+                                     * This method is _not_ forwards compatible with new types from
+                                     * the API for existing fields.
+                                     *
+                                     * @throws LangChainInvalidDataException if any value type in
+                                     *   this object doesn't match its expected type.
+                                     */
+                                    fun validate(): Type = apply {
+                                        if (validated) {
+                                            return@apply
+                                        }
+
+                                        known()
+                                        validated = true
+                                    }
+
+                                    fun isValid(): Boolean =
+                                        try {
+                                            validate()
+                                            true
+                                        } catch (e: LangChainInvalidDataException) {
+                                            false
+                                        }
+
+                                    /**
+                                     * Returns a score indicating how many valid values are
+                                     * contained in this object recursively.
+                                     *
+                                     * Used for best match union deserialization.
+                                     */
+                                    @JvmSynthetic
+                                    internal fun validity(): Int =
+                                        if (value() == Value._UNKNOWN) 0 else 1
+
+                                    override fun equals(other: Any?): Boolean {
+                                        if (this === other) {
+                                            return true
+                                        }
+
+                                        return other is Type && value == other.value
+                                    }
+
+                                    override fun hashCode() = value.hashCode()
+
+                                    override fun toString() = value.toString()
+                                }
+
+                                override fun equals(other: Any?): Boolean {
+                                    if (this === other) {
+                                        return true
+                                    }
+
+                                    return other is CustomChartFeedbackCountMetric &&
+                                        entity == other.entity &&
+                                        params == other.params &&
+                                        filter == other.filter &&
+                                        type == other.type &&
+                                        additionalProperties == other.additionalProperties
+                                }
+
+                                private val hashCode: Int by lazy {
+                                    Objects.hash(entity, params, filter, type, additionalProperties)
+                                }
+
+                                override fun hashCode(): Int = hashCode
+
+                                override fun toString() =
+                                    "CustomChartFeedbackCountMetric{entity=$entity, params=$params, filter=$filter, type=$type, additionalProperties=$additionalProperties}"
                             }
 
                             class CustomChartMetricCount
@@ -30482,6 +38200,8 @@ private constructor(
 
                                     companion object {
 
+                                        @JvmField val SUM = of("sum")
+
                                         @JvmField val MAX = of("max")
 
                                         @JvmField val MIN = of("min")
@@ -30493,6 +38213,7 @@ private constructor(
 
                                     /** An enum containing [Type]'s known values. */
                                     enum class Known {
+                                        SUM,
                                         MAX,
                                         MIN,
                                         AVG,
@@ -30512,6 +38233,7 @@ private constructor(
                                      *   method.
                                      */
                                     enum class Value {
+                                        SUM,
                                         MAX,
                                         MIN,
                                         AVG,
@@ -30532,6 +38254,7 @@ private constructor(
                                      */
                                     fun value(): Value =
                                         when (this) {
+                                            SUM -> Value.SUM
                                             MAX -> Value.MAX
                                             MIN -> Value.MIN
                                             AVG -> Value.AVG
@@ -30550,6 +38273,7 @@ private constructor(
                                      */
                                     fun known(): Known =
                                         when (this) {
+                                            SUM -> Known.SUM
                                             MAX -> Known.MAX
                                             MIN -> Known.MIN
                                             AVG -> Known.AVG
@@ -31293,6 +39017,577 @@ private constructor(
 
                                 override fun toString() =
                                     "CustomChartMetricScalar{field=$field, type=$type, filter=$filter, additionalProperties=$additionalProperties}"
+                            }
+
+                            class CustomChartFeedbackScoreMetricPercentile
+                            @JsonCreator(mode = JsonCreator.Mode.DISABLED)
+                            private constructor(
+                                private val field: JsonValue,
+                                private val params: JsonField<Params>,
+                                private val type: JsonValue,
+                                private val filter: JsonField<String>,
+                                private val additionalProperties: MutableMap<String, JsonValue>,
+                            ) {
+
+                                @JsonCreator
+                                private constructor(
+                                    @JsonProperty("field")
+                                    @ExcludeMissing
+                                    field: JsonValue = JsonMissing.of(),
+                                    @JsonProperty("params")
+                                    @ExcludeMissing
+                                    params: JsonField<Params> = JsonMissing.of(),
+                                    @JsonProperty("type")
+                                    @ExcludeMissing
+                                    type: JsonValue = JsonMissing.of(),
+                                    @JsonProperty("filter")
+                                    @ExcludeMissing
+                                    filter: JsonField<String> = JsonMissing.of(),
+                                ) : this(field, params, type, filter, mutableMapOf())
+
+                                /**
+                                 * Expected to always return the following:
+                                 * ```java
+                                 * JsonValue.from("feedback_score")
+                                 * ```
+                                 *
+                                 * However, this method can be useful for debugging and logging
+                                 * (e.g. if the server responded with an unexpected value).
+                                 */
+                                @JsonProperty("field")
+                                @ExcludeMissing
+                                fun _field(): JsonValue = field
+
+                                /**
+                                 * @throws LangChainInvalidDataException if the JSON field has an
+                                 *   unexpected type or is unexpectedly missing or null (e.g. if the
+                                 *   server responded with an unexpected value).
+                                 */
+                                fun params(): Params = params.getRequired("params")
+
+                                /**
+                                 * Expected to always return the following:
+                                 * ```java
+                                 * JsonValue.from("percentile")
+                                 * ```
+                                 *
+                                 * However, this method can be useful for debugging and logging
+                                 * (e.g. if the server responded with an unexpected value).
+                                 */
+                                @JsonProperty("type") @ExcludeMissing fun _type(): JsonValue = type
+
+                                /**
+                                 * @throws LangChainInvalidDataException if the JSON field has an
+                                 *   unexpected type (e.g. if the server responded with an
+                                 *   unexpected value).
+                                 */
+                                fun filter(): Optional<String> = filter.getOptional("filter")
+
+                                /**
+                                 * Returns the raw JSON value of [params].
+                                 *
+                                 * Unlike [params], this method doesn't throw if the JSON field has
+                                 * an unexpected type.
+                                 */
+                                @JsonProperty("params")
+                                @ExcludeMissing
+                                fun _params(): JsonField<Params> = params
+
+                                /**
+                                 * Returns the raw JSON value of [filter].
+                                 *
+                                 * Unlike [filter], this method doesn't throw if the JSON field has
+                                 * an unexpected type.
+                                 */
+                                @JsonProperty("filter")
+                                @ExcludeMissing
+                                fun _filter(): JsonField<String> = filter
+
+                                @JsonAnySetter
+                                private fun putAdditionalProperty(key: String, value: JsonValue) {
+                                    additionalProperties.put(key, value)
+                                }
+
+                                @JsonAnyGetter
+                                @ExcludeMissing
+                                fun _additionalProperties(): Map<String, JsonValue> =
+                                    Collections.unmodifiableMap(additionalProperties)
+
+                                fun toBuilder() = Builder().from(this)
+
+                                companion object {
+
+                                    /**
+                                     * Returns a mutable builder for constructing an instance of
+                                     * [CustomChartFeedbackScoreMetricPercentile].
+                                     *
+                                     * The following fields are required:
+                                     * ```java
+                                     * .params()
+                                     * ```
+                                     */
+                                    @JvmStatic fun builder() = Builder()
+                                }
+
+                                /** A builder for [CustomChartFeedbackScoreMetricPercentile]. */
+                                class Builder internal constructor() {
+
+                                    private var field: JsonValue = JsonValue.from("feedback_score")
+                                    private var params: JsonField<Params>? = null
+                                    private var type: JsonValue = JsonValue.from("percentile")
+                                    private var filter: JsonField<String> = JsonMissing.of()
+                                    private var additionalProperties:
+                                        MutableMap<String, JsonValue> =
+                                        mutableMapOf()
+
+                                    @JvmSynthetic
+                                    internal fun from(
+                                        customChartFeedbackScoreMetricPercentile:
+                                            CustomChartFeedbackScoreMetricPercentile
+                                    ) = apply {
+                                        field = customChartFeedbackScoreMetricPercentile.field
+                                        params = customChartFeedbackScoreMetricPercentile.params
+                                        type = customChartFeedbackScoreMetricPercentile.type
+                                        filter = customChartFeedbackScoreMetricPercentile.filter
+                                        additionalProperties =
+                                            customChartFeedbackScoreMetricPercentile
+                                                .additionalProperties
+                                                .toMutableMap()
+                                    }
+
+                                    /**
+                                     * Sets the field to an arbitrary JSON value.
+                                     *
+                                     * It is usually unnecessary to call this method because the
+                                     * field defaults to the following:
+                                     * ```java
+                                     * JsonValue.from("feedback_score")
+                                     * ```
+                                     *
+                                     * This method is primarily for setting the field to an
+                                     * undocumented or not yet supported value.
+                                     */
+                                    fun field(field: JsonValue) = apply { this.field = field }
+
+                                    fun params(params: Params) = params(JsonField.of(params))
+
+                                    /**
+                                     * Sets [Builder.params] to an arbitrary JSON value.
+                                     *
+                                     * You should usually call [Builder.params] with a well-typed
+                                     * [Params] value instead. This method is primarily for setting
+                                     * the field to an undocumented or not yet supported value.
+                                     */
+                                    fun params(params: JsonField<Params>) = apply {
+                                        this.params = params
+                                    }
+
+                                    /**
+                                     * Sets the field to an arbitrary JSON value.
+                                     *
+                                     * It is usually unnecessary to call this method because the
+                                     * field defaults to the following:
+                                     * ```java
+                                     * JsonValue.from("percentile")
+                                     * ```
+                                     *
+                                     * This method is primarily for setting the field to an
+                                     * undocumented or not yet supported value.
+                                     */
+                                    fun type(type: JsonValue) = apply { this.type = type }
+
+                                    fun filter(filter: String?) =
+                                        filter(JsonField.ofNullable(filter))
+
+                                    /**
+                                     * Alias for calling [Builder.filter] with
+                                     * `filter.orElse(null)`.
+                                     */
+                                    fun filter(filter: Optional<String>) =
+                                        filter(filter.getOrNull())
+
+                                    /**
+                                     * Sets [Builder.filter] to an arbitrary JSON value.
+                                     *
+                                     * You should usually call [Builder.filter] with a well-typed
+                                     * [String] value instead. This method is primarily for setting
+                                     * the field to an undocumented or not yet supported value.
+                                     */
+                                    fun filter(filter: JsonField<String>) = apply {
+                                        this.filter = filter
+                                    }
+
+                                    fun additionalProperties(
+                                        additionalProperties: Map<String, JsonValue>
+                                    ) = apply {
+                                        this.additionalProperties.clear()
+                                        putAllAdditionalProperties(additionalProperties)
+                                    }
+
+                                    fun putAdditionalProperty(key: String, value: JsonValue) =
+                                        apply {
+                                            additionalProperties.put(key, value)
+                                        }
+
+                                    fun putAllAdditionalProperties(
+                                        additionalProperties: Map<String, JsonValue>
+                                    ) = apply {
+                                        this.additionalProperties.putAll(additionalProperties)
+                                    }
+
+                                    fun removeAdditionalProperty(key: String) = apply {
+                                        additionalProperties.remove(key)
+                                    }
+
+                                    fun removeAllAdditionalProperties(keys: Set<String>) = apply {
+                                        keys.forEach(::removeAdditionalProperty)
+                                    }
+
+                                    /**
+                                     * Returns an immutable instance of
+                                     * [CustomChartFeedbackScoreMetricPercentile].
+                                     *
+                                     * Further updates to this [Builder] will not mutate the
+                                     * returned instance.
+                                     *
+                                     * The following fields are required:
+                                     * ```java
+                                     * .params()
+                                     * ```
+                                     *
+                                     * @throws IllegalStateException if any required field is unset.
+                                     */
+                                    fun build(): CustomChartFeedbackScoreMetricPercentile =
+                                        CustomChartFeedbackScoreMetricPercentile(
+                                            field,
+                                            checkRequired("params", params),
+                                            type,
+                                            filter,
+                                            additionalProperties.toMutableMap(),
+                                        )
+                                }
+
+                                private var validated: Boolean = false
+
+                                /**
+                                 * Validates that the types of all values in this object match their
+                                 * expected types recursively.
+                                 *
+                                 * This method is _not_ forwards compatible with new types from the
+                                 * API for existing fields.
+                                 *
+                                 * @throws LangChainInvalidDataException if any value type in this
+                                 *   object doesn't match its expected type.
+                                 */
+                                fun validate(): CustomChartFeedbackScoreMetricPercentile = apply {
+                                    if (validated) {
+                                        return@apply
+                                    }
+
+                                    _field().let {
+                                        if (it != JsonValue.from("feedback_score")) {
+                                            throw LangChainInvalidDataException(
+                                                "'field' is invalid, received $it"
+                                            )
+                                        }
+                                    }
+                                    params().validate()
+                                    _type().let {
+                                        if (it != JsonValue.from("percentile")) {
+                                            throw LangChainInvalidDataException(
+                                                "'type' is invalid, received $it"
+                                            )
+                                        }
+                                    }
+                                    filter()
+                                    validated = true
+                                }
+
+                                fun isValid(): Boolean =
+                                    try {
+                                        validate()
+                                        true
+                                    } catch (e: LangChainInvalidDataException) {
+                                        false
+                                    }
+
+                                /**
+                                 * Returns a score indicating how many valid values are contained in
+                                 * this object recursively.
+                                 *
+                                 * Used for best match union deserialization.
+                                 */
+                                @JvmSynthetic
+                                internal fun validity(): Int =
+                                    field.let {
+                                        if (it == JsonValue.from("feedback_score")) 1 else 0
+                                    } +
+                                        (params.asKnown().getOrNull()?.validity() ?: 0) +
+                                        type.let {
+                                            if (it == JsonValue.from("percentile")) 1 else 0
+                                        } +
+                                        (if (filter.asKnown().isPresent) 1 else 0)
+
+                                class Params
+                                @JsonCreator(mode = JsonCreator.Mode.DISABLED)
+                                private constructor(
+                                    private val feedbackKey: JsonField<String>,
+                                    private val p: JsonField<Double>,
+                                    private val additionalProperties: MutableMap<String, JsonValue>,
+                                ) {
+
+                                    @JsonCreator
+                                    private constructor(
+                                        @JsonProperty("feedback_key")
+                                        @ExcludeMissing
+                                        feedbackKey: JsonField<String> = JsonMissing.of(),
+                                        @JsonProperty("p")
+                                        @ExcludeMissing
+                                        p: JsonField<Double> = JsonMissing.of(),
+                                    ) : this(feedbackKey, p, mutableMapOf())
+
+                                    /**
+                                     * @throws LangChainInvalidDataException if the JSON field has
+                                     *   an unexpected type or is unexpectedly missing or null (e.g.
+                                     *   if the server responded with an unexpected value).
+                                     */
+                                    fun feedbackKey(): String =
+                                        feedbackKey.getRequired("feedback_key")
+
+                                    /**
+                                     * @throws LangChainInvalidDataException if the JSON field has
+                                     *   an unexpected type or is unexpectedly missing or null (e.g.
+                                     *   if the server responded with an unexpected value).
+                                     */
+                                    fun p(): Double = p.getRequired("p")
+
+                                    /**
+                                     * Returns the raw JSON value of [feedbackKey].
+                                     *
+                                     * Unlike [feedbackKey], this method doesn't throw if the JSON
+                                     * field has an unexpected type.
+                                     */
+                                    @JsonProperty("feedback_key")
+                                    @ExcludeMissing
+                                    fun _feedbackKey(): JsonField<String> = feedbackKey
+
+                                    /**
+                                     * Returns the raw JSON value of [p].
+                                     *
+                                     * Unlike [p], this method doesn't throw if the JSON field has
+                                     * an unexpected type.
+                                     */
+                                    @JsonProperty("p")
+                                    @ExcludeMissing
+                                    fun _p(): JsonField<Double> = p
+
+                                    @JsonAnySetter
+                                    private fun putAdditionalProperty(
+                                        key: String,
+                                        value: JsonValue,
+                                    ) {
+                                        additionalProperties.put(key, value)
+                                    }
+
+                                    @JsonAnyGetter
+                                    @ExcludeMissing
+                                    fun _additionalProperties(): Map<String, JsonValue> =
+                                        Collections.unmodifiableMap(additionalProperties)
+
+                                    fun toBuilder() = Builder().from(this)
+
+                                    companion object {
+
+                                        /**
+                                         * Returns a mutable builder for constructing an instance of
+                                         * [Params].
+                                         *
+                                         * The following fields are required:
+                                         * ```java
+                                         * .feedbackKey()
+                                         * .p()
+                                         * ```
+                                         */
+                                        @JvmStatic fun builder() = Builder()
+                                    }
+
+                                    /** A builder for [Params]. */
+                                    class Builder internal constructor() {
+
+                                        private var feedbackKey: JsonField<String>? = null
+                                        private var p: JsonField<Double>? = null
+                                        private var additionalProperties:
+                                            MutableMap<String, JsonValue> =
+                                            mutableMapOf()
+
+                                        @JvmSynthetic
+                                        internal fun from(params: Params) = apply {
+                                            feedbackKey = params.feedbackKey
+                                            p = params.p
+                                            additionalProperties =
+                                                params.additionalProperties.toMutableMap()
+                                        }
+
+                                        fun feedbackKey(feedbackKey: String) =
+                                            feedbackKey(JsonField.of(feedbackKey))
+
+                                        /**
+                                         * Sets [Builder.feedbackKey] to an arbitrary JSON value.
+                                         *
+                                         * You should usually call [Builder.feedbackKey] with a
+                                         * well-typed [String] value instead. This method is
+                                         * primarily for setting the field to an undocumented or not
+                                         * yet supported value.
+                                         */
+                                        fun feedbackKey(feedbackKey: JsonField<String>) = apply {
+                                            this.feedbackKey = feedbackKey
+                                        }
+
+                                        fun p(p: Double) = p(JsonField.of(p))
+
+                                        /**
+                                         * Sets [Builder.p] to an arbitrary JSON value.
+                                         *
+                                         * You should usually call [Builder.p] with a well-typed
+                                         * [Double] value instead. This method is primarily for
+                                         * setting the field to an undocumented or not yet supported
+                                         * value.
+                                         */
+                                        fun p(p: JsonField<Double>) = apply { this.p = p }
+
+                                        fun additionalProperties(
+                                            additionalProperties: Map<String, JsonValue>
+                                        ) = apply {
+                                            this.additionalProperties.clear()
+                                            putAllAdditionalProperties(additionalProperties)
+                                        }
+
+                                        fun putAdditionalProperty(key: String, value: JsonValue) =
+                                            apply {
+                                                additionalProperties.put(key, value)
+                                            }
+
+                                        fun putAllAdditionalProperties(
+                                            additionalProperties: Map<String, JsonValue>
+                                        ) = apply {
+                                            this.additionalProperties.putAll(additionalProperties)
+                                        }
+
+                                        fun removeAdditionalProperty(key: String) = apply {
+                                            additionalProperties.remove(key)
+                                        }
+
+                                        fun removeAllAdditionalProperties(keys: Set<String>) =
+                                            apply {
+                                                keys.forEach(::removeAdditionalProperty)
+                                            }
+
+                                        /**
+                                         * Returns an immutable instance of [Params].
+                                         *
+                                         * Further updates to this [Builder] will not mutate the
+                                         * returned instance.
+                                         *
+                                         * The following fields are required:
+                                         * ```java
+                                         * .feedbackKey()
+                                         * .p()
+                                         * ```
+                                         *
+                                         * @throws IllegalStateException if any required field is
+                                         *   unset.
+                                         */
+                                        fun build(): Params =
+                                            Params(
+                                                checkRequired("feedbackKey", feedbackKey),
+                                                checkRequired("p", p),
+                                                additionalProperties.toMutableMap(),
+                                            )
+                                    }
+
+                                    private var validated: Boolean = false
+
+                                    /**
+                                     * Validates that the types of all values in this object match
+                                     * their expected types recursively.
+                                     *
+                                     * This method is _not_ forwards compatible with new types from
+                                     * the API for existing fields.
+                                     *
+                                     * @throws LangChainInvalidDataException if any value type in
+                                     *   this object doesn't match its expected type.
+                                     */
+                                    fun validate(): Params = apply {
+                                        if (validated) {
+                                            return@apply
+                                        }
+
+                                        feedbackKey()
+                                        p()
+                                        validated = true
+                                    }
+
+                                    fun isValid(): Boolean =
+                                        try {
+                                            validate()
+                                            true
+                                        } catch (e: LangChainInvalidDataException) {
+                                            false
+                                        }
+
+                                    /**
+                                     * Returns a score indicating how many valid values are
+                                     * contained in this object recursively.
+                                     *
+                                     * Used for best match union deserialization.
+                                     */
+                                    @JvmSynthetic
+                                    internal fun validity(): Int =
+                                        (if (feedbackKey.asKnown().isPresent) 1 else 0) +
+                                            (if (p.asKnown().isPresent) 1 else 0)
+
+                                    override fun equals(other: Any?): Boolean {
+                                        if (this === other) {
+                                            return true
+                                        }
+
+                                        return other is Params &&
+                                            feedbackKey == other.feedbackKey &&
+                                            p == other.p &&
+                                            additionalProperties == other.additionalProperties
+                                    }
+
+                                    private val hashCode: Int by lazy {
+                                        Objects.hash(feedbackKey, p, additionalProperties)
+                                    }
+
+                                    override fun hashCode(): Int = hashCode
+
+                                    override fun toString() =
+                                        "Params{feedbackKey=$feedbackKey, p=$p, additionalProperties=$additionalProperties}"
+                                }
+
+                                override fun equals(other: Any?): Boolean {
+                                    if (this === other) {
+                                        return true
+                                    }
+
+                                    return other is CustomChartFeedbackScoreMetricPercentile &&
+                                        field == other.field &&
+                                        params == other.params &&
+                                        type == other.type &&
+                                        filter == other.filter &&
+                                        additionalProperties == other.additionalProperties
+                                }
+
+                                private val hashCode: Int by lazy {
+                                    Objects.hash(field, params, type, filter, additionalProperties)
+                                }
+
+                                override fun hashCode(): Int = hashCode
+
+                                override fun toString() =
+                                    "CustomChartFeedbackScoreMetricPercentile{field=$field, params=$params, type=$type, filter=$filter, additionalProperties=$additionalProperties}"
                             }
 
                             class CustomChartMetricPercentile

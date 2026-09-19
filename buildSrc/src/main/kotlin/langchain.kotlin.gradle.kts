@@ -29,6 +29,11 @@ kotlin {
     }
 }
 
+val mockitoAgent by configurations.creating {
+    isCanBeResolved = true
+    isCanBeConsumed = false
+}
+
 tasks.withType<Test>().configureEach {
     systemProperty("junit.jupiter.execution.parallel.enabled", true)
     systemProperty("junit.jupiter.execution.parallel.mode.default", "concurrent")
@@ -36,6 +41,11 @@ tasks.withType<Test>().configureEach {
     // Suppress JVM warnings about dynamically loaded agents (e.g. byte-buddy used by Mockito).
     // Without this, agent warnings are written to stderr and break tests that capture stderr output.
     jvmArgs("-XX:+EnableDynamicAgentLoading")
+
+    // Run Mockito as a proper Java agent so it does not self-attach and print a warning to stderr.
+    // Self-attach warnings pollute stderr and break tests that capture stderr output.
+    // Uses a named CommandLineArgumentProvider class for configuration cache compatibility.
+    jvmArgumentProviders.add(MockitoAgentProvider(mockitoAgent))
 
     // `SKIP_MOCK_TESTS` affects which tests run so it must be added as input for proper cache invalidation.
     inputs.property("skipMockTests", System.getenv("SKIP_MOCK_TESTS")).optional(true)

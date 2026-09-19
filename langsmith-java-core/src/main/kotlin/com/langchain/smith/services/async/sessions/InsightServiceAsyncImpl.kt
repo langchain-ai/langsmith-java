@@ -29,6 +29,8 @@ import com.langchain.smith.models.sessions.insights.InsightRetrieveRunsParams
 import com.langchain.smith.models.sessions.insights.InsightRetrieveRunsResponse
 import com.langchain.smith.models.sessions.insights.InsightUpdateParams
 import com.langchain.smith.models.sessions.insights.InsightUpdateResponse
+import com.langchain.smith.services.async.sessions.insights.ConfigServiceAsync
+import com.langchain.smith.services.async.sessions.insights.ConfigServiceAsyncImpl
 import java.util.concurrent.CompletableFuture
 import java.util.function.Consumer
 import kotlin.jvm.optionals.getOrNull
@@ -40,10 +42,14 @@ class InsightServiceAsyncImpl internal constructor(private val clientOptions: Cl
         WithRawResponseImpl(clientOptions)
     }
 
+    private val configs: ConfigServiceAsync by lazy { ConfigServiceAsyncImpl(clientOptions) }
+
     override fun withRawResponse(): InsightServiceAsync.WithRawResponse = withRawResponse
 
     override fun withOptions(modifier: Consumer<ClientOptions.Builder>): InsightServiceAsync =
         InsightServiceAsyncImpl(clientOptions.toBuilder().apply(modifier::accept).build())
+
+    override fun configs(): ConfigServiceAsync = configs
 
     override fun create(
         params: InsightCreateParams,
@@ -93,12 +99,18 @@ class InsightServiceAsyncImpl internal constructor(private val clientOptions: Cl
         private val errorHandler: Handler<HttpResponse> =
             errorHandler(errorBodyHandler(clientOptions.jsonMapper))
 
+        private val configs: ConfigServiceAsync.WithRawResponse by lazy {
+            ConfigServiceAsyncImpl.WithRawResponseImpl(clientOptions)
+        }
+
         override fun withOptions(
             modifier: Consumer<ClientOptions.Builder>
         ): InsightServiceAsync.WithRawResponse =
             InsightServiceAsyncImpl.WithRawResponseImpl(
                 clientOptions.toBuilder().apply(modifier::accept).build()
             )
+
+        override fun configs(): ConfigServiceAsync.WithRawResponse = configs
 
         private val createHandler: Handler<InsightCreateResponse> =
             jsonHandler<InsightCreateResponse>(clientOptions.jsonMapper)

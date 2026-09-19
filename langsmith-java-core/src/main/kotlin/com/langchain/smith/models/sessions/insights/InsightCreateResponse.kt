@@ -17,7 +17,7 @@ import java.util.Objects
 import java.util.Optional
 import kotlin.jvm.optionals.getOrNull
 
-/** Response to creating a run clustering job. */
+/** An Insights job queued for execution. */
 class InsightCreateResponse
 @JsonCreator(mode = JsonCreator.Mode.DISABLED)
 private constructor(

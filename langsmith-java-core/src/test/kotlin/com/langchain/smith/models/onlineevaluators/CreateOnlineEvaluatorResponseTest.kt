@@ -19,9 +19,30 @@ internal class CreateOnlineEvaluatorResponseTest {
                         .id("id")
                         .codeEvaluator(
                             OnlineCodeEvaluator.builder()
+                                .advancedFeaturesEnabled(true)
                                 .code("code")
+                                .dependencies("dependencies")
+                                .evaluatorBuildError("evaluator_build_error")
+                                .evaluatorBuildStatus(
+                                    OnlineCodeEvaluator.EvaluatorBuildStatus.ENQUEUED
+                                )
                                 .evaluatorId("evaluator_id")
                                 .language("language")
+                                .managedCodeEvaluatorKey("managed_code_evaluator_key")
+                                .managedCodeEvaluatorSettings(
+                                    OnlineCodeEvaluator.ManagedCodeEvaluatorSettings.builder()
+                                        .putAdditionalProperty(
+                                            "foo",
+                                            JsonValue.from(
+                                                mapOf(
+                                                    "is_enabled" to true,
+                                                    "key_name" to "key_name",
+                                                )
+                                            ),
+                                        )
+                                        .build()
+                                )
+                                .requireAttachments(true)
                                 .build()
                         )
                         .createdAt("created_at")
@@ -77,9 +98,25 @@ internal class CreateOnlineEvaluatorResponseTest {
                     .id("id")
                     .codeEvaluator(
                         OnlineCodeEvaluator.builder()
+                            .advancedFeaturesEnabled(true)
                             .code("code")
+                            .dependencies("dependencies")
+                            .evaluatorBuildError("evaluator_build_error")
+                            .evaluatorBuildStatus(OnlineCodeEvaluator.EvaluatorBuildStatus.ENQUEUED)
                             .evaluatorId("evaluator_id")
                             .language("language")
+                            .managedCodeEvaluatorKey("managed_code_evaluator_key")
+                            .managedCodeEvaluatorSettings(
+                                OnlineCodeEvaluator.ManagedCodeEvaluatorSettings.builder()
+                                    .putAdditionalProperty(
+                                        "foo",
+                                        JsonValue.from(
+                                            mapOf("is_enabled" to true, "key_name" to "key_name")
+                                        ),
+                                    )
+                                    .build()
+                            )
+                            .requireAttachments(true)
                             .build()
                     )
                     .createdAt("created_at")
@@ -139,9 +176,30 @@ internal class CreateOnlineEvaluatorResponseTest {
                         .id("id")
                         .codeEvaluator(
                             OnlineCodeEvaluator.builder()
+                                .advancedFeaturesEnabled(true)
                                 .code("code")
+                                .dependencies("dependencies")
+                                .evaluatorBuildError("evaluator_build_error")
+                                .evaluatorBuildStatus(
+                                    OnlineCodeEvaluator.EvaluatorBuildStatus.ENQUEUED
+                                )
                                 .evaluatorId("evaluator_id")
                                 .language("language")
+                                .managedCodeEvaluatorKey("managed_code_evaluator_key")
+                                .managedCodeEvaluatorSettings(
+                                    OnlineCodeEvaluator.ManagedCodeEvaluatorSettings.builder()
+                                        .putAdditionalProperty(
+                                            "foo",
+                                            JsonValue.from(
+                                                mapOf(
+                                                    "is_enabled" to true,
+                                                    "key_name" to "key_name",
+                                                )
+                                            ),
+                                        )
+                                        .build()
+                                )
+                                .requireAttachments(true)
                                 .build()
                         )
                         .createdAt("created_at")

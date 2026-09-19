@@ -15,6 +15,12 @@ internal class SandboxResponseTest {
         val sandboxResponse =
             SandboxResponse.builder()
                 .id("id")
+                .accessDelegation(
+                    SandboxResponse.AccessDelegation.builder()
+                        .mode(SandboxResponse.AccessDelegation.Mode.INHERIT)
+                        .addPermission("string")
+                        .build()
+                )
                 .cpuMillicores(0L)
                 .createdAt("created_at")
                 .createdBy("created_by")
@@ -33,32 +39,10 @@ internal class SandboxResponseTest {
                         .auth(
                             SandboxResponse.MountConfig.Auth.builder()
                                 .aws(
-                                    SandboxResponse.MountConfig.Auth.Aws.builder()
-                                        .accessKeyId(
-                                            SandboxResponse.MountConfig.Auth.Aws.AccessKeyId
-                                                .builder()
-                                                .type(
-                                                    SandboxResponse.MountConfig.Auth.Aws.AccessKeyId
-                                                        .Type
-                                                        .PLAINTEXT
-                                                )
-                                                .isSet(true)
-                                                .value("value")
-                                                .build()
-                                        )
-                                        .secretAccessKey(
-                                            SandboxResponse.MountConfig.Auth.Aws.SecretAccessKey
-                                                .builder()
-                                                .type(
-                                                    SandboxResponse.MountConfig.Auth.Aws
-                                                        .SecretAccessKey
-                                                        .Type
-                                                        .PLAINTEXT
-                                                )
-                                                .isSet(true)
-                                                .value("value")
-                                                .build()
-                                        )
+                                    SandboxResponse.MountConfig.Auth.Aws
+                                        .SandboxesSandboxAwsMountRoleAuthConfig
+                                        .builder()
+                                        .roleArn("x")
                                         .build()
                                 )
                                 .gcp(
@@ -182,39 +166,18 @@ internal class SandboxResponseTest {
                                 )
                                 .build()
                         )
+                        .description("description")
                         .addNoProxy("string")
                         .addRule(
                             SandboxResponse.ProxyConfig.Rule.builder()
                                 .name("name")
                                 .aws(
-                                    SandboxResponse.ProxyConfig.Rule.Aws.builder()
-                                        .accessKeyId(
-                                            SandboxResponse.ProxyConfig.Rule.Aws.AccessKeyId
-                                                .builder()
-                                                .type(
-                                                    SandboxResponse.ProxyConfig.Rule.Aws.AccessKeyId
-                                                        .Type
-                                                        .PLAINTEXT
-                                                )
-                                                .isSet(true)
-                                                .value("value")
-                                                .build()
-                                        )
-                                        .secretAccessKey(
-                                            SandboxResponse.ProxyConfig.Rule.Aws.SecretAccessKey
-                                                .builder()
-                                                .type(
-                                                    SandboxResponse.ProxyConfig.Rule.Aws
-                                                        .SecretAccessKey
-                                                        .Type
-                                                        .PLAINTEXT
-                                                )
-                                                .isSet(true)
-                                                .value("value")
-                                                .build()
-                                        )
+                                    SandboxResponse.ProxyConfig.Rule.Aws.SandboxesProxyAwsRoleConfig
+                                        .builder()
+                                        .roleArn("x")
                                         .build()
                                 )
+                                .description("description")
                                 .enabled(true)
                                 .envVars(
                                     SandboxResponse.ProxyConfig.Rule.EnvVars.builder()
@@ -256,6 +219,17 @@ internal class SandboxResponseTest {
                         )
                         .build()
                 )
+                .runConfig(
+                    SandboxResponse.RunConfig.builder()
+                        .envVars(
+                            SandboxResponse.RunConfig.EnvVars.builder()
+                                .putAdditionalProperty("foo", JsonValue.from("string"))
+                                .build()
+                        )
+                        .user("user")
+                        .workDir("work_dir")
+                        .build()
+                )
                 .sizeClass("size_class")
                 .snapshotId("snapshot_id")
                 .status("status")
@@ -267,6 +241,13 @@ internal class SandboxResponseTest {
                 .build()
 
         assertThat(sandboxResponse.id()).contains("id")
+        assertThat(sandboxResponse.accessDelegation())
+            .contains(
+                SandboxResponse.AccessDelegation.builder()
+                    .mode(SandboxResponse.AccessDelegation.Mode.INHERIT)
+                    .addPermission("string")
+                    .build()
+            )
         assertThat(sandboxResponse.cpuMillicores()).contains(0L)
         assertThat(sandboxResponse.createdAt()).contains("created_at")
         assertThat(sandboxResponse.createdBy()).contains("created_by")
@@ -287,30 +268,10 @@ internal class SandboxResponseTest {
                     .auth(
                         SandboxResponse.MountConfig.Auth.builder()
                             .aws(
-                                SandboxResponse.MountConfig.Auth.Aws.builder()
-                                    .accessKeyId(
-                                        SandboxResponse.MountConfig.Auth.Aws.AccessKeyId.builder()
-                                            .type(
-                                                SandboxResponse.MountConfig.Auth.Aws.AccessKeyId
-                                                    .Type
-                                                    .PLAINTEXT
-                                            )
-                                            .isSet(true)
-                                            .value("value")
-                                            .build()
-                                    )
-                                    .secretAccessKey(
-                                        SandboxResponse.MountConfig.Auth.Aws.SecretAccessKey
-                                            .builder()
-                                            .type(
-                                                SandboxResponse.MountConfig.Auth.Aws.SecretAccessKey
-                                                    .Type
-                                                    .PLAINTEXT
-                                            )
-                                            .isSet(true)
-                                            .value("value")
-                                            .build()
-                                    )
+                                SandboxResponse.MountConfig.Auth.Aws
+                                    .SandboxesSandboxAwsMountRoleAuthConfig
+                                    .builder()
+                                    .roleArn("x")
                                     .build()
                             )
                             .gcp(
@@ -431,37 +392,18 @@ internal class SandboxResponseTest {
                             )
                             .build()
                     )
+                    .description("description")
                     .addNoProxy("string")
                     .addRule(
                         SandboxResponse.ProxyConfig.Rule.builder()
                             .name("name")
                             .aws(
-                                SandboxResponse.ProxyConfig.Rule.Aws.builder()
-                                    .accessKeyId(
-                                        SandboxResponse.ProxyConfig.Rule.Aws.AccessKeyId.builder()
-                                            .type(
-                                                SandboxResponse.ProxyConfig.Rule.Aws.AccessKeyId
-                                                    .Type
-                                                    .PLAINTEXT
-                                            )
-                                            .isSet(true)
-                                            .value("value")
-                                            .build()
-                                    )
-                                    .secretAccessKey(
-                                        SandboxResponse.ProxyConfig.Rule.Aws.SecretAccessKey
-                                            .builder()
-                                            .type(
-                                                SandboxResponse.ProxyConfig.Rule.Aws.SecretAccessKey
-                                                    .Type
-                                                    .PLAINTEXT
-                                            )
-                                            .isSet(true)
-                                            .value("value")
-                                            .build()
-                                    )
+                                SandboxResponse.ProxyConfig.Rule.Aws.SandboxesProxyAwsRoleConfig
+                                    .builder()
+                                    .roleArn("x")
                                     .build()
                             )
+                            .description("description")
                             .enabled(true)
                             .envVars(
                                 SandboxResponse.ProxyConfig.Rule.EnvVars.builder()
@@ -501,6 +443,18 @@ internal class SandboxResponseTest {
                     )
                     .build()
             )
+        assertThat(sandboxResponse.runConfig())
+            .contains(
+                SandboxResponse.RunConfig.builder()
+                    .envVars(
+                        SandboxResponse.RunConfig.EnvVars.builder()
+                            .putAdditionalProperty("foo", JsonValue.from("string"))
+                            .build()
+                    )
+                    .user("user")
+                    .workDir("work_dir")
+                    .build()
+            )
         assertThat(sandboxResponse.sizeClass()).contains("size_class")
         assertThat(sandboxResponse.snapshotId()).contains("snapshot_id")
         assertThat(sandboxResponse.status()).contains("status")
@@ -517,6 +471,12 @@ internal class SandboxResponseTest {
         val sandboxResponse =
             SandboxResponse.builder()
                 .id("id")
+                .accessDelegation(
+                    SandboxResponse.AccessDelegation.builder()
+                        .mode(SandboxResponse.AccessDelegation.Mode.INHERIT)
+                        .addPermission("string")
+                        .build()
+                )
                 .cpuMillicores(0L)
                 .createdAt("created_at")
                 .createdBy("created_by")
@@ -535,32 +495,10 @@ internal class SandboxResponseTest {
                         .auth(
                             SandboxResponse.MountConfig.Auth.builder()
                                 .aws(
-                                    SandboxResponse.MountConfig.Auth.Aws.builder()
-                                        .accessKeyId(
-                                            SandboxResponse.MountConfig.Auth.Aws.AccessKeyId
-                                                .builder()
-                                                .type(
-                                                    SandboxResponse.MountConfig.Auth.Aws.AccessKeyId
-                                                        .Type
-                                                        .PLAINTEXT
-                                                )
-                                                .isSet(true)
-                                                .value("value")
-                                                .build()
-                                        )
-                                        .secretAccessKey(
-                                            SandboxResponse.MountConfig.Auth.Aws.SecretAccessKey
-                                                .builder()
-                                                .type(
-                                                    SandboxResponse.MountConfig.Auth.Aws
-                                                        .SecretAccessKey
-                                                        .Type
-                                                        .PLAINTEXT
-                                                )
-                                                .isSet(true)
-                                                .value("value")
-                                                .build()
-                                        )
+                                    SandboxResponse.MountConfig.Auth.Aws
+                                        .SandboxesSandboxAwsMountRoleAuthConfig
+                                        .builder()
+                                        .roleArn("x")
                                         .build()
                                 )
                                 .gcp(
@@ -684,39 +622,18 @@ internal class SandboxResponseTest {
                                 )
                                 .build()
                         )
+                        .description("description")
                         .addNoProxy("string")
                         .addRule(
                             SandboxResponse.ProxyConfig.Rule.builder()
                                 .name("name")
                                 .aws(
-                                    SandboxResponse.ProxyConfig.Rule.Aws.builder()
-                                        .accessKeyId(
-                                            SandboxResponse.ProxyConfig.Rule.Aws.AccessKeyId
-                                                .builder()
-                                                .type(
-                                                    SandboxResponse.ProxyConfig.Rule.Aws.AccessKeyId
-                                                        .Type
-                                                        .PLAINTEXT
-                                                )
-                                                .isSet(true)
-                                                .value("value")
-                                                .build()
-                                        )
-                                        .secretAccessKey(
-                                            SandboxResponse.ProxyConfig.Rule.Aws.SecretAccessKey
-                                                .builder()
-                                                .type(
-                                                    SandboxResponse.ProxyConfig.Rule.Aws
-                                                        .SecretAccessKey
-                                                        .Type
-                                                        .PLAINTEXT
-                                                )
-                                                .isSet(true)
-                                                .value("value")
-                                                .build()
-                                        )
+                                    SandboxResponse.ProxyConfig.Rule.Aws.SandboxesProxyAwsRoleConfig
+                                        .builder()
+                                        .roleArn("x")
                                         .build()
                                 )
+                                .description("description")
                                 .enabled(true)
                                 .envVars(
                                     SandboxResponse.ProxyConfig.Rule.EnvVars.builder()
@@ -756,6 +673,17 @@ internal class SandboxResponseTest {
                                 .type("type")
                                 .build()
                         )
+                        .build()
+                )
+                .runConfig(
+                    SandboxResponse.RunConfig.builder()
+                        .envVars(
+                            SandboxResponse.RunConfig.EnvVars.builder()
+                                .putAdditionalProperty("foo", JsonValue.from("string"))
+                                .build()
+                        )
+                        .user("user")
+                        .workDir("work_dir")
                         .build()
                 )
                 .sizeClass("size_class")

@@ -16,6 +16,8 @@ import com.langchain.smith.core.http.HttpResponseFor
 import com.langchain.smith.core.http.json
 import com.langchain.smith.core.http.parseable
 import com.langchain.smith.core.prepare
+import com.langchain.smith.models.threads.ThreadAggregateStatsParams
+import com.langchain.smith.models.threads.ThreadAggregateStatsResponse
 import com.langchain.smith.models.threads.ThreadListTracesPage
 import com.langchain.smith.models.threads.ThreadListTracesPageResponse
 import com.langchain.smith.models.threads.ThreadListTracesParams
@@ -24,6 +26,8 @@ import com.langchain.smith.models.threads.ThreadQueryPageResponse
 import com.langchain.smith.models.threads.ThreadQueryParams
 import com.langchain.smith.models.threads.ThreadStats
 import com.langchain.smith.models.threads.ThreadStatsParams
+import com.langchain.smith.services.blocking.threads.ShareService
+import com.langchain.smith.services.blocking.threads.ShareServiceImpl
 import java.util.function.Consumer
 import kotlin.jvm.optionals.getOrNull
 
@@ -34,10 +38,21 @@ class ThreadServiceImpl internal constructor(private val clientOptions: ClientOp
         WithRawResponseImpl(clientOptions)
     }
 
+    private val share: ShareService by lazy { ShareServiceImpl(clientOptions) }
+
     override fun withRawResponse(): ThreadService.WithRawResponse = withRawResponse
 
     override fun withOptions(modifier: Consumer<ClientOptions.Builder>): ThreadService =
         ThreadServiceImpl(clientOptions.toBuilder().apply(modifier::accept).build())
+
+    override fun share(): ShareService = share
+
+    override fun aggregateStats(
+        params: ThreadAggregateStatsParams,
+        requestOptions: RequestOptions,
+    ): ThreadAggregateStatsResponse =
+        // post /api/v2/threads/stats
+        withRawResponse().aggregateStats(params, requestOptions).parse()
 
     override fun listTraces(
         params: ThreadListTracesParams,
@@ -60,12 +75,46 @@ class ThreadServiceImpl internal constructor(private val clientOptions: ClientOp
         private val errorHandler: Handler<HttpResponse> =
             errorHandler(errorBodyHandler(clientOptions.jsonMapper))
 
+        private val share: ShareService.WithRawResponse by lazy {
+            ShareServiceImpl.WithRawResponseImpl(clientOptions)
+        }
+
         override fun withOptions(
             modifier: Consumer<ClientOptions.Builder>
         ): ThreadService.WithRawResponse =
             ThreadServiceImpl.WithRawResponseImpl(
                 clientOptions.toBuilder().apply(modifier::accept).build()
             )
+
+        override fun share(): ShareService.WithRawResponse = share
+
+        private val aggregateStatsHandler: Handler<ThreadAggregateStatsResponse> =
+            jsonHandler<ThreadAggregateStatsResponse>(clientOptions.jsonMapper)
+
+        override fun aggregateStats(
+            params: ThreadAggregateStatsParams,
+            requestOptions: RequestOptions,
+        ): HttpResponseFor<ThreadAggregateStatsResponse> {
+            val request =
+                HttpRequest.builder()
+                    .method(HttpMethod.POST)
+                    .baseUrl(clientOptions.baseUrl())
+                    .addPathSegments("api", "v2", "threads", "stats")
+                    .body(json(clientOptions.jsonMapper, params._body()))
+                    .build()
+                    .prepare(clientOptions, params)
+            val requestOptions = requestOptions.applyDefaults(RequestOptions.from(clientOptions))
+            val response = clientOptions.httpClient.execute(request, requestOptions)
+            return errorHandler.handle(response).parseable {
+                response
+                    .use { aggregateStatsHandler.handle(it) }
+                    .also {
+                        if (requestOptions.responseValidation!!) {
+                            it.validate()
+                        }
+                    }
+            }
+        }
 
         private val listTracesHandler: Handler<ThreadListTracesPageResponse> =
             jsonHandler<ThreadListTracesPageResponse>(clientOptions.jsonMapper)
