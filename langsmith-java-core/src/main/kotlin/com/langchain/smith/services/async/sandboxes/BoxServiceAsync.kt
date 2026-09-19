@@ -14,11 +14,14 @@ import com.langchain.smith.models.sandboxes.SnapshotResponse
 import com.langchain.smith.models.sandboxes.boxes.BoxCreateParams
 import com.langchain.smith.models.sandboxes.boxes.BoxCreateSnapshotParams
 import com.langchain.smith.models.sandboxes.boxes.BoxDeleteParams
+import com.langchain.smith.models.sandboxes.boxes.BoxDeleteServiceUrlParams
 import com.langchain.smith.models.sandboxes.boxes.BoxGenerateDownloadUrlParams
 import com.langchain.smith.models.sandboxes.boxes.BoxGenerateServiceUrlParams
 import com.langchain.smith.models.sandboxes.boxes.BoxGetStatusParams
 import com.langchain.smith.models.sandboxes.boxes.BoxListPageAsync
 import com.langchain.smith.models.sandboxes.boxes.BoxListParams
+import com.langchain.smith.models.sandboxes.boxes.BoxListServiceUrlsPageAsync
+import com.langchain.smith.models.sandboxes.boxes.BoxListServiceUrlsParams
 import com.langchain.smith.models.sandboxes.boxes.BoxRetrieveParams
 import com.langchain.smith.models.sandboxes.boxes.BoxStartParams
 import com.langchain.smith.models.sandboxes.boxes.BoxStopParams
@@ -215,6 +218,42 @@ interface BoxServiceAsync {
     ): CompletableFuture<SnapshotResponse>
 
     /**
+     * Removes the sharing grant for one port, or for every port when port is omitted. A LangSmith
+     * login URL stops working immediately. A previously minted service token is not revoked and
+     * stays valid until it expires, but no new one can be issued from the removed grant.
+     */
+    fun deleteServiceUrl(name: String): CompletableFuture<Void?> =
+        deleteServiceUrl(name, BoxDeleteServiceUrlParams.none())
+
+    /** @see deleteServiceUrl */
+    fun deleteServiceUrl(
+        name: String,
+        params: BoxDeleteServiceUrlParams = BoxDeleteServiceUrlParams.none(),
+        requestOptions: RequestOptions = RequestOptions.none(),
+    ): CompletableFuture<Void?> =
+        deleteServiceUrl(params.toBuilder().name(name).build(), requestOptions)
+
+    /** @see deleteServiceUrl */
+    fun deleteServiceUrl(
+        name: String,
+        params: BoxDeleteServiceUrlParams = BoxDeleteServiceUrlParams.none(),
+    ): CompletableFuture<Void?> = deleteServiceUrl(name, params, RequestOptions.none())
+
+    /** @see deleteServiceUrl */
+    fun deleteServiceUrl(
+        params: BoxDeleteServiceUrlParams,
+        requestOptions: RequestOptions = RequestOptions.none(),
+    ): CompletableFuture<Void?>
+
+    /** @see deleteServiceUrl */
+    fun deleteServiceUrl(params: BoxDeleteServiceUrlParams): CompletableFuture<Void?> =
+        deleteServiceUrl(params, RequestOptions.none())
+
+    /** @see deleteServiceUrl */
+    fun deleteServiceUrl(name: String, requestOptions: RequestOptions): CompletableFuture<Void?> =
+        deleteServiceUrl(name, BoxDeleteServiceUrlParams.none(), requestOptions)
+
+    /**
      * Generate a tokenized link that downloads a single file from a sandbox with no further
      * authentication. This mints a token rather than creating an addressable resource, so it
      * returns 200 with no Location header. The token pins the sandbox, the file path, the response
@@ -335,6 +374,48 @@ interface BoxServiceAsync {
         requestOptions: RequestOptions,
     ): CompletableFuture<SandboxStatusResponse> =
         getStatus(name, BoxGetStatusParams.none(), requestOptions)
+
+    /**
+     * Returns one entry per port the sandbox is currently reachable on, so a caller can see what is
+     * shared before turning it off. Expired token grants are omitted. Cursors are opaque and only
+     * valid on this endpoint; do not parse or construct one.
+     */
+    fun listServiceUrls(name: String): CompletableFuture<BoxListServiceUrlsPageAsync> =
+        listServiceUrls(name, BoxListServiceUrlsParams.none())
+
+    /** @see listServiceUrls */
+    fun listServiceUrls(
+        name: String,
+        params: BoxListServiceUrlsParams = BoxListServiceUrlsParams.none(),
+        requestOptions: RequestOptions = RequestOptions.none(),
+    ): CompletableFuture<BoxListServiceUrlsPageAsync> =
+        listServiceUrls(params.toBuilder().name(name).build(), requestOptions)
+
+    /** @see listServiceUrls */
+    fun listServiceUrls(
+        name: String,
+        params: BoxListServiceUrlsParams = BoxListServiceUrlsParams.none(),
+    ): CompletableFuture<BoxListServiceUrlsPageAsync> =
+        listServiceUrls(name, params, RequestOptions.none())
+
+    /** @see listServiceUrls */
+    fun listServiceUrls(
+        params: BoxListServiceUrlsParams,
+        requestOptions: RequestOptions = RequestOptions.none(),
+    ): CompletableFuture<BoxListServiceUrlsPageAsync>
+
+    /** @see listServiceUrls */
+    fun listServiceUrls(
+        params: BoxListServiceUrlsParams
+    ): CompletableFuture<BoxListServiceUrlsPageAsync> =
+        listServiceUrls(params, RequestOptions.none())
+
+    /** @see listServiceUrls */
+    fun listServiceUrls(
+        name: String,
+        requestOptions: RequestOptions,
+    ): CompletableFuture<BoxListServiceUrlsPageAsync> =
+        listServiceUrls(name, BoxListServiceUrlsParams.none(), requestOptions)
 
     /** Start a stopped or failed sandbox. This endpoint is not idempotent. */
     fun start(name: String): CompletableFuture<SandboxResponse> = start(name, BoxStartParams.none())
@@ -603,6 +684,44 @@ interface BoxServiceAsync {
         ): CompletableFuture<HttpResponseFor<SnapshotResponse>>
 
         /**
+         * Returns a raw HTTP response for `delete /api/v2/sandboxes/boxes/{name}/service-urls`, but
+         * is otherwise the same as [BoxServiceAsync.deleteServiceUrl].
+         */
+        fun deleteServiceUrl(name: String): CompletableFuture<HttpResponse> =
+            deleteServiceUrl(name, BoxDeleteServiceUrlParams.none())
+
+        /** @see deleteServiceUrl */
+        fun deleteServiceUrl(
+            name: String,
+            params: BoxDeleteServiceUrlParams = BoxDeleteServiceUrlParams.none(),
+            requestOptions: RequestOptions = RequestOptions.none(),
+        ): CompletableFuture<HttpResponse> =
+            deleteServiceUrl(params.toBuilder().name(name).build(), requestOptions)
+
+        /** @see deleteServiceUrl */
+        fun deleteServiceUrl(
+            name: String,
+            params: BoxDeleteServiceUrlParams = BoxDeleteServiceUrlParams.none(),
+        ): CompletableFuture<HttpResponse> = deleteServiceUrl(name, params, RequestOptions.none())
+
+        /** @see deleteServiceUrl */
+        fun deleteServiceUrl(
+            params: BoxDeleteServiceUrlParams,
+            requestOptions: RequestOptions = RequestOptions.none(),
+        ): CompletableFuture<HttpResponse>
+
+        /** @see deleteServiceUrl */
+        fun deleteServiceUrl(params: BoxDeleteServiceUrlParams): CompletableFuture<HttpResponse> =
+            deleteServiceUrl(params, RequestOptions.none())
+
+        /** @see deleteServiceUrl */
+        fun deleteServiceUrl(
+            name: String,
+            requestOptions: RequestOptions,
+        ): CompletableFuture<HttpResponse> =
+            deleteServiceUrl(name, BoxDeleteServiceUrlParams.none(), requestOptions)
+
+        /**
          * Returns a raw HTTP response for `post /api/v2/sandboxes/boxes/{name}/download-url`, but
          * is otherwise the same as [BoxServiceAsync.generateDownloadUrl].
          */
@@ -715,6 +834,49 @@ interface BoxServiceAsync {
             requestOptions: RequestOptions,
         ): CompletableFuture<HttpResponseFor<SandboxStatusResponse>> =
             getStatus(name, BoxGetStatusParams.none(), requestOptions)
+
+        /**
+         * Returns a raw HTTP response for `get /api/v2/sandboxes/boxes/{name}/service-urls`, but is
+         * otherwise the same as [BoxServiceAsync.listServiceUrls].
+         */
+        fun listServiceUrls(
+            name: String
+        ): CompletableFuture<HttpResponseFor<BoxListServiceUrlsPageAsync>> =
+            listServiceUrls(name, BoxListServiceUrlsParams.none())
+
+        /** @see listServiceUrls */
+        fun listServiceUrls(
+            name: String,
+            params: BoxListServiceUrlsParams = BoxListServiceUrlsParams.none(),
+            requestOptions: RequestOptions = RequestOptions.none(),
+        ): CompletableFuture<HttpResponseFor<BoxListServiceUrlsPageAsync>> =
+            listServiceUrls(params.toBuilder().name(name).build(), requestOptions)
+
+        /** @see listServiceUrls */
+        fun listServiceUrls(
+            name: String,
+            params: BoxListServiceUrlsParams = BoxListServiceUrlsParams.none(),
+        ): CompletableFuture<HttpResponseFor<BoxListServiceUrlsPageAsync>> =
+            listServiceUrls(name, params, RequestOptions.none())
+
+        /** @see listServiceUrls */
+        fun listServiceUrls(
+            params: BoxListServiceUrlsParams,
+            requestOptions: RequestOptions = RequestOptions.none(),
+        ): CompletableFuture<HttpResponseFor<BoxListServiceUrlsPageAsync>>
+
+        /** @see listServiceUrls */
+        fun listServiceUrls(
+            params: BoxListServiceUrlsParams
+        ): CompletableFuture<HttpResponseFor<BoxListServiceUrlsPageAsync>> =
+            listServiceUrls(params, RequestOptions.none())
+
+        /** @see listServiceUrls */
+        fun listServiceUrls(
+            name: String,
+            requestOptions: RequestOptions,
+        ): CompletableFuture<HttpResponseFor<BoxListServiceUrlsPageAsync>> =
+            listServiceUrls(name, BoxListServiceUrlsParams.none(), requestOptions)
 
         /**
          * Returns a raw HTTP response for `post /api/v2/sandboxes/boxes/{name}/start`, but is

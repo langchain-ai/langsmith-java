@@ -6,6 +6,7 @@ import com.langchain.smith.client.okhttp.LangsmithOkHttpClient
 import com.langchain.smith.core.JsonValue
 import com.langchain.smith.models.sandboxes.boxes.BoxCreateParams
 import com.langchain.smith.models.sandboxes.boxes.BoxCreateSnapshotParams
+import com.langchain.smith.models.sandboxes.boxes.BoxDeleteServiceUrlParams
 import com.langchain.smith.models.sandboxes.boxes.BoxGenerateDownloadUrlParams
 import com.langchain.smith.models.sandboxes.boxes.BoxGenerateServiceUrlParams
 import com.langchain.smith.models.sandboxes.boxes.BoxUpdateParams
@@ -462,6 +463,18 @@ internal class BoxServiceTest {
 
     @Disabled("Mock server tests are disabled")
     @Test
+    fun deleteServiceUrl() {
+        val client =
+            LangsmithOkHttpClient.builder().apiKey("My API Key").tenantId("My Tenant ID").build()
+        val boxService = client.sandboxes().boxes()
+
+        boxService.deleteServiceUrl(
+            BoxDeleteServiceUrlParams.builder().name("name").port(0L).build()
+        )
+    }
+
+    @Disabled("Mock server tests are disabled")
+    @Test
     fun generateDownloadUrl() {
         val client =
             LangsmithOkHttpClient.builder().apiKey("My API Key").tenantId("My Tenant ID").build()
@@ -513,6 +526,18 @@ internal class BoxServiceTest {
         val sandboxStatusResponse = boxService.getStatus("name")
 
         sandboxStatusResponse.validate()
+    }
+
+    @Disabled("Mock server tests are disabled")
+    @Test
+    fun listServiceUrls() {
+        val client =
+            LangsmithOkHttpClient.builder().apiKey("My API Key").tenantId("My Tenant ID").build()
+        val boxService = client.sandboxes().boxes()
+
+        val page = boxService.listServiceUrls("name")
+
+        page.response().validate()
     }
 
     @Disabled("Mock server tests are disabled")

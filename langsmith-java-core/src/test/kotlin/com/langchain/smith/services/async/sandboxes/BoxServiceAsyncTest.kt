@@ -6,6 +6,7 @@ import com.langchain.smith.client.okhttp.LangsmithOkHttpClientAsync
 import com.langchain.smith.core.JsonValue
 import com.langchain.smith.models.sandboxes.boxes.BoxCreateParams
 import com.langchain.smith.models.sandboxes.boxes.BoxCreateSnapshotParams
+import com.langchain.smith.models.sandboxes.boxes.BoxDeleteServiceUrlParams
 import com.langchain.smith.models.sandboxes.boxes.BoxGenerateDownloadUrlParams
 import com.langchain.smith.models.sandboxes.boxes.BoxGenerateServiceUrlParams
 import com.langchain.smith.models.sandboxes.boxes.BoxUpdateParams
@@ -487,6 +488,24 @@ internal class BoxServiceAsyncTest {
 
     @Disabled("Mock server tests are disabled")
     @Test
+    fun deleteServiceUrl() {
+        val client =
+            LangsmithOkHttpClientAsync.builder()
+                .apiKey("My API Key")
+                .tenantId("My Tenant ID")
+                .build()
+        val boxServiceAsync = client.sandboxes().boxes()
+
+        val future =
+            boxServiceAsync.deleteServiceUrl(
+                BoxDeleteServiceUrlParams.builder().name("name").port(0L).build()
+            )
+
+        val response = future.get()
+    }
+
+    @Disabled("Mock server tests are disabled")
+    @Test
     fun generateDownloadUrl() {
         val client =
             LangsmithOkHttpClientAsync.builder()
@@ -550,6 +569,22 @@ internal class BoxServiceAsyncTest {
 
         val sandboxStatusResponse = sandboxStatusResponseFuture.get()
         sandboxStatusResponse.validate()
+    }
+
+    @Disabled("Mock server tests are disabled")
+    @Test
+    fun listServiceUrls() {
+        val client =
+            LangsmithOkHttpClientAsync.builder()
+                .apiKey("My API Key")
+                .tenantId("My Tenant ID")
+                .build()
+        val boxServiceAsync = client.sandboxes().boxes()
+
+        val pageFuture = boxServiceAsync.listServiceUrls("name")
+
+        val page = pageFuture.get()
+        page.response().validate()
     }
 
     @Disabled("Mock server tests are disabled")

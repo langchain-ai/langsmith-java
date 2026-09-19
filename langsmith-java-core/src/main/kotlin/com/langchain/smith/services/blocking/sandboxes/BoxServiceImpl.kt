@@ -26,11 +26,15 @@ import com.langchain.smith.models.sandboxes.SnapshotResponse
 import com.langchain.smith.models.sandboxes.boxes.BoxCreateParams
 import com.langchain.smith.models.sandboxes.boxes.BoxCreateSnapshotParams
 import com.langchain.smith.models.sandboxes.boxes.BoxDeleteParams
+import com.langchain.smith.models.sandboxes.boxes.BoxDeleteServiceUrlParams
 import com.langchain.smith.models.sandboxes.boxes.BoxGenerateDownloadUrlParams
 import com.langchain.smith.models.sandboxes.boxes.BoxGenerateServiceUrlParams
 import com.langchain.smith.models.sandboxes.boxes.BoxGetStatusParams
 import com.langchain.smith.models.sandboxes.boxes.BoxListPage
 import com.langchain.smith.models.sandboxes.boxes.BoxListParams
+import com.langchain.smith.models.sandboxes.boxes.BoxListServiceUrlsPage
+import com.langchain.smith.models.sandboxes.boxes.BoxListServiceUrlsPageResponse
+import com.langchain.smith.models.sandboxes.boxes.BoxListServiceUrlsParams
 import com.langchain.smith.models.sandboxes.boxes.BoxRetrieveParams
 import com.langchain.smith.models.sandboxes.boxes.BoxStartParams
 import com.langchain.smith.models.sandboxes.boxes.BoxStopParams
@@ -80,6 +84,14 @@ class BoxServiceImpl internal constructor(private val clientOptions: ClientOptio
         // post /api/v2/sandboxes/boxes/{name}/snapshot
         withRawResponse().createSnapshot(params, requestOptions).parse()
 
+    override fun deleteServiceUrl(
+        params: BoxDeleteServiceUrlParams,
+        requestOptions: RequestOptions,
+    ) {
+        // delete /api/v2/sandboxes/boxes/{name}/service-urls
+        withRawResponse().deleteServiceUrl(params, requestOptions)
+    }
+
     override fun generateDownloadUrl(
         params: BoxGenerateDownloadUrlParams,
         requestOptions: RequestOptions,
@@ -100,6 +112,13 @@ class BoxServiceImpl internal constructor(private val clientOptions: ClientOptio
     ): SandboxStatusResponse =
         // get /api/v2/sandboxes/boxes/{name}/status
         withRawResponse().getStatus(params, requestOptions).parse()
+
+    override fun listServiceUrls(
+        params: BoxListServiceUrlsParams,
+        requestOptions: RequestOptions,
+    ): BoxListServiceUrlsPage =
+        // get /api/v2/sandboxes/boxes/{name}/service-urls
+        withRawResponse().listServiceUrls(params, requestOptions).parse()
 
     override fun start(params: BoxStartParams, requestOptions: RequestOptions): SandboxResponse =
         // post /api/v2/sandboxes/boxes/{name}/start
@@ -305,6 +324,37 @@ class BoxServiceImpl internal constructor(private val clientOptions: ClientOptio
             }
         }
 
+        private val deleteServiceUrlHandler: Handler<Void?> = emptyHandler()
+
+        override fun deleteServiceUrl(
+            params: BoxDeleteServiceUrlParams,
+            requestOptions: RequestOptions,
+        ): HttpResponse {
+            // We check here instead of in the params builder because this can be specified
+            // positionally or in the params class.
+            checkRequired("name", params.name().getOrNull())
+            val request =
+                HttpRequest.builder()
+                    .method(HttpMethod.DELETE)
+                    .baseUrl(clientOptions.baseUrl())
+                    .addPathSegments(
+                        "api",
+                        "v2",
+                        "sandboxes",
+                        "boxes",
+                        params._pathParam(0),
+                        "service-urls",
+                    )
+                    .apply { params._body().ifPresent { body(json(clientOptions.jsonMapper, it)) } }
+                    .build()
+                    .prepare(clientOptions, params)
+            val requestOptions = requestOptions.applyDefaults(RequestOptions.from(clientOptions))
+            val response = clientOptions.httpClient.execute(request, requestOptions)
+            return errorHandler.handle(response).parseable {
+                response.use { deleteServiceUrlHandler.handle(it) }
+            }
+        }
+
         private val generateDownloadUrlHandler: Handler<DownloadUrlResponse> =
             jsonHandler<DownloadUrlResponse>(clientOptions.jsonMapper)
 
@@ -414,6 +464,50 @@ class BoxServiceImpl internal constructor(private val clientOptions: ClientOptio
                         if (requestOptions.responseValidation!!) {
                             it.validate()
                         }
+                    }
+            }
+        }
+
+        private val listServiceUrlsHandler: Handler<BoxListServiceUrlsPageResponse> =
+            jsonHandler<BoxListServiceUrlsPageResponse>(clientOptions.jsonMapper)
+
+        override fun listServiceUrls(
+            params: BoxListServiceUrlsParams,
+            requestOptions: RequestOptions,
+        ): HttpResponseFor<BoxListServiceUrlsPage> {
+            // We check here instead of in the params builder because this can be specified
+            // positionally or in the params class.
+            checkRequired("name", params.name().getOrNull())
+            val request =
+                HttpRequest.builder()
+                    .method(HttpMethod.GET)
+                    .baseUrl(clientOptions.baseUrl())
+                    .addPathSegments(
+                        "api",
+                        "v2",
+                        "sandboxes",
+                        "boxes",
+                        params._pathParam(0),
+                        "service-urls",
+                    )
+                    .build()
+                    .prepare(clientOptions, params)
+            val requestOptions = requestOptions.applyDefaults(RequestOptions.from(clientOptions))
+            val response = clientOptions.httpClient.execute(request, requestOptions)
+            return errorHandler.handle(response).parseable {
+                response
+                    .use { listServiceUrlsHandler.handle(it) }
+                    .also {
+                        if (requestOptions.responseValidation!!) {
+                            it.validate()
+                        }
+                    }
+                    .let {
+                        BoxListServiceUrlsPage.builder()
+                            .service(BoxServiceImpl(clientOptions))
+                            .params(params)
+                            .response(it)
+                            .build()
                     }
             }
         }
