@@ -1,5 +1,77 @@
 # Changelog
 
+## [0.1.0-beta.22](https://github.com/langchain-ai/langsmith-java/compare/v0.1.0-beta.21...v0.1.0-beta.22) (2026-07-31)
+
+
+### Chores
+
+* note light-review expectation on generated SDK release PRs ([#53](https://github.com/langchain-ai/langsmith-java/issues/53)) ([c9f5168](https://github.com/langchain-ai/langsmith-java/commit/c9f51683ce4f58d647eaf91dd3b70dbd70d12ce8))
+
+## [0.1.0-beta.21](https://github.com/langchain-ai/langsmith-java/compare/v0.1.0-beta.20...v0.1.0-beta.21) (2026-07-30)
+
+
+### Bug Fixes
+
+* **evaluation:** don't post comparative feedback without a session_id ([#52](https://github.com/langchain-ai/langsmith-java/issues/52)) ([714a32c](https://github.com/langchain-ai/langsmith-java/commit/714a32cc62b2528be49070d1477e50769aba9ab8))
+
+
+### Documentation
+
+* **feedback:** document session_id as required on feedback creation ([8abc50a](https://github.com/langchain-ai/langsmith-java/commit/8abc50af55b11c8f856ef3bdb89687f3c2a1821d))
+
+## [0.1.0-beta.20](https://github.com/langchain-ai/langsmith-java/compare/v0.1.0-beta.19...v0.1.0-beta.20) (2026-07-30)
+
+
+### Features
+
+* **annotation-queues:** rename items wire field session_id to project_id ([02f1aeb](https://github.com/langchain-ai/langsmith-java/commit/02f1aeb12c4ff72c3d234c79f8a7392266f4c627))
+* **backend:** allow storing markdown / text blocks as charts in /v1/charts/{...} endpoints ([06cdab2](https://github.com/langchain-ai/langsmith-java/commit/06cdab251930846bfa9d23cd9cc852ab5e5798eb))
+* expose annotation queue item APIs publicly [LSE-2550] ([2fdc70b](https://github.com/langchain-ai/langsmith-java/commit/2fdc70b11abf451eb0ac62772e99ef1deeb59cfb))
+* **smith-go:** declare v2 endpoints under /api/v2 in the OpenAPI spec ([5535473](https://github.com/langchain-ai/langsmith-java/commit/553547325fd5b245fe9aa1ca8ba72cb75e063904))
+
+
+### Bug Fixes
+
+* **annotation-queues:** document item endpoints at their served path ([02b1bda](https://github.com/langchain-ai/langsmith-java/commit/02b1bda78f9c719720103f0f408db37bcca947f8))
+* **evaluators:** show an evaluator's current name wherever it's attached [LSE-2687] ([3d2ec89](https://github.com/langchain-ai/langsmith-java/commit/3d2ec89e0436ba6bf48612ef239ca1d579a3adc4))
+* remove internal annotation queue API docs ([2c5d0dc](https://github.com/langchain-ai/langsmith-java/commit/2c5d0dcd28c4210c81879b5776f73d7610520648))
+* **runs:** restore optional session on public dataset stats endpoint ([b922c8e](https://github.com/langchain-ai/langsmith-java/commit/b922c8e220899972978256016e97e9245c6d0c9f))
+* strip a trailing /api or /api/v1 from the configured base URL ([#51](https://github.com/langchain-ai/langsmith-java/issues/51)) ([383fbdb](https://github.com/langchain-ai/langsmith-java/commit/383fbdb431a6360c5b94774c4a270e98f491e92d))
+* **threads:** make trace_id in list_traces respect the selects contract ([fd6269b](https://github.com/langchain-ai/langsmith-java/commit/fd6269b8655d49c24dbd6bc1fe6e9c460a8debd6))
+
+
+### Chores
+
+* **info:** remove legacy Python /info endpoint, serve from smith-go ([3d6f9eb](https://github.com/langchain-ai/langsmith-java/commit/3d6f9eb532da5526be9e9d12d0f619ca74fd9b32))
+
+## [0.1.0-beta.19](https://github.com/langchain-ai/langsmith-java/compare/v0.1.0-beta.18...v0.1.0-beta.19) (2026-07-23)
+
+
+### Features
+
+* **backend:** Allow storing grid layout to custom dashboards ([8aded40](https://github.com/langchain-ai/langsmith-java/commit/8aded40800f6096880f43d2ef51a07963dec65e5))
+* **backend:** update CRUD endpoint to allow retrieving / storing chart series metadata ([aa4be05](https://github.com/langchain-ai/langsmith-java/commit/aa4be05c111d702aa801cba4acbda69e0a5da7a6))
+* **host:** p50/p99 run queue wait-time chart in project monitoring [LSD-1547] ([f660828](https://github.com/langchain-ai/langsmith-java/commit/f6608288d483e0041c6e0fe643f6881f3c1a3a68))
+* **sandboxes:** free-form labels on sandboxes and snapshots ([6165434](https://github.com/langchain-ai/langsmith-java/commit/6165434d21025dfaeef22b4a63e31a0f0e4977a1))
+* **sandboxes:** let proxy rules contribute sandbox env vars ([eace8c3](https://github.com/langchain-ai/langsmith-java/commit/eace8c3f9903e180fc7e9cfbaf0a13a7a91a5635))
+
+
+### Bug Fixes
+
+* **evaluators:** persist and wire through playground_settings_id for llm-as-judge oauth models [part of ENT-1402] ([b072b2e](https://github.com/langchain-ai/langsmith-java/commit/b072b2e2fcf6dafd32cb0213e02127a82ab0659a))
+* **runs:** require session in POST /runs/stats ([056dbd3](https://github.com/langchain-ai/langsmith-java/commit/056dbd3673294fcd1fbc564d4332ba38c151ec6b))
+* support last_queued_at in v2 runs query ([e7fe407](https://github.com/langchain-ai/langsmith-java/commit/e7fe407f74819ac775fcc092289d9dcfaafc036d))
+
+
+### Reverts
+
+* **runs:** require session in POST /runs/stats ([95da1e9](https://github.com/langchain-ai/langsmith-java/commit/95da1e9b944058f30b5274c882f4669933b8bbfd))
+
+
+### Refactors
+
+* **runs:** remove SmithDB v2 endpoint flag [LSO-3391] ([aece72d](https://github.com/langchain-ai/langsmith-java/commit/aece72d035ca24eb8ee94236d301f7610b18eefc))
+
 ## [0.1.0-beta.18](https://github.com/langchain-ai/langsmith-java/compare/v0.1.0-beta.17...v0.1.0-beta.18) (2026-07-20)
 
 
