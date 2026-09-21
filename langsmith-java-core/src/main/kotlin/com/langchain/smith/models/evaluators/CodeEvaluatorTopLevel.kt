@@ -23,6 +23,7 @@ class CodeEvaluatorTopLevel
 private constructor(
     private val code: JsonField<String>,
     private val language: JsonField<Language>,
+    private val requireAttachments: JsonField<Boolean>,
     private val additionalProperties: MutableMap<String, JsonValue>,
 ) {
 
@@ -30,7 +31,10 @@ private constructor(
     private constructor(
         @JsonProperty("code") @ExcludeMissing code: JsonField<String> = JsonMissing.of(),
         @JsonProperty("language") @ExcludeMissing language: JsonField<Language> = JsonMissing.of(),
-    ) : this(code, language, mutableMapOf())
+        @JsonProperty("require_attachments")
+        @ExcludeMissing
+        requireAttachments: JsonField<Boolean> = JsonMissing.of(),
+    ) : this(code, language, requireAttachments, mutableMapOf())
 
     /**
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type or is
@@ -45,6 +49,13 @@ private constructor(
     fun language(): Optional<Language> = language.getOptional("language")
 
     /**
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
+    fun requireAttachments(): Optional<Boolean> =
+        requireAttachments.getOptional("require_attachments")
+
+    /**
      * Returns the raw JSON value of [code].
      *
      * Unlike [code], this method doesn't throw if the JSON field has an unexpected type.
@@ -57,6 +68,16 @@ private constructor(
      * Unlike [language], this method doesn't throw if the JSON field has an unexpected type.
      */
     @JsonProperty("language") @ExcludeMissing fun _language(): JsonField<Language> = language
+
+    /**
+     * Returns the raw JSON value of [requireAttachments].
+     *
+     * Unlike [requireAttachments], this method doesn't throw if the JSON field has an unexpected
+     * type.
+     */
+    @JsonProperty("require_attachments")
+    @ExcludeMissing
+    fun _requireAttachments(): JsonField<Boolean> = requireAttachments
 
     @JsonAnySetter
     private fun putAdditionalProperty(key: String, value: JsonValue) {
@@ -88,12 +109,14 @@ private constructor(
 
         private var code: JsonField<String>? = null
         private var language: JsonField<Language> = JsonMissing.of()
+        private var requireAttachments: JsonField<Boolean> = JsonMissing.of()
         private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
 
         @JvmSynthetic
         internal fun from(codeEvaluatorTopLevel: CodeEvaluatorTopLevel) = apply {
             code = codeEvaluatorTopLevel.code
             language = codeEvaluatorTopLevel.language
+            requireAttachments = codeEvaluatorTopLevel.requireAttachments
             additionalProperties = codeEvaluatorTopLevel.additionalProperties.toMutableMap()
         }
 
@@ -120,6 +143,20 @@ private constructor(
          * value.
          */
         fun language(language: JsonField<Language>) = apply { this.language = language }
+
+        fun requireAttachments(requireAttachments: Boolean) =
+            requireAttachments(JsonField.of(requireAttachments))
+
+        /**
+         * Sets [Builder.requireAttachments] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.requireAttachments] with a well-typed [Boolean] value
+         * instead. This method is primarily for setting the field to an undocumented or not yet
+         * supported value.
+         */
+        fun requireAttachments(requireAttachments: JsonField<Boolean>) = apply {
+            this.requireAttachments = requireAttachments
+        }
 
         fun additionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
             this.additionalProperties.clear()
@@ -156,6 +193,7 @@ private constructor(
             CodeEvaluatorTopLevel(
                 checkRequired("code", code),
                 language,
+                requireAttachments,
                 additionalProperties.toMutableMap(),
             )
     }
@@ -177,6 +215,7 @@ private constructor(
 
         code()
         language().ifPresent { it.validate() }
+        requireAttachments()
         validated = true
     }
 
@@ -195,7 +234,9 @@ private constructor(
      */
     @JvmSynthetic
     internal fun validity(): Int =
-        (if (code.asKnown().isPresent) 1 else 0) + (language.asKnown().getOrNull()?.validity() ?: 0)
+        (if (code.asKnown().isPresent) 1 else 0) +
+            (language.asKnown().getOrNull()?.validity() ?: 0) +
+            (if (requireAttachments.asKnown().isPresent) 1 else 0)
 
     class Language @JsonCreator private constructor(private val value: JsonField<String>) : Enum {
 
@@ -341,13 +382,16 @@ private constructor(
         return other is CodeEvaluatorTopLevel &&
             code == other.code &&
             language == other.language &&
+            requireAttachments == other.requireAttachments &&
             additionalProperties == other.additionalProperties
     }
 
-    private val hashCode: Int by lazy { Objects.hash(code, language, additionalProperties) }
+    private val hashCode: Int by lazy {
+        Objects.hash(code, language, requireAttachments, additionalProperties)
+    }
 
     override fun hashCode(): Int = hashCode
 
     override fun toString() =
-        "CodeEvaluatorTopLevel{code=$code, language=$language, additionalProperties=$additionalProperties}"
+        "CodeEvaluatorTopLevel{code=$code, language=$language, requireAttachments=$requireAttachments, additionalProperties=$additionalProperties}"
 }

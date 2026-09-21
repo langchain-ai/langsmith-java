@@ -15,10 +15,12 @@ internal class CodeEvaluatorTopLevelTest {
             CodeEvaluatorTopLevel.builder()
                 .code("code")
                 .language(CodeEvaluatorTopLevel.Language.PYTHON)
+                .requireAttachments(true)
                 .build()
 
         assertThat(codeEvaluatorTopLevel.code()).isEqualTo("code")
         assertThat(codeEvaluatorTopLevel.language()).contains(CodeEvaluatorTopLevel.Language.PYTHON)
+        assertThat(codeEvaluatorTopLevel.requireAttachments()).contains(true)
     }
 
     @Test
@@ -28,6 +30,7 @@ internal class CodeEvaluatorTopLevelTest {
             CodeEvaluatorTopLevel.builder()
                 .code("code")
                 .language(CodeEvaluatorTopLevel.Language.PYTHON)
+                .requireAttachments(true)
                 .build()
 
         val roundtrippedCodeEvaluatorTopLevel =
