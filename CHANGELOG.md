@@ -1,5 +1,99 @@
 # Changelog
 
+## [0.1.0-beta.23](https://github.com/langchain-ai/langsmith-java/compare/v0.1.0-beta.22...v0.1.0-beta.23) (2026-09-21)
+
+
+### ⚠ BREAKING CHANGES
+
+* **projects:** remove trajectory_evaluators field from project schemas
+* **evaluators:** add advanced_features_enabled, remove workspace_secrets_keys
+* **threads:** remove conversations, make share_token optional, add SSE
+* **sessions:** add trajectory_evaluators field and make it non-nullable
+
+### Features
+
+* add "sum" aggregation type to chart config ([2f7f047](https://github.com/langchain-ai/langsmith-java/commit/2f7f047ee4ca785c9667f07c67e26d1ba13760b5))
+* add granularity query parameter to usage metrics endpoint ([3f5545d](https://github.com/langchain-ai/langsmith-java/commit/3f5545db059130459bfc0b448beb50f172d2eef6))
+* add trajectory_evaluators field to experiment config ([4e01fdc](https://github.com/langchain-ai/langsmith-java/commit/4e01fdc1687abe98cbe6932792e8325a26b57442))
+* **annotation-queues:** add min_start_time and max_start_time filters to list items ([8885359](https://github.com/langchain-ai/langsmith-java/commit/8885359bbb86d1b779207bd57f6b80d75fa657a4))
+* **annotation-queues:** add trace start-time filters to items count ([7d29d7a](https://github.com/langchain-ai/langsmith-java/commit/7d29d7a923e387dcbae27831924568a5a1a9c0c3))
+* **dashboards:** attach v1→v2 chart conversion preview once per chart instead of per series ([42bd2aa](https://github.com/langchain-ai/langsmith-java/commit/42bd2aa016491c0c4fade559020d4382c998429c))
+* **datasets:** return source thread id on examples ([3bfa73c](https://github.com/langchain-ai/langsmith-java/commit/3bfa73c55087c0fec1e3e8d67f61d233de8ea87b))
+* **engine:** answerable auto-resolution prompts, and a task that closes on verdicts ([16292b0](https://github.com/langchain-ai/langsmith-java/commit/16292b0933df2d7884cf9fc2200c54f93b2d62da))
+* **evaluators:** add advanced_features_enabled, remove workspace_secrets_keys ([fbc65eb](https://github.com/langchain-ai/langsmith-java/commit/fbc65ebbd96962c2e9f630b56555d35b42f02d67))
+* **evaluators:** add agent_id filter parameter to list endpoint ([f3f64a2](https://github.com/langchain-ai/langsmith-java/commit/f3f64a2a66fbd1282c78c0a6efa395519c04d58c))
+* **evaluators:** add dependencies and workspace_secrets_keys fields ([ecc15f8](https://github.com/langchain-ai/langsmith-java/commit/ecc15f8b891691dd303886ea2487fda23d89d968))
+* **evaluators:** add dependencies, build status, and workspace secrets fields ([b958097](https://github.com/langchain-ai/langsmith-java/commit/b9580975e64522f5710870a04e3f6119a201849e))
+* **evaluators:** add managed code evaluator key and settings fields ([0f4d259](https://github.com/langchain-ai/langsmith-java/commit/0f4d259e5b84dd8ff90f51269916594516b7f7e4))
+* **evaluators:** add require_attachments field to evaluator schemas ([6f49ba5](https://github.com/langchain-ai/langsmith-java/commit/6f49ba57466ab310497cdf07cf7e3b5bb779fc42))
+* **feedback:** add optional regex_validator field to feedback schema ([01a4a2c](https://github.com/langchain-ai/langsmith-java/commit/01a4a2c2a71813fc015928ff0d2f0fc8d04074ac))
+* **info:** add billing_installation_id field to instance info response ([1e57226](https://github.com/langchain-ai/langsmith-java/commit/1e57226c23fabe1cc919e5ddcd47ddeb8a75c5bc))
+* **insights:** add list, update, and delete methods for job configs ([6148d13](https://github.com/langchain-ai/langsmith-java/commit/6148d13d038f8a32463e87776ed329944b654d6a))
+* **insights:** map insights configs create endpoint to SDK resource ([c6db960](https://github.com/langchain-ai/langsmith-java/commit/c6db960b80f39b6a2d15b40f810cf26d5074461b))
+* **issues:** add activity, severity_exact filters and sort_by options ([53cf175](https://github.com/langchain-ai/langsmith-java/commit/53cf1757b17a8c65d9caccf8f0ab0088e1c79c83))
+* **issues:** add include_linear_context param and LinearContext response field ([5054b35](https://github.com/langchain-ai/langsmith-java/commit/5054b3536a2eb1b92067b9f2a8a8f2f099b50683))
+* **issues:** add Linear integration fields to issue board responses ([9577baf](https://github.com/langchain-ai/langsmith-java/commit/9577baf0f4caad9a9f7fbdea43d5cdcd2e84e125))
+* **issues:** add trace_id filter to list issues endpoint ([2b4fa82](https://github.com/langchain-ai/langsmith-java/commit/2b4fa8240b94e0f49cd3cbc61b523638f9a98402))
+* **issues:** add validation_deployment_id, validation_result fields ([0806917](https://github.com/langchain-ai/langsmith-java/commit/080691753939dbbdc2a5a13f8062c82387022d73))
+* **obs:** add feedback count to CRUD pane ([6d187be](https://github.com/langchain-ai/langsmith-java/commit/6d187be5a6b929c7bd9466d91d6357b717923dec))
+* **product-feedback:** add submit and retrieve product feedback endpoints ([1d01bec](https://github.com/langchain-ai/langsmith-java/commit/1d01becf974f0fa81aa801029072f17b55898c68))
+* **registries:** add provider and repository_search_mode fields ([2ae6024](https://github.com/langchain-ai/langsmith-java/commit/2ae6024e052c55d716131aa053484623f2fb297a))
+* **repos:** add typed directory entry and selector models ([f22c297](https://github.com/langchain-ai/langsmith-java/commit/f22c2970a96dbdeefaf0b0dd51d3b6cd998ce808))
+* **runs:** add ls_user_id field and LS_USER_ID select enum value ([8c91b51](https://github.com/langchain-ai/langsmith-java/commit/8c91b517f54046f650c22683d52ae377aa37b6e9))
+* **runs:** add trace_filter and tree_filter query parameters ([2285d98](https://github.com/langchain-ai/langsmith-java/commit/2285d9815d761696a87d6e003a8d4bc899428995))
+* **runs:** add trajectory_id as a valid group_by value ([c8568ec](https://github.com/langchain-ai/langsmith-java/commit/c8568ec3ac8594192f33b8750814ca144eb6df7d))
+* **sandbox:** add hand-written Java sandbox client ([#54](https://github.com/langchain-ai/langsmith-java/issues/54)) ([b5ee963](https://github.com/langchain-ai/langsmith-java/commit/b5ee963b8a49e989db98c17fc01ef00760bd4955))
+* **sandboxes:** add access field to service-url for durable LangSmith login mode ([fd514c4](https://github.com/langchain-ai/langsmith-java/commit/fd514c44672d0dee3219f4c5c7ef7b82752f9f3f))
+* **sandboxes:** add access_delegation field to sandbox create and response ([292b1d9](https://github.com/langchain-ai/langsmith-java/commit/292b1d9508c6c4b1fd86d7d5a4b5b2a2619c86b8))
+* **sandboxes:** add AWS IAM role auth fields to registry create and update ([448f462](https://github.com/langchain-ai/langsmith-java/commit/448f462ca5d21e5818cb808986dbf29082f23931))
+* **sandboxes:** add csp_sandbox_flags and csp_source_bundles to download-url ([fd08488](https://github.com/langchain-ai/langsmith-java/commit/fd084885f7f99d849e4b71018134374ca0f1ccc9))
+* **sandboxes:** add cursor pagination and sort_order to sandbox list ([7f49284](https://github.com/langchain-ai/langsmith-java/commit/7f49284585a8d784bfb743db5882ac65baa002b6))
+* **sandboxes:** add cursor pagination and sort_order to snapshot list ([49f9b1b](https://github.com/langchain-ai/langsmith-java/commit/49f9b1b56810b4ca46b970563729d2e4a6a8f329))
+* **sandboxes:** add delegated_from_sandbox_id field to audit log context ([6eb1f31](https://github.com/langchain-ai/langsmith-java/commit/6eb1f3189d6e315f633f6860ce9b661c99d51858))
+* **sandboxes:** add description field to snapshots and proxy config ([7e6d27f](https://github.com/langchain-ai/langsmith-java/commit/7e6d27f04321dcd5b9dbd3c71bf1eac5ba443e49))
+* **sandboxes:** add generate_download_url method for sandbox files ([d90b82b](https://github.com/langchain-ai/langsmith-java/commit/d90b82bec1a12e41999e8c3f39e6acf865f7e44c))
+* **sandboxes:** add IAM role auth config variants for AWS proxy and mounts ([c2cbdd1](https://github.com/langchain-ai/langsmith-java/commit/c2cbdd18db7c843ef85b04ecf831082e58b2cbe8))
+* **sandboxes:** add list and delete service URL sharing endpoints ([95cb327](https://github.com/langchain-ai/langsmith-java/commit/95cb327a045e60fa2911b1066eabdbcf7fa435fb))
+* **sandboxes:** add list_usage_costs endpoint for hourly sandbox costs ([019e3e5](https://github.com/langchain-ai/langsmith-java/commit/019e3e5a54efe3d2df3e53f0cca3f8f990e64a2a))
+* **sandboxes:** add run_config to sandbox, snapshot, and exec command schemas ([fb88daf](https://github.com/langchain-ai/langsmith-java/commit/fb88daf4f32a10b6f6219093afac847c8d2e05de))
+* **sandboxes:** Docker-style tags, names, and permissions for snapshots ([7a2d4f0](https://github.com/langchain-ai/langsmith-java/commit/7a2d4f0bb3a9e88171ae264392cadb11db21bbff))
+* **sessions:** add trajectory_evaluators field and make it non-nullable ([33dd3d1](https://github.com/langchain-ai/langsmith-java/commit/33dd3d17e3918a3f4d97b7dac05c9adc1a73cc8b))
+* **threads:** add aggregate thread stats endpoint ([1bb023e](https://github.com/langchain-ai/langsmith-java/commit/1bb023e86afd5520980845aa8d22839b31e62e9b))
+* **threads:** add filter field to query thread stats request ([aed609f](https://github.com/langchain-ai/langsmith-java/commit/aed609f0cba25e37c7144ab12fb32458e3d25e25))
+* **threads:** add sandbox activation endpoint ([50baee0](https://github.com/langchain-ai/langsmith-java/commit/50baee03e5265c6f2a7674234369ec91fc0d25cd))
+* **threads:** add support for tree, trace, and thread filter in /v2/threads/query ([2ca4b84](https://github.com/langchain-ai/langsmith-java/commit/2ca4b841491fd11d6cd7e929ed409d2fd88d95f1))
+* **threads:** add turn_number field and TURN_NUMBER select option to thread traces ([bcb8613](https://github.com/langchain-ai/langsmith-java/commit/bcb8613c96d0b2caee5bbd3efa12b6b6e839961e))
+* **threadshare:** add thread share mint, revoke, and read-state [LSO-3432] ([2e09757](https://github.com/langchain-ai/langsmith-java/commit/2e09757ee235c0e0c1c0ae5c1241ec3ab824d8f6))
+* **threads:** remove conversations, make share_token optional, add SSE ([5bc8fa0](https://github.com/langchain-ai/langsmith-java/commit/5bc8fa0b54cf66fa71cdf78357f32a5a185602e4))
+
+
+### Bug Fixes
+
+* build, lint, and test failures (feat(secrets): add read_org_encrypted_secrets permission scope) ([515d29b](https://github.com/langchain-ai/langsmith-java/commit/515d29b6c3d8e98404bbceaf87371c3b27113cd5))
+* constrain vulnerable buildscript dependencies ([#57](https://github.com/langchain-ai/langsmith-java/issues/57)) ([ff4fc75](https://github.com/langchain-ai/langsmith-java/commit/ff4fc7546f8550922ced1af06d96fca1347d8499))
+* **evaluators:** scope spend/traces/limits to the selected application [LSE-2754] ([b3a8274](https://github.com/langchain-ai/langsmith-java/commit/b3a827473ec6088a080562d1a7fd225c4179deaa))
+* **fleet:** route agent delete through the platform directories route [AB-3257] ([28251aa](https://github.com/langchain-ai/langsmith-java/commit/28251aa4dd1d96fbd981b13d2ed62a820dc4c354))
+* patch August Dependabot alerts ([#56](https://github.com/langchain-ai/langsmith-java/issues/56)) ([e0560a9](https://github.com/langchain-ai/langsmith-java/commit/e0560a98bbdecd9b1419a8901ef0c5c32ea13970))
+* patch Tomcat vulnerabilities in Spring Boot example ([#58](https://github.com/langchain-ai/langsmith-java/issues/58)) ([2c09ebd](https://github.com/langchain-ai/langsmith-java/commit/2c09ebd3982583b4883e42e3ad9e04ff4d14c265))
+* **projects:** remove trajectory_evaluators field from project schemas ([351ca7f](https://github.com/langchain-ai/langsmith-java/commit/351ca7f3c00b2692f0ba9bc7b62e384b8f9787eb))
+* **sandboxes:** warn on memory-per-vCPU ratio violations and widen the tolerance ([964a0a6](https://github.com/langchain-ai/langsmith-java/commit/964a0a6b26866c01be9f9053d2bb0cb3f8be9944))
+
+
+### Chores
+
+* annotate share_tokens items with uuid format ([2cc50c6](https://github.com/langchain-ai/langsmith-java/commit/2cc50c669546e58c305b45dda77840ed6d736e9c))
+* **evaluators:** update delete and patch endpoint descriptions ([4183d02](https://github.com/langchain-ai/langsmith-java/commit/4183d028d5c211c39245ad6c4bd391e2eb05d85e))
+* regenerate from spec description updates ([627e1f6](https://github.com/langchain-ai/langsmith-java/commit/627e1f60633e660a6805c48e1e886b26090b3dbd))
+* **sandboxes:** update snapshot endpoint descriptions ([52d2cab](https://github.com/langchain-ai/langsmith-java/commit/52d2cab0b567cff298a0184cbdd4464c6aee95a9))
+* update deprecation notice URLs for runs and datasets migration guides ([4ee5bed](https://github.com/langchain-ai/langsmith-java/commit/4ee5bed7023903ca767744a8f33fcc82706d7bb9))
+* update evaluator description text to use "Tuned Evaluators ([ee31f23](https://github.com/langchain-ai/langsmith-java/commit/ee31f23856ae630a141a9511fcc55649f8314568))
+* update offset parameter description to note 100000 limit ([d8a2653](https://github.com/langchain-ai/langsmith-java/commit/d8a265393896e8c0e7312bb40a2857c8e1e39165))
+
+
+### Documentation
+
+* refresh CONTRIBUTING for the staging/production contribution flow ([#55](https://github.com/langchain-ai/langsmith-java/issues/55)) ([aec05cf](https://github.com/langchain-ai/langsmith-java/commit/aec05cf5f7041fee736b89ad610ca34c1780911e))
+
 ## [0.1.0-beta.22](https://github.com/langchain-ai/langsmith-java/compare/v0.1.0-beta.21...v0.1.0-beta.22) (2026-07-31)
 
 
