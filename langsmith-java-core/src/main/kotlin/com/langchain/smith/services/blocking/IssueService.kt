@@ -61,7 +61,7 @@ interface IssueService {
      * **Beta:** This endpoint is in active development and may change without notice.
      *
      * Returns issues for the authenticated tenant, optionally filtered by session, status,
-     * severity, tag, or last modified time.
+     * severity, tag, linked trace, or last modified time.
      */
     fun list(): IssueListPage = list(IssueListParams.none())
 

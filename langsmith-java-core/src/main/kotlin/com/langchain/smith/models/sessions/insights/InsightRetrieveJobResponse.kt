@@ -20,7 +20,7 @@ import java.util.Objects
 import java.util.Optional
 import kotlin.jvm.optionals.getOrNull
 
-/** Response to get a specific cluster job for a session. */
+/** An Insights job and the report it produced. */
 class InsightRetrieveJobResponse
 @JsonCreator(mode = JsonCreator.Mode.DISABLED)
 private constructor(
@@ -132,7 +132,7 @@ private constructor(
     fun metadata(): Optional<Metadata> = metadata.getOptional("metadata")
 
     /**
-     * High level summary of an insights job that pulls out patterns and specific traces.
+     * High-level summary of an Insights report with patterns and specific traces.
      *
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
@@ -422,7 +422,7 @@ private constructor(
          */
         fun metadata(metadata: JsonField<Metadata>) = apply { this.metadata = metadata }
 
-        /** High level summary of an insights job that pulls out patterns and specific traces. */
+        /** High-level summary of an Insights report with patterns and specific traces. */
         fun report(report: Report?) = report(JsonField.ofNullable(report))
 
         /** Alias for calling [Builder.report] with `report.orElse(null)`. */
@@ -1229,7 +1229,7 @@ private constructor(
         override fun toString() = "Metadata{additionalProperties=$additionalProperties}"
     }
 
-    /** High level summary of an insights job that pulls out patterns and specific traces. */
+    /** High-level summary of an Insights report with patterns and specific traces. */
     class Report
     @JsonCreator(mode = JsonCreator.Mode.DISABLED)
     private constructor(
@@ -1509,7 +1509,7 @@ private constructor(
                 (keyPoints.asKnown().getOrNull()?.size ?: 0) +
                 (if (title.asKnown().isPresent) 1 else 0)
 
-        /** A trace highlighted in an insights report summary. Up to 10 per insights job. */
+        /** A trace highlighted in an Insights report summary. Up to 10 per report. */
         class HighlightedTrace
         @JsonCreator(mode = JsonCreator.Mode.DISABLED)
         private constructor(

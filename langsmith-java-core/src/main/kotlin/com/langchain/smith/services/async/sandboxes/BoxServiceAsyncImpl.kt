@@ -17,6 +17,7 @@ import com.langchain.smith.core.http.HttpResponseFor
 import com.langchain.smith.core.http.json
 import com.langchain.smith.core.http.parseable
 import com.langchain.smith.core.prepareAsync
+import com.langchain.smith.models.sandboxes.DownloadUrlResponse
 import com.langchain.smith.models.sandboxes.SandboxListResponse
 import com.langchain.smith.models.sandboxes.SandboxResponse
 import com.langchain.smith.models.sandboxes.SandboxStatusResponse
@@ -25,9 +26,15 @@ import com.langchain.smith.models.sandboxes.SnapshotResponse
 import com.langchain.smith.models.sandboxes.boxes.BoxCreateParams
 import com.langchain.smith.models.sandboxes.boxes.BoxCreateSnapshotParams
 import com.langchain.smith.models.sandboxes.boxes.BoxDeleteParams
+import com.langchain.smith.models.sandboxes.boxes.BoxDeleteServiceUrlParams
+import com.langchain.smith.models.sandboxes.boxes.BoxGenerateDownloadUrlParams
 import com.langchain.smith.models.sandboxes.boxes.BoxGenerateServiceUrlParams
 import com.langchain.smith.models.sandboxes.boxes.BoxGetStatusParams
+import com.langchain.smith.models.sandboxes.boxes.BoxListPageAsync
 import com.langchain.smith.models.sandboxes.boxes.BoxListParams
+import com.langchain.smith.models.sandboxes.boxes.BoxListServiceUrlsPageAsync
+import com.langchain.smith.models.sandboxes.boxes.BoxListServiceUrlsPageResponse
+import com.langchain.smith.models.sandboxes.boxes.BoxListServiceUrlsParams
 import com.langchain.smith.models.sandboxes.boxes.BoxRetrieveParams
 import com.langchain.smith.models.sandboxes.boxes.BoxStartParams
 import com.langchain.smith.models.sandboxes.boxes.BoxStopParams
@@ -72,7 +79,7 @@ class BoxServiceAsyncImpl internal constructor(private val clientOptions: Client
     override fun list(
         params: BoxListParams,
         requestOptions: RequestOptions,
-    ): CompletableFuture<SandboxListResponse> =
+    ): CompletableFuture<BoxListPageAsync> =
         // get /api/v2/sandboxes/boxes
         withRawResponse().list(params, requestOptions).thenApply { it.parse() }
 
@@ -90,6 +97,20 @@ class BoxServiceAsyncImpl internal constructor(private val clientOptions: Client
         // post /api/v2/sandboxes/boxes/{name}/snapshot
         withRawResponse().createSnapshot(params, requestOptions).thenApply { it.parse() }
 
+    override fun deleteServiceUrl(
+        params: BoxDeleteServiceUrlParams,
+        requestOptions: RequestOptions,
+    ): CompletableFuture<Void?> =
+        // delete /api/v2/sandboxes/boxes/{name}/service-urls
+        withRawResponse().deleteServiceUrl(params, requestOptions).thenAccept {}
+
+    override fun generateDownloadUrl(
+        params: BoxGenerateDownloadUrlParams,
+        requestOptions: RequestOptions,
+    ): CompletableFuture<DownloadUrlResponse> =
+        // post /api/v2/sandboxes/boxes/{name}/download-url
+        withRawResponse().generateDownloadUrl(params, requestOptions).thenApply { it.parse() }
+
     override fun generateServiceUrl(
         params: BoxGenerateServiceUrlParams,
         requestOptions: RequestOptions,
@@ -103,6 +124,13 @@ class BoxServiceAsyncImpl internal constructor(private val clientOptions: Client
     ): CompletableFuture<SandboxStatusResponse> =
         // get /api/v2/sandboxes/boxes/{name}/status
         withRawResponse().getStatus(params, requestOptions).thenApply { it.parse() }
+
+    override fun listServiceUrls(
+        params: BoxListServiceUrlsParams,
+        requestOptions: RequestOptions,
+    ): CompletableFuture<BoxListServiceUrlsPageAsync> =
+        // get /api/v2/sandboxes/boxes/{name}/service-urls
+        withRawResponse().listServiceUrls(params, requestOptions).thenApply { it.parse() }
 
     override fun start(
         params: BoxStartParams,
@@ -235,7 +263,7 @@ class BoxServiceAsyncImpl internal constructor(private val clientOptions: Client
         override fun list(
             params: BoxListParams,
             requestOptions: RequestOptions,
-        ): CompletableFuture<HttpResponseFor<SandboxListResponse>> {
+        ): CompletableFuture<HttpResponseFor<BoxListPageAsync>> {
             val request =
                 HttpRequest.builder()
                     .method(HttpMethod.GET)
@@ -254,6 +282,14 @@ class BoxServiceAsyncImpl internal constructor(private val clientOptions: Client
                                 if (requestOptions.responseValidation!!) {
                                     it.validate()
                                 }
+                            }
+                            .let {
+                                BoxListPageAsync.builder()
+                                    .service(BoxServiceAsyncImpl(clientOptions))
+                                    .streamHandlerExecutor(clientOptions.streamHandlerExecutor)
+                                    .params(params)
+                                    .response(it)
+                                    .build()
                             }
                     }
                 }
@@ -318,6 +354,81 @@ class BoxServiceAsyncImpl internal constructor(private val clientOptions: Client
                     errorHandler.handle(response).parseable {
                         response
                             .use { createSnapshotHandler.handle(it) }
+                            .also {
+                                if (requestOptions.responseValidation!!) {
+                                    it.validate()
+                                }
+                            }
+                    }
+                }
+        }
+
+        private val deleteServiceUrlHandler: Handler<Void?> = emptyHandler()
+
+        override fun deleteServiceUrl(
+            params: BoxDeleteServiceUrlParams,
+            requestOptions: RequestOptions,
+        ): CompletableFuture<HttpResponse> {
+            // We check here instead of in the params builder because this can be specified
+            // positionally or in the params class.
+            checkRequired("name", params.name().getOrNull())
+            val request =
+                HttpRequest.builder()
+                    .method(HttpMethod.DELETE)
+                    .baseUrl(clientOptions.baseUrl())
+                    .addPathSegments(
+                        "api",
+                        "v2",
+                        "sandboxes",
+                        "boxes",
+                        params._pathParam(0),
+                        "service-urls",
+                    )
+                    .apply { params._body().ifPresent { body(json(clientOptions.jsonMapper, it)) } }
+                    .build()
+                    .prepareAsync(clientOptions, params)
+            val requestOptions = requestOptions.applyDefaults(RequestOptions.from(clientOptions))
+            return request
+                .thenComposeAsync { clientOptions.httpClient.executeAsync(it, requestOptions) }
+                .thenApply { response ->
+                    errorHandler.handle(response).parseable {
+                        response.use { deleteServiceUrlHandler.handle(it) }
+                    }
+                }
+        }
+
+        private val generateDownloadUrlHandler: Handler<DownloadUrlResponse> =
+            jsonHandler<DownloadUrlResponse>(clientOptions.jsonMapper)
+
+        override fun generateDownloadUrl(
+            params: BoxGenerateDownloadUrlParams,
+            requestOptions: RequestOptions,
+        ): CompletableFuture<HttpResponseFor<DownloadUrlResponse>> {
+            // We check here instead of in the params builder because this can be specified
+            // positionally or in the params class.
+            checkRequired("name", params.name().getOrNull())
+            val request =
+                HttpRequest.builder()
+                    .method(HttpMethod.POST)
+                    .baseUrl(clientOptions.baseUrl())
+                    .addPathSegments(
+                        "api",
+                        "v2",
+                        "sandboxes",
+                        "boxes",
+                        params._pathParam(0),
+                        "download-url",
+                    )
+                    .body(json(clientOptions.jsonMapper, params._body()))
+                    .build()
+                    .prepareAsync(clientOptions, params)
+            val requestOptions = requestOptions.applyDefaults(RequestOptions.from(clientOptions))
+            return request
+                .thenComposeAsync { clientOptions.httpClient.executeAsync(it, requestOptions) }
+                .thenApply { response ->
+                    errorHandler.handle(response).parseable {
+                        response
+                            .use { generateDownloadUrlHandler.handle(it) }
                             .also {
                                 if (requestOptions.responseValidation!!) {
                                     it.validate()
@@ -403,6 +514,54 @@ class BoxServiceAsyncImpl internal constructor(private val clientOptions: Client
                                 if (requestOptions.responseValidation!!) {
                                     it.validate()
                                 }
+                            }
+                    }
+                }
+        }
+
+        private val listServiceUrlsHandler: Handler<BoxListServiceUrlsPageResponse> =
+            jsonHandler<BoxListServiceUrlsPageResponse>(clientOptions.jsonMapper)
+
+        override fun listServiceUrls(
+            params: BoxListServiceUrlsParams,
+            requestOptions: RequestOptions,
+        ): CompletableFuture<HttpResponseFor<BoxListServiceUrlsPageAsync>> {
+            // We check here instead of in the params builder because this can be specified
+            // positionally or in the params class.
+            checkRequired("name", params.name().getOrNull())
+            val request =
+                HttpRequest.builder()
+                    .method(HttpMethod.GET)
+                    .baseUrl(clientOptions.baseUrl())
+                    .addPathSegments(
+                        "api",
+                        "v2",
+                        "sandboxes",
+                        "boxes",
+                        params._pathParam(0),
+                        "service-urls",
+                    )
+                    .build()
+                    .prepareAsync(clientOptions, params)
+            val requestOptions = requestOptions.applyDefaults(RequestOptions.from(clientOptions))
+            return request
+                .thenComposeAsync { clientOptions.httpClient.executeAsync(it, requestOptions) }
+                .thenApply { response ->
+                    errorHandler.handle(response).parseable {
+                        response
+                            .use { listServiceUrlsHandler.handle(it) }
+                            .also {
+                                if (requestOptions.responseValidation!!) {
+                                    it.validate()
+                                }
+                            }
+                            .let {
+                                BoxListServiceUrlsPageAsync.builder()
+                                    .service(BoxServiceAsyncImpl(clientOptions))
+                                    .streamHandlerExecutor(clientOptions.streamHandlerExecutor)
+                                    .params(params)
+                                    .response(it)
+                                    .build()
                             }
                     }
                 }

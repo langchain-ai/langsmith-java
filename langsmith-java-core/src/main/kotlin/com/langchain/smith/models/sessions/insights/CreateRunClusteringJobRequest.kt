@@ -20,7 +20,7 @@ import java.util.Objects
 import java.util.Optional
 import kotlin.jvm.optionals.getOrNull
 
-/** Request to create a run clustering job. */
+/** Configuration for an Insights job. */
 class CreateRunClusteringJobRequest
 @JsonCreator(mode = JsonCreator.Mode.DISABLED)
 private constructor(

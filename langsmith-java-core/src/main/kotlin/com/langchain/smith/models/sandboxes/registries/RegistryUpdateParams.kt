@@ -6,6 +6,7 @@ import com.fasterxml.jackson.annotation.JsonAnyGetter
 import com.fasterxml.jackson.annotation.JsonAnySetter
 import com.fasterxml.jackson.annotation.JsonCreator
 import com.fasterxml.jackson.annotation.JsonProperty
+import com.langchain.smith.core.Enum
 import com.langchain.smith.core.ExcludeMissing
 import com.langchain.smith.core.JsonField
 import com.langchain.smith.core.JsonMissing
@@ -34,6 +35,18 @@ private constructor(
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
      */
+    fun authType(): Optional<AuthType> = body.authType()
+
+    /**
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
+    fun awsRoleArn(): Optional<String> = body.awsRoleArn()
+
+    /**
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
     fun bodyName(): Optional<String> = body.bodyName()
 
     /**
@@ -53,6 +66,20 @@ private constructor(
      *   server responded with an unexpected value).
      */
     fun username(): Optional<String> = body.username()
+
+    /**
+     * Returns the raw JSON value of [authType].
+     *
+     * Unlike [authType], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    fun _authType(): JsonField<AuthType> = body._authType()
+
+    /**
+     * Returns the raw JSON value of [awsRoleArn].
+     *
+     * Unlike [awsRoleArn], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    fun _awsRoleArn(): JsonField<String> = body._awsRoleArn()
 
     /**
      * Returns the raw JSON value of [bodyName].
@@ -126,12 +153,36 @@ private constructor(
          *
          * This is generally only useful if you are already constructing the body separately.
          * Otherwise, it's more convenient to use the top-level setters instead:
+         * - [authType]
+         * - [awsRoleArn]
          * - [bodyName]
          * - [password]
          * - [url]
-         * - [username]
+         * - etc.
          */
         fun body(body: Body) = apply { this.body = body.toBuilder() }
+
+        fun authType(authType: AuthType) = apply { body.authType(authType) }
+
+        /**
+         * Sets [Builder.authType] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.authType] with a well-typed [AuthType] value instead.
+         * This method is primarily for setting the field to an undocumented or not yet supported
+         * value.
+         */
+        fun authType(authType: JsonField<AuthType>) = apply { body.authType(authType) }
+
+        fun awsRoleArn(awsRoleArn: String) = apply { body.awsRoleArn(awsRoleArn) }
+
+        /**
+         * Sets [Builder.awsRoleArn] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.awsRoleArn] with a well-typed [String] value instead.
+         * This method is primarily for setting the field to an undocumented or not yet supported
+         * value.
+         */
+        fun awsRoleArn(awsRoleArn: JsonField<String>) = apply { body.awsRoleArn(awsRoleArn) }
 
         fun bodyName(bodyName: String) = apply { body.bodyName(bodyName) }
 
@@ -319,6 +370,8 @@ private constructor(
     class Body
     @JsonCreator(mode = JsonCreator.Mode.DISABLED)
     private constructor(
+        private val authType: JsonField<AuthType>,
+        private val awsRoleArn: JsonField<String>,
         private val bodyName: JsonField<String>,
         private val password: JsonField<String>,
         private val url: JsonField<String>,
@@ -328,13 +381,31 @@ private constructor(
 
         @JsonCreator
         private constructor(
+            @JsonProperty("auth_type")
+            @ExcludeMissing
+            authType: JsonField<AuthType> = JsonMissing.of(),
+            @JsonProperty("aws_role_arn")
+            @ExcludeMissing
+            awsRoleArn: JsonField<String> = JsonMissing.of(),
             @JsonProperty("name") @ExcludeMissing bodyName: JsonField<String> = JsonMissing.of(),
             @JsonProperty("password")
             @ExcludeMissing
             password: JsonField<String> = JsonMissing.of(),
             @JsonProperty("url") @ExcludeMissing url: JsonField<String> = JsonMissing.of(),
             @JsonProperty("username") @ExcludeMissing username: JsonField<String> = JsonMissing.of(),
-        ) : this(bodyName, password, url, username, mutableMapOf())
+        ) : this(authType, awsRoleArn, bodyName, password, url, username, mutableMapOf())
+
+        /**
+         * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
+         *   the server responded with an unexpected value).
+         */
+        fun authType(): Optional<AuthType> = authType.getOptional("auth_type")
+
+        /**
+         * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
+         *   the server responded with an unexpected value).
+         */
+        fun awsRoleArn(): Optional<String> = awsRoleArn.getOptional("aws_role_arn")
 
         /**
          * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
@@ -359,6 +430,22 @@ private constructor(
          *   the server responded with an unexpected value).
          */
         fun username(): Optional<String> = username.getOptional("username")
+
+        /**
+         * Returns the raw JSON value of [authType].
+         *
+         * Unlike [authType], this method doesn't throw if the JSON field has an unexpected type.
+         */
+        @JsonProperty("auth_type") @ExcludeMissing fun _authType(): JsonField<AuthType> = authType
+
+        /**
+         * Returns the raw JSON value of [awsRoleArn].
+         *
+         * Unlike [awsRoleArn], this method doesn't throw if the JSON field has an unexpected type.
+         */
+        @JsonProperty("aws_role_arn")
+        @ExcludeMissing
+        fun _awsRoleArn(): JsonField<String> = awsRoleArn
 
         /**
          * Returns the raw JSON value of [bodyName].
@@ -409,6 +496,8 @@ private constructor(
         /** A builder for [Body]. */
         class Builder internal constructor() {
 
+            private var authType: JsonField<AuthType> = JsonMissing.of()
+            private var awsRoleArn: JsonField<String> = JsonMissing.of()
             private var bodyName: JsonField<String> = JsonMissing.of()
             private var password: JsonField<String> = JsonMissing.of()
             private var url: JsonField<String> = JsonMissing.of()
@@ -417,12 +506,36 @@ private constructor(
 
             @JvmSynthetic
             internal fun from(body: Body) = apply {
+                authType = body.authType
+                awsRoleArn = body.awsRoleArn
                 bodyName = body.bodyName
                 password = body.password
                 url = body.url
                 username = body.username
                 additionalProperties = body.additionalProperties.toMutableMap()
             }
+
+            fun authType(authType: AuthType) = authType(JsonField.of(authType))
+
+            /**
+             * Sets [Builder.authType] to an arbitrary JSON value.
+             *
+             * You should usually call [Builder.authType] with a well-typed [AuthType] value
+             * instead. This method is primarily for setting the field to an undocumented or not yet
+             * supported value.
+             */
+            fun authType(authType: JsonField<AuthType>) = apply { this.authType = authType }
+
+            fun awsRoleArn(awsRoleArn: String) = awsRoleArn(JsonField.of(awsRoleArn))
+
+            /**
+             * Sets [Builder.awsRoleArn] to an arbitrary JSON value.
+             *
+             * You should usually call [Builder.awsRoleArn] with a well-typed [String] value
+             * instead. This method is primarily for setting the field to an undocumented or not yet
+             * supported value.
+             */
+            fun awsRoleArn(awsRoleArn: JsonField<String>) = apply { this.awsRoleArn = awsRoleArn }
 
             fun bodyName(bodyName: String) = bodyName(JsonField.of(bodyName))
 
@@ -493,7 +606,15 @@ private constructor(
              * Further updates to this [Builder] will not mutate the returned instance.
              */
             fun build(): Body =
-                Body(bodyName, password, url, username, additionalProperties.toMutableMap())
+                Body(
+                    authType,
+                    awsRoleArn,
+                    bodyName,
+                    password,
+                    url,
+                    username,
+                    additionalProperties.toMutableMap(),
+                )
         }
 
         private var validated: Boolean = false
@@ -512,6 +633,8 @@ private constructor(
                 return@apply
             }
 
+            authType().ifPresent { it.validate() }
+            awsRoleArn()
             bodyName()
             password()
             url()
@@ -535,7 +658,9 @@ private constructor(
          */
         @JvmSynthetic
         internal fun validity(): Int =
-            (if (bodyName.asKnown().isPresent) 1 else 0) +
+            (authType.asKnown().getOrNull()?.validity() ?: 0) +
+                (if (awsRoleArn.asKnown().isPresent) 1 else 0) +
+                (if (bodyName.asKnown().isPresent) 1 else 0) +
                 (if (password.asKnown().isPresent) 1 else 0) +
                 (if (url.asKnown().isPresent) 1 else 0) +
                 (if (username.asKnown().isPresent) 1 else 0)
@@ -546,6 +671,8 @@ private constructor(
             }
 
             return other is Body &&
+                authType == other.authType &&
+                awsRoleArn == other.awsRoleArn &&
                 bodyName == other.bodyName &&
                 password == other.password &&
                 url == other.url &&
@@ -554,13 +681,157 @@ private constructor(
         }
 
         private val hashCode: Int by lazy {
-            Objects.hash(bodyName, password, url, username, additionalProperties)
+            Objects.hash(
+                authType,
+                awsRoleArn,
+                bodyName,
+                password,
+                url,
+                username,
+                additionalProperties,
+            )
         }
 
         override fun hashCode(): Int = hashCode
 
         override fun toString() =
-            "Body{bodyName=$bodyName, password=$password, url=$url, username=$username, additionalProperties=$additionalProperties}"
+            "Body{authType=$authType, awsRoleArn=$awsRoleArn, bodyName=$bodyName, password=$password, url=$url, username=$username, additionalProperties=$additionalProperties}"
+    }
+
+    class AuthType @JsonCreator private constructor(private val value: JsonField<String>) : Enum {
+
+        /**
+         * Returns this class instance's raw value.
+         *
+         * This is usually only useful if this instance was deserialized from data that doesn't
+         * match any known member, and you want to know that value. For example, if the SDK is on an
+         * older version than the API, then the API may respond with new members that the SDK is
+         * unaware of.
+         */
+        @com.fasterxml.jackson.annotation.JsonValue fun _value(): JsonField<String> = value
+
+        companion object {
+
+            @JvmField val DOCKER_CONFIG = of("DOCKER_CONFIG")
+
+            @JvmField val AWS_ROLE = of("AWS_ROLE")
+
+            @JvmStatic fun of(value: String) = AuthType(JsonField.of(value))
+        }
+
+        /** An enum containing [AuthType]'s known values. */
+        enum class Known {
+            DOCKER_CONFIG,
+            AWS_ROLE,
+        }
+
+        /**
+         * An enum containing [AuthType]'s known values, as well as an [_UNKNOWN] member.
+         *
+         * An instance of [AuthType] can contain an unknown value in a couple of cases:
+         * - It was deserialized from data that doesn't match any known member. For example, if the
+         *   SDK is on an older version than the API, then the API may respond with new members that
+         *   the SDK is unaware of.
+         * - It was constructed with an arbitrary value using the [of] method.
+         */
+        enum class Value {
+            DOCKER_CONFIG,
+            AWS_ROLE,
+            /** An enum member indicating that [AuthType] was instantiated with an unknown value. */
+            _UNKNOWN,
+        }
+
+        /**
+         * Returns an enum member corresponding to this class instance's value, or [Value._UNKNOWN]
+         * if the class was instantiated with an unknown value.
+         *
+         * Use the [known] method instead if you're certain the value is always known or if you want
+         * to throw for the unknown case.
+         */
+        fun value(): Value =
+            when (this) {
+                DOCKER_CONFIG -> Value.DOCKER_CONFIG
+                AWS_ROLE -> Value.AWS_ROLE
+                else -> Value._UNKNOWN
+            }
+
+        /**
+         * Returns an enum member corresponding to this class instance's value.
+         *
+         * Use the [value] method instead if you're uncertain the value is always known and don't
+         * want to throw for the unknown case.
+         *
+         * @throws LangChainInvalidDataException if this class instance's value is a not a known
+         *   member.
+         */
+        fun known(): Known =
+            when (this) {
+                DOCKER_CONFIG -> Known.DOCKER_CONFIG
+                AWS_ROLE -> Known.AWS_ROLE
+                else -> throw LangChainInvalidDataException("Unknown AuthType: $value")
+            }
+
+        /**
+         * Returns this class instance's primitive wire representation.
+         *
+         * This differs from the [toString] method because that method is primarily for debugging
+         * and generally doesn't throw.
+         *
+         * @throws LangChainInvalidDataException if this class instance's value does not have the
+         *   expected primitive type.
+         */
+        fun asString(): String =
+            _value().asString().orElseThrow {
+                LangChainInvalidDataException("Value is not a String")
+            }
+
+        private var validated: Boolean = false
+
+        /**
+         * Validates that the types of all values in this object match their expected types
+         * recursively.
+         *
+         * This method is _not_ forwards compatible with new types from the API for existing fields.
+         *
+         * @throws LangChainInvalidDataException if any value type in this object doesn't match its
+         *   expected type.
+         */
+        fun validate(): AuthType = apply {
+            if (validated) {
+                return@apply
+            }
+
+            known()
+            validated = true
+        }
+
+        fun isValid(): Boolean =
+            try {
+                validate()
+                true
+            } catch (e: LangChainInvalidDataException) {
+                false
+            }
+
+        /**
+         * Returns a score indicating how many valid values are contained in this object
+         * recursively.
+         *
+         * Used for best match union deserialization.
+         */
+        @JvmSynthetic internal fun validity(): Int = if (value() == Value._UNKNOWN) 0 else 1
+
+        override fun equals(other: Any?): Boolean {
+            if (this === other) {
+                return true
+            }
+
+            return other is AuthType && value == other.value
+        }
+
+        override fun hashCode() = value.hashCode()
+
+        override fun toString() = value.toString()
     }
 
     override fun equals(other: Any?): Boolean {

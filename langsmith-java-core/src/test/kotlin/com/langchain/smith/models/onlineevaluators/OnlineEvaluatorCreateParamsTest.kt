@@ -15,8 +15,23 @@ internal class OnlineEvaluatorCreateParamsTest {
                 CreateOnlineEvaluatorRequest.builder()
                     .codeEvaluator(
                         CreateOnlineCodeEvaluatorRequest.builder()
+                            .advancedFeaturesEnabled(true)
                             .code("code")
+                            .dependencies("dependencies")
                             .language("language")
+                            .managedCodeEvaluatorKey("managed_code_evaluator_key")
+                            .managedCodeEvaluatorSettings(
+                                CreateOnlineCodeEvaluatorRequest.ManagedCodeEvaluatorSettings
+                                    .builder()
+                                    .putAdditionalProperty(
+                                        "foo",
+                                        JsonValue.from(
+                                            mapOf("is_enabled" to true, "key_name" to "key_name")
+                                        ),
+                                    )
+                                    .build()
+                            )
+                            .requireAttachments(true)
                             .build()
                     )
                     .llmEvaluator(
@@ -42,8 +57,26 @@ internal class OnlineEvaluatorCreateParamsTest {
                     CreateOnlineEvaluatorRequest.builder()
                         .codeEvaluator(
                             CreateOnlineCodeEvaluatorRequest.builder()
+                                .advancedFeaturesEnabled(true)
                                 .code("code")
+                                .dependencies("dependencies")
                                 .language("language")
+                                .managedCodeEvaluatorKey("managed_code_evaluator_key")
+                                .managedCodeEvaluatorSettings(
+                                    CreateOnlineCodeEvaluatorRequest.ManagedCodeEvaluatorSettings
+                                        .builder()
+                                        .putAdditionalProperty(
+                                            "foo",
+                                            JsonValue.from(
+                                                mapOf(
+                                                    "is_enabled" to true,
+                                                    "key_name" to "key_name",
+                                                )
+                                            ),
+                                        )
+                                        .build()
+                                )
+                                .requireAttachments(true)
                                 .build()
                         )
                         .llmEvaluator(
@@ -67,8 +100,23 @@ internal class OnlineEvaluatorCreateParamsTest {
                 CreateOnlineEvaluatorRequest.builder()
                     .codeEvaluator(
                         CreateOnlineCodeEvaluatorRequest.builder()
+                            .advancedFeaturesEnabled(true)
                             .code("code")
+                            .dependencies("dependencies")
                             .language("language")
+                            .managedCodeEvaluatorKey("managed_code_evaluator_key")
+                            .managedCodeEvaluatorSettings(
+                                CreateOnlineCodeEvaluatorRequest.ManagedCodeEvaluatorSettings
+                                    .builder()
+                                    .putAdditionalProperty(
+                                        "foo",
+                                        JsonValue.from(
+                                            mapOf("is_enabled" to true, "key_name" to "key_name")
+                                        ),
+                                    )
+                                    .build()
+                            )
+                            .requireAttachments(true)
                             .build()
                     )
                     .llmEvaluator(

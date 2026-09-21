@@ -17,6 +17,8 @@ internal class ThreadListTracesParamsTest {
             .filter("filter")
             .pageSize(1L)
             .addSelect(ThreadListTracesParams.Select.THREAD_ID)
+            .traceFilter("trace_filter")
+            .treeFilter("tree_filter")
             .build()
     }
 
@@ -43,6 +45,8 @@ internal class ThreadListTracesParamsTest {
                 .filter("filter")
                 .pageSize(1L)
                 .addSelect(ThreadListTracesParams.Select.THREAD_ID)
+                .traceFilter("trace_filter")
+                .treeFilter("tree_filter")
                 .build()
 
         val queryParams = params._queryParams()
@@ -55,6 +59,8 @@ internal class ThreadListTracesParamsTest {
                     .put("filter", "filter")
                     .put("page_size", "1")
                     .put("selects", "THREAD_ID")
+                    .put("trace_filter", "trace_filter")
+                    .put("tree_filter", "tree_filter")
                     .build()
             )
     }

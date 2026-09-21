@@ -12,6 +12,12 @@ internal class BoxCreateParamsTest {
     @Test
     fun create() {
         BoxCreateParams.builder()
+            .accessDelegation(
+                BoxCreateParams.AccessDelegation.builder()
+                    .mode(BoxCreateParams.AccessDelegation.Mode.INHERIT)
+                    .addPermission("string")
+                    .build()
+            )
             .cpuMillicores(0L)
             .deleteAfterStopSeconds(0L)
             .envVars(
@@ -32,30 +38,10 @@ internal class BoxCreateParamsTest {
                     .auth(
                         BoxCreateParams.MountConfig.Auth.builder()
                             .aws(
-                                BoxCreateParams.MountConfig.Auth.Aws.builder()
-                                    .accessKeyId(
-                                        BoxCreateParams.MountConfig.Auth.Aws.AccessKeyId.builder()
-                                            .type(
-                                                BoxCreateParams.MountConfig.Auth.Aws.AccessKeyId
-                                                    .Type
-                                                    .PLAINTEXT
-                                            )
-                                            .isSet(true)
-                                            .value("value")
-                                            .build()
-                                    )
-                                    .secretAccessKey(
-                                        BoxCreateParams.MountConfig.Auth.Aws.SecretAccessKey
-                                            .builder()
-                                            .type(
-                                                BoxCreateParams.MountConfig.Auth.Aws.SecretAccessKey
-                                                    .Type
-                                                    .PLAINTEXT
-                                            )
-                                            .isSet(true)
-                                            .value("value")
-                                            .build()
-                                    )
+                                BoxCreateParams.MountConfig.Auth.Aws
+                                    .SandboxesSandboxAwsMountRoleAuthConfig
+                                    .builder()
+                                    .roleArn("x")
                                     .build()
                             )
                             .gcp(
@@ -175,37 +161,18 @@ internal class BoxCreateParamsTest {
                             )
                             .build()
                     )
+                    .description("description")
                     .addNoProxy("string")
                     .addRule(
                         BoxCreateParams.ProxyConfig.Rule.builder()
                             .name("name")
                             .aws(
-                                BoxCreateParams.ProxyConfig.Rule.Aws.builder()
-                                    .accessKeyId(
-                                        BoxCreateParams.ProxyConfig.Rule.Aws.AccessKeyId.builder()
-                                            .type(
-                                                BoxCreateParams.ProxyConfig.Rule.Aws.AccessKeyId
-                                                    .Type
-                                                    .PLAINTEXT
-                                            )
-                                            .isSet(true)
-                                            .value("value")
-                                            .build()
-                                    )
-                                    .secretAccessKey(
-                                        BoxCreateParams.ProxyConfig.Rule.Aws.SecretAccessKey
-                                            .builder()
-                                            .type(
-                                                BoxCreateParams.ProxyConfig.Rule.Aws.SecretAccessKey
-                                                    .Type
-                                                    .PLAINTEXT
-                                            )
-                                            .isSet(true)
-                                            .value("value")
-                                            .build()
-                                    )
+                                BoxCreateParams.ProxyConfig.Rule.Aws.SandboxesProxyAwsRoleConfig
+                                    .builder()
+                                    .roleArn("x")
                                     .build()
                             )
+                            .description("description")
                             .enabled(true)
                             .envVars(
                                 BoxCreateParams.ProxyConfig.Rule.EnvVars.builder()
@@ -246,6 +213,18 @@ internal class BoxCreateParamsTest {
                     .build()
             )
             .restoreMemory(true)
+            .runConfig(
+                BoxCreateParams.RunConfig.builder()
+                    .envVars(
+                        BoxCreateParams.RunConfig.EnvVars.builder()
+                            .putAdditionalProperty("foo", JsonValue.from("string"))
+                            .build()
+                    )
+                    .user("user")
+                    .workDir("work_dir")
+                    .build()
+            )
+            .snapshot("snapshot")
             .snapshotId("snapshot_id")
             .snapshotName("snapshot_name")
             .addTagValueId("string")
@@ -257,6 +236,12 @@ internal class BoxCreateParamsTest {
     fun body() {
         val params =
             BoxCreateParams.builder()
+                .accessDelegation(
+                    BoxCreateParams.AccessDelegation.builder()
+                        .mode(BoxCreateParams.AccessDelegation.Mode.INHERIT)
+                        .addPermission("string")
+                        .build()
+                )
                 .cpuMillicores(0L)
                 .deleteAfterStopSeconds(0L)
                 .envVars(
@@ -277,32 +262,10 @@ internal class BoxCreateParamsTest {
                         .auth(
                             BoxCreateParams.MountConfig.Auth.builder()
                                 .aws(
-                                    BoxCreateParams.MountConfig.Auth.Aws.builder()
-                                        .accessKeyId(
-                                            BoxCreateParams.MountConfig.Auth.Aws.AccessKeyId
-                                                .builder()
-                                                .type(
-                                                    BoxCreateParams.MountConfig.Auth.Aws.AccessKeyId
-                                                        .Type
-                                                        .PLAINTEXT
-                                                )
-                                                .isSet(true)
-                                                .value("value")
-                                                .build()
-                                        )
-                                        .secretAccessKey(
-                                            BoxCreateParams.MountConfig.Auth.Aws.SecretAccessKey
-                                                .builder()
-                                                .type(
-                                                    BoxCreateParams.MountConfig.Auth.Aws
-                                                        .SecretAccessKey
-                                                        .Type
-                                                        .PLAINTEXT
-                                                )
-                                                .isSet(true)
-                                                .value("value")
-                                                .build()
-                                        )
+                                    BoxCreateParams.MountConfig.Auth.Aws
+                                        .SandboxesSandboxAwsMountRoleAuthConfig
+                                        .builder()
+                                        .roleArn("x")
                                         .build()
                                 )
                                 .gcp(
@@ -426,39 +389,18 @@ internal class BoxCreateParamsTest {
                                 )
                                 .build()
                         )
+                        .description("description")
                         .addNoProxy("string")
                         .addRule(
                             BoxCreateParams.ProxyConfig.Rule.builder()
                                 .name("name")
                                 .aws(
-                                    BoxCreateParams.ProxyConfig.Rule.Aws.builder()
-                                        .accessKeyId(
-                                            BoxCreateParams.ProxyConfig.Rule.Aws.AccessKeyId
-                                                .builder()
-                                                .type(
-                                                    BoxCreateParams.ProxyConfig.Rule.Aws.AccessKeyId
-                                                        .Type
-                                                        .PLAINTEXT
-                                                )
-                                                .isSet(true)
-                                                .value("value")
-                                                .build()
-                                        )
-                                        .secretAccessKey(
-                                            BoxCreateParams.ProxyConfig.Rule.Aws.SecretAccessKey
-                                                .builder()
-                                                .type(
-                                                    BoxCreateParams.ProxyConfig.Rule.Aws
-                                                        .SecretAccessKey
-                                                        .Type
-                                                        .PLAINTEXT
-                                                )
-                                                .isSet(true)
-                                                .value("value")
-                                                .build()
-                                        )
+                                    BoxCreateParams.ProxyConfig.Rule.Aws.SandboxesProxyAwsRoleConfig
+                                        .builder()
+                                        .roleArn("x")
                                         .build()
                                 )
+                                .description("description")
                                 .enabled(true)
                                 .envVars(
                                     BoxCreateParams.ProxyConfig.Rule.EnvVars.builder()
@@ -501,6 +443,18 @@ internal class BoxCreateParamsTest {
                         .build()
                 )
                 .restoreMemory(true)
+                .runConfig(
+                    BoxCreateParams.RunConfig.builder()
+                        .envVars(
+                            BoxCreateParams.RunConfig.EnvVars.builder()
+                                .putAdditionalProperty("foo", JsonValue.from("string"))
+                                .build()
+                        )
+                        .user("user")
+                        .workDir("work_dir")
+                        .build()
+                )
+                .snapshot("snapshot")
                 .snapshotId("snapshot_id")
                 .snapshotName("snapshot_name")
                 .addTagValueId("string")
@@ -509,6 +463,13 @@ internal class BoxCreateParamsTest {
 
         val body = params._body()
 
+        assertThat(body.accessDelegation())
+            .contains(
+                BoxCreateParams.AccessDelegation.builder()
+                    .mode(BoxCreateParams.AccessDelegation.Mode.INHERIT)
+                    .addPermission("string")
+                    .build()
+            )
         assertThat(body.cpuMillicores()).contains(0L)
         assertThat(body.deleteAfterStopSeconds()).contains(0L)
         assertThat(body.envVars())
@@ -532,30 +493,10 @@ internal class BoxCreateParamsTest {
                     .auth(
                         BoxCreateParams.MountConfig.Auth.builder()
                             .aws(
-                                BoxCreateParams.MountConfig.Auth.Aws.builder()
-                                    .accessKeyId(
-                                        BoxCreateParams.MountConfig.Auth.Aws.AccessKeyId.builder()
-                                            .type(
-                                                BoxCreateParams.MountConfig.Auth.Aws.AccessKeyId
-                                                    .Type
-                                                    .PLAINTEXT
-                                            )
-                                            .isSet(true)
-                                            .value("value")
-                                            .build()
-                                    )
-                                    .secretAccessKey(
-                                        BoxCreateParams.MountConfig.Auth.Aws.SecretAccessKey
-                                            .builder()
-                                            .type(
-                                                BoxCreateParams.MountConfig.Auth.Aws.SecretAccessKey
-                                                    .Type
-                                                    .PLAINTEXT
-                                            )
-                                            .isSet(true)
-                                            .value("value")
-                                            .build()
-                                    )
+                                BoxCreateParams.MountConfig.Auth.Aws
+                                    .SandboxesSandboxAwsMountRoleAuthConfig
+                                    .builder()
+                                    .roleArn("x")
                                     .build()
                             )
                             .gcp(
@@ -676,37 +617,18 @@ internal class BoxCreateParamsTest {
                             )
                             .build()
                     )
+                    .description("description")
                     .addNoProxy("string")
                     .addRule(
                         BoxCreateParams.ProxyConfig.Rule.builder()
                             .name("name")
                             .aws(
-                                BoxCreateParams.ProxyConfig.Rule.Aws.builder()
-                                    .accessKeyId(
-                                        BoxCreateParams.ProxyConfig.Rule.Aws.AccessKeyId.builder()
-                                            .type(
-                                                BoxCreateParams.ProxyConfig.Rule.Aws.AccessKeyId
-                                                    .Type
-                                                    .PLAINTEXT
-                                            )
-                                            .isSet(true)
-                                            .value("value")
-                                            .build()
-                                    )
-                                    .secretAccessKey(
-                                        BoxCreateParams.ProxyConfig.Rule.Aws.SecretAccessKey
-                                            .builder()
-                                            .type(
-                                                BoxCreateParams.ProxyConfig.Rule.Aws.SecretAccessKey
-                                                    .Type
-                                                    .PLAINTEXT
-                                            )
-                                            .isSet(true)
-                                            .value("value")
-                                            .build()
-                                    )
+                                BoxCreateParams.ProxyConfig.Rule.Aws.SandboxesProxyAwsRoleConfig
+                                    .builder()
+                                    .roleArn("x")
                                     .build()
                             )
+                            .description("description")
                             .enabled(true)
                             .envVars(
                                 BoxCreateParams.ProxyConfig.Rule.EnvVars.builder()
@@ -747,6 +669,19 @@ internal class BoxCreateParamsTest {
                     .build()
             )
         assertThat(body.restoreMemory()).contains(true)
+        assertThat(body.runConfig())
+            .contains(
+                BoxCreateParams.RunConfig.builder()
+                    .envVars(
+                        BoxCreateParams.RunConfig.EnvVars.builder()
+                            .putAdditionalProperty("foo", JsonValue.from("string"))
+                            .build()
+                    )
+                    .user("user")
+                    .workDir("work_dir")
+                    .build()
+            )
+        assertThat(body.snapshot()).contains("snapshot")
         assertThat(body.snapshotId()).contains("snapshot_id")
         assertThat(body.snapshotName()).contains("snapshot_name")
         assertThat(body.tagValueIds().getOrNull()).containsExactly("string")

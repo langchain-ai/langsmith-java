@@ -12,7 +12,8 @@ import kotlin.jvm.optionals.getOrNull
 
 /**
  * Resolve a RUN or THREAD item to its current review section and zero-based position for deep
- * linking.
+ * linking. The returned cursor counts RUN and THREAD items together, so it is only valid for a list
+ * request with no item_type or start-time filter.
  */
 class ItemRetrievePlacementParams
 private constructor(

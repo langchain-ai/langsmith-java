@@ -11,7 +11,10 @@ import java.util.Objects
 import java.util.Optional
 import kotlin.jvm.optionals.getOrNull
 
-/** Delete a snapshot by ID. The underlying storage is reclaimed asynchronously. */
+/**
+ * Delete a snapshot by ID or by a Docker-style name[:tag] reference. The underlying storage is
+ * reclaimed asynchronously.
+ */
 class SnapshotDeleteParams
 private constructor(
     private val snapshotId: String?,

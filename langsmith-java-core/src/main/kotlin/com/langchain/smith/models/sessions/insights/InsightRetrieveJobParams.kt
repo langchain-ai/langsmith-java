@@ -10,7 +10,7 @@ import java.util.Objects
 import java.util.Optional
 import kotlin.jvm.optionals.getOrNull
 
-/** Get a specific cluster job for a session. */
+/** Get an Insights job for a project. */
 class InsightRetrieveJobParams
 private constructor(
     private val sessionId: String,

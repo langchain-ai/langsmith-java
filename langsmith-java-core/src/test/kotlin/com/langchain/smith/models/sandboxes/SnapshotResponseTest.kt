@@ -5,6 +5,7 @@ package com.langchain.smith.models.sandboxes
 import com.fasterxml.jackson.module.kotlin.jacksonTypeRef
 import com.langchain.smith.core.JsonValue
 import com.langchain.smith.core.jsonMapper
+import kotlin.jvm.optionals.getOrNull
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
@@ -17,6 +18,7 @@ internal class SnapshotResponseTest {
                 .id("id")
                 .createdAt("created_at")
                 .createdBy("created_by")
+                .description("description")
                 .dockerImage("docker_image")
                 .fsCapacityBytes(0L)
                 .fsUsedBytes(0L)
@@ -29,15 +31,28 @@ internal class SnapshotResponseTest {
                 .memorySnapshotSizeBytes(0L)
                 .name("name")
                 .registryId("registry_id")
+                .runConfig(
+                    SnapshotResponse.RunConfig.builder()
+                        .envVars(
+                            SnapshotResponse.RunConfig.EnvVars.builder()
+                                .putAdditionalProperty("foo", JsonValue.from("string"))
+                                .build()
+                        )
+                        .user("user")
+                        .workDir("work_dir")
+                        .build()
+                )
                 .sourceSandboxId("source_sandbox_id")
                 .status("status")
                 .statusMessage("status_message")
+                .addTag("string")
                 .updatedAt("updated_at")
                 .build()
 
         assertThat(snapshotResponse.id()).contains("id")
         assertThat(snapshotResponse.createdAt()).contains("created_at")
         assertThat(snapshotResponse.createdBy()).contains("created_by")
+        assertThat(snapshotResponse.description()).contains("description")
         assertThat(snapshotResponse.dockerImage()).contains("docker_image")
         assertThat(snapshotResponse.fsCapacityBytes()).contains(0L)
         assertThat(snapshotResponse.fsUsedBytes()).contains(0L)
@@ -51,9 +66,22 @@ internal class SnapshotResponseTest {
         assertThat(snapshotResponse.memorySnapshotSizeBytes()).contains(0L)
         assertThat(snapshotResponse.name()).contains("name")
         assertThat(snapshotResponse.registryId()).contains("registry_id")
+        assertThat(snapshotResponse.runConfig())
+            .contains(
+                SnapshotResponse.RunConfig.builder()
+                    .envVars(
+                        SnapshotResponse.RunConfig.EnvVars.builder()
+                            .putAdditionalProperty("foo", JsonValue.from("string"))
+                            .build()
+                    )
+                    .user("user")
+                    .workDir("work_dir")
+                    .build()
+            )
         assertThat(snapshotResponse.sourceSandboxId()).contains("source_sandbox_id")
         assertThat(snapshotResponse.status()).contains("status")
         assertThat(snapshotResponse.statusMessage()).contains("status_message")
+        assertThat(snapshotResponse.tags().getOrNull()).containsExactly("string")
         assertThat(snapshotResponse.updatedAt()).contains("updated_at")
     }
 
@@ -65,6 +93,7 @@ internal class SnapshotResponseTest {
                 .id("id")
                 .createdAt("created_at")
                 .createdBy("created_by")
+                .description("description")
                 .dockerImage("docker_image")
                 .fsCapacityBytes(0L)
                 .fsUsedBytes(0L)
@@ -77,9 +106,21 @@ internal class SnapshotResponseTest {
                 .memorySnapshotSizeBytes(0L)
                 .name("name")
                 .registryId("registry_id")
+                .runConfig(
+                    SnapshotResponse.RunConfig.builder()
+                        .envVars(
+                            SnapshotResponse.RunConfig.EnvVars.builder()
+                                .putAdditionalProperty("foo", JsonValue.from("string"))
+                                .build()
+                        )
+                        .user("user")
+                        .workDir("work_dir")
+                        .build()
+                )
                 .sourceSandboxId("source_sandbox_id")
                 .status("status")
                 .statusMessage("status_message")
+                .addTag("string")
                 .updatedAt("updated_at")
                 .build()
 

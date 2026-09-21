@@ -16,8 +16,21 @@ internal class UpdateOnlineEvaluatorRequestTest {
             UpdateOnlineEvaluatorRequest.builder()
                 .codeEvaluator(
                     UpdateOnlineCodeEvaluatorRequest.builder()
+                        .advancedFeaturesEnabled(true)
                         .code("code")
+                        .dependencies("dependencies")
                         .language("language")
+                        .managedCodeEvaluatorSettings(
+                            UpdateOnlineCodeEvaluatorRequest.ManagedCodeEvaluatorSettings.builder()
+                                .putAdditionalProperty(
+                                    "foo",
+                                    JsonValue.from(
+                                        mapOf("is_enabled" to true, "key_name" to "key_name")
+                                    ),
+                                )
+                                .build()
+                        )
+                        .requireAttachments(true)
                         .build()
                 )
                 .llmEvaluator(
@@ -35,7 +48,23 @@ internal class UpdateOnlineEvaluatorRequestTest {
 
         assertThat(updateOnlineEvaluatorRequest.codeEvaluator())
             .contains(
-                UpdateOnlineCodeEvaluatorRequest.builder().code("code").language("language").build()
+                UpdateOnlineCodeEvaluatorRequest.builder()
+                    .advancedFeaturesEnabled(true)
+                    .code("code")
+                    .dependencies("dependencies")
+                    .language("language")
+                    .managedCodeEvaluatorSettings(
+                        UpdateOnlineCodeEvaluatorRequest.ManagedCodeEvaluatorSettings.builder()
+                            .putAdditionalProperty(
+                                "foo",
+                                JsonValue.from(
+                                    mapOf("is_enabled" to true, "key_name" to "key_name")
+                                ),
+                            )
+                            .build()
+                    )
+                    .requireAttachments(true)
+                    .build()
             )
         assertThat(updateOnlineEvaluatorRequest.llmEvaluator())
             .contains(
@@ -58,8 +87,21 @@ internal class UpdateOnlineEvaluatorRequestTest {
             UpdateOnlineEvaluatorRequest.builder()
                 .codeEvaluator(
                     UpdateOnlineCodeEvaluatorRequest.builder()
+                        .advancedFeaturesEnabled(true)
                         .code("code")
+                        .dependencies("dependencies")
                         .language("language")
+                        .managedCodeEvaluatorSettings(
+                            UpdateOnlineCodeEvaluatorRequest.ManagedCodeEvaluatorSettings.builder()
+                                .putAdditionalProperty(
+                                    "foo",
+                                    JsonValue.from(
+                                        mapOf("is_enabled" to true, "key_name" to "key_name")
+                                    ),
+                                )
+                                .build()
+                        )
+                        .requireAttachments(true)
                         .build()
                 )
                 .llmEvaluator(

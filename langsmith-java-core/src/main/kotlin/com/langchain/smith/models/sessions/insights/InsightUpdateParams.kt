@@ -20,7 +20,7 @@ import java.util.Objects
 import java.util.Optional
 import kotlin.jvm.optionals.getOrNull
 
-/** Update a session cluster job. */
+/** Update an Insights job for a project. */
 class InsightUpdateParams
 private constructor(
     private val sessionId: String,
@@ -268,7 +268,7 @@ private constructor(
 
     override fun _queryParams(): QueryParams = additionalQueryParams
 
-    /** Request to update a session cluster job. */
+    /** Request to update an Insights job. */
     class Body
     @JsonCreator(mode = JsonCreator.Mode.DISABLED)
     private constructor(

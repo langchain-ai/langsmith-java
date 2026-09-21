@@ -664,6 +664,21 @@ RunQueryV2Params params = RunQueryV2Params.builder()
 
 These can be accessed on the built object later using the `_additionalHeaders()`, `_additionalQueryParams()`, and `_additionalBodyProperties()` methods.
 
+To set undocumented parameters on _nested_ headers, query params, or body classes, call the `putAdditionalProperty` method on the nested class:
+
+```java
+import com.langchain.smith.core.JsonValue;
+import com.langchain.smith.models.productfeedback.ProductFeedbackCreateParams;
+
+ProductFeedbackCreateParams params = ProductFeedbackCreateParams.builder()
+    .client(ProductFeedbackCreateParams.Client.builder()
+        .putAdditionalProperty("secretProperty", JsonValue.from("42"))
+        .build())
+    .build();
+```
+
+These properties can be accessed on the nested built object later using the `_additionalProperties()` method.
+
 To set a documented parameter or property to an undocumented or not yet supported _value_, pass a [`JsonValue`](langsmith-java-core/src/main/kotlin/com/langchain/smith/core/Values.kt) object to its setter:
 
 ```java
@@ -720,11 +735,13 @@ To forcibly omit a required parameter or property, pass [`JsonMissing`](langsmit
 
 ```java
 import com.langchain.smith.core.JsonMissing;
+import com.langchain.smith.models.productfeedback.ProductFeedbackCreateParams;
 import com.langchain.smith.models.runs.RunQueryV2Params;
-import com.langchain.smith.models.sessions.SessionRetrieveParams;
 
-RunQueryV2Params params = SessionRetrieveParams.builder()
-    .sessionId(JsonMissing.of())
+RunQueryV2Params params = ProductFeedbackCreateParams.builder()
+    .message("x")
+    .source(ProductFeedbackCreateParams.Source.LANGSMITH_CLI)
+    .category(JsonMissing.of())
     .build();
 ```
 
@@ -736,7 +753,7 @@ To access undocumented response properties, call the `_additionalProperties()` m
 import com.langchain.smith.core.JsonValue;
 import java.util.Map;
 
-Map<String, JsonValue> additionalProperties = client.sessions().create(params)._additionalProperties();
+Map<String, JsonValue> additionalProperties = client.productFeedback().create(params)._additionalProperties();
 JsonValue secretPropertyValue = additionalProperties.get("secretProperty");
 
 String result = secretPropertyValue.accept(new JsonValue.Visitor<>() {
@@ -764,21 +781,22 @@ To access a property's raw JSON value, which may be undocumented, call its `_` p
 
 ```java
 import com.langchain.smith.core.JsonField;
+import com.langchain.smith.models.productfeedback.ProductFeedbackCreateParams;
 import java.util.Optional;
 
-JsonField<String> id = client.sessions().create(params)._id();
+JsonField<ProductFeedbackCreateParams.Category> category = client.productFeedback().create(params)._category();
 
-if (id.isMissing()) {
+if (category.isMissing()) {
   // The property is absent from the JSON response
-} else if (id.isNull()) {
+} else if (category.isNull()) {
   // The property was set to literal null
 } else {
   // Check if value was provided as a string
   // Other methods include `asNumber()`, `asBoolean()`, etc.
-  Optional<String> jsonString = id.asString();
+  Optional<String> jsonString = category.asString();
 
   // Try to deserialize into a custom type
-  MyClass myObject = id.asUnknown().orElseThrow().convert(MyClass.class);
+  MyClass myObject = category.asUnknown().orElseThrow().convert(MyClass.class);
 }
 ```
 
@@ -793,9 +811,9 @@ Validating the response is _not_ forwards compatible with new types from the API
 If you would still prefer to check that the response is completely well-typed upfront, then either call `validate()`:
 
 ```java
-import com.langchain.smith.models.sessions.TracerSessionWithoutVirtualFields;
+import com.langchain.smith.models.productfeedback.ProductFeedbackCreateResponse;
 
-TracerSessionWithoutVirtualFields tracerSessionWithoutVirtualFields = client.sessions().create(params).validate();
+ProductFeedbackCreateResponse productFeedback = client.productFeedback().create(params).validate();
 ```
 
 Or configure the method call to validate the response using the `responseValidation` method:

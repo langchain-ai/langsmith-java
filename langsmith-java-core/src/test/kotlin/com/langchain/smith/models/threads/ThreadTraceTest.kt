@@ -71,6 +71,7 @@ internal class ThreadTraceTest {
                 .totalCost(0.0)
                 .totalTokens(0L)
                 .traceId("018e4c7e-a9fb-7ef0-a5b6-6ea3a82e9327")
+                .turnNumber(1L)
                 .build()
 
         assertThat(threadTrace.completionCost()).contains(0.0)
@@ -135,6 +136,7 @@ internal class ThreadTraceTest {
         assertThat(threadTrace.totalCost()).contains(0.0)
         assertThat(threadTrace.totalTokens()).contains(0L)
         assertThat(threadTrace.traceId()).contains("018e4c7e-a9fb-7ef0-a5b6-6ea3a82e9327")
+        assertThat(threadTrace.turnNumber()).contains(1L)
     }
 
     @Test
@@ -198,6 +200,7 @@ internal class ThreadTraceTest {
                 .totalCost(0.0)
                 .totalTokens(0L)
                 .traceId("018e4c7e-a9fb-7ef0-a5b6-6ea3a82e9327")
+                .turnNumber(1L)
                 .build()
 
         val roundtrippedThreadTrace =

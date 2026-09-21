@@ -18,7 +18,7 @@ import java.util.Collections
 import java.util.Objects
 import kotlin.jvm.optionals.getOrNull
 
-/** Response to get all cluster jobs for a session. */
+/** A collection of Insights jobs. */
 class InsightListPageResponse
 @JsonCreator(mode = JsonCreator.Mode.DISABLED)
 private constructor(

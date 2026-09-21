@@ -6,19 +6,25 @@ import com.langchain.smith.core.Params
 import com.langchain.smith.core.checkRequired
 import com.langchain.smith.core.http.Headers
 import com.langchain.smith.core.http.QueryParams
+import java.time.OffsetDateTime
+import java.time.format.DateTimeFormatter
 import java.util.Objects
 import java.util.Optional
 import kotlin.jvm.optionals.getOrNull
 
 /**
- * Returns the number of annotation queue items for the requested reviewer-specific or archived
- * bucket.
+ * Returns the number of annotation queue items in one status bucket. The two time windows are
+ * independent: start_time/end_time bound when an item was archived, min_start_time/max_start_time
+ * bound when its trace ran. Items with no trace start time are excluded when either of the latter
+ * is set.
  */
 class ItemRetrieveCountParams
 private constructor(
     private val queueId: String?,
     private val status: String,
     private val endTime: String?,
+    private val maxStartTime: OffsetDateTime?,
+    private val minStartTime: OffsetDateTime?,
     private val startTime: String?,
     private val additionalHeaders: Headers,
     private val additionalQueryParams: QueryParams,
@@ -29,10 +35,16 @@ private constructor(
     /** Count bucket: all, needs_my_review, needs_others_review, or archived. */
     fun status(): String = status
 
-    /** Exclusive upper bound for archived item timestamp */
+    /** Archived strictly before this time. Only used when status=archived */
     fun endTime(): Optional<String> = Optional.ofNullable(endTime)
 
-    /** Exclusive lower bound for archived item timestamp */
+    /** Trace started at or before this time */
+    fun maxStartTime(): Optional<OffsetDateTime> = Optional.ofNullable(maxStartTime)
+
+    /** Trace started at or after this time */
+    fun minStartTime(): Optional<OffsetDateTime> = Optional.ofNullable(minStartTime)
+
+    /** Archived strictly after this time. Only used when status=archived */
     fun startTime(): Optional<String> = Optional.ofNullable(startTime)
 
     /** Additional headers to send with the request. */
@@ -62,6 +74,8 @@ private constructor(
         private var queueId: String? = null
         private var status: String? = null
         private var endTime: String? = null
+        private var maxStartTime: OffsetDateTime? = null
+        private var minStartTime: OffsetDateTime? = null
         private var startTime: String? = null
         private var additionalHeaders: Headers.Builder = Headers.builder()
         private var additionalQueryParams: QueryParams.Builder = QueryParams.builder()
@@ -71,6 +85,8 @@ private constructor(
             queueId = itemRetrieveCountParams.queueId
             status = itemRetrieveCountParams.status
             endTime = itemRetrieveCountParams.endTime
+            maxStartTime = itemRetrieveCountParams.maxStartTime
+            minStartTime = itemRetrieveCountParams.minStartTime
             startTime = itemRetrieveCountParams.startTime
             additionalHeaders = itemRetrieveCountParams.additionalHeaders.toBuilder()
             additionalQueryParams = itemRetrieveCountParams.additionalQueryParams.toBuilder()
@@ -84,13 +100,27 @@ private constructor(
         /** Count bucket: all, needs_my_review, needs_others_review, or archived. */
         fun status(status: String) = apply { this.status = status }
 
-        /** Exclusive upper bound for archived item timestamp */
+        /** Archived strictly before this time. Only used when status=archived */
         fun endTime(endTime: String?) = apply { this.endTime = endTime }
 
         /** Alias for calling [Builder.endTime] with `endTime.orElse(null)`. */
         fun endTime(endTime: Optional<String>) = endTime(endTime.getOrNull())
 
-        /** Exclusive lower bound for archived item timestamp */
+        /** Trace started at or before this time */
+        fun maxStartTime(maxStartTime: OffsetDateTime?) = apply { this.maxStartTime = maxStartTime }
+
+        /** Alias for calling [Builder.maxStartTime] with `maxStartTime.orElse(null)`. */
+        fun maxStartTime(maxStartTime: Optional<OffsetDateTime>) =
+            maxStartTime(maxStartTime.getOrNull())
+
+        /** Trace started at or after this time */
+        fun minStartTime(minStartTime: OffsetDateTime?) = apply { this.minStartTime = minStartTime }
+
+        /** Alias for calling [Builder.minStartTime] with `minStartTime.orElse(null)`. */
+        fun minStartTime(minStartTime: Optional<OffsetDateTime>) =
+            minStartTime(minStartTime.getOrNull())
+
+        /** Archived strictly after this time. Only used when status=archived */
         fun startTime(startTime: String?) = apply { this.startTime = startTime }
 
         /** Alias for calling [Builder.startTime] with `startTime.orElse(null)`. */
@@ -211,6 +241,8 @@ private constructor(
                 queueId,
                 checkRequired("status", status),
                 endTime,
+                maxStartTime,
+                minStartTime,
                 startTime,
                 additionalHeaders.build(),
                 additionalQueryParams.build(),
@@ -230,6 +262,12 @@ private constructor(
             .apply {
                 put("status", status)
                 endTime?.let { put("end_time", it) }
+                maxStartTime?.let {
+                    put("max_start_time", DateTimeFormatter.ISO_OFFSET_DATE_TIME.format(it))
+                }
+                minStartTime?.let {
+                    put("min_start_time", DateTimeFormatter.ISO_OFFSET_DATE_TIME.format(it))
+                }
                 startTime?.let { put("start_time", it) }
                 putAll(additionalQueryParams)
             }
@@ -244,14 +282,25 @@ private constructor(
             queueId == other.queueId &&
             status == other.status &&
             endTime == other.endTime &&
+            maxStartTime == other.maxStartTime &&
+            minStartTime == other.minStartTime &&
             startTime == other.startTime &&
             additionalHeaders == other.additionalHeaders &&
             additionalQueryParams == other.additionalQueryParams
     }
 
     override fun hashCode(): Int =
-        Objects.hash(queueId, status, endTime, startTime, additionalHeaders, additionalQueryParams)
+        Objects.hash(
+            queueId,
+            status,
+            endTime,
+            maxStartTime,
+            minStartTime,
+            startTime,
+            additionalHeaders,
+            additionalQueryParams,
+        )
 
     override fun toString() =
-        "ItemRetrieveCountParams{queueId=$queueId, status=$status, endTime=$endTime, startTime=$startTime, additionalHeaders=$additionalHeaders, additionalQueryParams=$additionalQueryParams}"
+        "ItemRetrieveCountParams{queueId=$queueId, status=$status, endTime=$endTime, maxStartTime=$maxStartTime, minStartTime=$minStartTime, startTime=$startTime, additionalHeaders=$additionalHeaders, additionalQueryParams=$additionalQueryParams}"
 }

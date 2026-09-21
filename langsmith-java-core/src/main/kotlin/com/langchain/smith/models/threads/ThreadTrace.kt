@@ -45,6 +45,7 @@ private constructor(
     private val totalCost: JsonField<Double>,
     private val totalTokens: JsonField<Long>,
     private val traceId: JsonField<String>,
+    private val turnNumber: JsonField<Long>,
     private val additionalProperties: MutableMap<String, JsonValue>,
 ) {
 
@@ -104,6 +105,7 @@ private constructor(
         @ExcludeMissing
         totalTokens: JsonField<Long> = JsonMissing.of(),
         @JsonProperty("trace_id") @ExcludeMissing traceId: JsonField<String> = JsonMissing.of(),
+        @JsonProperty("turn_number") @ExcludeMissing turnNumber: JsonField<Long> = JsonMissing.of(),
     ) : this(
         completionCost,
         completionCostDetails,
@@ -129,6 +131,7 @@ private constructor(
         totalCost,
         totalTokens,
         traceId,
+        turnNumber,
         mutableMapOf(),
     )
 
@@ -352,6 +355,16 @@ private constructor(
     fun traceId(): Optional<String> = traceId.getOptional("trace_id")
 
     /**
+     * `turn_number` is the 1-based position in the whole thread, ordered by start_time then
+     * trace_id ascending, before filtering or pagination. Updates and deletions can change this
+     * position. Omitted unless TURN_NUMBER is included in `selects`.
+     *
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
+    fun turnNumber(): Optional<Long> = turnNumber.getOptional("turn_number")
+
+    /**
      * Returns the raw JSON value of [completionCost].
      *
      * Unlike [completionCost], this method doesn't throw if the JSON field has an unexpected type.
@@ -534,6 +547,13 @@ private constructor(
      */
     @JsonProperty("trace_id") @ExcludeMissing fun _traceId(): JsonField<String> = traceId
 
+    /**
+     * Returns the raw JSON value of [turnNumber].
+     *
+     * Unlike [turnNumber], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    @JsonProperty("turn_number") @ExcludeMissing fun _turnNumber(): JsonField<Long> = turnNumber
+
     @JsonAnySetter
     private fun putAdditionalProperty(key: String, value: JsonValue) {
         additionalProperties.put(key, value)
@@ -579,6 +599,7 @@ private constructor(
         private var totalCost: JsonField<Double> = JsonMissing.of()
         private var totalTokens: JsonField<Long> = JsonMissing.of()
         private var traceId: JsonField<String> = JsonMissing.of()
+        private var turnNumber: JsonField<Long> = JsonMissing.of()
         private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
 
         @JvmSynthetic
@@ -607,6 +628,7 @@ private constructor(
             totalCost = threadTrace.totalCost
             totalTokens = threadTrace.totalTokens
             traceId = threadTrace.traceId
+            turnNumber = threadTrace.turnNumber
             additionalProperties = threadTrace.additionalProperties.toMutableMap()
         }
 
@@ -965,6 +987,21 @@ private constructor(
          */
         fun traceId(traceId: JsonField<String>) = apply { this.traceId = traceId }
 
+        /**
+         * `turn_number` is the 1-based position in the whole thread, ordered by start_time then
+         * trace_id ascending, before filtering or pagination. Updates and deletions can change this
+         * position. Omitted unless TURN_NUMBER is included in `selects`.
+         */
+        fun turnNumber(turnNumber: Long) = turnNumber(JsonField.of(turnNumber))
+
+        /**
+         * Sets [Builder.turnNumber] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.turnNumber] with a well-typed [Long] value instead. This
+         * method is primarily for setting the field to an undocumented or not yet supported value.
+         */
+        fun turnNumber(turnNumber: JsonField<Long>) = apply { this.turnNumber = turnNumber }
+
         fun additionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
             this.additionalProperties.clear()
             putAllAdditionalProperties(additionalProperties)
@@ -1015,6 +1052,7 @@ private constructor(
                 totalCost,
                 totalTokens,
                 traceId,
+                turnNumber,
                 additionalProperties.toMutableMap(),
             )
     }
@@ -1056,6 +1094,7 @@ private constructor(
         totalCost()
         totalTokens()
         traceId()
+        turnNumber()
         validated = true
     }
 
@@ -1095,7 +1134,8 @@ private constructor(
             (if (threadId.asKnown().isPresent) 1 else 0) +
             (if (totalCost.asKnown().isPresent) 1 else 0) +
             (if (totalTokens.asKnown().isPresent) 1 else 0) +
-            (if (traceId.asKnown().isPresent) 1 else 0)
+            (if (traceId.asKnown().isPresent) 1 else 0) +
+            (if (turnNumber.asKnown().isPresent) 1 else 0)
 
     /**
      * `completion_cost_details` is the USD cost breakdown for completion-side categories;
@@ -2203,6 +2243,7 @@ private constructor(
             totalCost == other.totalCost &&
             totalTokens == other.totalTokens &&
             traceId == other.traceId &&
+            turnNumber == other.turnNumber &&
             additionalProperties == other.additionalProperties
     }
 
@@ -2232,6 +2273,7 @@ private constructor(
             totalCost,
             totalTokens,
             traceId,
+            turnNumber,
             additionalProperties,
         )
     }
@@ -2239,5 +2281,5 @@ private constructor(
     override fun hashCode(): Int = hashCode
 
     override fun toString() =
-        "ThreadTrace{completionCost=$completionCost, completionCostDetails=$completionCostDetails, completionTokenDetails=$completionTokenDetails, completionTokens=$completionTokens, endTime=$endTime, error=$error, errorPreview=$errorPreview, firstTokenTime=$firstTokenTime, inputs=$inputs, inputsPreview=$inputsPreview, latency=$latency, name=$name, op=$op, outputs=$outputs, outputsPreview=$outputsPreview, promptCost=$promptCost, promptCostDetails=$promptCostDetails, promptTokenDetails=$promptTokenDetails, promptTokens=$promptTokens, startTime=$startTime, threadId=$threadId, totalCost=$totalCost, totalTokens=$totalTokens, traceId=$traceId, additionalProperties=$additionalProperties}"
+        "ThreadTrace{completionCost=$completionCost, completionCostDetails=$completionCostDetails, completionTokenDetails=$completionTokenDetails, completionTokens=$completionTokens, endTime=$endTime, error=$error, errorPreview=$errorPreview, firstTokenTime=$firstTokenTime, inputs=$inputs, inputsPreview=$inputsPreview, latency=$latency, name=$name, op=$op, outputs=$outputs, outputsPreview=$outputsPreview, promptCost=$promptCost, promptCostDetails=$promptCostDetails, promptTokenDetails=$promptTokenDetails, promptTokens=$promptTokens, startTime=$startTime, threadId=$threadId, totalCost=$totalCost, totalTokens=$totalTokens, traceId=$traceId, turnNumber=$turnNumber, additionalProperties=$additionalProperties}"
 }

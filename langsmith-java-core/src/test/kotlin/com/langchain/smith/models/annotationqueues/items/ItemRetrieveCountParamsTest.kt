@@ -3,6 +3,7 @@
 package com.langchain.smith.models.annotationqueues.items
 
 import com.langchain.smith.core.http.QueryParams
+import java.time.OffsetDateTime
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
@@ -14,6 +15,8 @@ internal class ItemRetrieveCountParamsTest {
             .queueId("queue_id")
             .status("status")
             .endTime("end_time")
+            .maxStartTime(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
+            .minStartTime(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
             .startTime("start_time")
             .build()
     }
@@ -34,6 +37,8 @@ internal class ItemRetrieveCountParamsTest {
                 .queueId("queue_id")
                 .status("status")
                 .endTime("end_time")
+                .maxStartTime(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
+                .minStartTime(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
                 .startTime("start_time")
                 .build()
 
@@ -44,6 +49,8 @@ internal class ItemRetrieveCountParamsTest {
                 QueryParams.builder()
                     .put("status", "status")
                     .put("end_time", "end_time")
+                    .put("max_start_time", "2019-12-27T18:11:19.117Z")
+                    .put("min_start_time", "2019-12-27T18:11:19.117Z")
                     .put("start_time", "start_time")
                     .build()
             )

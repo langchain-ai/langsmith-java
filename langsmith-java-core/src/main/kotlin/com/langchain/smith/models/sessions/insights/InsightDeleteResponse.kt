@@ -15,7 +15,7 @@ import com.langchain.smith.errors.LangChainInvalidDataException
 import java.util.Collections
 import java.util.Objects
 
-/** Response to delete a session cluster job. */
+/** Confirmation that an Insights job was deleted. */
 class InsightDeleteResponse
 @JsonCreator(mode = JsonCreator.Mode.DISABLED)
 private constructor(

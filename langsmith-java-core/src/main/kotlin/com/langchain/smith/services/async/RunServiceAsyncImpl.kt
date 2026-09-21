@@ -234,7 +234,7 @@ class RunServiceAsyncImpl internal constructor(private val clientOptions: Client
         withRawResponse().multipartIngest(create, update, requestOptions).thenApply { it.parse() }
 
     @Deprecated(
-        "Deprecated: use queryV2 instead, which calls /api/v2/runs/query. See https://docs.langchain.com/langsmith/smithdb-sdk-migration#runs-query for the migration guide. Will be removed after Jan 31, 2027."
+        "Deprecated: use queryV2 instead, which calls /api/v2/runs/query. See https://docs.langchain.com/langsmith/smithdb-sdk-migration-query-runs#runs-query for the migration guide. Will be removed after Jan 31, 2027."
     )
     override fun queryV1(
         params: RunQueryV1Params,
@@ -251,7 +251,7 @@ class RunServiceAsyncImpl internal constructor(private val clientOptions: Client
         withRawResponse().queryV2(params, requestOptions).thenApply { it.parse() }
 
     @Deprecated(
-        "Deprecated: use retrieveV2 instead, which calls /api/v2/runs/{run_id}. See https://docs.langchain.com/langsmith/smithdb-sdk-migration#runs-retrieve for the migration guide. Will be removed after Jan 31, 2027."
+        "Deprecated: use retrieveV2 instead, which calls /api/v2/runs/{run_id}. See https://docs.langchain.com/langsmith/smithdb-sdk-migration-runs#runs-retrieve for the migration guide. Will be removed after Jan 31, 2027."
     )
     override fun retrieveV1(
         params: RunRetrieveV1Params,
@@ -568,7 +568,7 @@ class RunServiceAsyncImpl internal constructor(private val clientOptions: Client
             jsonHandler<RunQueryV1PageResponse>(clientOptions.jsonMapper)
 
         @Deprecated(
-            "Deprecated: use queryV2 instead, which calls /api/v2/runs/query. See https://docs.langchain.com/langsmith/smithdb-sdk-migration#runs-query for the migration guide. Will be removed after Jan 31, 2027."
+            "Deprecated: use queryV2 instead, which calls /api/v2/runs/query. See https://docs.langchain.com/langsmith/smithdb-sdk-migration-query-runs#runs-query for the migration guide. Will be removed after Jan 31, 2027."
         )
         override fun queryV1(
             params: RunQueryV1Params,
@@ -649,7 +649,7 @@ class RunServiceAsyncImpl internal constructor(private val clientOptions: Client
             jsonHandler<RunSchema>(clientOptions.jsonMapper)
 
         @Deprecated(
-            "Deprecated: use retrieveV2 instead, which calls /api/v2/runs/{run_id}. See https://docs.langchain.com/langsmith/smithdb-sdk-migration#runs-retrieve for the migration guide. Will be removed after Jan 31, 2027."
+            "Deprecated: use retrieveV2 instead, which calls /api/v2/runs/{run_id}. See https://docs.langchain.com/langsmith/smithdb-sdk-migration-runs#runs-retrieve for the migration guide. Will be removed after Jan 31, 2027."
         )
         override fun retrieveV1(
             params: RunRetrieveV1Params,
