@@ -6,6 +6,8 @@ import com.langchain.smith.core.ClientOptions
 import com.langchain.smith.core.getPackageVersion
 import com.langchain.smith.services.async.AnnotationQueueServiceAsync
 import com.langchain.smith.services.async.AnnotationQueueServiceAsyncImpl
+import com.langchain.smith.services.async.ChartServiceAsync
+import com.langchain.smith.services.async.ChartServiceAsyncImpl
 import com.langchain.smith.services.async.CommitServiceAsync
 import com.langchain.smith.services.async.CommitServiceAsyncImpl
 import com.langchain.smith.services.async.DatasetServiceAsync
@@ -89,6 +91,10 @@ class LangsmithClientAsyncImpl(private val clientOptions: ClientOptions) : Langs
         ThreadServiceAsyncImpl(clientOptionsWithUserAgent)
     }
 
+    private val charts: ChartServiceAsync by lazy {
+        ChartServiceAsyncImpl(clientOptionsWithUserAgent)
+    }
+
     private val traces: TraceServiceAsync by lazy {
         TraceServiceAsyncImpl(clientOptionsWithUserAgent)
     }
@@ -158,6 +164,8 @@ class LangsmithClientAsyncImpl(private val clientOptions: ClientOptions) : Langs
 
     override fun threads(): ThreadServiceAsync = threads
 
+    override fun charts(): ChartServiceAsync = charts
+
     override fun traces(): TraceServiceAsync = traces
 
     override fun evaluators(): EvaluatorServiceAsync = evaluators
@@ -224,6 +232,10 @@ class LangsmithClientAsyncImpl(private val clientOptions: ClientOptions) : Langs
 
         private val threads: ThreadServiceAsync.WithRawResponse by lazy {
             ThreadServiceAsyncImpl.WithRawResponseImpl(clientOptions)
+        }
+
+        private val charts: ChartServiceAsync.WithRawResponse by lazy {
+            ChartServiceAsyncImpl.WithRawResponseImpl(clientOptions)
         }
 
         private val traces: TraceServiceAsync.WithRawResponse by lazy {
@@ -299,6 +311,8 @@ class LangsmithClientAsyncImpl(private val clientOptions: ClientOptions) : Langs
         override fun runs(): RunServiceAsync.WithRawResponse = runs
 
         override fun threads(): ThreadServiceAsync.WithRawResponse = threads
+
+        override fun charts(): ChartServiceAsync.WithRawResponse = charts
 
         override fun traces(): TraceServiceAsync.WithRawResponse = traces
 
