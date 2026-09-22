@@ -28,7 +28,7 @@ private constructor(
     private val evaluatorBuildStatus: JsonField<EvaluatorBuildStatus>,
     private val evaluatorId: JsonField<String>,
     private val language: JsonField<String>,
-    private val managedCodeEvaluatorKey: JsonField<String>,
+    private val managedCodeEvaluatorKey: JsonField<ManagedCodeEvaluatorKey>,
     private val managedCodeEvaluatorSettings: JsonField<ManagedCodeEvaluatorSettings>,
     private val requireAttachments: JsonField<Boolean>,
     private val additionalProperties: MutableMap<String, JsonValue>,
@@ -55,7 +55,7 @@ private constructor(
         @JsonProperty("language") @ExcludeMissing language: JsonField<String> = JsonMissing.of(),
         @JsonProperty("managed_code_evaluator_key")
         @ExcludeMissing
-        managedCodeEvaluatorKey: JsonField<String> = JsonMissing.of(),
+        managedCodeEvaluatorKey: JsonField<ManagedCodeEvaluatorKey> = JsonMissing.of(),
         @JsonProperty("managed_code_evaluator_settings")
         @ExcludeMissing
         managedCodeEvaluatorSettings: JsonField<ManagedCodeEvaluatorSettings> = JsonMissing.of(),
@@ -127,7 +127,7 @@ private constructor(
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
      */
-    fun managedCodeEvaluatorKey(): Optional<String> =
+    fun managedCodeEvaluatorKey(): Optional<ManagedCodeEvaluatorKey> =
         managedCodeEvaluatorKey.getOptional("managed_code_evaluator_key")
 
     /**
@@ -217,7 +217,7 @@ private constructor(
      */
     @JsonProperty("managed_code_evaluator_key")
     @ExcludeMissing
-    fun _managedCodeEvaluatorKey(): JsonField<String> = managedCodeEvaluatorKey
+    fun _managedCodeEvaluatorKey(): JsonField<ManagedCodeEvaluatorKey> = managedCodeEvaluatorKey
 
     /**
      * Returns the raw JSON value of [managedCodeEvaluatorSettings].
@@ -268,7 +268,7 @@ private constructor(
         private var evaluatorBuildStatus: JsonField<EvaluatorBuildStatus> = JsonMissing.of()
         private var evaluatorId: JsonField<String> = JsonMissing.of()
         private var language: JsonField<String> = JsonMissing.of()
-        private var managedCodeEvaluatorKey: JsonField<String> = JsonMissing.of()
+        private var managedCodeEvaluatorKey: JsonField<ManagedCodeEvaluatorKey> = JsonMissing.of()
         private var managedCodeEvaluatorSettings: JsonField<ManagedCodeEvaluatorSettings> =
             JsonMissing.of()
         private var requireAttachments: JsonField<Boolean> = JsonMissing.of()
@@ -376,19 +376,20 @@ private constructor(
          */
         fun language(language: JsonField<String>) = apply { this.language = language }
 
-        fun managedCodeEvaluatorKey(managedCodeEvaluatorKey: String) =
+        fun managedCodeEvaluatorKey(managedCodeEvaluatorKey: ManagedCodeEvaluatorKey) =
             managedCodeEvaluatorKey(JsonField.of(managedCodeEvaluatorKey))
 
         /**
          * Sets [Builder.managedCodeEvaluatorKey] to an arbitrary JSON value.
          *
-         * You should usually call [Builder.managedCodeEvaluatorKey] with a well-typed [String]
-         * value instead. This method is primarily for setting the field to an undocumented or not
-         * yet supported value.
+         * You should usually call [Builder.managedCodeEvaluatorKey] with a well-typed
+         * [ManagedCodeEvaluatorKey] value instead. This method is primarily for setting the field
+         * to an undocumented or not yet supported value.
          */
-        fun managedCodeEvaluatorKey(managedCodeEvaluatorKey: JsonField<String>) = apply {
-            this.managedCodeEvaluatorKey = managedCodeEvaluatorKey
-        }
+        fun managedCodeEvaluatorKey(managedCodeEvaluatorKey: JsonField<ManagedCodeEvaluatorKey>) =
+            apply {
+                this.managedCodeEvaluatorKey = managedCodeEvaluatorKey
+            }
 
         fun managedCodeEvaluatorSettings(
             managedCodeEvaluatorSettings: ManagedCodeEvaluatorSettings
@@ -485,7 +486,7 @@ private constructor(
         evaluatorBuildStatus().ifPresent { it.validate() }
         evaluatorId()
         language()
-        managedCodeEvaluatorKey()
+        managedCodeEvaluatorKey().ifPresent { it.validate() }
         managedCodeEvaluatorSettings().ifPresent { it.validate() }
         requireAttachments()
         validated = true
@@ -513,7 +514,7 @@ private constructor(
             (evaluatorBuildStatus.asKnown().getOrNull()?.validity() ?: 0) +
             (if (evaluatorId.asKnown().isPresent) 1 else 0) +
             (if (language.asKnown().isPresent) 1 else 0) +
-            (if (managedCodeEvaluatorKey.asKnown().isPresent) 1 else 0) +
+            (managedCodeEvaluatorKey.asKnown().getOrNull()?.validity() ?: 0) +
             (managedCodeEvaluatorSettings.asKnown().getOrNull()?.validity() ?: 0) +
             (if (requireAttachments.asKnown().isPresent) 1 else 0)
 
@@ -664,6 +665,144 @@ private constructor(
             }
 
             return other is EvaluatorBuildStatus && value == other.value
+        }
+
+        override fun hashCode() = value.hashCode()
+
+        override fun toString() = value.toString()
+    }
+
+    class ManagedCodeEvaluatorKey
+    @JsonCreator
+    private constructor(private val value: JsonField<String>) : Enum {
+
+        /**
+         * Returns this class instance's raw value.
+         *
+         * This is usually only useful if this instance was deserialized from data that doesn't
+         * match any known member, and you want to know that value. For example, if the SDK is on an
+         * older version than the API, then the API may respond with new members that the SDK is
+         * unaware of.
+         */
+        @com.fasterxml.jackson.annotation.JsonValue fun _value(): JsonField<String> = value
+
+        companion object {
+
+            @JvmField val VOICE_METRICS = of("voice_metrics")
+
+            @JvmStatic fun of(value: String) = ManagedCodeEvaluatorKey(JsonField.of(value))
+        }
+
+        /** An enum containing [ManagedCodeEvaluatorKey]'s known values. */
+        enum class Known {
+            VOICE_METRICS
+        }
+
+        /**
+         * An enum containing [ManagedCodeEvaluatorKey]'s known values, as well as an [_UNKNOWN]
+         * member.
+         *
+         * An instance of [ManagedCodeEvaluatorKey] can contain an unknown value in a couple of
+         * cases:
+         * - It was deserialized from data that doesn't match any known member. For example, if the
+         *   SDK is on an older version than the API, then the API may respond with new members that
+         *   the SDK is unaware of.
+         * - It was constructed with an arbitrary value using the [of] method.
+         */
+        enum class Value {
+            VOICE_METRICS,
+            /**
+             * An enum member indicating that [ManagedCodeEvaluatorKey] was instantiated with an
+             * unknown value.
+             */
+            _UNKNOWN,
+        }
+
+        /**
+         * Returns an enum member corresponding to this class instance's value, or [Value._UNKNOWN]
+         * if the class was instantiated with an unknown value.
+         *
+         * Use the [known] method instead if you're certain the value is always known or if you want
+         * to throw for the unknown case.
+         */
+        fun value(): Value =
+            when (this) {
+                VOICE_METRICS -> Value.VOICE_METRICS
+                else -> Value._UNKNOWN
+            }
+
+        /**
+         * Returns an enum member corresponding to this class instance's value.
+         *
+         * Use the [value] method instead if you're uncertain the value is always known and don't
+         * want to throw for the unknown case.
+         *
+         * @throws LangChainInvalidDataException if this class instance's value is a not a known
+         *   member.
+         */
+        fun known(): Known =
+            when (this) {
+                VOICE_METRICS -> Known.VOICE_METRICS
+                else ->
+                    throw LangChainInvalidDataException("Unknown ManagedCodeEvaluatorKey: $value")
+            }
+
+        /**
+         * Returns this class instance's primitive wire representation.
+         *
+         * This differs from the [toString] method because that method is primarily for debugging
+         * and generally doesn't throw.
+         *
+         * @throws LangChainInvalidDataException if this class instance's value does not have the
+         *   expected primitive type.
+         */
+        fun asString(): String =
+            _value().asString().orElseThrow {
+                LangChainInvalidDataException("Value is not a String")
+            }
+
+        private var validated: Boolean = false
+
+        /**
+         * Validates that the types of all values in this object match their expected types
+         * recursively.
+         *
+         * This method is _not_ forwards compatible with new types from the API for existing fields.
+         *
+         * @throws LangChainInvalidDataException if any value type in this object doesn't match its
+         *   expected type.
+         */
+        fun validate(): ManagedCodeEvaluatorKey = apply {
+            if (validated) {
+                return@apply
+            }
+
+            known()
+            validated = true
+        }
+
+        fun isValid(): Boolean =
+            try {
+                validate()
+                true
+            } catch (e: LangChainInvalidDataException) {
+                false
+            }
+
+        /**
+         * Returns a score indicating how many valid values are contained in this object
+         * recursively.
+         *
+         * Used for best match union deserialization.
+         */
+        @JvmSynthetic internal fun validity(): Int = if (value() == Value._UNKNOWN) 0 else 1
+
+        override fun equals(other: Any?): Boolean {
+            if (this === other) {
+                return true
+            }
+
+            return other is ManagedCodeEvaluatorKey && value == other.value
         }
 
         override fun hashCode() = value.hashCode()

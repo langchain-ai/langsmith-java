@@ -19,7 +19,10 @@ internal class OnlineEvaluatorCreateParamsTest {
                             .code("code")
                             .dependencies("dependencies")
                             .language("language")
-                            .managedCodeEvaluatorKey("managed_code_evaluator_key")
+                            .managedCodeEvaluatorKey(
+                                CreateOnlineCodeEvaluatorRequest.ManagedCodeEvaluatorKey
+                                    .VOICE_METRICS
+                            )
                             .managedCodeEvaluatorSettings(
                                 CreateOnlineCodeEvaluatorRequest.ManagedCodeEvaluatorSettings
                                     .builder()
@@ -61,7 +64,10 @@ internal class OnlineEvaluatorCreateParamsTest {
                                 .code("code")
                                 .dependencies("dependencies")
                                 .language("language")
-                                .managedCodeEvaluatorKey("managed_code_evaluator_key")
+                                .managedCodeEvaluatorKey(
+                                    CreateOnlineCodeEvaluatorRequest.ManagedCodeEvaluatorKey
+                                        .VOICE_METRICS
+                                )
                                 .managedCodeEvaluatorSettings(
                                     CreateOnlineCodeEvaluatorRequest.ManagedCodeEvaluatorSettings
                                         .builder()
@@ -104,7 +110,10 @@ internal class OnlineEvaluatorCreateParamsTest {
                             .code("code")
                             .dependencies("dependencies")
                             .language("language")
-                            .managedCodeEvaluatorKey("managed_code_evaluator_key")
+                            .managedCodeEvaluatorKey(
+                                CreateOnlineCodeEvaluatorRequest.ManagedCodeEvaluatorKey
+                                    .VOICE_METRICS
+                            )
                             .managedCodeEvaluatorSettings(
                                 CreateOnlineCodeEvaluatorRequest.ManagedCodeEvaluatorSettings
                                     .builder()
