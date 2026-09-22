@@ -83,9 +83,9 @@ dependencies {
         testImplementation("org.eclipse.jetty.http2:http2-common") { version { require("12.1.10") } }
         testImplementation("org.eclipse.jetty.http2:http2-hpack") { version { require("12.1.10") } }
         testImplementation("org.eclipse.jetty.http2:http2-server") { version { require("12.1.10") } }
-        testImplementation("org.bouncycastle:bcpg-jdk18on:1.84")
-        testImplementation("org.bouncycastle:bcpkix-jdk18on:1.84")
-        testImplementation("org.bouncycastle:bcprov-jdk18on:1.84")
+        testImplementation("org.bouncycastle:bcpg-jdk18on:1.85")
+        testImplementation("org.bouncycastle:bcpkix-jdk18on:1.85")
+        testImplementation("org.bouncycastle:bcprov-jdk18on:1.85")
         testImplementation("org.apache.logging.log4j:log4j-core:2.25.5")
         testImplementation("org.apache.opennlp:opennlp-tools") { version { require("2.5.9") } }
         testImplementation("com.github.jknack:handlebars") { version { require("4.5.2") } }
