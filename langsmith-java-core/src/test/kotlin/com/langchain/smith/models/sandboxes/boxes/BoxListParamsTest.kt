@@ -22,6 +22,7 @@ internal class BoxListParamsTest {
             .sortDirection("sort_direction")
             .sortOrder("sort_order")
             .status("status")
+            .addTagValueId("string")
             .build()
     }
 
@@ -40,6 +41,7 @@ internal class BoxListParamsTest {
                 .sortDirection("sort_direction")
                 .sortOrder("sort_order")
                 .status("status")
+                .addTagValueId("string")
                 .build()
 
         val queryParams = params._queryParams()
@@ -58,6 +60,7 @@ internal class BoxListParamsTest {
                     .put("sort_direction", "sort_direction")
                     .put("sort_order", "sort_order")
                     .put("status", "status")
+                    .put("tag_value_id", "string")
                     .build()
             )
     }

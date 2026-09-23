@@ -29,6 +29,7 @@ private constructor(
     private val sortDirection: String?,
     private val sortOrder: String?,
     private val status: String?,
+    private val tagValueId: List<String>?,
     private val additionalHeaders: Headers,
     private val additionalQueryParams: QueryParams,
 ) : Params {
@@ -72,6 +73,9 @@ private constructor(
     /** Filter by status (provisioning, ready, failed, stopped, deleting) */
     fun status(): Optional<String> = Optional.ofNullable(status)
 
+    /** Filter by workspace resource tag value IDs; all must match */
+    fun tagValueId(): Optional<List<String>> = Optional.ofNullable(tagValueId)
+
     /** Additional headers to send with the request. */
     fun _additionalHeaders(): Headers = additionalHeaders
 
@@ -102,6 +106,7 @@ private constructor(
         private var sortDirection: String? = null
         private var sortOrder: String? = null
         private var status: String? = null
+        private var tagValueId: MutableList<String>? = null
         private var additionalHeaders: Headers.Builder = Headers.builder()
         private var additionalQueryParams: QueryParams.Builder = QueryParams.builder()
 
@@ -118,6 +123,7 @@ private constructor(
             sortDirection = boxListParams.sortDirection
             sortOrder = boxListParams.sortOrder
             status = boxListParams.status
+            tagValueId = boxListParams.tagValueId?.toMutableList()
             additionalHeaders = boxListParams.additionalHeaders.toBuilder()
             additionalQueryParams = boxListParams.additionalQueryParams.toBuilder()
         }
@@ -224,6 +230,23 @@ private constructor(
 
         /** Alias for calling [Builder.status] with `status.orElse(null)`. */
         fun status(status: Optional<String>) = status(status.getOrNull())
+
+        /** Filter by workspace resource tag value IDs; all must match */
+        fun tagValueId(tagValueId: List<String>?) = apply {
+            this.tagValueId = tagValueId?.toMutableList()
+        }
+
+        /** Alias for calling [Builder.tagValueId] with `tagValueId.orElse(null)`. */
+        fun tagValueId(tagValueId: Optional<List<String>>) = tagValueId(tagValueId.getOrNull())
+
+        /**
+         * Adds a single [String] to [Builder.tagValueId].
+         *
+         * @throws IllegalStateException if the field was previously set to a non-list.
+         */
+        fun addTagValueId(tagValueId: String) = apply {
+            this.tagValueId = (this.tagValueId ?: mutableListOf()).apply { add(tagValueId) }
+        }
 
         fun additionalHeaders(additionalHeaders: Headers) = apply {
             this.additionalHeaders.clear()
@@ -341,6 +364,7 @@ private constructor(
                 sortDirection,
                 sortOrder,
                 status,
+                tagValueId?.toImmutable(),
                 additionalHeaders.build(),
                 additionalQueryParams.build(),
             )
@@ -362,6 +386,7 @@ private constructor(
                 sortDirection?.let { put("sort_direction", it) }
                 sortOrder?.let { put("sort_order", it) }
                 status?.let { put("status", it) }
+                tagValueId?.forEach { put("tag_value_id", it) }
                 putAll(additionalQueryParams)
             }
             .build()
@@ -383,6 +408,7 @@ private constructor(
             sortDirection == other.sortDirection &&
             sortOrder == other.sortOrder &&
             status == other.status &&
+            tagValueId == other.tagValueId &&
             additionalHeaders == other.additionalHeaders &&
             additionalQueryParams == other.additionalQueryParams
     }
@@ -400,10 +426,11 @@ private constructor(
             sortDirection,
             sortOrder,
             status,
+            tagValueId,
             additionalHeaders,
             additionalQueryParams,
         )
 
     override fun toString() =
-        "BoxListParams{createdBy=$createdBy, cursor=$cursor, label=$label, limit=$limit, nameContains=$nameContains, offset=$offset, pageSize=$pageSize, sortBy=$sortBy, sortDirection=$sortDirection, sortOrder=$sortOrder, status=$status, additionalHeaders=$additionalHeaders, additionalQueryParams=$additionalQueryParams}"
+        "BoxListParams{createdBy=$createdBy, cursor=$cursor, label=$label, limit=$limit, nameContains=$nameContains, offset=$offset, pageSize=$pageSize, sortBy=$sortBy, sortDirection=$sortDirection, sortOrder=$sortOrder, status=$status, tagValueId=$tagValueId, additionalHeaders=$additionalHeaders, additionalQueryParams=$additionalQueryParams}"
 }
