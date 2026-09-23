@@ -37,6 +37,7 @@ private constructor(
     private val fixPrNumber: JsonField<Long>,
     private val fixPrompt: JsonField<String>,
     private val fixVerification: JsonField<FixVerification>,
+    private val fixes: JsonField<List<Fix>>,
     private val lastSeenAt: JsonField<String>,
     private val linearContext: JsonField<LinearContext>,
     private val linearSync: JsonField<LinearSync>,
@@ -87,6 +88,7 @@ private constructor(
         @JsonProperty("fix_verification")
         @ExcludeMissing
         fixVerification: JsonField<FixVerification> = JsonMissing.of(),
+        @JsonProperty("fixes") @ExcludeMissing fixes: JsonField<List<Fix>> = JsonMissing.of(),
         @JsonProperty("last_seen_at")
         @ExcludeMissing
         lastSeenAt: JsonField<String> = JsonMissing.of(),
@@ -139,6 +141,7 @@ private constructor(
         fixPrNumber,
         fixPrompt,
         fixVerification,
+        fixes,
         lastSeenAt,
         linearContext,
         linearSync,
@@ -220,6 +223,8 @@ private constructor(
     fun firstSeenAt(): Optional<String> = firstSeenAt.getOptional("first_seen_at")
 
     /**
+     * Legacy: branch of the oldest fix in the board's oldest connected repository.
+     *
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
      */
@@ -238,6 +243,9 @@ private constructor(
     fun fixPrNumber(): Optional<Long> = fixPrNumber.getOptional("fix_pr_number")
 
     /**
+     * Issue-level: the problem every fix shares, and the last time a fix run was dispatched for
+     * this issue — one run works several fixes.
+     *
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
      */
@@ -249,6 +257,14 @@ private constructor(
      */
     fun fixVerification(): Optional<FixVerification> =
         fixVerification.getOptional("fix_verification")
+
+    /**
+     * Newest first.
+     *
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
+    fun fixes(): Optional<List<Fix>> = fixes.getOptional("fixes")
 
     /**
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
@@ -455,6 +471,13 @@ private constructor(
     fun _fixVerification(): JsonField<FixVerification> = fixVerification
 
     /**
+     * Returns the raw JSON value of [fixes].
+     *
+     * Unlike [fixes], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    @JsonProperty("fixes") @ExcludeMissing fun _fixes(): JsonField<List<Fix>> = fixes
+
+    /**
      * Returns the raw JSON value of [lastSeenAt].
      *
      * Unlike [lastSeenAt], this method doesn't throw if the JSON field has an unexpected type.
@@ -630,6 +653,7 @@ private constructor(
         private var fixPrNumber: JsonField<Long> = JsonMissing.of()
         private var fixPrompt: JsonField<String> = JsonMissing.of()
         private var fixVerification: JsonField<FixVerification> = JsonMissing.of()
+        private var fixes: JsonField<MutableList<Fix>>? = null
         private var lastSeenAt: JsonField<String> = JsonMissing.of()
         private var linearContext: JsonField<LinearContext> = JsonMissing.of()
         private var linearSync: JsonField<LinearSync> = JsonMissing.of()
@@ -665,6 +689,7 @@ private constructor(
             fixPrNumber = issue.fixPrNumber
             fixPrompt = issue.fixPrompt
             fixVerification = issue.fixVerification
+            fixes = issue.fixes.map { it.toMutableList() }
             lastSeenAt = issue.lastSeenAt
             linearContext = issue.linearContext
             linearSync = issue.linearSync
@@ -765,6 +790,7 @@ private constructor(
          */
         fun firstSeenAt(firstSeenAt: JsonField<String>) = apply { this.firstSeenAt = firstSeenAt }
 
+        /** Legacy: branch of the oldest fix in the board's oldest connected repository. */
         fun fixBranch(fixBranch: String) = fixBranch(JsonField.of(fixBranch))
 
         /**
@@ -801,6 +827,10 @@ private constructor(
          */
         fun fixPrNumber(fixPrNumber: JsonField<Long>) = apply { this.fixPrNumber = fixPrNumber }
 
+        /**
+         * Issue-level: the problem every fix shares, and the last time a fix run was dispatched for
+         * this issue — one run works several fixes.
+         */
         fun fixPrompt(fixPrompt: String) = fixPrompt(JsonField.of(fixPrompt))
 
         /**
@@ -824,6 +854,29 @@ private constructor(
          */
         fun fixVerification(fixVerification: JsonField<FixVerification>) = apply {
             this.fixVerification = fixVerification
+        }
+
+        /** Newest first. */
+        fun fixes(fixes: List<Fix>) = fixes(JsonField.of(fixes))
+
+        /**
+         * Sets [Builder.fixes] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.fixes] with a well-typed `List<Fix>` value instead. This
+         * method is primarily for setting the field to an undocumented or not yet supported value.
+         */
+        fun fixes(fixes: JsonField<List<Fix>>) = apply {
+            this.fixes = fixes.map { it.toMutableList() }
+        }
+
+        /**
+         * Adds a single [Fix] to [fixes].
+         *
+         * @throws IllegalStateException if the field was previously set to a non-list.
+         */
+        fun addFix(fix: Fix) = apply {
+            fixes =
+                (fixes ?: JsonField.of(mutableListOf())).also { checkKnown("fixes", it).add(fix) }
         }
 
         fun lastSeenAt(lastSeenAt: String) = lastSeenAt(JsonField.of(lastSeenAt))
@@ -1121,6 +1174,7 @@ private constructor(
                 fixPrNumber,
                 fixPrompt,
                 fixVerification,
+                (fixes ?: JsonMissing.of()).map { it.toImmutable() },
                 lastSeenAt,
                 linearContext,
                 linearSync,
@@ -1169,6 +1223,7 @@ private constructor(
         fixPrNumber()
         fixPrompt()
         fixVerification().ifPresent { it.validate() }
+        fixes().ifPresent { it.forEach { it.validate() } }
         lastSeenAt()
         linearContext().ifPresent { it.validate() }
         linearSync().ifPresent { it.validate() }
@@ -1215,6 +1270,7 @@ private constructor(
             (if (fixPrNumber.asKnown().isPresent) 1 else 0) +
             (if (fixPrompt.asKnown().isPresent) 1 else 0) +
             (fixVerification.asKnown().getOrNull()?.validity() ?: 0) +
+            (fixes.asKnown().getOrNull()?.sumOf { it.validity().toInt() } ?: 0) +
             (if (lastSeenAt.asKnown().isPresent) 1 else 0) +
             (linearContext.asKnown().getOrNull()?.validity() ?: 0) +
             (linearSync.asKnown().getOrNull()?.validity() ?: 0) +
@@ -5924,6 +5980,370 @@ private constructor(
             "FixVerification{attempt=$attempt, baselineExperimentId=$baselineExperimentId, datasetId=$datasetId, parentDeploymentId=$parentDeploymentId, previewDeploymentId=$previewDeploymentId, previewExperimentId=$previewExperimentId, reason=$reason, rootTraceIds=$rootTraceIds, status=$status, updatedAt=$updatedAt, additionalProperties=$additionalProperties}"
     }
 
+    class Fix
+    @JsonCreator(mode = JsonCreator.Mode.DISABLED)
+    private constructor(
+        private val id: JsonField<String>,
+        private val branch: JsonField<String>,
+        private val createdAt: JsonField<OffsetDateTime>,
+        private val prNumber: JsonField<Long>,
+        private val repoUrl: JsonField<String>,
+        private val updatedAt: JsonField<OffsetDateTime>,
+        private val additionalProperties: MutableMap<String, JsonValue>,
+    ) {
+
+        @JsonCreator
+        private constructor(
+            @JsonProperty("id") @ExcludeMissing id: JsonField<String> = JsonMissing.of(),
+            @JsonProperty("branch") @ExcludeMissing branch: JsonField<String> = JsonMissing.of(),
+            @JsonProperty("created_at")
+            @ExcludeMissing
+            createdAt: JsonField<OffsetDateTime> = JsonMissing.of(),
+            @JsonProperty("pr_number") @ExcludeMissing prNumber: JsonField<Long> = JsonMissing.of(),
+            @JsonProperty("repo_url") @ExcludeMissing repoUrl: JsonField<String> = JsonMissing.of(),
+            @JsonProperty("updated_at")
+            @ExcludeMissing
+            updatedAt: JsonField<OffsetDateTime> = JsonMissing.of(),
+        ) : this(id, branch, createdAt, prNumber, repoUrl, updatedAt, mutableMapOf())
+
+        /**
+         * @throws LangChainInvalidDataException if the JSON field has an unexpected type or is
+         *   unexpectedly missing or null (e.g. if the server responded with an unexpected value).
+         */
+        fun id(): String = id.getRequired("id")
+
+        /**
+         * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
+         *   the server responded with an unexpected value).
+         */
+        fun branch(): Optional<String> = branch.getOptional("branch")
+
+        /**
+         * @throws LangChainInvalidDataException if the JSON field has an unexpected type or is
+         *   unexpectedly missing or null (e.g. if the server responded with an unexpected value).
+         */
+        fun createdAt(): OffsetDateTime = createdAt.getRequired("created_at")
+
+        /**
+         * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
+         *   the server responded with an unexpected value).
+         */
+        fun prNumber(): Optional<Long> = prNumber.getOptional("pr_number")
+
+        /**
+         * @throws LangChainInvalidDataException if the JSON field has an unexpected type or is
+         *   unexpectedly missing or null (e.g. if the server responded with an unexpected value).
+         */
+        fun repoUrl(): String = repoUrl.getRequired("repo_url")
+
+        /**
+         * @throws LangChainInvalidDataException if the JSON field has an unexpected type or is
+         *   unexpectedly missing or null (e.g. if the server responded with an unexpected value).
+         */
+        fun updatedAt(): OffsetDateTime = updatedAt.getRequired("updated_at")
+
+        /**
+         * Returns the raw JSON value of [id].
+         *
+         * Unlike [id], this method doesn't throw if the JSON field has an unexpected type.
+         */
+        @JsonProperty("id") @ExcludeMissing fun _id(): JsonField<String> = id
+
+        /**
+         * Returns the raw JSON value of [branch].
+         *
+         * Unlike [branch], this method doesn't throw if the JSON field has an unexpected type.
+         */
+        @JsonProperty("branch") @ExcludeMissing fun _branch(): JsonField<String> = branch
+
+        /**
+         * Returns the raw JSON value of [createdAt].
+         *
+         * Unlike [createdAt], this method doesn't throw if the JSON field has an unexpected type.
+         */
+        @JsonProperty("created_at")
+        @ExcludeMissing
+        fun _createdAt(): JsonField<OffsetDateTime> = createdAt
+
+        /**
+         * Returns the raw JSON value of [prNumber].
+         *
+         * Unlike [prNumber], this method doesn't throw if the JSON field has an unexpected type.
+         */
+        @JsonProperty("pr_number") @ExcludeMissing fun _prNumber(): JsonField<Long> = prNumber
+
+        /**
+         * Returns the raw JSON value of [repoUrl].
+         *
+         * Unlike [repoUrl], this method doesn't throw if the JSON field has an unexpected type.
+         */
+        @JsonProperty("repo_url") @ExcludeMissing fun _repoUrl(): JsonField<String> = repoUrl
+
+        /**
+         * Returns the raw JSON value of [updatedAt].
+         *
+         * Unlike [updatedAt], this method doesn't throw if the JSON field has an unexpected type.
+         */
+        @JsonProperty("updated_at")
+        @ExcludeMissing
+        fun _updatedAt(): JsonField<OffsetDateTime> = updatedAt
+
+        @JsonAnySetter
+        private fun putAdditionalProperty(key: String, value: JsonValue) {
+            additionalProperties.put(key, value)
+        }
+
+        @JsonAnyGetter
+        @ExcludeMissing
+        fun _additionalProperties(): Map<String, JsonValue> =
+            Collections.unmodifiableMap(additionalProperties)
+
+        fun toBuilder() = Builder().from(this)
+
+        companion object {
+
+            /**
+             * Returns a mutable builder for constructing an instance of [Fix].
+             *
+             * The following fields are required:
+             * ```java
+             * .id()
+             * .branch()
+             * .createdAt()
+             * .prNumber()
+             * .repoUrl()
+             * .updatedAt()
+             * ```
+             */
+            @JvmStatic fun builder() = Builder()
+        }
+
+        /** A builder for [Fix]. */
+        class Builder internal constructor() {
+
+            private var id: JsonField<String>? = null
+            private var branch: JsonField<String>? = null
+            private var createdAt: JsonField<OffsetDateTime>? = null
+            private var prNumber: JsonField<Long>? = null
+            private var repoUrl: JsonField<String>? = null
+            private var updatedAt: JsonField<OffsetDateTime>? = null
+            private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
+
+            @JvmSynthetic
+            internal fun from(fix: Fix) = apply {
+                id = fix.id
+                branch = fix.branch
+                createdAt = fix.createdAt
+                prNumber = fix.prNumber
+                repoUrl = fix.repoUrl
+                updatedAt = fix.updatedAt
+                additionalProperties = fix.additionalProperties.toMutableMap()
+            }
+
+            fun id(id: String) = id(JsonField.of(id))
+
+            /**
+             * Sets [Builder.id] to an arbitrary JSON value.
+             *
+             * You should usually call [Builder.id] with a well-typed [String] value instead. This
+             * method is primarily for setting the field to an undocumented or not yet supported
+             * value.
+             */
+            fun id(id: JsonField<String>) = apply { this.id = id }
+
+            fun branch(branch: String?) = branch(JsonField.ofNullable(branch))
+
+            /** Alias for calling [Builder.branch] with `branch.orElse(null)`. */
+            fun branch(branch: Optional<String>) = branch(branch.getOrNull())
+
+            /**
+             * Sets [Builder.branch] to an arbitrary JSON value.
+             *
+             * You should usually call [Builder.branch] with a well-typed [String] value instead.
+             * This method is primarily for setting the field to an undocumented or not yet
+             * supported value.
+             */
+            fun branch(branch: JsonField<String>) = apply { this.branch = branch }
+
+            fun createdAt(createdAt: OffsetDateTime) = createdAt(JsonField.of(createdAt))
+
+            /**
+             * Sets [Builder.createdAt] to an arbitrary JSON value.
+             *
+             * You should usually call [Builder.createdAt] with a well-typed [OffsetDateTime] value
+             * instead. This method is primarily for setting the field to an undocumented or not yet
+             * supported value.
+             */
+            fun createdAt(createdAt: JsonField<OffsetDateTime>) = apply {
+                this.createdAt = createdAt
+            }
+
+            fun prNumber(prNumber: Long?) = prNumber(JsonField.ofNullable(prNumber))
+
+            /**
+             * Alias for [Builder.prNumber].
+             *
+             * This unboxed primitive overload exists for backwards compatibility.
+             */
+            fun prNumber(prNumber: Long) = prNumber(prNumber as Long?)
+
+            /** Alias for calling [Builder.prNumber] with `prNumber.orElse(null)`. */
+            fun prNumber(prNumber: Optional<Long>) = prNumber(prNumber.getOrNull())
+
+            /**
+             * Sets [Builder.prNumber] to an arbitrary JSON value.
+             *
+             * You should usually call [Builder.prNumber] with a well-typed [Long] value instead.
+             * This method is primarily for setting the field to an undocumented or not yet
+             * supported value.
+             */
+            fun prNumber(prNumber: JsonField<Long>) = apply { this.prNumber = prNumber }
+
+            fun repoUrl(repoUrl: String) = repoUrl(JsonField.of(repoUrl))
+
+            /**
+             * Sets [Builder.repoUrl] to an arbitrary JSON value.
+             *
+             * You should usually call [Builder.repoUrl] with a well-typed [String] value instead.
+             * This method is primarily for setting the field to an undocumented or not yet
+             * supported value.
+             */
+            fun repoUrl(repoUrl: JsonField<String>) = apply { this.repoUrl = repoUrl }
+
+            fun updatedAt(updatedAt: OffsetDateTime) = updatedAt(JsonField.of(updatedAt))
+
+            /**
+             * Sets [Builder.updatedAt] to an arbitrary JSON value.
+             *
+             * You should usually call [Builder.updatedAt] with a well-typed [OffsetDateTime] value
+             * instead. This method is primarily for setting the field to an undocumented or not yet
+             * supported value.
+             */
+            fun updatedAt(updatedAt: JsonField<OffsetDateTime>) = apply {
+                this.updatedAt = updatedAt
+            }
+
+            fun additionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
+                this.additionalProperties.clear()
+                putAllAdditionalProperties(additionalProperties)
+            }
+
+            fun putAdditionalProperty(key: String, value: JsonValue) = apply {
+                additionalProperties.put(key, value)
+            }
+
+            fun putAllAdditionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
+                this.additionalProperties.putAll(additionalProperties)
+            }
+
+            fun removeAdditionalProperty(key: String) = apply { additionalProperties.remove(key) }
+
+            fun removeAllAdditionalProperties(keys: Set<String>) = apply {
+                keys.forEach(::removeAdditionalProperty)
+            }
+
+            /**
+             * Returns an immutable instance of [Fix].
+             *
+             * Further updates to this [Builder] will not mutate the returned instance.
+             *
+             * The following fields are required:
+             * ```java
+             * .id()
+             * .branch()
+             * .createdAt()
+             * .prNumber()
+             * .repoUrl()
+             * .updatedAt()
+             * ```
+             *
+             * @throws IllegalStateException if any required field is unset.
+             */
+            fun build(): Fix =
+                Fix(
+                    checkRequired("id", id),
+                    checkRequired("branch", branch),
+                    checkRequired("createdAt", createdAt),
+                    checkRequired("prNumber", prNumber),
+                    checkRequired("repoUrl", repoUrl),
+                    checkRequired("updatedAt", updatedAt),
+                    additionalProperties.toMutableMap(),
+                )
+        }
+
+        private var validated: Boolean = false
+
+        /**
+         * Validates that the types of all values in this object match their expected types
+         * recursively.
+         *
+         * This method is _not_ forwards compatible with new types from the API for existing fields.
+         *
+         * @throws LangChainInvalidDataException if any value type in this object doesn't match its
+         *   expected type.
+         */
+        fun validate(): Fix = apply {
+            if (validated) {
+                return@apply
+            }
+
+            id()
+            branch()
+            createdAt()
+            prNumber()
+            repoUrl()
+            updatedAt()
+            validated = true
+        }
+
+        fun isValid(): Boolean =
+            try {
+                validate()
+                true
+            } catch (e: LangChainInvalidDataException) {
+                false
+            }
+
+        /**
+         * Returns a score indicating how many valid values are contained in this object
+         * recursively.
+         *
+         * Used for best match union deserialization.
+         */
+        @JvmSynthetic
+        internal fun validity(): Int =
+            (if (id.asKnown().isPresent) 1 else 0) +
+                (if (branch.asKnown().isPresent) 1 else 0) +
+                (if (createdAt.asKnown().isPresent) 1 else 0) +
+                (if (prNumber.asKnown().isPresent) 1 else 0) +
+                (if (repoUrl.asKnown().isPresent) 1 else 0) +
+                (if (updatedAt.asKnown().isPresent) 1 else 0)
+
+        override fun equals(other: Any?): Boolean {
+            if (this === other) {
+                return true
+            }
+
+            return other is Fix &&
+                id == other.id &&
+                branch == other.branch &&
+                createdAt == other.createdAt &&
+                prNumber == other.prNumber &&
+                repoUrl == other.repoUrl &&
+                updatedAt == other.updatedAt &&
+                additionalProperties == other.additionalProperties
+        }
+
+        private val hashCode: Int by lazy {
+            Objects.hash(id, branch, createdAt, prNumber, repoUrl, updatedAt, additionalProperties)
+        }
+
+        override fun hashCode(): Int = hashCode
+
+        override fun toString() =
+            "Fix{id=$id, branch=$branch, createdAt=$createdAt, prNumber=$prNumber, repoUrl=$repoUrl, updatedAt=$updatedAt, additionalProperties=$additionalProperties}"
+    }
+
     class LinearContext
     @JsonCreator(mode = JsonCreator.Mode.DISABLED)
     private constructor(
@@ -7644,6 +8064,7 @@ private constructor(
             fixPrNumber == other.fixPrNumber &&
             fixPrompt == other.fixPrompt &&
             fixVerification == other.fixVerification &&
+            fixes == other.fixes &&
             lastSeenAt == other.lastSeenAt &&
             linearContext == other.linearContext &&
             linearSync == other.linearSync &&
@@ -7680,6 +8101,7 @@ private constructor(
             fixPrNumber,
             fixPrompt,
             fixVerification,
+            fixes,
             lastSeenAt,
             linearContext,
             linearSync,
@@ -7705,5 +8127,5 @@ private constructor(
     override fun hashCode(): Int = hashCode
 
     override fun toString() =
-        "Issue{id=$id, actions=$actions, autoResolutionEvidence=$autoResolutionEvidence, autoResolutionState=$autoResolutionState, createdAt=$createdAt, description=$description, evidence=$evidence, firstSeenAt=$firstSeenAt, fixBranch=$fixBranch, fixDispatchedAt=$fixDispatchedAt, fixPrNumber=$fixPrNumber, fixPrompt=$fixPrompt, fixVerification=$fixVerification, lastSeenAt=$lastSeenAt, linearContext=$linearContext, linearSync=$linearSync, name=$name, proposedContextFixes=$proposedContextFixes, proposedExamples=$proposedExamples, proposedFix=$proposedFix, proposedPromptFixes=$proposedPromptFixes, recurrencesSinceWatching=$recurrencesSinceWatching, sessionId=$sessionId, severity=$severity, status=$status, tags=$tags, tenantId=$tenantId, traces=$traces, updatedAt=$updatedAt, validationResult=$validationResult, watchingSince=$watchingSince, additionalProperties=$additionalProperties}"
+        "Issue{id=$id, actions=$actions, autoResolutionEvidence=$autoResolutionEvidence, autoResolutionState=$autoResolutionState, createdAt=$createdAt, description=$description, evidence=$evidence, firstSeenAt=$firstSeenAt, fixBranch=$fixBranch, fixDispatchedAt=$fixDispatchedAt, fixPrNumber=$fixPrNumber, fixPrompt=$fixPrompt, fixVerification=$fixVerification, fixes=$fixes, lastSeenAt=$lastSeenAt, linearContext=$linearContext, linearSync=$linearSync, name=$name, proposedContextFixes=$proposedContextFixes, proposedExamples=$proposedExamples, proposedFix=$proposedFix, proposedPromptFixes=$proposedPromptFixes, recurrencesSinceWatching=$recurrencesSinceWatching, sessionId=$sessionId, severity=$severity, status=$status, tags=$tags, tenantId=$tenantId, traces=$traces, updatedAt=$updatedAt, validationResult=$validationResult, watchingSince=$watchingSince, additionalProperties=$additionalProperties}"
 }
