@@ -1198,8 +1198,11 @@ private constructor(
     @JsonCreator(mode = JsonCreator.Mode.DISABLED)
     private constructor(
         private val attempt: JsonField<Long>,
+        private val baselineExperimentId: JsonField<String>,
+        private val datasetId: JsonField<String>,
         private val parentDeploymentId: JsonField<String>,
         private val previewDeploymentId: JsonField<String>,
+        private val previewExperimentId: JsonField<String>,
         private val reason: JsonField<String>,
         private val rootTraceIds: JsonField<List<String>>,
         private val status: JsonField<Status>,
@@ -1210,12 +1213,21 @@ private constructor(
         @JsonCreator
         private constructor(
             @JsonProperty("attempt") @ExcludeMissing attempt: JsonField<Long> = JsonMissing.of(),
+            @JsonProperty("baseline_experiment_id")
+            @ExcludeMissing
+            baselineExperimentId: JsonField<String> = JsonMissing.of(),
+            @JsonProperty("dataset_id")
+            @ExcludeMissing
+            datasetId: JsonField<String> = JsonMissing.of(),
             @JsonProperty("parent_deployment_id")
             @ExcludeMissing
             parentDeploymentId: JsonField<String> = JsonMissing.of(),
             @JsonProperty("preview_deployment_id")
             @ExcludeMissing
             previewDeploymentId: JsonField<String> = JsonMissing.of(),
+            @JsonProperty("preview_experiment_id")
+            @ExcludeMissing
+            previewExperimentId: JsonField<String> = JsonMissing.of(),
             @JsonProperty("reason") @ExcludeMissing reason: JsonField<String> = JsonMissing.of(),
             @JsonProperty("root_trace_ids")
             @ExcludeMissing
@@ -1226,8 +1238,11 @@ private constructor(
             updatedAt: JsonField<OffsetDateTime> = JsonMissing.of(),
         ) : this(
             attempt,
+            baselineExperimentId,
+            datasetId,
             parentDeploymentId,
             previewDeploymentId,
+            previewExperimentId,
             reason,
             rootTraceIds,
             status,
@@ -1245,6 +1260,19 @@ private constructor(
          * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
          *   the server responded with an unexpected value).
          */
+        fun baselineExperimentId(): Optional<String> =
+            baselineExperimentId.getOptional("baseline_experiment_id")
+
+        /**
+         * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
+         *   the server responded with an unexpected value).
+         */
+        fun datasetId(): Optional<String> = datasetId.getOptional("dataset_id")
+
+        /**
+         * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
+         *   the server responded with an unexpected value).
+         */
         fun parentDeploymentId(): Optional<String> =
             parentDeploymentId.getOptional("parent_deployment_id")
 
@@ -1254,6 +1282,13 @@ private constructor(
          */
         fun previewDeploymentId(): Optional<String> =
             previewDeploymentId.getOptional("preview_deployment_id")
+
+        /**
+         * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
+         *   the server responded with an unexpected value).
+         */
+        fun previewExperimentId(): Optional<String> =
+            previewExperimentId.getOptional("preview_experiment_id")
 
         /**
          * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
@@ -1287,6 +1322,23 @@ private constructor(
         @JsonProperty("attempt") @ExcludeMissing fun _attempt(): JsonField<Long> = attempt
 
         /**
+         * Returns the raw JSON value of [baselineExperimentId].
+         *
+         * Unlike [baselineExperimentId], this method doesn't throw if the JSON field has an
+         * unexpected type.
+         */
+        @JsonProperty("baseline_experiment_id")
+        @ExcludeMissing
+        fun _baselineExperimentId(): JsonField<String> = baselineExperimentId
+
+        /**
+         * Returns the raw JSON value of [datasetId].
+         *
+         * Unlike [datasetId], this method doesn't throw if the JSON field has an unexpected type.
+         */
+        @JsonProperty("dataset_id") @ExcludeMissing fun _datasetId(): JsonField<String> = datasetId
+
+        /**
          * Returns the raw JSON value of [parentDeploymentId].
          *
          * Unlike [parentDeploymentId], this method doesn't throw if the JSON field has an
@@ -1305,6 +1357,16 @@ private constructor(
         @JsonProperty("preview_deployment_id")
         @ExcludeMissing
         fun _previewDeploymentId(): JsonField<String> = previewDeploymentId
+
+        /**
+         * Returns the raw JSON value of [previewExperimentId].
+         *
+         * Unlike [previewExperimentId], this method doesn't throw if the JSON field has an
+         * unexpected type.
+         */
+        @JsonProperty("preview_experiment_id")
+        @ExcludeMissing
+        fun _previewExperimentId(): JsonField<String> = previewExperimentId
 
         /**
          * Returns the raw JSON value of [reason].
@@ -1361,8 +1423,11 @@ private constructor(
         class Builder internal constructor() {
 
             private var attempt: JsonField<Long> = JsonMissing.of()
+            private var baselineExperimentId: JsonField<String> = JsonMissing.of()
+            private var datasetId: JsonField<String> = JsonMissing.of()
             private var parentDeploymentId: JsonField<String> = JsonMissing.of()
             private var previewDeploymentId: JsonField<String> = JsonMissing.of()
+            private var previewExperimentId: JsonField<String> = JsonMissing.of()
             private var reason: JsonField<String> = JsonMissing.of()
             private var rootTraceIds: JsonField<MutableList<String>>? = null
             private var status: JsonField<Status> = JsonMissing.of()
@@ -1372,8 +1437,11 @@ private constructor(
             @JvmSynthetic
             internal fun from(fixVerification: FixVerification) = apply {
                 attempt = fixVerification.attempt
+                baselineExperimentId = fixVerification.baselineExperimentId
+                datasetId = fixVerification.datasetId
                 parentDeploymentId = fixVerification.parentDeploymentId
                 previewDeploymentId = fixVerification.previewDeploymentId
+                previewExperimentId = fixVerification.previewExperimentId
                 reason = fixVerification.reason
                 rootTraceIds = fixVerification.rootTraceIds.map { it.toMutableList() }
                 status = fixVerification.status
@@ -1391,6 +1459,31 @@ private constructor(
              * supported value.
              */
             fun attempt(attempt: JsonField<Long>) = apply { this.attempt = attempt }
+
+            fun baselineExperimentId(baselineExperimentId: String) =
+                baselineExperimentId(JsonField.of(baselineExperimentId))
+
+            /**
+             * Sets [Builder.baselineExperimentId] to an arbitrary JSON value.
+             *
+             * You should usually call [Builder.baselineExperimentId] with a well-typed [String]
+             * value instead. This method is primarily for setting the field to an undocumented or
+             * not yet supported value.
+             */
+            fun baselineExperimentId(baselineExperimentId: JsonField<String>) = apply {
+                this.baselineExperimentId = baselineExperimentId
+            }
+
+            fun datasetId(datasetId: String) = datasetId(JsonField.of(datasetId))
+
+            /**
+             * Sets [Builder.datasetId] to an arbitrary JSON value.
+             *
+             * You should usually call [Builder.datasetId] with a well-typed [String] value instead.
+             * This method is primarily for setting the field to an undocumented or not yet
+             * supported value.
+             */
+            fun datasetId(datasetId: JsonField<String>) = apply { this.datasetId = datasetId }
 
             fun parentDeploymentId(parentDeploymentId: String) =
                 parentDeploymentId(JsonField.of(parentDeploymentId))
@@ -1418,6 +1511,20 @@ private constructor(
              */
             fun previewDeploymentId(previewDeploymentId: JsonField<String>) = apply {
                 this.previewDeploymentId = previewDeploymentId
+            }
+
+            fun previewExperimentId(previewExperimentId: String) =
+                previewExperimentId(JsonField.of(previewExperimentId))
+
+            /**
+             * Sets [Builder.previewExperimentId] to an arbitrary JSON value.
+             *
+             * You should usually call [Builder.previewExperimentId] with a well-typed [String]
+             * value instead. This method is primarily for setting the field to an undocumented or
+             * not yet supported value.
+             */
+            fun previewExperimentId(previewExperimentId: JsonField<String>) = apply {
+                this.previewExperimentId = previewExperimentId
             }
 
             fun reason(reason: String) = reason(JsonField.of(reason))
@@ -1507,8 +1614,11 @@ private constructor(
             fun build(): FixVerification =
                 FixVerification(
                     attempt,
+                    baselineExperimentId,
+                    datasetId,
                     parentDeploymentId,
                     previewDeploymentId,
+                    previewExperimentId,
                     reason,
                     (rootTraceIds ?: JsonMissing.of()).map { it.toImmutable() },
                     status,
@@ -1534,8 +1644,11 @@ private constructor(
             }
 
             attempt()
+            baselineExperimentId()
+            datasetId()
             parentDeploymentId()
             previewDeploymentId()
+            previewExperimentId()
             reason()
             rootTraceIds()
             status().ifPresent { it.validate() }
@@ -1560,8 +1673,11 @@ private constructor(
         @JvmSynthetic
         internal fun validity(): Int =
             (if (attempt.asKnown().isPresent) 1 else 0) +
+                (if (baselineExperimentId.asKnown().isPresent) 1 else 0) +
+                (if (datasetId.asKnown().isPresent) 1 else 0) +
                 (if (parentDeploymentId.asKnown().isPresent) 1 else 0) +
                 (if (previewDeploymentId.asKnown().isPresent) 1 else 0) +
+                (if (previewExperimentId.asKnown().isPresent) 1 else 0) +
                 (if (reason.asKnown().isPresent) 1 else 0) +
                 (rootTraceIds.asKnown().getOrNull()?.size ?: 0) +
                 (status.asKnown().getOrNull()?.validity() ?: 0) +
@@ -1743,8 +1859,11 @@ private constructor(
 
             return other is FixVerification &&
                 attempt == other.attempt &&
+                baselineExperimentId == other.baselineExperimentId &&
+                datasetId == other.datasetId &&
                 parentDeploymentId == other.parentDeploymentId &&
                 previewDeploymentId == other.previewDeploymentId &&
+                previewExperimentId == other.previewExperimentId &&
                 reason == other.reason &&
                 rootTraceIds == other.rootTraceIds &&
                 status == other.status &&
@@ -1755,8 +1874,11 @@ private constructor(
         private val hashCode: Int by lazy {
             Objects.hash(
                 attempt,
+                baselineExperimentId,
+                datasetId,
                 parentDeploymentId,
                 previewDeploymentId,
+                previewExperimentId,
                 reason,
                 rootTraceIds,
                 status,
@@ -1768,7 +1890,7 @@ private constructor(
         override fun hashCode(): Int = hashCode
 
         override fun toString() =
-            "FixVerification{attempt=$attempt, parentDeploymentId=$parentDeploymentId, previewDeploymentId=$previewDeploymentId, reason=$reason, rootTraceIds=$rootTraceIds, status=$status, updatedAt=$updatedAt, additionalProperties=$additionalProperties}"
+            "FixVerification{attempt=$attempt, baselineExperimentId=$baselineExperimentId, datasetId=$datasetId, parentDeploymentId=$parentDeploymentId, previewDeploymentId=$previewDeploymentId, previewExperimentId=$previewExperimentId, reason=$reason, rootTraceIds=$rootTraceIds, status=$status, updatedAt=$updatedAt, additionalProperties=$additionalProperties}"
     }
 
     class LinearContext
@@ -2873,7 +2995,9 @@ private constructor(
     @JsonCreator(mode = JsonCreator.Mode.DISABLED)
     private constructor(
         private val activeRevisionId: JsonField<String>,
+        private val baselineExperimentId: JsonField<String>,
         private val completedAt: JsonField<OffsetDateTime>,
+        private val datasetId: JsonField<String>,
         private val deploymentId: JsonField<String>,
         private val outcome: JsonField<Outcome>,
         private val reason: JsonField<String>,
@@ -2886,9 +3010,15 @@ private constructor(
             @JsonProperty("active_revision_id")
             @ExcludeMissing
             activeRevisionId: JsonField<String> = JsonMissing.of(),
+            @JsonProperty("baseline_experiment_id")
+            @ExcludeMissing
+            baselineExperimentId: JsonField<String> = JsonMissing.of(),
             @JsonProperty("completed_at")
             @ExcludeMissing
             completedAt: JsonField<OffsetDateTime> = JsonMissing.of(),
+            @JsonProperty("dataset_id")
+            @ExcludeMissing
+            datasetId: JsonField<String> = JsonMissing.of(),
             @JsonProperty("deployment_id")
             @ExcludeMissing
             deploymentId: JsonField<String> = JsonMissing.of(),
@@ -2899,7 +3029,9 @@ private constructor(
             rootTraceIds: JsonField<List<String>> = JsonMissing.of(),
         ) : this(
             activeRevisionId,
+            baselineExperimentId,
             completedAt,
+            datasetId,
             deploymentId,
             outcome,
             reason,
@@ -2918,7 +3050,20 @@ private constructor(
          * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
          *   the server responded with an unexpected value).
          */
+        fun baselineExperimentId(): Optional<String> =
+            baselineExperimentId.getOptional("baseline_experiment_id")
+
+        /**
+         * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
+         *   the server responded with an unexpected value).
+         */
         fun completedAt(): Optional<OffsetDateTime> = completedAt.getOptional("completed_at")
+
+        /**
+         * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
+         *   the server responded with an unexpected value).
+         */
+        fun datasetId(): Optional<String> = datasetId.getOptional("dataset_id")
 
         /**
          * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
@@ -2955,6 +3100,16 @@ private constructor(
         fun _activeRevisionId(): JsonField<String> = activeRevisionId
 
         /**
+         * Returns the raw JSON value of [baselineExperimentId].
+         *
+         * Unlike [baselineExperimentId], this method doesn't throw if the JSON field has an
+         * unexpected type.
+         */
+        @JsonProperty("baseline_experiment_id")
+        @ExcludeMissing
+        fun _baselineExperimentId(): JsonField<String> = baselineExperimentId
+
+        /**
          * Returns the raw JSON value of [completedAt].
          *
          * Unlike [completedAt], this method doesn't throw if the JSON field has an unexpected type.
@@ -2962,6 +3117,13 @@ private constructor(
         @JsonProperty("completed_at")
         @ExcludeMissing
         fun _completedAt(): JsonField<OffsetDateTime> = completedAt
+
+        /**
+         * Returns the raw JSON value of [datasetId].
+         *
+         * Unlike [datasetId], this method doesn't throw if the JSON field has an unexpected type.
+         */
+        @JsonProperty("dataset_id") @ExcludeMissing fun _datasetId(): JsonField<String> = datasetId
 
         /**
          * Returns the raw JSON value of [deploymentId].
@@ -3019,7 +3181,9 @@ private constructor(
         class Builder internal constructor() {
 
             private var activeRevisionId: JsonField<String> = JsonMissing.of()
+            private var baselineExperimentId: JsonField<String> = JsonMissing.of()
             private var completedAt: JsonField<OffsetDateTime> = JsonMissing.of()
+            private var datasetId: JsonField<String> = JsonMissing.of()
             private var deploymentId: JsonField<String> = JsonMissing.of()
             private var outcome: JsonField<Outcome> = JsonMissing.of()
             private var reason: JsonField<String> = JsonMissing.of()
@@ -3029,7 +3193,9 @@ private constructor(
             @JvmSynthetic
             internal fun from(validationResult: ValidationResult) = apply {
                 activeRevisionId = validationResult.activeRevisionId
+                baselineExperimentId = validationResult.baselineExperimentId
                 completedAt = validationResult.completedAt
+                datasetId = validationResult.datasetId
                 deploymentId = validationResult.deploymentId
                 outcome = validationResult.outcome
                 reason = validationResult.reason
@@ -3051,6 +3217,20 @@ private constructor(
                 this.activeRevisionId = activeRevisionId
             }
 
+            fun baselineExperimentId(baselineExperimentId: String) =
+                baselineExperimentId(JsonField.of(baselineExperimentId))
+
+            /**
+             * Sets [Builder.baselineExperimentId] to an arbitrary JSON value.
+             *
+             * You should usually call [Builder.baselineExperimentId] with a well-typed [String]
+             * value instead. This method is primarily for setting the field to an undocumented or
+             * not yet supported value.
+             */
+            fun baselineExperimentId(baselineExperimentId: JsonField<String>) = apply {
+                this.baselineExperimentId = baselineExperimentId
+            }
+
             fun completedAt(completedAt: OffsetDateTime) = completedAt(JsonField.of(completedAt))
 
             /**
@@ -3063,6 +3243,17 @@ private constructor(
             fun completedAt(completedAt: JsonField<OffsetDateTime>) = apply {
                 this.completedAt = completedAt
             }
+
+            fun datasetId(datasetId: String) = datasetId(JsonField.of(datasetId))
+
+            /**
+             * Sets [Builder.datasetId] to an arbitrary JSON value.
+             *
+             * You should usually call [Builder.datasetId] with a well-typed [String] value instead.
+             * This method is primarily for setting the field to an undocumented or not yet
+             * supported value.
+             */
+            fun datasetId(datasetId: JsonField<String>) = apply { this.datasetId = datasetId }
 
             fun deploymentId(deploymentId: String) = deploymentId(JsonField.of(deploymentId))
 
@@ -3151,7 +3342,9 @@ private constructor(
             fun build(): ValidationResult =
                 ValidationResult(
                     activeRevisionId,
+                    baselineExperimentId,
                     completedAt,
+                    datasetId,
                     deploymentId,
                     outcome,
                     reason,
@@ -3177,7 +3370,9 @@ private constructor(
             }
 
             activeRevisionId()
+            baselineExperimentId()
             completedAt()
+            datasetId()
             deploymentId()
             outcome().ifPresent { it.validate() }
             reason()
@@ -3202,7 +3397,9 @@ private constructor(
         @JvmSynthetic
         internal fun validity(): Int =
             (if (activeRevisionId.asKnown().isPresent) 1 else 0) +
+                (if (baselineExperimentId.asKnown().isPresent) 1 else 0) +
                 (if (completedAt.asKnown().isPresent) 1 else 0) +
+                (if (datasetId.asKnown().isPresent) 1 else 0) +
                 (if (deploymentId.asKnown().isPresent) 1 else 0) +
                 (outcome.asKnown().getOrNull()?.validity() ?: 0) +
                 (if (reason.asKnown().isPresent) 1 else 0) +
@@ -3367,7 +3564,9 @@ private constructor(
 
             return other is ValidationResult &&
                 activeRevisionId == other.activeRevisionId &&
+                baselineExperimentId == other.baselineExperimentId &&
                 completedAt == other.completedAt &&
+                datasetId == other.datasetId &&
                 deploymentId == other.deploymentId &&
                 outcome == other.outcome &&
                 reason == other.reason &&
@@ -3378,7 +3577,9 @@ private constructor(
         private val hashCode: Int by lazy {
             Objects.hash(
                 activeRevisionId,
+                baselineExperimentId,
                 completedAt,
+                datasetId,
                 deploymentId,
                 outcome,
                 reason,
@@ -3390,7 +3591,7 @@ private constructor(
         override fun hashCode(): Int = hashCode
 
         override fun toString() =
-            "ValidationResult{activeRevisionId=$activeRevisionId, completedAt=$completedAt, deploymentId=$deploymentId, outcome=$outcome, reason=$reason, rootTraceIds=$rootTraceIds, additionalProperties=$additionalProperties}"
+            "ValidationResult{activeRevisionId=$activeRevisionId, baselineExperimentId=$baselineExperimentId, completedAt=$completedAt, datasetId=$datasetId, deploymentId=$deploymentId, outcome=$outcome, reason=$reason, rootTraceIds=$rootTraceIds, additionalProperties=$additionalProperties}"
     }
 
     override fun equals(other: Any?): Boolean {
