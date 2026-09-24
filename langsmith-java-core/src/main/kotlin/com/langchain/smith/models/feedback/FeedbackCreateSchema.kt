@@ -163,10 +163,12 @@ private constructor(
     fun createdAt(): Optional<OffsetDateTime> = createdAt.getOptional("created_at")
 
     /**
+     * Deprecated. Use `extra.error` instead. If both values are provided, `error` takes precedence.
+     *
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
      */
-    fun error(): Optional<Boolean> = error.getOptional("error")
+    @Deprecated("deprecated") fun error(): Optional<Boolean> = error.getOptional("error")
 
     /**
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
@@ -305,7 +307,10 @@ private constructor(
      *
      * Unlike [error], this method doesn't throw if the JSON field has an unexpected type.
      */
-    @JsonProperty("error") @ExcludeMissing fun _error(): JsonField<Boolean> = error
+    @Deprecated("deprecated")
+    @JsonProperty("error")
+    @ExcludeMissing
+    fun _error(): JsonField<Boolean> = error
 
     /**
      * Returns the raw JSON value of [extendTraceRetention].
@@ -575,17 +580,21 @@ private constructor(
          */
         fun createdAt(createdAt: JsonField<OffsetDateTime>) = apply { this.createdAt = createdAt }
 
-        fun error(error: Boolean?) = error(JsonField.ofNullable(error))
+        /**
+         * Deprecated. Use `extra.error` instead. If both values are provided, `error` takes
+         * precedence.
+         */
+        @Deprecated("deprecated") fun error(error: Boolean?) = error(JsonField.ofNullable(error))
 
         /**
          * Alias for [Builder.error].
          *
          * This unboxed primitive overload exists for backwards compatibility.
          */
-        fun error(error: Boolean) = error(error as Boolean?)
+        @Deprecated("deprecated") fun error(error: Boolean) = error(error as Boolean?)
 
         /** Alias for calling [Builder.error] with `error.orElse(null)`. */
-        fun error(error: Optional<Boolean>) = error(error.getOrNull())
+        @Deprecated("deprecated") fun error(error: Optional<Boolean>) = error(error.getOrNull())
 
         /**
          * Sets [Builder.error] to an arbitrary JSON value.
@@ -593,6 +602,7 @@ private constructor(
          * You should usually call [Builder.error] with a well-typed [Boolean] value instead. This
          * method is primarily for setting the field to an undocumented or not yet supported value.
          */
+        @Deprecated("deprecated")
         fun error(error: JsonField<Boolean>) = apply { this.error = error }
 
         fun extendTraceRetention(extendTraceRetention: Boolean) =
