@@ -12,6 +12,7 @@ import com.langchain.smith.core.JsonField
 import com.langchain.smith.core.JsonMissing
 import com.langchain.smith.core.JsonValue
 import com.langchain.smith.core.checkKnown
+import com.langchain.smith.core.checkRequired
 import com.langchain.smith.core.toImmutable
 import com.langchain.smith.errors.LangChainInvalidDataException
 import java.time.OffsetDateTime
@@ -29,12 +30,14 @@ private constructor(
     private val autoResolutionState: JsonField<String>,
     private val createdAt: JsonField<String>,
     private val description: JsonField<String>,
+    private val evidence: JsonField<Evidence>,
     private val firstSeenAt: JsonField<String>,
     private val fixBranch: JsonField<String>,
     private val fixDispatchedAt: JsonField<String>,
     private val fixPrNumber: JsonField<Long>,
     private val fixPrompt: JsonField<String>,
     private val fixVerification: JsonField<FixVerification>,
+    private val fixes: JsonField<List<Fix>>,
     private val lastSeenAt: JsonField<String>,
     private val linearContext: JsonField<LinearContext>,
     private val linearSync: JsonField<LinearSync>,
@@ -70,6 +73,7 @@ private constructor(
         @JsonProperty("description")
         @ExcludeMissing
         description: JsonField<String> = JsonMissing.of(),
+        @JsonProperty("evidence") @ExcludeMissing evidence: JsonField<Evidence> = JsonMissing.of(),
         @JsonProperty("first_seen_at")
         @ExcludeMissing
         firstSeenAt: JsonField<String> = JsonMissing.of(),
@@ -84,6 +88,7 @@ private constructor(
         @JsonProperty("fix_verification")
         @ExcludeMissing
         fixVerification: JsonField<FixVerification> = JsonMissing.of(),
+        @JsonProperty("fixes") @ExcludeMissing fixes: JsonField<List<Fix>> = JsonMissing.of(),
         @JsonProperty("last_seen_at")
         @ExcludeMissing
         lastSeenAt: JsonField<String> = JsonMissing.of(),
@@ -129,12 +134,14 @@ private constructor(
         autoResolutionState,
         createdAt,
         description,
+        evidence,
         firstSeenAt,
         fixBranch,
         fixDispatchedAt,
         fixPrNumber,
         fixPrompt,
         fixVerification,
+        fixes,
         lastSeenAt,
         linearContext,
         linearSync,
@@ -202,12 +209,22 @@ private constructor(
     fun description(): Optional<String> = description.getOptional("description")
 
     /**
+     * Nil for the trace-list issues that are the norm.
+     *
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
+    fun evidence(): Optional<Evidence> = evidence.getOptional("evidence")
+
+    /**
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
      */
     fun firstSeenAt(): Optional<String> = firstSeenAt.getOptional("first_seen_at")
 
     /**
+     * Legacy: branch of the oldest fix in the board's oldest connected repository.
+     *
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
      */
@@ -226,6 +243,9 @@ private constructor(
     fun fixPrNumber(): Optional<Long> = fixPrNumber.getOptional("fix_pr_number")
 
     /**
+     * Issue-level: the problem every fix shares, and the last time a fix run was dispatched for
+     * this issue — one run works several fixes.
+     *
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
      */
@@ -237,6 +257,14 @@ private constructor(
      */
     fun fixVerification(): Optional<FixVerification> =
         fixVerification.getOptional("fix_verification")
+
+    /**
+     * Newest first.
+     *
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
+    fun fixes(): Optional<List<Fix>> = fixes.getOptional("fixes")
 
     /**
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
@@ -388,6 +416,13 @@ private constructor(
     @JsonProperty("description") @ExcludeMissing fun _description(): JsonField<String> = description
 
     /**
+     * Returns the raw JSON value of [evidence].
+     *
+     * Unlike [evidence], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    @JsonProperty("evidence") @ExcludeMissing fun _evidence(): JsonField<Evidence> = evidence
+
+    /**
      * Returns the raw JSON value of [firstSeenAt].
      *
      * Unlike [firstSeenAt], this method doesn't throw if the JSON field has an unexpected type.
@@ -434,6 +469,13 @@ private constructor(
     @JsonProperty("fix_verification")
     @ExcludeMissing
     fun _fixVerification(): JsonField<FixVerification> = fixVerification
+
+    /**
+     * Returns the raw JSON value of [fixes].
+     *
+     * Unlike [fixes], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    @JsonProperty("fixes") @ExcludeMissing fun _fixes(): JsonField<List<Fix>> = fixes
 
     /**
      * Returns the raw JSON value of [lastSeenAt].
@@ -604,12 +646,14 @@ private constructor(
         private var autoResolutionState: JsonField<String> = JsonMissing.of()
         private var createdAt: JsonField<String> = JsonMissing.of()
         private var description: JsonField<String> = JsonMissing.of()
+        private var evidence: JsonField<Evidence> = JsonMissing.of()
         private var firstSeenAt: JsonField<String> = JsonMissing.of()
         private var fixBranch: JsonField<String> = JsonMissing.of()
         private var fixDispatchedAt: JsonField<String> = JsonMissing.of()
         private var fixPrNumber: JsonField<Long> = JsonMissing.of()
         private var fixPrompt: JsonField<String> = JsonMissing.of()
         private var fixVerification: JsonField<FixVerification> = JsonMissing.of()
+        private var fixes: JsonField<MutableList<Fix>>? = null
         private var lastSeenAt: JsonField<String> = JsonMissing.of()
         private var linearContext: JsonField<LinearContext> = JsonMissing.of()
         private var linearSync: JsonField<LinearSync> = JsonMissing.of()
@@ -638,12 +682,14 @@ private constructor(
             autoResolutionState = issue.autoResolutionState
             createdAt = issue.createdAt
             description = issue.description
+            evidence = issue.evidence
             firstSeenAt = issue.firstSeenAt
             fixBranch = issue.fixBranch
             fixDispatchedAt = issue.fixDispatchedAt
             fixPrNumber = issue.fixPrNumber
             fixPrompt = issue.fixPrompt
             fixVerification = issue.fixVerification
+            fixes = issue.fixes.map { it.toMutableList() }
             lastSeenAt = issue.lastSeenAt
             linearContext = issue.linearContext
             linearSync = issue.linearSync
@@ -718,6 +764,21 @@ private constructor(
          */
         fun description(description: JsonField<String>) = apply { this.description = description }
 
+        /** Nil for the trace-list issues that are the norm. */
+        fun evidence(evidence: Evidence?) = evidence(JsonField.ofNullable(evidence))
+
+        /** Alias for calling [Builder.evidence] with `evidence.orElse(null)`. */
+        fun evidence(evidence: Optional<Evidence>) = evidence(evidence.getOrNull())
+
+        /**
+         * Sets [Builder.evidence] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.evidence] with a well-typed [Evidence] value instead.
+         * This method is primarily for setting the field to an undocumented or not yet supported
+         * value.
+         */
+        fun evidence(evidence: JsonField<Evidence>) = apply { this.evidence = evidence }
+
         fun firstSeenAt(firstSeenAt: String) = firstSeenAt(JsonField.of(firstSeenAt))
 
         /**
@@ -729,6 +790,7 @@ private constructor(
          */
         fun firstSeenAt(firstSeenAt: JsonField<String>) = apply { this.firstSeenAt = firstSeenAt }
 
+        /** Legacy: branch of the oldest fix in the board's oldest connected repository. */
         fun fixBranch(fixBranch: String) = fixBranch(JsonField.of(fixBranch))
 
         /**
@@ -765,6 +827,10 @@ private constructor(
          */
         fun fixPrNumber(fixPrNumber: JsonField<Long>) = apply { this.fixPrNumber = fixPrNumber }
 
+        /**
+         * Issue-level: the problem every fix shares, and the last time a fix run was dispatched for
+         * this issue — one run works several fixes.
+         */
         fun fixPrompt(fixPrompt: String) = fixPrompt(JsonField.of(fixPrompt))
 
         /**
@@ -788,6 +854,29 @@ private constructor(
          */
         fun fixVerification(fixVerification: JsonField<FixVerification>) = apply {
             this.fixVerification = fixVerification
+        }
+
+        /** Newest first. */
+        fun fixes(fixes: List<Fix>) = fixes(JsonField.of(fixes))
+
+        /**
+         * Sets [Builder.fixes] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.fixes] with a well-typed `List<Fix>` value instead. This
+         * method is primarily for setting the field to an undocumented or not yet supported value.
+         */
+        fun fixes(fixes: JsonField<List<Fix>>) = apply {
+            this.fixes = fixes.map { it.toMutableList() }
+        }
+
+        /**
+         * Adds a single [Fix] to [fixes].
+         *
+         * @throws IllegalStateException if the field was previously set to a non-list.
+         */
+        fun addFix(fix: Fix) = apply {
+            fixes =
+                (fixes ?: JsonField.of(mutableListOf())).also { checkKnown("fixes", it).add(fix) }
         }
 
         fun lastSeenAt(lastSeenAt: String) = lastSeenAt(JsonField.of(lastSeenAt))
@@ -1078,12 +1167,14 @@ private constructor(
                 autoResolutionState,
                 createdAt,
                 description,
+                evidence,
                 firstSeenAt,
                 fixBranch,
                 fixDispatchedAt,
                 fixPrNumber,
                 fixPrompt,
                 fixVerification,
+                (fixes ?: JsonMissing.of()).map { it.toImmutable() },
                 lastSeenAt,
                 linearContext,
                 linearSync,
@@ -1125,12 +1216,14 @@ private constructor(
         autoResolutionState()
         createdAt()
         description()
+        evidence().ifPresent { it.validate() }
         firstSeenAt()
         fixBranch()
         fixDispatchedAt()
         fixPrNumber()
         fixPrompt()
         fixVerification().ifPresent { it.validate() }
+        fixes().ifPresent { it.forEach { it.validate() } }
         lastSeenAt()
         linearContext().ifPresent { it.validate() }
         linearSync().ifPresent { it.validate() }
@@ -1170,12 +1263,14 @@ private constructor(
             (if (autoResolutionState.asKnown().isPresent) 1 else 0) +
             (if (createdAt.asKnown().isPresent) 1 else 0) +
             (if (description.asKnown().isPresent) 1 else 0) +
+            (evidence.asKnown().getOrNull()?.validity() ?: 0) +
             (if (firstSeenAt.asKnown().isPresent) 1 else 0) +
             (if (fixBranch.asKnown().isPresent) 1 else 0) +
             (if (fixDispatchedAt.asKnown().isPresent) 1 else 0) +
             (if (fixPrNumber.asKnown().isPresent) 1 else 0) +
             (if (fixPrompt.asKnown().isPresent) 1 else 0) +
             (fixVerification.asKnown().getOrNull()?.validity() ?: 0) +
+            (fixes.asKnown().getOrNull()?.sumOf { it.validity().toInt() } ?: 0) +
             (if (lastSeenAt.asKnown().isPresent) 1 else 0) +
             (linearContext.asKnown().getOrNull()?.validity() ?: 0) +
             (linearSync.asKnown().getOrNull()?.validity() ?: 0) +
@@ -1194,12 +1289,4007 @@ private constructor(
             (validationResult.asKnown().getOrNull()?.validity() ?: 0) +
             (if (watchingSince.asKnown().isPresent) 1 else 0)
 
+    /** Nil for the trace-list issues that are the norm. */
+    class Evidence
+    @JsonCreator(mode = JsonCreator.Mode.DISABLED)
+    private constructor(
+        private val type: JsonField<Type>,
+        private val series: JsonField<Series>,
+        private val additionalProperties: MutableMap<String, JsonValue>,
+    ) {
+
+        @JsonCreator
+        private constructor(
+            @JsonProperty("type") @ExcludeMissing type: JsonField<Type> = JsonMissing.of(),
+            @JsonProperty("series") @ExcludeMissing series: JsonField<Series> = JsonMissing.of(),
+        ) : this(type, series, mutableMapOf())
+
+        /**
+         * @throws LangChainInvalidDataException if the JSON field has an unexpected type or is
+         *   unexpectedly missing or null (e.g. if the server responded with an unexpected value).
+         */
+        fun type(): Type = type.getRequired("type")
+
+        /**
+         * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
+         *   the server responded with an unexpected value).
+         */
+        fun series(): Optional<Series> = series.getOptional("series")
+
+        /**
+         * Returns the raw JSON value of [type].
+         *
+         * Unlike [type], this method doesn't throw if the JSON field has an unexpected type.
+         */
+        @JsonProperty("type") @ExcludeMissing fun _type(): JsonField<Type> = type
+
+        /**
+         * Returns the raw JSON value of [series].
+         *
+         * Unlike [series], this method doesn't throw if the JSON field has an unexpected type.
+         */
+        @JsonProperty("series") @ExcludeMissing fun _series(): JsonField<Series> = series
+
+        @JsonAnySetter
+        private fun putAdditionalProperty(key: String, value: JsonValue) {
+            additionalProperties.put(key, value)
+        }
+
+        @JsonAnyGetter
+        @ExcludeMissing
+        fun _additionalProperties(): Map<String, JsonValue> =
+            Collections.unmodifiableMap(additionalProperties)
+
+        fun toBuilder() = Builder().from(this)
+
+        companion object {
+
+            /**
+             * Returns a mutable builder for constructing an instance of [Evidence].
+             *
+             * The following fields are required:
+             * ```java
+             * .type()
+             * ```
+             */
+            @JvmStatic fun builder() = Builder()
+        }
+
+        /** A builder for [Evidence]. */
+        class Builder internal constructor() {
+
+            private var type: JsonField<Type>? = null
+            private var series: JsonField<Series> = JsonMissing.of()
+            private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
+
+            @JvmSynthetic
+            internal fun from(evidence: Evidence) = apply {
+                type = evidence.type
+                series = evidence.series
+                additionalProperties = evidence.additionalProperties.toMutableMap()
+            }
+
+            fun type(type: Type) = type(JsonField.of(type))
+
+            /**
+             * Sets [Builder.type] to an arbitrary JSON value.
+             *
+             * You should usually call [Builder.type] with a well-typed [Type] value instead. This
+             * method is primarily for setting the field to an undocumented or not yet supported
+             * value.
+             */
+            fun type(type: JsonField<Type>) = apply { this.type = type }
+
+            fun series(series: Series) = series(JsonField.of(series))
+
+            /**
+             * Sets [Builder.series] to an arbitrary JSON value.
+             *
+             * You should usually call [Builder.series] with a well-typed [Series] value instead.
+             * This method is primarily for setting the field to an undocumented or not yet
+             * supported value.
+             */
+            fun series(series: JsonField<Series>) = apply { this.series = series }
+
+            fun additionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
+                this.additionalProperties.clear()
+                putAllAdditionalProperties(additionalProperties)
+            }
+
+            fun putAdditionalProperty(key: String, value: JsonValue) = apply {
+                additionalProperties.put(key, value)
+            }
+
+            fun putAllAdditionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
+                this.additionalProperties.putAll(additionalProperties)
+            }
+
+            fun removeAdditionalProperty(key: String) = apply { additionalProperties.remove(key) }
+
+            fun removeAllAdditionalProperties(keys: Set<String>) = apply {
+                keys.forEach(::removeAdditionalProperty)
+            }
+
+            /**
+             * Returns an immutable instance of [Evidence].
+             *
+             * Further updates to this [Builder] will not mutate the returned instance.
+             *
+             * The following fields are required:
+             * ```java
+             * .type()
+             * ```
+             *
+             * @throws IllegalStateException if any required field is unset.
+             */
+            fun build(): Evidence =
+                Evidence(checkRequired("type", type), series, additionalProperties.toMutableMap())
+        }
+
+        private var validated: Boolean = false
+
+        /**
+         * Validates that the types of all values in this object match their expected types
+         * recursively.
+         *
+         * This method is _not_ forwards compatible with new types from the API for existing fields.
+         *
+         * @throws LangChainInvalidDataException if any value type in this object doesn't match its
+         *   expected type.
+         */
+        fun validate(): Evidence = apply {
+            if (validated) {
+                return@apply
+            }
+
+            type().validate()
+            series().ifPresent { it.validate() }
+            validated = true
+        }
+
+        fun isValid(): Boolean =
+            try {
+                validate()
+                true
+            } catch (e: LangChainInvalidDataException) {
+                false
+            }
+
+        /**
+         * Returns a score indicating how many valid values are contained in this object
+         * recursively.
+         *
+         * Used for best match union deserialization.
+         */
+        @JvmSynthetic
+        internal fun validity(): Int =
+            (type.asKnown().getOrNull()?.validity() ?: 0) +
+                (series.asKnown().getOrNull()?.validity() ?: 0)
+
+        class Type @JsonCreator private constructor(private val value: JsonField<String>) : Enum {
+
+            /**
+             * Returns this class instance's raw value.
+             *
+             * This is usually only useful if this instance was deserialized from data that doesn't
+             * match any known member, and you want to know that value. For example, if the SDK is
+             * on an older version than the API, then the API may respond with new members that the
+             * SDK is unaware of.
+             */
+            @com.fasterxml.jackson.annotation.JsonValue fun _value(): JsonField<String> = value
+
+            companion object {
+
+                @JvmField val SERIES = of("series")
+
+                @JvmStatic fun of(value: String) = Type(JsonField.of(value))
+            }
+
+            /** An enum containing [Type]'s known values. */
+            enum class Known {
+                SERIES
+            }
+
+            /**
+             * An enum containing [Type]'s known values, as well as an [_UNKNOWN] member.
+             *
+             * An instance of [Type] can contain an unknown value in a couple of cases:
+             * - It was deserialized from data that doesn't match any known member. For example, if
+             *   the SDK is on an older version than the API, then the API may respond with new
+             *   members that the SDK is unaware of.
+             * - It was constructed with an arbitrary value using the [of] method.
+             */
+            enum class Value {
+                SERIES,
+                /** An enum member indicating that [Type] was instantiated with an unknown value. */
+                _UNKNOWN,
+            }
+
+            /**
+             * Returns an enum member corresponding to this class instance's value, or
+             * [Value._UNKNOWN] if the class was instantiated with an unknown value.
+             *
+             * Use the [known] method instead if you're certain the value is always known or if you
+             * want to throw for the unknown case.
+             */
+            fun value(): Value =
+                when (this) {
+                    SERIES -> Value.SERIES
+                    else -> Value._UNKNOWN
+                }
+
+            /**
+             * Returns an enum member corresponding to this class instance's value.
+             *
+             * Use the [value] method instead if you're uncertain the value is always known and
+             * don't want to throw for the unknown case.
+             *
+             * @throws LangChainInvalidDataException if this class instance's value is a not a known
+             *   member.
+             */
+            fun known(): Known =
+                when (this) {
+                    SERIES -> Known.SERIES
+                    else -> throw LangChainInvalidDataException("Unknown Type: $value")
+                }
+
+            /**
+             * Returns this class instance's primitive wire representation.
+             *
+             * This differs from the [toString] method because that method is primarily for
+             * debugging and generally doesn't throw.
+             *
+             * @throws LangChainInvalidDataException if this class instance's value does not have
+             *   the expected primitive type.
+             */
+            fun asString(): String =
+                _value().asString().orElseThrow {
+                    LangChainInvalidDataException("Value is not a String")
+                }
+
+            private var validated: Boolean = false
+
+            /**
+             * Validates that the types of all values in this object match their expected types
+             * recursively.
+             *
+             * This method is _not_ forwards compatible with new types from the API for existing
+             * fields.
+             *
+             * @throws LangChainInvalidDataException if any value type in this object doesn't match
+             *   its expected type.
+             */
+            fun validate(): Type = apply {
+                if (validated) {
+                    return@apply
+                }
+
+                known()
+                validated = true
+            }
+
+            fun isValid(): Boolean =
+                try {
+                    validate()
+                    true
+                } catch (e: LangChainInvalidDataException) {
+                    false
+                }
+
+            /**
+             * Returns a score indicating how many valid values are contained in this object
+             * recursively.
+             *
+             * Used for best match union deserialization.
+             */
+            @JvmSynthetic internal fun validity(): Int = if (value() == Value._UNKNOWN) 0 else 1
+
+            override fun equals(other: Any?): Boolean {
+                if (this === other) {
+                    return true
+                }
+
+                return other is Type && value == other.value
+            }
+
+            override fun hashCode() = value.hashCode()
+
+            override fun toString() = value.toString()
+        }
+
+        class Series
+        @JsonCreator(mode = JsonCreator.Mode.DISABLED)
+        private constructor(
+            private val metricDefinition: JsonField<MetricDefinition>,
+            private val runFilter: JsonField<String>,
+            private val windowEnd: JsonField<OffsetDateTime>,
+            private val windowStart: JsonField<OffsetDateTime>,
+            private val additionalProperties: MutableMap<String, JsonValue>,
+        ) {
+
+            @JsonCreator
+            private constructor(
+                @JsonProperty("metric_definition")
+                @ExcludeMissing
+                metricDefinition: JsonField<MetricDefinition> = JsonMissing.of(),
+                @JsonProperty("run_filter")
+                @ExcludeMissing
+                runFilter: JsonField<String> = JsonMissing.of(),
+                @JsonProperty("window_end")
+                @ExcludeMissing
+                windowEnd: JsonField<OffsetDateTime> = JsonMissing.of(),
+                @JsonProperty("window_start")
+                @ExcludeMissing
+                windowStart: JsonField<OffsetDateTime> = JsonMissing.of(),
+            ) : this(metricDefinition, runFilter, windowEnd, windowStart, mutableMapOf())
+
+            /**
+             * @throws LangChainInvalidDataException if the JSON field has an unexpected type or is
+             *   unexpectedly missing or null (e.g. if the server responded with an unexpected
+             *   value).
+             */
+            fun metricDefinition(): MetricDefinition =
+                metricDefinition.getRequired("metric_definition")
+
+            /**
+             * Narrows what is measured; the renderer ANDs its root scope over it.
+             *
+             * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g.
+             *   if the server responded with an unexpected value).
+             */
+            fun runFilter(): Optional<String> = runFilter.getOptional("run_filter")
+
+            /**
+             * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g.
+             *   if the server responded with an unexpected value).
+             */
+            fun windowEnd(): Optional<OffsetDateTime> = windowEnd.getOptional("window_end")
+
+            /**
+             * The view the chart opens at, not a clamp. Start alone renders start -> now.
+             *
+             * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g.
+             *   if the server responded with an unexpected value).
+             */
+            fun windowStart(): Optional<OffsetDateTime> = windowStart.getOptional("window_start")
+
+            /**
+             * Returns the raw JSON value of [metricDefinition].
+             *
+             * Unlike [metricDefinition], this method doesn't throw if the JSON field has an
+             * unexpected type.
+             */
+            @JsonProperty("metric_definition")
+            @ExcludeMissing
+            fun _metricDefinition(): JsonField<MetricDefinition> = metricDefinition
+
+            /**
+             * Returns the raw JSON value of [runFilter].
+             *
+             * Unlike [runFilter], this method doesn't throw if the JSON field has an unexpected
+             * type.
+             */
+            @JsonProperty("run_filter")
+            @ExcludeMissing
+            fun _runFilter(): JsonField<String> = runFilter
+
+            /**
+             * Returns the raw JSON value of [windowEnd].
+             *
+             * Unlike [windowEnd], this method doesn't throw if the JSON field has an unexpected
+             * type.
+             */
+            @JsonProperty("window_end")
+            @ExcludeMissing
+            fun _windowEnd(): JsonField<OffsetDateTime> = windowEnd
+
+            /**
+             * Returns the raw JSON value of [windowStart].
+             *
+             * Unlike [windowStart], this method doesn't throw if the JSON field has an unexpected
+             * type.
+             */
+            @JsonProperty("window_start")
+            @ExcludeMissing
+            fun _windowStart(): JsonField<OffsetDateTime> = windowStart
+
+            @JsonAnySetter
+            private fun putAdditionalProperty(key: String, value: JsonValue) {
+                additionalProperties.put(key, value)
+            }
+
+            @JsonAnyGetter
+            @ExcludeMissing
+            fun _additionalProperties(): Map<String, JsonValue> =
+                Collections.unmodifiableMap(additionalProperties)
+
+            fun toBuilder() = Builder().from(this)
+
+            companion object {
+
+                /**
+                 * Returns a mutable builder for constructing an instance of [Series].
+                 *
+                 * The following fields are required:
+                 * ```java
+                 * .metricDefinition()
+                 * ```
+                 */
+                @JvmStatic fun builder() = Builder()
+            }
+
+            /** A builder for [Series]. */
+            class Builder internal constructor() {
+
+                private var metricDefinition: JsonField<MetricDefinition>? = null
+                private var runFilter: JsonField<String> = JsonMissing.of()
+                private var windowEnd: JsonField<OffsetDateTime> = JsonMissing.of()
+                private var windowStart: JsonField<OffsetDateTime> = JsonMissing.of()
+                private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
+
+                @JvmSynthetic
+                internal fun from(series: Series) = apply {
+                    metricDefinition = series.metricDefinition
+                    runFilter = series.runFilter
+                    windowEnd = series.windowEnd
+                    windowStart = series.windowStart
+                    additionalProperties = series.additionalProperties.toMutableMap()
+                }
+
+                fun metricDefinition(metricDefinition: MetricDefinition) =
+                    metricDefinition(JsonField.of(metricDefinition))
+
+                /**
+                 * Sets [Builder.metricDefinition] to an arbitrary JSON value.
+                 *
+                 * You should usually call [Builder.metricDefinition] with a well-typed
+                 * [MetricDefinition] value instead. This method is primarily for setting the field
+                 * to an undocumented or not yet supported value.
+                 */
+                fun metricDefinition(metricDefinition: JsonField<MetricDefinition>) = apply {
+                    this.metricDefinition = metricDefinition
+                }
+
+                /** Narrows what is measured; the renderer ANDs its root scope over it. */
+                fun runFilter(runFilter: String) = runFilter(JsonField.of(runFilter))
+
+                /**
+                 * Sets [Builder.runFilter] to an arbitrary JSON value.
+                 *
+                 * You should usually call [Builder.runFilter] with a well-typed [String] value
+                 * instead. This method is primarily for setting the field to an undocumented or not
+                 * yet supported value.
+                 */
+                fun runFilter(runFilter: JsonField<String>) = apply { this.runFilter = runFilter }
+
+                fun windowEnd(windowEnd: OffsetDateTime) = windowEnd(JsonField.of(windowEnd))
+
+                /**
+                 * Sets [Builder.windowEnd] to an arbitrary JSON value.
+                 *
+                 * You should usually call [Builder.windowEnd] with a well-typed [OffsetDateTime]
+                 * value instead. This method is primarily for setting the field to an undocumented
+                 * or not yet supported value.
+                 */
+                fun windowEnd(windowEnd: JsonField<OffsetDateTime>) = apply {
+                    this.windowEnd = windowEnd
+                }
+
+                /** The view the chart opens at, not a clamp. Start alone renders start -> now. */
+                fun windowStart(windowStart: OffsetDateTime) =
+                    windowStart(JsonField.of(windowStart))
+
+                /**
+                 * Sets [Builder.windowStart] to an arbitrary JSON value.
+                 *
+                 * You should usually call [Builder.windowStart] with a well-typed [OffsetDateTime]
+                 * value instead. This method is primarily for setting the field to an undocumented
+                 * or not yet supported value.
+                 */
+                fun windowStart(windowStart: JsonField<OffsetDateTime>) = apply {
+                    this.windowStart = windowStart
+                }
+
+                fun additionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
+                    this.additionalProperties.clear()
+                    putAllAdditionalProperties(additionalProperties)
+                }
+
+                fun putAdditionalProperty(key: String, value: JsonValue) = apply {
+                    additionalProperties.put(key, value)
+                }
+
+                fun putAllAdditionalProperties(additionalProperties: Map<String, JsonValue>) =
+                    apply {
+                        this.additionalProperties.putAll(additionalProperties)
+                    }
+
+                fun removeAdditionalProperty(key: String) = apply {
+                    additionalProperties.remove(key)
+                }
+
+                fun removeAllAdditionalProperties(keys: Set<String>) = apply {
+                    keys.forEach(::removeAdditionalProperty)
+                }
+
+                /**
+                 * Returns an immutable instance of [Series].
+                 *
+                 * Further updates to this [Builder] will not mutate the returned instance.
+                 *
+                 * The following fields are required:
+                 * ```java
+                 * .metricDefinition()
+                 * ```
+                 *
+                 * @throws IllegalStateException if any required field is unset.
+                 */
+                fun build(): Series =
+                    Series(
+                        checkRequired("metricDefinition", metricDefinition),
+                        runFilter,
+                        windowEnd,
+                        windowStart,
+                        additionalProperties.toMutableMap(),
+                    )
+            }
+
+            private var validated: Boolean = false
+
+            /**
+             * Validates that the types of all values in this object match their expected types
+             * recursively.
+             *
+             * This method is _not_ forwards compatible with new types from the API for existing
+             * fields.
+             *
+             * @throws LangChainInvalidDataException if any value type in this object doesn't match
+             *   its expected type.
+             */
+            fun validate(): Series = apply {
+                if (validated) {
+                    return@apply
+                }
+
+                metricDefinition().validate()
+                runFilter()
+                windowEnd()
+                windowStart()
+                validated = true
+            }
+
+            fun isValid(): Boolean =
+                try {
+                    validate()
+                    true
+                } catch (e: LangChainInvalidDataException) {
+                    false
+                }
+
+            /**
+             * Returns a score indicating how many valid values are contained in this object
+             * recursively.
+             *
+             * Used for best match union deserialization.
+             */
+            @JvmSynthetic
+            internal fun validity(): Int =
+                (metricDefinition.asKnown().getOrNull()?.validity() ?: 0) +
+                    (if (runFilter.asKnown().isPresent) 1 else 0) +
+                    (if (windowEnd.asKnown().isPresent) 1 else 0) +
+                    (if (windowStart.asKnown().isPresent) 1 else 0)
+
+            class MetricDefinition
+            @JsonCreator(mode = JsonCreator.Mode.DISABLED)
+            private constructor(
+                private val type: JsonField<Type>,
+                private val denominator: JsonField<Denominator>,
+                private val entity: JsonField<Entity>,
+                private val field: JsonField<Field>,
+                private val numerator: JsonField<Numerator>,
+                private val params: JsonField<Params>,
+                private val additionalProperties: MutableMap<String, JsonValue>,
+            ) {
+
+                @JsonCreator
+                private constructor(
+                    @JsonProperty("type") @ExcludeMissing type: JsonField<Type> = JsonMissing.of(),
+                    @JsonProperty("denominator")
+                    @ExcludeMissing
+                    denominator: JsonField<Denominator> = JsonMissing.of(),
+                    @JsonProperty("entity")
+                    @ExcludeMissing
+                    entity: JsonField<Entity> = JsonMissing.of(),
+                    @JsonProperty("field")
+                    @ExcludeMissing
+                    field: JsonField<Field> = JsonMissing.of(),
+                    @JsonProperty("numerator")
+                    @ExcludeMissing
+                    numerator: JsonField<Numerator> = JsonMissing.of(),
+                    @JsonProperty("params")
+                    @ExcludeMissing
+                    params: JsonField<Params> = JsonMissing.of(),
+                ) : this(type, denominator, entity, field, numerator, params, mutableMapOf())
+
+                /**
+                 * histogram is reserved and rejected; the tag publishes what is accepted.
+                 *
+                 * @throws LangChainInvalidDataException if the JSON field has an unexpected type or
+                 *   is unexpectedly missing or null (e.g. if the server responded with an
+                 *   unexpected value).
+                 */
+                fun type(): Type = type.getRequired("type")
+
+                /**
+                 * @throws LangChainInvalidDataException if the JSON field has an unexpected type
+                 *   (e.g. if the server responded with an unexpected value).
+                 */
+                fun denominator(): Optional<Denominator> = denominator.getOptional("denominator")
+
+                /**
+                 * Entity selects what a type=count metric counts. Only valid when type=count;
+                 * defaults to MetricEntityRun. entity=feedback requires params.feedback_key and
+                 * counts individual feedback records rather than runs.
+                 *
+                 * @throws LangChainInvalidDataException if the JSON field has an unexpected type
+                 *   (e.g. if the server responded with an unexpected value).
+                 */
+                fun entity(): Optional<Entity> = entity.getOptional("entity")
+
+                /**
+                 * @throws LangChainInvalidDataException if the JSON field has an unexpected type
+                 *   (e.g. if the server responded with an unexpected value).
+                 */
+                fun field(): Optional<Field> = field.getOptional("field")
+
+                /**
+                 * Numerator and Denominator are required when type=ratio.
+                 *
+                 * @throws LangChainInvalidDataException if the JSON field has an unexpected type
+                 *   (e.g. if the server responded with an unexpected value).
+                 */
+                fun numerator(): Optional<Numerator> = numerator.getOptional("numerator")
+
+                /**
+                 * percentile p or histogram bucket_count
+                 *
+                 * @throws LangChainInvalidDataException if the JSON field has an unexpected type
+                 *   (e.g. if the server responded with an unexpected value).
+                 */
+                fun params(): Optional<Params> = params.getOptional("params")
+
+                /**
+                 * Returns the raw JSON value of [type].
+                 *
+                 * Unlike [type], this method doesn't throw if the JSON field has an unexpected
+                 * type.
+                 */
+                @JsonProperty("type") @ExcludeMissing fun _type(): JsonField<Type> = type
+
+                /**
+                 * Returns the raw JSON value of [denominator].
+                 *
+                 * Unlike [denominator], this method doesn't throw if the JSON field has an
+                 * unexpected type.
+                 */
+                @JsonProperty("denominator")
+                @ExcludeMissing
+                fun _denominator(): JsonField<Denominator> = denominator
+
+                /**
+                 * Returns the raw JSON value of [entity].
+                 *
+                 * Unlike [entity], this method doesn't throw if the JSON field has an unexpected
+                 * type.
+                 */
+                @JsonProperty("entity") @ExcludeMissing fun _entity(): JsonField<Entity> = entity
+
+                /**
+                 * Returns the raw JSON value of [field].
+                 *
+                 * Unlike [field], this method doesn't throw if the JSON field has an unexpected
+                 * type.
+                 */
+                @JsonProperty("field") @ExcludeMissing fun _field(): JsonField<Field> = field
+
+                /**
+                 * Returns the raw JSON value of [numerator].
+                 *
+                 * Unlike [numerator], this method doesn't throw if the JSON field has an unexpected
+                 * type.
+                 */
+                @JsonProperty("numerator")
+                @ExcludeMissing
+                fun _numerator(): JsonField<Numerator> = numerator
+
+                /**
+                 * Returns the raw JSON value of [params].
+                 *
+                 * Unlike [params], this method doesn't throw if the JSON field has an unexpected
+                 * type.
+                 */
+                @JsonProperty("params") @ExcludeMissing fun _params(): JsonField<Params> = params
+
+                @JsonAnySetter
+                private fun putAdditionalProperty(key: String, value: JsonValue) {
+                    additionalProperties.put(key, value)
+                }
+
+                @JsonAnyGetter
+                @ExcludeMissing
+                fun _additionalProperties(): Map<String, JsonValue> =
+                    Collections.unmodifiableMap(additionalProperties)
+
+                fun toBuilder() = Builder().from(this)
+
+                companion object {
+
+                    /**
+                     * Returns a mutable builder for constructing an instance of [MetricDefinition].
+                     *
+                     * The following fields are required:
+                     * ```java
+                     * .type()
+                     * ```
+                     */
+                    @JvmStatic fun builder() = Builder()
+                }
+
+                /** A builder for [MetricDefinition]. */
+                class Builder internal constructor() {
+
+                    private var type: JsonField<Type>? = null
+                    private var denominator: JsonField<Denominator> = JsonMissing.of()
+                    private var entity: JsonField<Entity> = JsonMissing.of()
+                    private var field: JsonField<Field> = JsonMissing.of()
+                    private var numerator: JsonField<Numerator> = JsonMissing.of()
+                    private var params: JsonField<Params> = JsonMissing.of()
+                    private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
+
+                    @JvmSynthetic
+                    internal fun from(metricDefinition: MetricDefinition) = apply {
+                        type = metricDefinition.type
+                        denominator = metricDefinition.denominator
+                        entity = metricDefinition.entity
+                        field = metricDefinition.field
+                        numerator = metricDefinition.numerator
+                        params = metricDefinition.params
+                        additionalProperties = metricDefinition.additionalProperties.toMutableMap()
+                    }
+
+                    /** histogram is reserved and rejected; the tag publishes what is accepted. */
+                    fun type(type: Type) = type(JsonField.of(type))
+
+                    /**
+                     * Sets [Builder.type] to an arbitrary JSON value.
+                     *
+                     * You should usually call [Builder.type] with a well-typed [Type] value
+                     * instead. This method is primarily for setting the field to an undocumented or
+                     * not yet supported value.
+                     */
+                    fun type(type: JsonField<Type>) = apply { this.type = type }
+
+                    fun denominator(denominator: Denominator) =
+                        denominator(JsonField.of(denominator))
+
+                    /**
+                     * Sets [Builder.denominator] to an arbitrary JSON value.
+                     *
+                     * You should usually call [Builder.denominator] with a well-typed [Denominator]
+                     * value instead. This method is primarily for setting the field to an
+                     * undocumented or not yet supported value.
+                     */
+                    fun denominator(denominator: JsonField<Denominator>) = apply {
+                        this.denominator = denominator
+                    }
+
+                    /**
+                     * Entity selects what a type=count metric counts. Only valid when type=count;
+                     * defaults to MetricEntityRun. entity=feedback requires params.feedback_key and
+                     * counts individual feedback records rather than runs.
+                     */
+                    fun entity(entity: Entity) = entity(JsonField.of(entity))
+
+                    /**
+                     * Sets [Builder.entity] to an arbitrary JSON value.
+                     *
+                     * You should usually call [Builder.entity] with a well-typed [Entity] value
+                     * instead. This method is primarily for setting the field to an undocumented or
+                     * not yet supported value.
+                     */
+                    fun entity(entity: JsonField<Entity>) = apply { this.entity = entity }
+
+                    fun field(field: Field) = field(JsonField.of(field))
+
+                    /**
+                     * Sets [Builder.field] to an arbitrary JSON value.
+                     *
+                     * You should usually call [Builder.field] with a well-typed [Field] value
+                     * instead. This method is primarily for setting the field to an undocumented or
+                     * not yet supported value.
+                     */
+                    fun field(field: JsonField<Field>) = apply { this.field = field }
+
+                    /** Numerator and Denominator are required when type=ratio. */
+                    fun numerator(numerator: Numerator) = numerator(JsonField.of(numerator))
+
+                    /**
+                     * Sets [Builder.numerator] to an arbitrary JSON value.
+                     *
+                     * You should usually call [Builder.numerator] with a well-typed [Numerator]
+                     * value instead. This method is primarily for setting the field to an
+                     * undocumented or not yet supported value.
+                     */
+                    fun numerator(numerator: JsonField<Numerator>) = apply {
+                        this.numerator = numerator
+                    }
+
+                    /** percentile p or histogram bucket_count */
+                    fun params(params: Params) = params(JsonField.of(params))
+
+                    /**
+                     * Sets [Builder.params] to an arbitrary JSON value.
+                     *
+                     * You should usually call [Builder.params] with a well-typed [Params] value
+                     * instead. This method is primarily for setting the field to an undocumented or
+                     * not yet supported value.
+                     */
+                    fun params(params: JsonField<Params>) = apply { this.params = params }
+
+                    fun additionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
+                        this.additionalProperties.clear()
+                        putAllAdditionalProperties(additionalProperties)
+                    }
+
+                    fun putAdditionalProperty(key: String, value: JsonValue) = apply {
+                        additionalProperties.put(key, value)
+                    }
+
+                    fun putAllAdditionalProperties(additionalProperties: Map<String, JsonValue>) =
+                        apply {
+                            this.additionalProperties.putAll(additionalProperties)
+                        }
+
+                    fun removeAdditionalProperty(key: String) = apply {
+                        additionalProperties.remove(key)
+                    }
+
+                    fun removeAllAdditionalProperties(keys: Set<String>) = apply {
+                        keys.forEach(::removeAdditionalProperty)
+                    }
+
+                    /**
+                     * Returns an immutable instance of [MetricDefinition].
+                     *
+                     * Further updates to this [Builder] will not mutate the returned instance.
+                     *
+                     * The following fields are required:
+                     * ```java
+                     * .type()
+                     * ```
+                     *
+                     * @throws IllegalStateException if any required field is unset.
+                     */
+                    fun build(): MetricDefinition =
+                        MetricDefinition(
+                            checkRequired("type", type),
+                            denominator,
+                            entity,
+                            field,
+                            numerator,
+                            params,
+                            additionalProperties.toMutableMap(),
+                        )
+                }
+
+                private var validated: Boolean = false
+
+                /**
+                 * Validates that the types of all values in this object match their expected types
+                 * recursively.
+                 *
+                 * This method is _not_ forwards compatible with new types from the API for existing
+                 * fields.
+                 *
+                 * @throws LangChainInvalidDataException if any value type in this object doesn't
+                 *   match its expected type.
+                 */
+                fun validate(): MetricDefinition = apply {
+                    if (validated) {
+                        return@apply
+                    }
+
+                    type().validate()
+                    denominator().ifPresent { it.validate() }
+                    entity().ifPresent { it.validate() }
+                    field().ifPresent { it.validate() }
+                    numerator().ifPresent { it.validate() }
+                    params().ifPresent { it.validate() }
+                    validated = true
+                }
+
+                fun isValid(): Boolean =
+                    try {
+                        validate()
+                        true
+                    } catch (e: LangChainInvalidDataException) {
+                        false
+                    }
+
+                /**
+                 * Returns a score indicating how many valid values are contained in this object
+                 * recursively.
+                 *
+                 * Used for best match union deserialization.
+                 */
+                @JvmSynthetic
+                internal fun validity(): Int =
+                    (type.asKnown().getOrNull()?.validity() ?: 0) +
+                        (denominator.asKnown().getOrNull()?.validity() ?: 0) +
+                        (entity.asKnown().getOrNull()?.validity() ?: 0) +
+                        (field.asKnown().getOrNull()?.validity() ?: 0) +
+                        (numerator.asKnown().getOrNull()?.validity() ?: 0) +
+                        (params.asKnown().getOrNull()?.validity() ?: 0)
+
+                /** histogram is reserved and rejected; the tag publishes what is accepted. */
+                class Type @JsonCreator private constructor(private val value: JsonField<String>) :
+                    Enum {
+
+                    /**
+                     * Returns this class instance's raw value.
+                     *
+                     * This is usually only useful if this instance was deserialized from data that
+                     * doesn't match any known member, and you want to know that value. For example,
+                     * if the SDK is on an older version than the API, then the API may respond with
+                     * new members that the SDK is unaware of.
+                     */
+                    @com.fasterxml.jackson.annotation.JsonValue
+                    fun _value(): JsonField<String> = value
+
+                    companion object {
+
+                        @JvmField val COUNT = of("count")
+
+                        @JvmField val SUM = of("sum")
+
+                        @JvmField val AVG = of("avg")
+
+                        @JvmField val MIN = of("min")
+
+                        @JvmField val MAX = of("max")
+
+                        @JvmField val PERCENTILE = of("percentile")
+
+                        @JvmField val RATIO = of("ratio")
+
+                        @JvmField val HISTOGRAM = of("histogram")
+
+                        @JvmStatic fun of(value: String) = Type(JsonField.of(value))
+                    }
+
+                    /** An enum containing [Type]'s known values. */
+                    enum class Known {
+                        COUNT,
+                        SUM,
+                        AVG,
+                        MIN,
+                        MAX,
+                        PERCENTILE,
+                        RATIO,
+                        HISTOGRAM,
+                    }
+
+                    /**
+                     * An enum containing [Type]'s known values, as well as an [_UNKNOWN] member.
+                     *
+                     * An instance of [Type] can contain an unknown value in a couple of cases:
+                     * - It was deserialized from data that doesn't match any known member. For
+                     *   example, if the SDK is on an older version than the API, then the API may
+                     *   respond with new members that the SDK is unaware of.
+                     * - It was constructed with an arbitrary value using the [of] method.
+                     */
+                    enum class Value {
+                        COUNT,
+                        SUM,
+                        AVG,
+                        MIN,
+                        MAX,
+                        PERCENTILE,
+                        RATIO,
+                        HISTOGRAM,
+                        /**
+                         * An enum member indicating that [Type] was instantiated with an unknown
+                         * value.
+                         */
+                        _UNKNOWN,
+                    }
+
+                    /**
+                     * Returns an enum member corresponding to this class instance's value, or
+                     * [Value._UNKNOWN] if the class was instantiated with an unknown value.
+                     *
+                     * Use the [known] method instead if you're certain the value is always known or
+                     * if you want to throw for the unknown case.
+                     */
+                    fun value(): Value =
+                        when (this) {
+                            COUNT -> Value.COUNT
+                            SUM -> Value.SUM
+                            AVG -> Value.AVG
+                            MIN -> Value.MIN
+                            MAX -> Value.MAX
+                            PERCENTILE -> Value.PERCENTILE
+                            RATIO -> Value.RATIO
+                            HISTOGRAM -> Value.HISTOGRAM
+                            else -> Value._UNKNOWN
+                        }
+
+                    /**
+                     * Returns an enum member corresponding to this class instance's value.
+                     *
+                     * Use the [value] method instead if you're uncertain the value is always known
+                     * and don't want to throw for the unknown case.
+                     *
+                     * @throws LangChainInvalidDataException if this class instance's value is a not
+                     *   a known member.
+                     */
+                    fun known(): Known =
+                        when (this) {
+                            COUNT -> Known.COUNT
+                            SUM -> Known.SUM
+                            AVG -> Known.AVG
+                            MIN -> Known.MIN
+                            MAX -> Known.MAX
+                            PERCENTILE -> Known.PERCENTILE
+                            RATIO -> Known.RATIO
+                            HISTOGRAM -> Known.HISTOGRAM
+                            else -> throw LangChainInvalidDataException("Unknown Type: $value")
+                        }
+
+                    /**
+                     * Returns this class instance's primitive wire representation.
+                     *
+                     * This differs from the [toString] method because that method is primarily for
+                     * debugging and generally doesn't throw.
+                     *
+                     * @throws LangChainInvalidDataException if this class instance's value does not
+                     *   have the expected primitive type.
+                     */
+                    fun asString(): String =
+                        _value().asString().orElseThrow {
+                            LangChainInvalidDataException("Value is not a String")
+                        }
+
+                    private var validated: Boolean = false
+
+                    /**
+                     * Validates that the types of all values in this object match their expected
+                     * types recursively.
+                     *
+                     * This method is _not_ forwards compatible with new types from the API for
+                     * existing fields.
+                     *
+                     * @throws LangChainInvalidDataException if any value type in this object
+                     *   doesn't match its expected type.
+                     */
+                    fun validate(): Type = apply {
+                        if (validated) {
+                            return@apply
+                        }
+
+                        known()
+                        validated = true
+                    }
+
+                    fun isValid(): Boolean =
+                        try {
+                            validate()
+                            true
+                        } catch (e: LangChainInvalidDataException) {
+                            false
+                        }
+
+                    /**
+                     * Returns a score indicating how many valid values are contained in this object
+                     * recursively.
+                     *
+                     * Used for best match union deserialization.
+                     */
+                    @JvmSynthetic
+                    internal fun validity(): Int = if (value() == Value._UNKNOWN) 0 else 1
+
+                    override fun equals(other: Any?): Boolean {
+                        if (this === other) {
+                            return true
+                        }
+
+                        return other is Type && value == other.value
+                    }
+
+                    override fun hashCode() = value.hashCode()
+
+                    override fun toString() = value.toString()
+                }
+
+                class Denominator
+                @JsonCreator(mode = JsonCreator.Mode.DISABLED)
+                private constructor(
+                    private val type: JsonField<Type>,
+                    private val entity: JsonField<Entity>,
+                    private val field: JsonField<Field>,
+                    private val filter: JsonField<String>,
+                    private val params: JsonField<Params>,
+                    private val additionalProperties: MutableMap<String, JsonValue>,
+                ) {
+
+                    @JsonCreator
+                    private constructor(
+                        @JsonProperty("type")
+                        @ExcludeMissing
+                        type: JsonField<Type> = JsonMissing.of(),
+                        @JsonProperty("entity")
+                        @ExcludeMissing
+                        entity: JsonField<Entity> = JsonMissing.of(),
+                        @JsonProperty("field")
+                        @ExcludeMissing
+                        field: JsonField<Field> = JsonMissing.of(),
+                        @JsonProperty("filter")
+                        @ExcludeMissing
+                        filter: JsonField<String> = JsonMissing.of(),
+                        @JsonProperty("params")
+                        @ExcludeMissing
+                        params: JsonField<Params> = JsonMissing.of(),
+                    ) : this(type, entity, field, filter, params, mutableMapOf())
+
+                    /**
+                     * An operand is non-composite, so ratio is rejected here too.
+                     *
+                     * @throws LangChainInvalidDataException if the JSON field has an unexpected
+                     *   type or is unexpectedly missing or null (e.g. if the server responded with
+                     *   an unexpected value).
+                     */
+                    fun type(): Type = type.getRequired("type")
+
+                    /**
+                     * Entity selects what a type=count metric counts. Only valid when type=count;
+                     * defaults to MetricEntityRun. entity=feedback requires params.feedback_key and
+                     * counts individual feedback records rather than runs.
+                     *
+                     * @throws LangChainInvalidDataException if the JSON field has an unexpected
+                     *   type (e.g. if the server responded with an unexpected value).
+                     */
+                    fun entity(): Optional<Entity> = entity.getOptional("entity")
+
+                    /**
+                     * @throws LangChainInvalidDataException if the JSON field has an unexpected
+                     *   type (e.g. if the server responded with an unexpected value).
+                     */
+                    fun field(): Optional<Field> = field.getOptional("field")
+
+                    /**
+                     * @throws LangChainInvalidDataException if the JSON field has an unexpected
+                     *   type (e.g. if the server responded with an unexpected value).
+                     */
+                    fun filter(): Optional<String> = filter.getOptional("filter")
+
+                    /**
+                     * required when type=percentile
+                     *
+                     * @throws LangChainInvalidDataException if the JSON field has an unexpected
+                     *   type (e.g. if the server responded with an unexpected value).
+                     */
+                    fun params(): Optional<Params> = params.getOptional("params")
+
+                    /**
+                     * Returns the raw JSON value of [type].
+                     *
+                     * Unlike [type], this method doesn't throw if the JSON field has an unexpected
+                     * type.
+                     */
+                    @JsonProperty("type") @ExcludeMissing fun _type(): JsonField<Type> = type
+
+                    /**
+                     * Returns the raw JSON value of [entity].
+                     *
+                     * Unlike [entity], this method doesn't throw if the JSON field has an
+                     * unexpected type.
+                     */
+                    @JsonProperty("entity")
+                    @ExcludeMissing
+                    fun _entity(): JsonField<Entity> = entity
+
+                    /**
+                     * Returns the raw JSON value of [field].
+                     *
+                     * Unlike [field], this method doesn't throw if the JSON field has an unexpected
+                     * type.
+                     */
+                    @JsonProperty("field") @ExcludeMissing fun _field(): JsonField<Field> = field
+
+                    /**
+                     * Returns the raw JSON value of [filter].
+                     *
+                     * Unlike [filter], this method doesn't throw if the JSON field has an
+                     * unexpected type.
+                     */
+                    @JsonProperty("filter")
+                    @ExcludeMissing
+                    fun _filter(): JsonField<String> = filter
+
+                    /**
+                     * Returns the raw JSON value of [params].
+                     *
+                     * Unlike [params], this method doesn't throw if the JSON field has an
+                     * unexpected type.
+                     */
+                    @JsonProperty("params")
+                    @ExcludeMissing
+                    fun _params(): JsonField<Params> = params
+
+                    @JsonAnySetter
+                    private fun putAdditionalProperty(key: String, value: JsonValue) {
+                        additionalProperties.put(key, value)
+                    }
+
+                    @JsonAnyGetter
+                    @ExcludeMissing
+                    fun _additionalProperties(): Map<String, JsonValue> =
+                        Collections.unmodifiableMap(additionalProperties)
+
+                    fun toBuilder() = Builder().from(this)
+
+                    companion object {
+
+                        /**
+                         * Returns a mutable builder for constructing an instance of [Denominator].
+                         *
+                         * The following fields are required:
+                         * ```java
+                         * .type()
+                         * ```
+                         */
+                        @JvmStatic fun builder() = Builder()
+                    }
+
+                    /** A builder for [Denominator]. */
+                    class Builder internal constructor() {
+
+                        private var type: JsonField<Type>? = null
+                        private var entity: JsonField<Entity> = JsonMissing.of()
+                        private var field: JsonField<Field> = JsonMissing.of()
+                        private var filter: JsonField<String> = JsonMissing.of()
+                        private var params: JsonField<Params> = JsonMissing.of()
+                        private var additionalProperties: MutableMap<String, JsonValue> =
+                            mutableMapOf()
+
+                        @JvmSynthetic
+                        internal fun from(denominator: Denominator) = apply {
+                            type = denominator.type
+                            entity = denominator.entity
+                            field = denominator.field
+                            filter = denominator.filter
+                            params = denominator.params
+                            additionalProperties = denominator.additionalProperties.toMutableMap()
+                        }
+
+                        /** An operand is non-composite, so ratio is rejected here too. */
+                        fun type(type: Type) = type(JsonField.of(type))
+
+                        /**
+                         * Sets [Builder.type] to an arbitrary JSON value.
+                         *
+                         * You should usually call [Builder.type] with a well-typed [Type] value
+                         * instead. This method is primarily for setting the field to an
+                         * undocumented or not yet supported value.
+                         */
+                        fun type(type: JsonField<Type>) = apply { this.type = type }
+
+                        /**
+                         * Entity selects what a type=count metric counts. Only valid when
+                         * type=count; defaults to MetricEntityRun. entity=feedback requires
+                         * params.feedback_key and counts individual feedback records rather than
+                         * runs.
+                         */
+                        fun entity(entity: Entity) = entity(JsonField.of(entity))
+
+                        /**
+                         * Sets [Builder.entity] to an arbitrary JSON value.
+                         *
+                         * You should usually call [Builder.entity] with a well-typed [Entity] value
+                         * instead. This method is primarily for setting the field to an
+                         * undocumented or not yet supported value.
+                         */
+                        fun entity(entity: JsonField<Entity>) = apply { this.entity = entity }
+
+                        fun field(field: Field) = field(JsonField.of(field))
+
+                        /**
+                         * Sets [Builder.field] to an arbitrary JSON value.
+                         *
+                         * You should usually call [Builder.field] with a well-typed [Field] value
+                         * instead. This method is primarily for setting the field to an
+                         * undocumented or not yet supported value.
+                         */
+                        fun field(field: JsonField<Field>) = apply { this.field = field }
+
+                        fun filter(filter: String) = filter(JsonField.of(filter))
+
+                        /**
+                         * Sets [Builder.filter] to an arbitrary JSON value.
+                         *
+                         * You should usually call [Builder.filter] with a well-typed [String] value
+                         * instead. This method is primarily for setting the field to an
+                         * undocumented or not yet supported value.
+                         */
+                        fun filter(filter: JsonField<String>) = apply { this.filter = filter }
+
+                        /** required when type=percentile */
+                        fun params(params: Params) = params(JsonField.of(params))
+
+                        /**
+                         * Sets [Builder.params] to an arbitrary JSON value.
+                         *
+                         * You should usually call [Builder.params] with a well-typed [Params] value
+                         * instead. This method is primarily for setting the field to an
+                         * undocumented or not yet supported value.
+                         */
+                        fun params(params: JsonField<Params>) = apply { this.params = params }
+
+                        fun additionalProperties(additionalProperties: Map<String, JsonValue>) =
+                            apply {
+                                this.additionalProperties.clear()
+                                putAllAdditionalProperties(additionalProperties)
+                            }
+
+                        fun putAdditionalProperty(key: String, value: JsonValue) = apply {
+                            additionalProperties.put(key, value)
+                        }
+
+                        fun putAllAdditionalProperties(
+                            additionalProperties: Map<String, JsonValue>
+                        ) = apply { this.additionalProperties.putAll(additionalProperties) }
+
+                        fun removeAdditionalProperty(key: String) = apply {
+                            additionalProperties.remove(key)
+                        }
+
+                        fun removeAllAdditionalProperties(keys: Set<String>) = apply {
+                            keys.forEach(::removeAdditionalProperty)
+                        }
+
+                        /**
+                         * Returns an immutable instance of [Denominator].
+                         *
+                         * Further updates to this [Builder] will not mutate the returned instance.
+                         *
+                         * The following fields are required:
+                         * ```java
+                         * .type()
+                         * ```
+                         *
+                         * @throws IllegalStateException if any required field is unset.
+                         */
+                        fun build(): Denominator =
+                            Denominator(
+                                checkRequired("type", type),
+                                entity,
+                                field,
+                                filter,
+                                params,
+                                additionalProperties.toMutableMap(),
+                            )
+                    }
+
+                    private var validated: Boolean = false
+
+                    /**
+                     * Validates that the types of all values in this object match their expected
+                     * types recursively.
+                     *
+                     * This method is _not_ forwards compatible with new types from the API for
+                     * existing fields.
+                     *
+                     * @throws LangChainInvalidDataException if any value type in this object
+                     *   doesn't match its expected type.
+                     */
+                    fun validate(): Denominator = apply {
+                        if (validated) {
+                            return@apply
+                        }
+
+                        type().validate()
+                        entity().ifPresent { it.validate() }
+                        field().ifPresent { it.validate() }
+                        filter()
+                        params().ifPresent { it.validate() }
+                        validated = true
+                    }
+
+                    fun isValid(): Boolean =
+                        try {
+                            validate()
+                            true
+                        } catch (e: LangChainInvalidDataException) {
+                            false
+                        }
+
+                    /**
+                     * Returns a score indicating how many valid values are contained in this object
+                     * recursively.
+                     *
+                     * Used for best match union deserialization.
+                     */
+                    @JvmSynthetic
+                    internal fun validity(): Int =
+                        (type.asKnown().getOrNull()?.validity() ?: 0) +
+                            (entity.asKnown().getOrNull()?.validity() ?: 0) +
+                            (field.asKnown().getOrNull()?.validity() ?: 0) +
+                            (if (filter.asKnown().isPresent) 1 else 0) +
+                            (params.asKnown().getOrNull()?.validity() ?: 0)
+
+                    /** An operand is non-composite, so ratio is rejected here too. */
+                    class Type
+                    @JsonCreator
+                    private constructor(private val value: JsonField<String>) : Enum {
+
+                        /**
+                         * Returns this class instance's raw value.
+                         *
+                         * This is usually only useful if this instance was deserialized from data
+                         * that doesn't match any known member, and you want to know that value. For
+                         * example, if the SDK is on an older version than the API, then the API may
+                         * respond with new members that the SDK is unaware of.
+                         */
+                        @com.fasterxml.jackson.annotation.JsonValue
+                        fun _value(): JsonField<String> = value
+
+                        companion object {
+
+                            @JvmField val COUNT = of("count")
+
+                            @JvmField val SUM = of("sum")
+
+                            @JvmField val AVG = of("avg")
+
+                            @JvmField val MIN = of("min")
+
+                            @JvmField val MAX = of("max")
+
+                            @JvmField val PERCENTILE = of("percentile")
+
+                            @JvmField val RATIO = of("ratio")
+
+                            @JvmField val HISTOGRAM = of("histogram")
+
+                            @JvmStatic fun of(value: String) = Type(JsonField.of(value))
+                        }
+
+                        /** An enum containing [Type]'s known values. */
+                        enum class Known {
+                            COUNT,
+                            SUM,
+                            AVG,
+                            MIN,
+                            MAX,
+                            PERCENTILE,
+                            RATIO,
+                            HISTOGRAM,
+                        }
+
+                        /**
+                         * An enum containing [Type]'s known values, as well as an [_UNKNOWN]
+                         * member.
+                         *
+                         * An instance of [Type] can contain an unknown value in a couple of cases:
+                         * - It was deserialized from data that doesn't match any known member. For
+                         *   example, if the SDK is on an older version than the API, then the API
+                         *   may respond with new members that the SDK is unaware of.
+                         * - It was constructed with an arbitrary value using the [of] method.
+                         */
+                        enum class Value {
+                            COUNT,
+                            SUM,
+                            AVG,
+                            MIN,
+                            MAX,
+                            PERCENTILE,
+                            RATIO,
+                            HISTOGRAM,
+                            /**
+                             * An enum member indicating that [Type] was instantiated with an
+                             * unknown value.
+                             */
+                            _UNKNOWN,
+                        }
+
+                        /**
+                         * Returns an enum member corresponding to this class instance's value, or
+                         * [Value._UNKNOWN] if the class was instantiated with an unknown value.
+                         *
+                         * Use the [known] method instead if you're certain the value is always
+                         * known or if you want to throw for the unknown case.
+                         */
+                        fun value(): Value =
+                            when (this) {
+                                COUNT -> Value.COUNT
+                                SUM -> Value.SUM
+                                AVG -> Value.AVG
+                                MIN -> Value.MIN
+                                MAX -> Value.MAX
+                                PERCENTILE -> Value.PERCENTILE
+                                RATIO -> Value.RATIO
+                                HISTOGRAM -> Value.HISTOGRAM
+                                else -> Value._UNKNOWN
+                            }
+
+                        /**
+                         * Returns an enum member corresponding to this class instance's value.
+                         *
+                         * Use the [value] method instead if you're uncertain the value is always
+                         * known and don't want to throw for the unknown case.
+                         *
+                         * @throws LangChainInvalidDataException if this class instance's value is a
+                         *   not a known member.
+                         */
+                        fun known(): Known =
+                            when (this) {
+                                COUNT -> Known.COUNT
+                                SUM -> Known.SUM
+                                AVG -> Known.AVG
+                                MIN -> Known.MIN
+                                MAX -> Known.MAX
+                                PERCENTILE -> Known.PERCENTILE
+                                RATIO -> Known.RATIO
+                                HISTOGRAM -> Known.HISTOGRAM
+                                else -> throw LangChainInvalidDataException("Unknown Type: $value")
+                            }
+
+                        /**
+                         * Returns this class instance's primitive wire representation.
+                         *
+                         * This differs from the [toString] method because that method is primarily
+                         * for debugging and generally doesn't throw.
+                         *
+                         * @throws LangChainInvalidDataException if this class instance's value does
+                         *   not have the expected primitive type.
+                         */
+                        fun asString(): String =
+                            _value().asString().orElseThrow {
+                                LangChainInvalidDataException("Value is not a String")
+                            }
+
+                        private var validated: Boolean = false
+
+                        /**
+                         * Validates that the types of all values in this object match their
+                         * expected types recursively.
+                         *
+                         * This method is _not_ forwards compatible with new types from the API for
+                         * existing fields.
+                         *
+                         * @throws LangChainInvalidDataException if any value type in this object
+                         *   doesn't match its expected type.
+                         */
+                        fun validate(): Type = apply {
+                            if (validated) {
+                                return@apply
+                            }
+
+                            known()
+                            validated = true
+                        }
+
+                        fun isValid(): Boolean =
+                            try {
+                                validate()
+                                true
+                            } catch (e: LangChainInvalidDataException) {
+                                false
+                            }
+
+                        /**
+                         * Returns a score indicating how many valid values are contained in this
+                         * object recursively.
+                         *
+                         * Used for best match union deserialization.
+                         */
+                        @JvmSynthetic
+                        internal fun validity(): Int = if (value() == Value._UNKNOWN) 0 else 1
+
+                        override fun equals(other: Any?): Boolean {
+                            if (this === other) {
+                                return true
+                            }
+
+                            return other is Type && value == other.value
+                        }
+
+                        override fun hashCode() = value.hashCode()
+
+                        override fun toString() = value.toString()
+                    }
+
+                    /**
+                     * Entity selects what a type=count metric counts. Only valid when type=count;
+                     * defaults to MetricEntityRun. entity=feedback requires params.feedback_key and
+                     * counts individual feedback records rather than runs.
+                     */
+                    class Entity
+                    @JsonCreator
+                    private constructor(private val value: JsonField<String>) : Enum {
+
+                        /**
+                         * Returns this class instance's raw value.
+                         *
+                         * This is usually only useful if this instance was deserialized from data
+                         * that doesn't match any known member, and you want to know that value. For
+                         * example, if the SDK is on an older version than the API, then the API may
+                         * respond with new members that the SDK is unaware of.
+                         */
+                        @com.fasterxml.jackson.annotation.JsonValue
+                        fun _value(): JsonField<String> = value
+
+                        companion object {
+
+                            @JvmField val RUN = of("run")
+
+                            @JvmField val FEEDBACK = of("feedback")
+
+                            @JvmStatic fun of(value: String) = Entity(JsonField.of(value))
+                        }
+
+                        /** An enum containing [Entity]'s known values. */
+                        enum class Known {
+                            RUN,
+                            FEEDBACK,
+                        }
+
+                        /**
+                         * An enum containing [Entity]'s known values, as well as an [_UNKNOWN]
+                         * member.
+                         *
+                         * An instance of [Entity] can contain an unknown value in a couple of
+                         * cases:
+                         * - It was deserialized from data that doesn't match any known member. For
+                         *   example, if the SDK is on an older version than the API, then the API
+                         *   may respond with new members that the SDK is unaware of.
+                         * - It was constructed with an arbitrary value using the [of] method.
+                         */
+                        enum class Value {
+                            RUN,
+                            FEEDBACK,
+                            /**
+                             * An enum member indicating that [Entity] was instantiated with an
+                             * unknown value.
+                             */
+                            _UNKNOWN,
+                        }
+
+                        /**
+                         * Returns an enum member corresponding to this class instance's value, or
+                         * [Value._UNKNOWN] if the class was instantiated with an unknown value.
+                         *
+                         * Use the [known] method instead if you're certain the value is always
+                         * known or if you want to throw for the unknown case.
+                         */
+                        fun value(): Value =
+                            when (this) {
+                                RUN -> Value.RUN
+                                FEEDBACK -> Value.FEEDBACK
+                                else -> Value._UNKNOWN
+                            }
+
+                        /**
+                         * Returns an enum member corresponding to this class instance's value.
+                         *
+                         * Use the [value] method instead if you're uncertain the value is always
+                         * known and don't want to throw for the unknown case.
+                         *
+                         * @throws LangChainInvalidDataException if this class instance's value is a
+                         *   not a known member.
+                         */
+                        fun known(): Known =
+                            when (this) {
+                                RUN -> Known.RUN
+                                FEEDBACK -> Known.FEEDBACK
+                                else ->
+                                    throw LangChainInvalidDataException("Unknown Entity: $value")
+                            }
+
+                        /**
+                         * Returns this class instance's primitive wire representation.
+                         *
+                         * This differs from the [toString] method because that method is primarily
+                         * for debugging and generally doesn't throw.
+                         *
+                         * @throws LangChainInvalidDataException if this class instance's value does
+                         *   not have the expected primitive type.
+                         */
+                        fun asString(): String =
+                            _value().asString().orElseThrow {
+                                LangChainInvalidDataException("Value is not a String")
+                            }
+
+                        private var validated: Boolean = false
+
+                        /**
+                         * Validates that the types of all values in this object match their
+                         * expected types recursively.
+                         *
+                         * This method is _not_ forwards compatible with new types from the API for
+                         * existing fields.
+                         *
+                         * @throws LangChainInvalidDataException if any value type in this object
+                         *   doesn't match its expected type.
+                         */
+                        fun validate(): Entity = apply {
+                            if (validated) {
+                                return@apply
+                            }
+
+                            known()
+                            validated = true
+                        }
+
+                        fun isValid(): Boolean =
+                            try {
+                                validate()
+                                true
+                            } catch (e: LangChainInvalidDataException) {
+                                false
+                            }
+
+                        /**
+                         * Returns a score indicating how many valid values are contained in this
+                         * object recursively.
+                         *
+                         * Used for best match union deserialization.
+                         */
+                        @JvmSynthetic
+                        internal fun validity(): Int = if (value() == Value._UNKNOWN) 0 else 1
+
+                        override fun equals(other: Any?): Boolean {
+                            if (this === other) {
+                                return true
+                            }
+
+                            return other is Entity && value == other.value
+                        }
+
+                        override fun hashCode() = value.hashCode()
+
+                        override fun toString() = value.toString()
+                    }
+
+                    class Field
+                    @JsonCreator
+                    private constructor(private val value: JsonField<String>) : Enum {
+
+                        /**
+                         * Returns this class instance's raw value.
+                         *
+                         * This is usually only useful if this instance was deserialized from data
+                         * that doesn't match any known member, and you want to know that value. For
+                         * example, if the SDK is on an older version than the API, then the API may
+                         * respond with new members that the SDK is unaware of.
+                         */
+                        @com.fasterxml.jackson.annotation.JsonValue
+                        fun _value(): JsonField<String> = value
+
+                        companion object {
+
+                            @JvmField val LATENCY_SECONDS = of("latency_seconds")
+
+                            @JvmField val FIRST_TOKEN_SECONDS = of("first_token_seconds")
+
+                            @JvmField val TOTAL_TOKENS = of("total_tokens")
+
+                            @JvmField val PROMPT_TOKENS = of("prompt_tokens")
+
+                            @JvmField val COMPLETION_TOKENS = of("completion_tokens")
+
+                            @JvmField val TOTAL_COST = of("total_cost")
+
+                            @JvmField val PROMPT_COST = of("prompt_cost")
+
+                            @JvmField val COMPLETION_COST = of("completion_cost")
+
+                            @JvmField val FEEDBACK_SCORE = of("feedback_score")
+
+                            @JvmStatic fun of(value: String) = Field(JsonField.of(value))
+                        }
+
+                        /** An enum containing [Field]'s known values. */
+                        enum class Known {
+                            LATENCY_SECONDS,
+                            FIRST_TOKEN_SECONDS,
+                            TOTAL_TOKENS,
+                            PROMPT_TOKENS,
+                            COMPLETION_TOKENS,
+                            TOTAL_COST,
+                            PROMPT_COST,
+                            COMPLETION_COST,
+                            FEEDBACK_SCORE,
+                        }
+
+                        /**
+                         * An enum containing [Field]'s known values, as well as an [_UNKNOWN]
+                         * member.
+                         *
+                         * An instance of [Field] can contain an unknown value in a couple of cases:
+                         * - It was deserialized from data that doesn't match any known member. For
+                         *   example, if the SDK is on an older version than the API, then the API
+                         *   may respond with new members that the SDK is unaware of.
+                         * - It was constructed with an arbitrary value using the [of] method.
+                         */
+                        enum class Value {
+                            LATENCY_SECONDS,
+                            FIRST_TOKEN_SECONDS,
+                            TOTAL_TOKENS,
+                            PROMPT_TOKENS,
+                            COMPLETION_TOKENS,
+                            TOTAL_COST,
+                            PROMPT_COST,
+                            COMPLETION_COST,
+                            FEEDBACK_SCORE,
+                            /**
+                             * An enum member indicating that [Field] was instantiated with an
+                             * unknown value.
+                             */
+                            _UNKNOWN,
+                        }
+
+                        /**
+                         * Returns an enum member corresponding to this class instance's value, or
+                         * [Value._UNKNOWN] if the class was instantiated with an unknown value.
+                         *
+                         * Use the [known] method instead if you're certain the value is always
+                         * known or if you want to throw for the unknown case.
+                         */
+                        fun value(): Value =
+                            when (this) {
+                                LATENCY_SECONDS -> Value.LATENCY_SECONDS
+                                FIRST_TOKEN_SECONDS -> Value.FIRST_TOKEN_SECONDS
+                                TOTAL_TOKENS -> Value.TOTAL_TOKENS
+                                PROMPT_TOKENS -> Value.PROMPT_TOKENS
+                                COMPLETION_TOKENS -> Value.COMPLETION_TOKENS
+                                TOTAL_COST -> Value.TOTAL_COST
+                                PROMPT_COST -> Value.PROMPT_COST
+                                COMPLETION_COST -> Value.COMPLETION_COST
+                                FEEDBACK_SCORE -> Value.FEEDBACK_SCORE
+                                else -> Value._UNKNOWN
+                            }
+
+                        /**
+                         * Returns an enum member corresponding to this class instance's value.
+                         *
+                         * Use the [value] method instead if you're uncertain the value is always
+                         * known and don't want to throw for the unknown case.
+                         *
+                         * @throws LangChainInvalidDataException if this class instance's value is a
+                         *   not a known member.
+                         */
+                        fun known(): Known =
+                            when (this) {
+                                LATENCY_SECONDS -> Known.LATENCY_SECONDS
+                                FIRST_TOKEN_SECONDS -> Known.FIRST_TOKEN_SECONDS
+                                TOTAL_TOKENS -> Known.TOTAL_TOKENS
+                                PROMPT_TOKENS -> Known.PROMPT_TOKENS
+                                COMPLETION_TOKENS -> Known.COMPLETION_TOKENS
+                                TOTAL_COST -> Known.TOTAL_COST
+                                PROMPT_COST -> Known.PROMPT_COST
+                                COMPLETION_COST -> Known.COMPLETION_COST
+                                FEEDBACK_SCORE -> Known.FEEDBACK_SCORE
+                                else -> throw LangChainInvalidDataException("Unknown Field: $value")
+                            }
+
+                        /**
+                         * Returns this class instance's primitive wire representation.
+                         *
+                         * This differs from the [toString] method because that method is primarily
+                         * for debugging and generally doesn't throw.
+                         *
+                         * @throws LangChainInvalidDataException if this class instance's value does
+                         *   not have the expected primitive type.
+                         */
+                        fun asString(): String =
+                            _value().asString().orElseThrow {
+                                LangChainInvalidDataException("Value is not a String")
+                            }
+
+                        private var validated: Boolean = false
+
+                        /**
+                         * Validates that the types of all values in this object match their
+                         * expected types recursively.
+                         *
+                         * This method is _not_ forwards compatible with new types from the API for
+                         * existing fields.
+                         *
+                         * @throws LangChainInvalidDataException if any value type in this object
+                         *   doesn't match its expected type.
+                         */
+                        fun validate(): Field = apply {
+                            if (validated) {
+                                return@apply
+                            }
+
+                            known()
+                            validated = true
+                        }
+
+                        fun isValid(): Boolean =
+                            try {
+                                validate()
+                                true
+                            } catch (e: LangChainInvalidDataException) {
+                                false
+                            }
+
+                        /**
+                         * Returns a score indicating how many valid values are contained in this
+                         * object recursively.
+                         *
+                         * Used for best match union deserialization.
+                         */
+                        @JvmSynthetic
+                        internal fun validity(): Int = if (value() == Value._UNKNOWN) 0 else 1
+
+                        override fun equals(other: Any?): Boolean {
+                            if (this === other) {
+                                return true
+                            }
+
+                            return other is Field && value == other.value
+                        }
+
+                        override fun hashCode() = value.hashCode()
+
+                        override fun toString() = value.toString()
+                    }
+
+                    /** required when type=percentile */
+                    class Params
+                    @JsonCreator(mode = JsonCreator.Mode.DISABLED)
+                    private constructor(
+                        private val bucketCount: JsonField<Long>,
+                        private val feedbackKey: JsonField<String>,
+                        private val p: JsonField<Double>,
+                        private val additionalProperties: MutableMap<String, JsonValue>,
+                    ) {
+
+                        @JsonCreator
+                        private constructor(
+                            @JsonProperty("bucket_count")
+                            @ExcludeMissing
+                            bucketCount: JsonField<Long> = JsonMissing.of(),
+                            @JsonProperty("feedback_key")
+                            @ExcludeMissing
+                            feedbackKey: JsonField<String> = JsonMissing.of(),
+                            @JsonProperty("p")
+                            @ExcludeMissing
+                            p: JsonField<Double> = JsonMissing.of(),
+                        ) : this(bucketCount, feedbackKey, p, mutableMapOf())
+
+                        /**
+                         * @throws LangChainInvalidDataException if the JSON field has an unexpected
+                         *   type (e.g. if the server responded with an unexpected value).
+                         */
+                        fun bucketCount(): Optional<Long> = bucketCount.getOptional("bucket_count")
+
+                        /**
+                         * @throws LangChainInvalidDataException if the JSON field has an unexpected
+                         *   type (e.g. if the server responded with an unexpected value).
+                         */
+                        fun feedbackKey(): Optional<String> =
+                            feedbackKey.getOptional("feedback_key")
+
+                        /**
+                         * @throws LangChainInvalidDataException if the JSON field has an unexpected
+                         *   type (e.g. if the server responded with an unexpected value).
+                         */
+                        fun p(): Optional<Double> = p.getOptional("p")
+
+                        /**
+                         * Returns the raw JSON value of [bucketCount].
+                         *
+                         * Unlike [bucketCount], this method doesn't throw if the JSON field has an
+                         * unexpected type.
+                         */
+                        @JsonProperty("bucket_count")
+                        @ExcludeMissing
+                        fun _bucketCount(): JsonField<Long> = bucketCount
+
+                        /**
+                         * Returns the raw JSON value of [feedbackKey].
+                         *
+                         * Unlike [feedbackKey], this method doesn't throw if the JSON field has an
+                         * unexpected type.
+                         */
+                        @JsonProperty("feedback_key")
+                        @ExcludeMissing
+                        fun _feedbackKey(): JsonField<String> = feedbackKey
+
+                        /**
+                         * Returns the raw JSON value of [p].
+                         *
+                         * Unlike [p], this method doesn't throw if the JSON field has an unexpected
+                         * type.
+                         */
+                        @JsonProperty("p") @ExcludeMissing fun _p(): JsonField<Double> = p
+
+                        @JsonAnySetter
+                        private fun putAdditionalProperty(key: String, value: JsonValue) {
+                            additionalProperties.put(key, value)
+                        }
+
+                        @JsonAnyGetter
+                        @ExcludeMissing
+                        fun _additionalProperties(): Map<String, JsonValue> =
+                            Collections.unmodifiableMap(additionalProperties)
+
+                        fun toBuilder() = Builder().from(this)
+
+                        companion object {
+
+                            /**
+                             * Returns a mutable builder for constructing an instance of [Params].
+                             */
+                            @JvmStatic fun builder() = Builder()
+                        }
+
+                        /** A builder for [Params]. */
+                        class Builder internal constructor() {
+
+                            private var bucketCount: JsonField<Long> = JsonMissing.of()
+                            private var feedbackKey: JsonField<String> = JsonMissing.of()
+                            private var p: JsonField<Double> = JsonMissing.of()
+                            private var additionalProperties: MutableMap<String, JsonValue> =
+                                mutableMapOf()
+
+                            @JvmSynthetic
+                            internal fun from(params: Params) = apply {
+                                bucketCount = params.bucketCount
+                                feedbackKey = params.feedbackKey
+                                p = params.p
+                                additionalProperties = params.additionalProperties.toMutableMap()
+                            }
+
+                            fun bucketCount(bucketCount: Long) =
+                                bucketCount(JsonField.of(bucketCount))
+
+                            /**
+                             * Sets [Builder.bucketCount] to an arbitrary JSON value.
+                             *
+                             * You should usually call [Builder.bucketCount] with a well-typed
+                             * [Long] value instead. This method is primarily for setting the field
+                             * to an undocumented or not yet supported value.
+                             */
+                            fun bucketCount(bucketCount: JsonField<Long>) = apply {
+                                this.bucketCount = bucketCount
+                            }
+
+                            fun feedbackKey(feedbackKey: String) =
+                                feedbackKey(JsonField.of(feedbackKey))
+
+                            /**
+                             * Sets [Builder.feedbackKey] to an arbitrary JSON value.
+                             *
+                             * You should usually call [Builder.feedbackKey] with a well-typed
+                             * [String] value instead. This method is primarily for setting the
+                             * field to an undocumented or not yet supported value.
+                             */
+                            fun feedbackKey(feedbackKey: JsonField<String>) = apply {
+                                this.feedbackKey = feedbackKey
+                            }
+
+                            fun p(p: Double) = p(JsonField.of(p))
+
+                            /**
+                             * Sets [Builder.p] to an arbitrary JSON value.
+                             *
+                             * You should usually call [Builder.p] with a well-typed [Double] value
+                             * instead. This method is primarily for setting the field to an
+                             * undocumented or not yet supported value.
+                             */
+                            fun p(p: JsonField<Double>) = apply { this.p = p }
+
+                            fun additionalProperties(additionalProperties: Map<String, JsonValue>) =
+                                apply {
+                                    this.additionalProperties.clear()
+                                    putAllAdditionalProperties(additionalProperties)
+                                }
+
+                            fun putAdditionalProperty(key: String, value: JsonValue) = apply {
+                                additionalProperties.put(key, value)
+                            }
+
+                            fun putAllAdditionalProperties(
+                                additionalProperties: Map<String, JsonValue>
+                            ) = apply { this.additionalProperties.putAll(additionalProperties) }
+
+                            fun removeAdditionalProperty(key: String) = apply {
+                                additionalProperties.remove(key)
+                            }
+
+                            fun removeAllAdditionalProperties(keys: Set<String>) = apply {
+                                keys.forEach(::removeAdditionalProperty)
+                            }
+
+                            /**
+                             * Returns an immutable instance of [Params].
+                             *
+                             * Further updates to this [Builder] will not mutate the returned
+                             * instance.
+                             */
+                            fun build(): Params =
+                                Params(
+                                    bucketCount,
+                                    feedbackKey,
+                                    p,
+                                    additionalProperties.toMutableMap(),
+                                )
+                        }
+
+                        private var validated: Boolean = false
+
+                        /**
+                         * Validates that the types of all values in this object match their
+                         * expected types recursively.
+                         *
+                         * This method is _not_ forwards compatible with new types from the API for
+                         * existing fields.
+                         *
+                         * @throws LangChainInvalidDataException if any value type in this object
+                         *   doesn't match its expected type.
+                         */
+                        fun validate(): Params = apply {
+                            if (validated) {
+                                return@apply
+                            }
+
+                            bucketCount()
+                            feedbackKey()
+                            p()
+                            validated = true
+                        }
+
+                        fun isValid(): Boolean =
+                            try {
+                                validate()
+                                true
+                            } catch (e: LangChainInvalidDataException) {
+                                false
+                            }
+
+                        /**
+                         * Returns a score indicating how many valid values are contained in this
+                         * object recursively.
+                         *
+                         * Used for best match union deserialization.
+                         */
+                        @JvmSynthetic
+                        internal fun validity(): Int =
+                            (if (bucketCount.asKnown().isPresent) 1 else 0) +
+                                (if (feedbackKey.asKnown().isPresent) 1 else 0) +
+                                (if (p.asKnown().isPresent) 1 else 0)
+
+                        override fun equals(other: Any?): Boolean {
+                            if (this === other) {
+                                return true
+                            }
+
+                            return other is Params &&
+                                bucketCount == other.bucketCount &&
+                                feedbackKey == other.feedbackKey &&
+                                p == other.p &&
+                                additionalProperties == other.additionalProperties
+                        }
+
+                        private val hashCode: Int by lazy {
+                            Objects.hash(bucketCount, feedbackKey, p, additionalProperties)
+                        }
+
+                        override fun hashCode(): Int = hashCode
+
+                        override fun toString() =
+                            "Params{bucketCount=$bucketCount, feedbackKey=$feedbackKey, p=$p, additionalProperties=$additionalProperties}"
+                    }
+
+                    override fun equals(other: Any?): Boolean {
+                        if (this === other) {
+                            return true
+                        }
+
+                        return other is Denominator &&
+                            type == other.type &&
+                            entity == other.entity &&
+                            field == other.field &&
+                            filter == other.filter &&
+                            params == other.params &&
+                            additionalProperties == other.additionalProperties
+                    }
+
+                    private val hashCode: Int by lazy {
+                        Objects.hash(type, entity, field, filter, params, additionalProperties)
+                    }
+
+                    override fun hashCode(): Int = hashCode
+
+                    override fun toString() =
+                        "Denominator{type=$type, entity=$entity, field=$field, filter=$filter, params=$params, additionalProperties=$additionalProperties}"
+                }
+
+                /**
+                 * Entity selects what a type=count metric counts. Only valid when type=count;
+                 * defaults to MetricEntityRun. entity=feedback requires params.feedback_key and
+                 * counts individual feedback records rather than runs.
+                 */
+                class Entity
+                @JsonCreator
+                private constructor(private val value: JsonField<String>) : Enum {
+
+                    /**
+                     * Returns this class instance's raw value.
+                     *
+                     * This is usually only useful if this instance was deserialized from data that
+                     * doesn't match any known member, and you want to know that value. For example,
+                     * if the SDK is on an older version than the API, then the API may respond with
+                     * new members that the SDK is unaware of.
+                     */
+                    @com.fasterxml.jackson.annotation.JsonValue
+                    fun _value(): JsonField<String> = value
+
+                    companion object {
+
+                        @JvmField val RUN = of("run")
+
+                        @JvmField val FEEDBACK = of("feedback")
+
+                        @JvmStatic fun of(value: String) = Entity(JsonField.of(value))
+                    }
+
+                    /** An enum containing [Entity]'s known values. */
+                    enum class Known {
+                        RUN,
+                        FEEDBACK,
+                    }
+
+                    /**
+                     * An enum containing [Entity]'s known values, as well as an [_UNKNOWN] member.
+                     *
+                     * An instance of [Entity] can contain an unknown value in a couple of cases:
+                     * - It was deserialized from data that doesn't match any known member. For
+                     *   example, if the SDK is on an older version than the API, then the API may
+                     *   respond with new members that the SDK is unaware of.
+                     * - It was constructed with an arbitrary value using the [of] method.
+                     */
+                    enum class Value {
+                        RUN,
+                        FEEDBACK,
+                        /**
+                         * An enum member indicating that [Entity] was instantiated with an unknown
+                         * value.
+                         */
+                        _UNKNOWN,
+                    }
+
+                    /**
+                     * Returns an enum member corresponding to this class instance's value, or
+                     * [Value._UNKNOWN] if the class was instantiated with an unknown value.
+                     *
+                     * Use the [known] method instead if you're certain the value is always known or
+                     * if you want to throw for the unknown case.
+                     */
+                    fun value(): Value =
+                        when (this) {
+                            RUN -> Value.RUN
+                            FEEDBACK -> Value.FEEDBACK
+                            else -> Value._UNKNOWN
+                        }
+
+                    /**
+                     * Returns an enum member corresponding to this class instance's value.
+                     *
+                     * Use the [value] method instead if you're uncertain the value is always known
+                     * and don't want to throw for the unknown case.
+                     *
+                     * @throws LangChainInvalidDataException if this class instance's value is a not
+                     *   a known member.
+                     */
+                    fun known(): Known =
+                        when (this) {
+                            RUN -> Known.RUN
+                            FEEDBACK -> Known.FEEDBACK
+                            else -> throw LangChainInvalidDataException("Unknown Entity: $value")
+                        }
+
+                    /**
+                     * Returns this class instance's primitive wire representation.
+                     *
+                     * This differs from the [toString] method because that method is primarily for
+                     * debugging and generally doesn't throw.
+                     *
+                     * @throws LangChainInvalidDataException if this class instance's value does not
+                     *   have the expected primitive type.
+                     */
+                    fun asString(): String =
+                        _value().asString().orElseThrow {
+                            LangChainInvalidDataException("Value is not a String")
+                        }
+
+                    private var validated: Boolean = false
+
+                    /**
+                     * Validates that the types of all values in this object match their expected
+                     * types recursively.
+                     *
+                     * This method is _not_ forwards compatible with new types from the API for
+                     * existing fields.
+                     *
+                     * @throws LangChainInvalidDataException if any value type in this object
+                     *   doesn't match its expected type.
+                     */
+                    fun validate(): Entity = apply {
+                        if (validated) {
+                            return@apply
+                        }
+
+                        known()
+                        validated = true
+                    }
+
+                    fun isValid(): Boolean =
+                        try {
+                            validate()
+                            true
+                        } catch (e: LangChainInvalidDataException) {
+                            false
+                        }
+
+                    /**
+                     * Returns a score indicating how many valid values are contained in this object
+                     * recursively.
+                     *
+                     * Used for best match union deserialization.
+                     */
+                    @JvmSynthetic
+                    internal fun validity(): Int = if (value() == Value._UNKNOWN) 0 else 1
+
+                    override fun equals(other: Any?): Boolean {
+                        if (this === other) {
+                            return true
+                        }
+
+                        return other is Entity && value == other.value
+                    }
+
+                    override fun hashCode() = value.hashCode()
+
+                    override fun toString() = value.toString()
+                }
+
+                class Field @JsonCreator private constructor(private val value: JsonField<String>) :
+                    Enum {
+
+                    /**
+                     * Returns this class instance's raw value.
+                     *
+                     * This is usually only useful if this instance was deserialized from data that
+                     * doesn't match any known member, and you want to know that value. For example,
+                     * if the SDK is on an older version than the API, then the API may respond with
+                     * new members that the SDK is unaware of.
+                     */
+                    @com.fasterxml.jackson.annotation.JsonValue
+                    fun _value(): JsonField<String> = value
+
+                    companion object {
+
+                        @JvmField val LATENCY_SECONDS = of("latency_seconds")
+
+                        @JvmField val FIRST_TOKEN_SECONDS = of("first_token_seconds")
+
+                        @JvmField val TOTAL_TOKENS = of("total_tokens")
+
+                        @JvmField val PROMPT_TOKENS = of("prompt_tokens")
+
+                        @JvmField val COMPLETION_TOKENS = of("completion_tokens")
+
+                        @JvmField val TOTAL_COST = of("total_cost")
+
+                        @JvmField val PROMPT_COST = of("prompt_cost")
+
+                        @JvmField val COMPLETION_COST = of("completion_cost")
+
+                        @JvmField val FEEDBACK_SCORE = of("feedback_score")
+
+                        @JvmStatic fun of(value: String) = Field(JsonField.of(value))
+                    }
+
+                    /** An enum containing [Field]'s known values. */
+                    enum class Known {
+                        LATENCY_SECONDS,
+                        FIRST_TOKEN_SECONDS,
+                        TOTAL_TOKENS,
+                        PROMPT_TOKENS,
+                        COMPLETION_TOKENS,
+                        TOTAL_COST,
+                        PROMPT_COST,
+                        COMPLETION_COST,
+                        FEEDBACK_SCORE,
+                    }
+
+                    /**
+                     * An enum containing [Field]'s known values, as well as an [_UNKNOWN] member.
+                     *
+                     * An instance of [Field] can contain an unknown value in a couple of cases:
+                     * - It was deserialized from data that doesn't match any known member. For
+                     *   example, if the SDK is on an older version than the API, then the API may
+                     *   respond with new members that the SDK is unaware of.
+                     * - It was constructed with an arbitrary value using the [of] method.
+                     */
+                    enum class Value {
+                        LATENCY_SECONDS,
+                        FIRST_TOKEN_SECONDS,
+                        TOTAL_TOKENS,
+                        PROMPT_TOKENS,
+                        COMPLETION_TOKENS,
+                        TOTAL_COST,
+                        PROMPT_COST,
+                        COMPLETION_COST,
+                        FEEDBACK_SCORE,
+                        /**
+                         * An enum member indicating that [Field] was instantiated with an unknown
+                         * value.
+                         */
+                        _UNKNOWN,
+                    }
+
+                    /**
+                     * Returns an enum member corresponding to this class instance's value, or
+                     * [Value._UNKNOWN] if the class was instantiated with an unknown value.
+                     *
+                     * Use the [known] method instead if you're certain the value is always known or
+                     * if you want to throw for the unknown case.
+                     */
+                    fun value(): Value =
+                        when (this) {
+                            LATENCY_SECONDS -> Value.LATENCY_SECONDS
+                            FIRST_TOKEN_SECONDS -> Value.FIRST_TOKEN_SECONDS
+                            TOTAL_TOKENS -> Value.TOTAL_TOKENS
+                            PROMPT_TOKENS -> Value.PROMPT_TOKENS
+                            COMPLETION_TOKENS -> Value.COMPLETION_TOKENS
+                            TOTAL_COST -> Value.TOTAL_COST
+                            PROMPT_COST -> Value.PROMPT_COST
+                            COMPLETION_COST -> Value.COMPLETION_COST
+                            FEEDBACK_SCORE -> Value.FEEDBACK_SCORE
+                            else -> Value._UNKNOWN
+                        }
+
+                    /**
+                     * Returns an enum member corresponding to this class instance's value.
+                     *
+                     * Use the [value] method instead if you're uncertain the value is always known
+                     * and don't want to throw for the unknown case.
+                     *
+                     * @throws LangChainInvalidDataException if this class instance's value is a not
+                     *   a known member.
+                     */
+                    fun known(): Known =
+                        when (this) {
+                            LATENCY_SECONDS -> Known.LATENCY_SECONDS
+                            FIRST_TOKEN_SECONDS -> Known.FIRST_TOKEN_SECONDS
+                            TOTAL_TOKENS -> Known.TOTAL_TOKENS
+                            PROMPT_TOKENS -> Known.PROMPT_TOKENS
+                            COMPLETION_TOKENS -> Known.COMPLETION_TOKENS
+                            TOTAL_COST -> Known.TOTAL_COST
+                            PROMPT_COST -> Known.PROMPT_COST
+                            COMPLETION_COST -> Known.COMPLETION_COST
+                            FEEDBACK_SCORE -> Known.FEEDBACK_SCORE
+                            else -> throw LangChainInvalidDataException("Unknown Field: $value")
+                        }
+
+                    /**
+                     * Returns this class instance's primitive wire representation.
+                     *
+                     * This differs from the [toString] method because that method is primarily for
+                     * debugging and generally doesn't throw.
+                     *
+                     * @throws LangChainInvalidDataException if this class instance's value does not
+                     *   have the expected primitive type.
+                     */
+                    fun asString(): String =
+                        _value().asString().orElseThrow {
+                            LangChainInvalidDataException("Value is not a String")
+                        }
+
+                    private var validated: Boolean = false
+
+                    /**
+                     * Validates that the types of all values in this object match their expected
+                     * types recursively.
+                     *
+                     * This method is _not_ forwards compatible with new types from the API for
+                     * existing fields.
+                     *
+                     * @throws LangChainInvalidDataException if any value type in this object
+                     *   doesn't match its expected type.
+                     */
+                    fun validate(): Field = apply {
+                        if (validated) {
+                            return@apply
+                        }
+
+                        known()
+                        validated = true
+                    }
+
+                    fun isValid(): Boolean =
+                        try {
+                            validate()
+                            true
+                        } catch (e: LangChainInvalidDataException) {
+                            false
+                        }
+
+                    /**
+                     * Returns a score indicating how many valid values are contained in this object
+                     * recursively.
+                     *
+                     * Used for best match union deserialization.
+                     */
+                    @JvmSynthetic
+                    internal fun validity(): Int = if (value() == Value._UNKNOWN) 0 else 1
+
+                    override fun equals(other: Any?): Boolean {
+                        if (this === other) {
+                            return true
+                        }
+
+                        return other is Field && value == other.value
+                    }
+
+                    override fun hashCode() = value.hashCode()
+
+                    override fun toString() = value.toString()
+                }
+
+                /** Numerator and Denominator are required when type=ratio. */
+                class Numerator
+                @JsonCreator(mode = JsonCreator.Mode.DISABLED)
+                private constructor(
+                    private val type: JsonField<Type>,
+                    private val entity: JsonField<Entity>,
+                    private val field: JsonField<Field>,
+                    private val filter: JsonField<String>,
+                    private val params: JsonField<Params>,
+                    private val additionalProperties: MutableMap<String, JsonValue>,
+                ) {
+
+                    @JsonCreator
+                    private constructor(
+                        @JsonProperty("type")
+                        @ExcludeMissing
+                        type: JsonField<Type> = JsonMissing.of(),
+                        @JsonProperty("entity")
+                        @ExcludeMissing
+                        entity: JsonField<Entity> = JsonMissing.of(),
+                        @JsonProperty("field")
+                        @ExcludeMissing
+                        field: JsonField<Field> = JsonMissing.of(),
+                        @JsonProperty("filter")
+                        @ExcludeMissing
+                        filter: JsonField<String> = JsonMissing.of(),
+                        @JsonProperty("params")
+                        @ExcludeMissing
+                        params: JsonField<Params> = JsonMissing.of(),
+                    ) : this(type, entity, field, filter, params, mutableMapOf())
+
+                    /**
+                     * An operand is non-composite, so ratio is rejected here too.
+                     *
+                     * @throws LangChainInvalidDataException if the JSON field has an unexpected
+                     *   type or is unexpectedly missing or null (e.g. if the server responded with
+                     *   an unexpected value).
+                     */
+                    fun type(): Type = type.getRequired("type")
+
+                    /**
+                     * Entity selects what a type=count metric counts. Only valid when type=count;
+                     * defaults to MetricEntityRun. entity=feedback requires params.feedback_key and
+                     * counts individual feedback records rather than runs.
+                     *
+                     * @throws LangChainInvalidDataException if the JSON field has an unexpected
+                     *   type (e.g. if the server responded with an unexpected value).
+                     */
+                    fun entity(): Optional<Entity> = entity.getOptional("entity")
+
+                    /**
+                     * @throws LangChainInvalidDataException if the JSON field has an unexpected
+                     *   type (e.g. if the server responded with an unexpected value).
+                     */
+                    fun field(): Optional<Field> = field.getOptional("field")
+
+                    /**
+                     * @throws LangChainInvalidDataException if the JSON field has an unexpected
+                     *   type (e.g. if the server responded with an unexpected value).
+                     */
+                    fun filter(): Optional<String> = filter.getOptional("filter")
+
+                    /**
+                     * required when type=percentile
+                     *
+                     * @throws LangChainInvalidDataException if the JSON field has an unexpected
+                     *   type (e.g. if the server responded with an unexpected value).
+                     */
+                    fun params(): Optional<Params> = params.getOptional("params")
+
+                    /**
+                     * Returns the raw JSON value of [type].
+                     *
+                     * Unlike [type], this method doesn't throw if the JSON field has an unexpected
+                     * type.
+                     */
+                    @JsonProperty("type") @ExcludeMissing fun _type(): JsonField<Type> = type
+
+                    /**
+                     * Returns the raw JSON value of [entity].
+                     *
+                     * Unlike [entity], this method doesn't throw if the JSON field has an
+                     * unexpected type.
+                     */
+                    @JsonProperty("entity")
+                    @ExcludeMissing
+                    fun _entity(): JsonField<Entity> = entity
+
+                    /**
+                     * Returns the raw JSON value of [field].
+                     *
+                     * Unlike [field], this method doesn't throw if the JSON field has an unexpected
+                     * type.
+                     */
+                    @JsonProperty("field") @ExcludeMissing fun _field(): JsonField<Field> = field
+
+                    /**
+                     * Returns the raw JSON value of [filter].
+                     *
+                     * Unlike [filter], this method doesn't throw if the JSON field has an
+                     * unexpected type.
+                     */
+                    @JsonProperty("filter")
+                    @ExcludeMissing
+                    fun _filter(): JsonField<String> = filter
+
+                    /**
+                     * Returns the raw JSON value of [params].
+                     *
+                     * Unlike [params], this method doesn't throw if the JSON field has an
+                     * unexpected type.
+                     */
+                    @JsonProperty("params")
+                    @ExcludeMissing
+                    fun _params(): JsonField<Params> = params
+
+                    @JsonAnySetter
+                    private fun putAdditionalProperty(key: String, value: JsonValue) {
+                        additionalProperties.put(key, value)
+                    }
+
+                    @JsonAnyGetter
+                    @ExcludeMissing
+                    fun _additionalProperties(): Map<String, JsonValue> =
+                        Collections.unmodifiableMap(additionalProperties)
+
+                    fun toBuilder() = Builder().from(this)
+
+                    companion object {
+
+                        /**
+                         * Returns a mutable builder for constructing an instance of [Numerator].
+                         *
+                         * The following fields are required:
+                         * ```java
+                         * .type()
+                         * ```
+                         */
+                        @JvmStatic fun builder() = Builder()
+                    }
+
+                    /** A builder for [Numerator]. */
+                    class Builder internal constructor() {
+
+                        private var type: JsonField<Type>? = null
+                        private var entity: JsonField<Entity> = JsonMissing.of()
+                        private var field: JsonField<Field> = JsonMissing.of()
+                        private var filter: JsonField<String> = JsonMissing.of()
+                        private var params: JsonField<Params> = JsonMissing.of()
+                        private var additionalProperties: MutableMap<String, JsonValue> =
+                            mutableMapOf()
+
+                        @JvmSynthetic
+                        internal fun from(numerator: Numerator) = apply {
+                            type = numerator.type
+                            entity = numerator.entity
+                            field = numerator.field
+                            filter = numerator.filter
+                            params = numerator.params
+                            additionalProperties = numerator.additionalProperties.toMutableMap()
+                        }
+
+                        /** An operand is non-composite, so ratio is rejected here too. */
+                        fun type(type: Type) = type(JsonField.of(type))
+
+                        /**
+                         * Sets [Builder.type] to an arbitrary JSON value.
+                         *
+                         * You should usually call [Builder.type] with a well-typed [Type] value
+                         * instead. This method is primarily for setting the field to an
+                         * undocumented or not yet supported value.
+                         */
+                        fun type(type: JsonField<Type>) = apply { this.type = type }
+
+                        /**
+                         * Entity selects what a type=count metric counts. Only valid when
+                         * type=count; defaults to MetricEntityRun. entity=feedback requires
+                         * params.feedback_key and counts individual feedback records rather than
+                         * runs.
+                         */
+                        fun entity(entity: Entity) = entity(JsonField.of(entity))
+
+                        /**
+                         * Sets [Builder.entity] to an arbitrary JSON value.
+                         *
+                         * You should usually call [Builder.entity] with a well-typed [Entity] value
+                         * instead. This method is primarily for setting the field to an
+                         * undocumented or not yet supported value.
+                         */
+                        fun entity(entity: JsonField<Entity>) = apply { this.entity = entity }
+
+                        fun field(field: Field) = field(JsonField.of(field))
+
+                        /**
+                         * Sets [Builder.field] to an arbitrary JSON value.
+                         *
+                         * You should usually call [Builder.field] with a well-typed [Field] value
+                         * instead. This method is primarily for setting the field to an
+                         * undocumented or not yet supported value.
+                         */
+                        fun field(field: JsonField<Field>) = apply { this.field = field }
+
+                        fun filter(filter: String) = filter(JsonField.of(filter))
+
+                        /**
+                         * Sets [Builder.filter] to an arbitrary JSON value.
+                         *
+                         * You should usually call [Builder.filter] with a well-typed [String] value
+                         * instead. This method is primarily for setting the field to an
+                         * undocumented or not yet supported value.
+                         */
+                        fun filter(filter: JsonField<String>) = apply { this.filter = filter }
+
+                        /** required when type=percentile */
+                        fun params(params: Params) = params(JsonField.of(params))
+
+                        /**
+                         * Sets [Builder.params] to an arbitrary JSON value.
+                         *
+                         * You should usually call [Builder.params] with a well-typed [Params] value
+                         * instead. This method is primarily for setting the field to an
+                         * undocumented or not yet supported value.
+                         */
+                        fun params(params: JsonField<Params>) = apply { this.params = params }
+
+                        fun additionalProperties(additionalProperties: Map<String, JsonValue>) =
+                            apply {
+                                this.additionalProperties.clear()
+                                putAllAdditionalProperties(additionalProperties)
+                            }
+
+                        fun putAdditionalProperty(key: String, value: JsonValue) = apply {
+                            additionalProperties.put(key, value)
+                        }
+
+                        fun putAllAdditionalProperties(
+                            additionalProperties: Map<String, JsonValue>
+                        ) = apply { this.additionalProperties.putAll(additionalProperties) }
+
+                        fun removeAdditionalProperty(key: String) = apply {
+                            additionalProperties.remove(key)
+                        }
+
+                        fun removeAllAdditionalProperties(keys: Set<String>) = apply {
+                            keys.forEach(::removeAdditionalProperty)
+                        }
+
+                        /**
+                         * Returns an immutable instance of [Numerator].
+                         *
+                         * Further updates to this [Builder] will not mutate the returned instance.
+                         *
+                         * The following fields are required:
+                         * ```java
+                         * .type()
+                         * ```
+                         *
+                         * @throws IllegalStateException if any required field is unset.
+                         */
+                        fun build(): Numerator =
+                            Numerator(
+                                checkRequired("type", type),
+                                entity,
+                                field,
+                                filter,
+                                params,
+                                additionalProperties.toMutableMap(),
+                            )
+                    }
+
+                    private var validated: Boolean = false
+
+                    /**
+                     * Validates that the types of all values in this object match their expected
+                     * types recursively.
+                     *
+                     * This method is _not_ forwards compatible with new types from the API for
+                     * existing fields.
+                     *
+                     * @throws LangChainInvalidDataException if any value type in this object
+                     *   doesn't match its expected type.
+                     */
+                    fun validate(): Numerator = apply {
+                        if (validated) {
+                            return@apply
+                        }
+
+                        type().validate()
+                        entity().ifPresent { it.validate() }
+                        field().ifPresent { it.validate() }
+                        filter()
+                        params().ifPresent { it.validate() }
+                        validated = true
+                    }
+
+                    fun isValid(): Boolean =
+                        try {
+                            validate()
+                            true
+                        } catch (e: LangChainInvalidDataException) {
+                            false
+                        }
+
+                    /**
+                     * Returns a score indicating how many valid values are contained in this object
+                     * recursively.
+                     *
+                     * Used for best match union deserialization.
+                     */
+                    @JvmSynthetic
+                    internal fun validity(): Int =
+                        (type.asKnown().getOrNull()?.validity() ?: 0) +
+                            (entity.asKnown().getOrNull()?.validity() ?: 0) +
+                            (field.asKnown().getOrNull()?.validity() ?: 0) +
+                            (if (filter.asKnown().isPresent) 1 else 0) +
+                            (params.asKnown().getOrNull()?.validity() ?: 0)
+
+                    /** An operand is non-composite, so ratio is rejected here too. */
+                    class Type
+                    @JsonCreator
+                    private constructor(private val value: JsonField<String>) : Enum {
+
+                        /**
+                         * Returns this class instance's raw value.
+                         *
+                         * This is usually only useful if this instance was deserialized from data
+                         * that doesn't match any known member, and you want to know that value. For
+                         * example, if the SDK is on an older version than the API, then the API may
+                         * respond with new members that the SDK is unaware of.
+                         */
+                        @com.fasterxml.jackson.annotation.JsonValue
+                        fun _value(): JsonField<String> = value
+
+                        companion object {
+
+                            @JvmField val COUNT = of("count")
+
+                            @JvmField val SUM = of("sum")
+
+                            @JvmField val AVG = of("avg")
+
+                            @JvmField val MIN = of("min")
+
+                            @JvmField val MAX = of("max")
+
+                            @JvmField val PERCENTILE = of("percentile")
+
+                            @JvmField val RATIO = of("ratio")
+
+                            @JvmField val HISTOGRAM = of("histogram")
+
+                            @JvmStatic fun of(value: String) = Type(JsonField.of(value))
+                        }
+
+                        /** An enum containing [Type]'s known values. */
+                        enum class Known {
+                            COUNT,
+                            SUM,
+                            AVG,
+                            MIN,
+                            MAX,
+                            PERCENTILE,
+                            RATIO,
+                            HISTOGRAM,
+                        }
+
+                        /**
+                         * An enum containing [Type]'s known values, as well as an [_UNKNOWN]
+                         * member.
+                         *
+                         * An instance of [Type] can contain an unknown value in a couple of cases:
+                         * - It was deserialized from data that doesn't match any known member. For
+                         *   example, if the SDK is on an older version than the API, then the API
+                         *   may respond with new members that the SDK is unaware of.
+                         * - It was constructed with an arbitrary value using the [of] method.
+                         */
+                        enum class Value {
+                            COUNT,
+                            SUM,
+                            AVG,
+                            MIN,
+                            MAX,
+                            PERCENTILE,
+                            RATIO,
+                            HISTOGRAM,
+                            /**
+                             * An enum member indicating that [Type] was instantiated with an
+                             * unknown value.
+                             */
+                            _UNKNOWN,
+                        }
+
+                        /**
+                         * Returns an enum member corresponding to this class instance's value, or
+                         * [Value._UNKNOWN] if the class was instantiated with an unknown value.
+                         *
+                         * Use the [known] method instead if you're certain the value is always
+                         * known or if you want to throw for the unknown case.
+                         */
+                        fun value(): Value =
+                            when (this) {
+                                COUNT -> Value.COUNT
+                                SUM -> Value.SUM
+                                AVG -> Value.AVG
+                                MIN -> Value.MIN
+                                MAX -> Value.MAX
+                                PERCENTILE -> Value.PERCENTILE
+                                RATIO -> Value.RATIO
+                                HISTOGRAM -> Value.HISTOGRAM
+                                else -> Value._UNKNOWN
+                            }
+
+                        /**
+                         * Returns an enum member corresponding to this class instance's value.
+                         *
+                         * Use the [value] method instead if you're uncertain the value is always
+                         * known and don't want to throw for the unknown case.
+                         *
+                         * @throws LangChainInvalidDataException if this class instance's value is a
+                         *   not a known member.
+                         */
+                        fun known(): Known =
+                            when (this) {
+                                COUNT -> Known.COUNT
+                                SUM -> Known.SUM
+                                AVG -> Known.AVG
+                                MIN -> Known.MIN
+                                MAX -> Known.MAX
+                                PERCENTILE -> Known.PERCENTILE
+                                RATIO -> Known.RATIO
+                                HISTOGRAM -> Known.HISTOGRAM
+                                else -> throw LangChainInvalidDataException("Unknown Type: $value")
+                            }
+
+                        /**
+                         * Returns this class instance's primitive wire representation.
+                         *
+                         * This differs from the [toString] method because that method is primarily
+                         * for debugging and generally doesn't throw.
+                         *
+                         * @throws LangChainInvalidDataException if this class instance's value does
+                         *   not have the expected primitive type.
+                         */
+                        fun asString(): String =
+                            _value().asString().orElseThrow {
+                                LangChainInvalidDataException("Value is not a String")
+                            }
+
+                        private var validated: Boolean = false
+
+                        /**
+                         * Validates that the types of all values in this object match their
+                         * expected types recursively.
+                         *
+                         * This method is _not_ forwards compatible with new types from the API for
+                         * existing fields.
+                         *
+                         * @throws LangChainInvalidDataException if any value type in this object
+                         *   doesn't match its expected type.
+                         */
+                        fun validate(): Type = apply {
+                            if (validated) {
+                                return@apply
+                            }
+
+                            known()
+                            validated = true
+                        }
+
+                        fun isValid(): Boolean =
+                            try {
+                                validate()
+                                true
+                            } catch (e: LangChainInvalidDataException) {
+                                false
+                            }
+
+                        /**
+                         * Returns a score indicating how many valid values are contained in this
+                         * object recursively.
+                         *
+                         * Used for best match union deserialization.
+                         */
+                        @JvmSynthetic
+                        internal fun validity(): Int = if (value() == Value._UNKNOWN) 0 else 1
+
+                        override fun equals(other: Any?): Boolean {
+                            if (this === other) {
+                                return true
+                            }
+
+                            return other is Type && value == other.value
+                        }
+
+                        override fun hashCode() = value.hashCode()
+
+                        override fun toString() = value.toString()
+                    }
+
+                    /**
+                     * Entity selects what a type=count metric counts. Only valid when type=count;
+                     * defaults to MetricEntityRun. entity=feedback requires params.feedback_key and
+                     * counts individual feedback records rather than runs.
+                     */
+                    class Entity
+                    @JsonCreator
+                    private constructor(private val value: JsonField<String>) : Enum {
+
+                        /**
+                         * Returns this class instance's raw value.
+                         *
+                         * This is usually only useful if this instance was deserialized from data
+                         * that doesn't match any known member, and you want to know that value. For
+                         * example, if the SDK is on an older version than the API, then the API may
+                         * respond with new members that the SDK is unaware of.
+                         */
+                        @com.fasterxml.jackson.annotation.JsonValue
+                        fun _value(): JsonField<String> = value
+
+                        companion object {
+
+                            @JvmField val RUN = of("run")
+
+                            @JvmField val FEEDBACK = of("feedback")
+
+                            @JvmStatic fun of(value: String) = Entity(JsonField.of(value))
+                        }
+
+                        /** An enum containing [Entity]'s known values. */
+                        enum class Known {
+                            RUN,
+                            FEEDBACK,
+                        }
+
+                        /**
+                         * An enum containing [Entity]'s known values, as well as an [_UNKNOWN]
+                         * member.
+                         *
+                         * An instance of [Entity] can contain an unknown value in a couple of
+                         * cases:
+                         * - It was deserialized from data that doesn't match any known member. For
+                         *   example, if the SDK is on an older version than the API, then the API
+                         *   may respond with new members that the SDK is unaware of.
+                         * - It was constructed with an arbitrary value using the [of] method.
+                         */
+                        enum class Value {
+                            RUN,
+                            FEEDBACK,
+                            /**
+                             * An enum member indicating that [Entity] was instantiated with an
+                             * unknown value.
+                             */
+                            _UNKNOWN,
+                        }
+
+                        /**
+                         * Returns an enum member corresponding to this class instance's value, or
+                         * [Value._UNKNOWN] if the class was instantiated with an unknown value.
+                         *
+                         * Use the [known] method instead if you're certain the value is always
+                         * known or if you want to throw for the unknown case.
+                         */
+                        fun value(): Value =
+                            when (this) {
+                                RUN -> Value.RUN
+                                FEEDBACK -> Value.FEEDBACK
+                                else -> Value._UNKNOWN
+                            }
+
+                        /**
+                         * Returns an enum member corresponding to this class instance's value.
+                         *
+                         * Use the [value] method instead if you're uncertain the value is always
+                         * known and don't want to throw for the unknown case.
+                         *
+                         * @throws LangChainInvalidDataException if this class instance's value is a
+                         *   not a known member.
+                         */
+                        fun known(): Known =
+                            when (this) {
+                                RUN -> Known.RUN
+                                FEEDBACK -> Known.FEEDBACK
+                                else ->
+                                    throw LangChainInvalidDataException("Unknown Entity: $value")
+                            }
+
+                        /**
+                         * Returns this class instance's primitive wire representation.
+                         *
+                         * This differs from the [toString] method because that method is primarily
+                         * for debugging and generally doesn't throw.
+                         *
+                         * @throws LangChainInvalidDataException if this class instance's value does
+                         *   not have the expected primitive type.
+                         */
+                        fun asString(): String =
+                            _value().asString().orElseThrow {
+                                LangChainInvalidDataException("Value is not a String")
+                            }
+
+                        private var validated: Boolean = false
+
+                        /**
+                         * Validates that the types of all values in this object match their
+                         * expected types recursively.
+                         *
+                         * This method is _not_ forwards compatible with new types from the API for
+                         * existing fields.
+                         *
+                         * @throws LangChainInvalidDataException if any value type in this object
+                         *   doesn't match its expected type.
+                         */
+                        fun validate(): Entity = apply {
+                            if (validated) {
+                                return@apply
+                            }
+
+                            known()
+                            validated = true
+                        }
+
+                        fun isValid(): Boolean =
+                            try {
+                                validate()
+                                true
+                            } catch (e: LangChainInvalidDataException) {
+                                false
+                            }
+
+                        /**
+                         * Returns a score indicating how many valid values are contained in this
+                         * object recursively.
+                         *
+                         * Used for best match union deserialization.
+                         */
+                        @JvmSynthetic
+                        internal fun validity(): Int = if (value() == Value._UNKNOWN) 0 else 1
+
+                        override fun equals(other: Any?): Boolean {
+                            if (this === other) {
+                                return true
+                            }
+
+                            return other is Entity && value == other.value
+                        }
+
+                        override fun hashCode() = value.hashCode()
+
+                        override fun toString() = value.toString()
+                    }
+
+                    class Field
+                    @JsonCreator
+                    private constructor(private val value: JsonField<String>) : Enum {
+
+                        /**
+                         * Returns this class instance's raw value.
+                         *
+                         * This is usually only useful if this instance was deserialized from data
+                         * that doesn't match any known member, and you want to know that value. For
+                         * example, if the SDK is on an older version than the API, then the API may
+                         * respond with new members that the SDK is unaware of.
+                         */
+                        @com.fasterxml.jackson.annotation.JsonValue
+                        fun _value(): JsonField<String> = value
+
+                        companion object {
+
+                            @JvmField val LATENCY_SECONDS = of("latency_seconds")
+
+                            @JvmField val FIRST_TOKEN_SECONDS = of("first_token_seconds")
+
+                            @JvmField val TOTAL_TOKENS = of("total_tokens")
+
+                            @JvmField val PROMPT_TOKENS = of("prompt_tokens")
+
+                            @JvmField val COMPLETION_TOKENS = of("completion_tokens")
+
+                            @JvmField val TOTAL_COST = of("total_cost")
+
+                            @JvmField val PROMPT_COST = of("prompt_cost")
+
+                            @JvmField val COMPLETION_COST = of("completion_cost")
+
+                            @JvmField val FEEDBACK_SCORE = of("feedback_score")
+
+                            @JvmStatic fun of(value: String) = Field(JsonField.of(value))
+                        }
+
+                        /** An enum containing [Field]'s known values. */
+                        enum class Known {
+                            LATENCY_SECONDS,
+                            FIRST_TOKEN_SECONDS,
+                            TOTAL_TOKENS,
+                            PROMPT_TOKENS,
+                            COMPLETION_TOKENS,
+                            TOTAL_COST,
+                            PROMPT_COST,
+                            COMPLETION_COST,
+                            FEEDBACK_SCORE,
+                        }
+
+                        /**
+                         * An enum containing [Field]'s known values, as well as an [_UNKNOWN]
+                         * member.
+                         *
+                         * An instance of [Field] can contain an unknown value in a couple of cases:
+                         * - It was deserialized from data that doesn't match any known member. For
+                         *   example, if the SDK is on an older version than the API, then the API
+                         *   may respond with new members that the SDK is unaware of.
+                         * - It was constructed with an arbitrary value using the [of] method.
+                         */
+                        enum class Value {
+                            LATENCY_SECONDS,
+                            FIRST_TOKEN_SECONDS,
+                            TOTAL_TOKENS,
+                            PROMPT_TOKENS,
+                            COMPLETION_TOKENS,
+                            TOTAL_COST,
+                            PROMPT_COST,
+                            COMPLETION_COST,
+                            FEEDBACK_SCORE,
+                            /**
+                             * An enum member indicating that [Field] was instantiated with an
+                             * unknown value.
+                             */
+                            _UNKNOWN,
+                        }
+
+                        /**
+                         * Returns an enum member corresponding to this class instance's value, or
+                         * [Value._UNKNOWN] if the class was instantiated with an unknown value.
+                         *
+                         * Use the [known] method instead if you're certain the value is always
+                         * known or if you want to throw for the unknown case.
+                         */
+                        fun value(): Value =
+                            when (this) {
+                                LATENCY_SECONDS -> Value.LATENCY_SECONDS
+                                FIRST_TOKEN_SECONDS -> Value.FIRST_TOKEN_SECONDS
+                                TOTAL_TOKENS -> Value.TOTAL_TOKENS
+                                PROMPT_TOKENS -> Value.PROMPT_TOKENS
+                                COMPLETION_TOKENS -> Value.COMPLETION_TOKENS
+                                TOTAL_COST -> Value.TOTAL_COST
+                                PROMPT_COST -> Value.PROMPT_COST
+                                COMPLETION_COST -> Value.COMPLETION_COST
+                                FEEDBACK_SCORE -> Value.FEEDBACK_SCORE
+                                else -> Value._UNKNOWN
+                            }
+
+                        /**
+                         * Returns an enum member corresponding to this class instance's value.
+                         *
+                         * Use the [value] method instead if you're uncertain the value is always
+                         * known and don't want to throw for the unknown case.
+                         *
+                         * @throws LangChainInvalidDataException if this class instance's value is a
+                         *   not a known member.
+                         */
+                        fun known(): Known =
+                            when (this) {
+                                LATENCY_SECONDS -> Known.LATENCY_SECONDS
+                                FIRST_TOKEN_SECONDS -> Known.FIRST_TOKEN_SECONDS
+                                TOTAL_TOKENS -> Known.TOTAL_TOKENS
+                                PROMPT_TOKENS -> Known.PROMPT_TOKENS
+                                COMPLETION_TOKENS -> Known.COMPLETION_TOKENS
+                                TOTAL_COST -> Known.TOTAL_COST
+                                PROMPT_COST -> Known.PROMPT_COST
+                                COMPLETION_COST -> Known.COMPLETION_COST
+                                FEEDBACK_SCORE -> Known.FEEDBACK_SCORE
+                                else -> throw LangChainInvalidDataException("Unknown Field: $value")
+                            }
+
+                        /**
+                         * Returns this class instance's primitive wire representation.
+                         *
+                         * This differs from the [toString] method because that method is primarily
+                         * for debugging and generally doesn't throw.
+                         *
+                         * @throws LangChainInvalidDataException if this class instance's value does
+                         *   not have the expected primitive type.
+                         */
+                        fun asString(): String =
+                            _value().asString().orElseThrow {
+                                LangChainInvalidDataException("Value is not a String")
+                            }
+
+                        private var validated: Boolean = false
+
+                        /**
+                         * Validates that the types of all values in this object match their
+                         * expected types recursively.
+                         *
+                         * This method is _not_ forwards compatible with new types from the API for
+                         * existing fields.
+                         *
+                         * @throws LangChainInvalidDataException if any value type in this object
+                         *   doesn't match its expected type.
+                         */
+                        fun validate(): Field = apply {
+                            if (validated) {
+                                return@apply
+                            }
+
+                            known()
+                            validated = true
+                        }
+
+                        fun isValid(): Boolean =
+                            try {
+                                validate()
+                                true
+                            } catch (e: LangChainInvalidDataException) {
+                                false
+                            }
+
+                        /**
+                         * Returns a score indicating how many valid values are contained in this
+                         * object recursively.
+                         *
+                         * Used for best match union deserialization.
+                         */
+                        @JvmSynthetic
+                        internal fun validity(): Int = if (value() == Value._UNKNOWN) 0 else 1
+
+                        override fun equals(other: Any?): Boolean {
+                            if (this === other) {
+                                return true
+                            }
+
+                            return other is Field && value == other.value
+                        }
+
+                        override fun hashCode() = value.hashCode()
+
+                        override fun toString() = value.toString()
+                    }
+
+                    /** required when type=percentile */
+                    class Params
+                    @JsonCreator(mode = JsonCreator.Mode.DISABLED)
+                    private constructor(
+                        private val bucketCount: JsonField<Long>,
+                        private val feedbackKey: JsonField<String>,
+                        private val p: JsonField<Double>,
+                        private val additionalProperties: MutableMap<String, JsonValue>,
+                    ) {
+
+                        @JsonCreator
+                        private constructor(
+                            @JsonProperty("bucket_count")
+                            @ExcludeMissing
+                            bucketCount: JsonField<Long> = JsonMissing.of(),
+                            @JsonProperty("feedback_key")
+                            @ExcludeMissing
+                            feedbackKey: JsonField<String> = JsonMissing.of(),
+                            @JsonProperty("p")
+                            @ExcludeMissing
+                            p: JsonField<Double> = JsonMissing.of(),
+                        ) : this(bucketCount, feedbackKey, p, mutableMapOf())
+
+                        /**
+                         * @throws LangChainInvalidDataException if the JSON field has an unexpected
+                         *   type (e.g. if the server responded with an unexpected value).
+                         */
+                        fun bucketCount(): Optional<Long> = bucketCount.getOptional("bucket_count")
+
+                        /**
+                         * @throws LangChainInvalidDataException if the JSON field has an unexpected
+                         *   type (e.g. if the server responded with an unexpected value).
+                         */
+                        fun feedbackKey(): Optional<String> =
+                            feedbackKey.getOptional("feedback_key")
+
+                        /**
+                         * @throws LangChainInvalidDataException if the JSON field has an unexpected
+                         *   type (e.g. if the server responded with an unexpected value).
+                         */
+                        fun p(): Optional<Double> = p.getOptional("p")
+
+                        /**
+                         * Returns the raw JSON value of [bucketCount].
+                         *
+                         * Unlike [bucketCount], this method doesn't throw if the JSON field has an
+                         * unexpected type.
+                         */
+                        @JsonProperty("bucket_count")
+                        @ExcludeMissing
+                        fun _bucketCount(): JsonField<Long> = bucketCount
+
+                        /**
+                         * Returns the raw JSON value of [feedbackKey].
+                         *
+                         * Unlike [feedbackKey], this method doesn't throw if the JSON field has an
+                         * unexpected type.
+                         */
+                        @JsonProperty("feedback_key")
+                        @ExcludeMissing
+                        fun _feedbackKey(): JsonField<String> = feedbackKey
+
+                        /**
+                         * Returns the raw JSON value of [p].
+                         *
+                         * Unlike [p], this method doesn't throw if the JSON field has an unexpected
+                         * type.
+                         */
+                        @JsonProperty("p") @ExcludeMissing fun _p(): JsonField<Double> = p
+
+                        @JsonAnySetter
+                        private fun putAdditionalProperty(key: String, value: JsonValue) {
+                            additionalProperties.put(key, value)
+                        }
+
+                        @JsonAnyGetter
+                        @ExcludeMissing
+                        fun _additionalProperties(): Map<String, JsonValue> =
+                            Collections.unmodifiableMap(additionalProperties)
+
+                        fun toBuilder() = Builder().from(this)
+
+                        companion object {
+
+                            /**
+                             * Returns a mutable builder for constructing an instance of [Params].
+                             */
+                            @JvmStatic fun builder() = Builder()
+                        }
+
+                        /** A builder for [Params]. */
+                        class Builder internal constructor() {
+
+                            private var bucketCount: JsonField<Long> = JsonMissing.of()
+                            private var feedbackKey: JsonField<String> = JsonMissing.of()
+                            private var p: JsonField<Double> = JsonMissing.of()
+                            private var additionalProperties: MutableMap<String, JsonValue> =
+                                mutableMapOf()
+
+                            @JvmSynthetic
+                            internal fun from(params: Params) = apply {
+                                bucketCount = params.bucketCount
+                                feedbackKey = params.feedbackKey
+                                p = params.p
+                                additionalProperties = params.additionalProperties.toMutableMap()
+                            }
+
+                            fun bucketCount(bucketCount: Long) =
+                                bucketCount(JsonField.of(bucketCount))
+
+                            /**
+                             * Sets [Builder.bucketCount] to an arbitrary JSON value.
+                             *
+                             * You should usually call [Builder.bucketCount] with a well-typed
+                             * [Long] value instead. This method is primarily for setting the field
+                             * to an undocumented or not yet supported value.
+                             */
+                            fun bucketCount(bucketCount: JsonField<Long>) = apply {
+                                this.bucketCount = bucketCount
+                            }
+
+                            fun feedbackKey(feedbackKey: String) =
+                                feedbackKey(JsonField.of(feedbackKey))
+
+                            /**
+                             * Sets [Builder.feedbackKey] to an arbitrary JSON value.
+                             *
+                             * You should usually call [Builder.feedbackKey] with a well-typed
+                             * [String] value instead. This method is primarily for setting the
+                             * field to an undocumented or not yet supported value.
+                             */
+                            fun feedbackKey(feedbackKey: JsonField<String>) = apply {
+                                this.feedbackKey = feedbackKey
+                            }
+
+                            fun p(p: Double) = p(JsonField.of(p))
+
+                            /**
+                             * Sets [Builder.p] to an arbitrary JSON value.
+                             *
+                             * You should usually call [Builder.p] with a well-typed [Double] value
+                             * instead. This method is primarily for setting the field to an
+                             * undocumented or not yet supported value.
+                             */
+                            fun p(p: JsonField<Double>) = apply { this.p = p }
+
+                            fun additionalProperties(additionalProperties: Map<String, JsonValue>) =
+                                apply {
+                                    this.additionalProperties.clear()
+                                    putAllAdditionalProperties(additionalProperties)
+                                }
+
+                            fun putAdditionalProperty(key: String, value: JsonValue) = apply {
+                                additionalProperties.put(key, value)
+                            }
+
+                            fun putAllAdditionalProperties(
+                                additionalProperties: Map<String, JsonValue>
+                            ) = apply { this.additionalProperties.putAll(additionalProperties) }
+
+                            fun removeAdditionalProperty(key: String) = apply {
+                                additionalProperties.remove(key)
+                            }
+
+                            fun removeAllAdditionalProperties(keys: Set<String>) = apply {
+                                keys.forEach(::removeAdditionalProperty)
+                            }
+
+                            /**
+                             * Returns an immutable instance of [Params].
+                             *
+                             * Further updates to this [Builder] will not mutate the returned
+                             * instance.
+                             */
+                            fun build(): Params =
+                                Params(
+                                    bucketCount,
+                                    feedbackKey,
+                                    p,
+                                    additionalProperties.toMutableMap(),
+                                )
+                        }
+
+                        private var validated: Boolean = false
+
+                        /**
+                         * Validates that the types of all values in this object match their
+                         * expected types recursively.
+                         *
+                         * This method is _not_ forwards compatible with new types from the API for
+                         * existing fields.
+                         *
+                         * @throws LangChainInvalidDataException if any value type in this object
+                         *   doesn't match its expected type.
+                         */
+                        fun validate(): Params = apply {
+                            if (validated) {
+                                return@apply
+                            }
+
+                            bucketCount()
+                            feedbackKey()
+                            p()
+                            validated = true
+                        }
+
+                        fun isValid(): Boolean =
+                            try {
+                                validate()
+                                true
+                            } catch (e: LangChainInvalidDataException) {
+                                false
+                            }
+
+                        /**
+                         * Returns a score indicating how many valid values are contained in this
+                         * object recursively.
+                         *
+                         * Used for best match union deserialization.
+                         */
+                        @JvmSynthetic
+                        internal fun validity(): Int =
+                            (if (bucketCount.asKnown().isPresent) 1 else 0) +
+                                (if (feedbackKey.asKnown().isPresent) 1 else 0) +
+                                (if (p.asKnown().isPresent) 1 else 0)
+
+                        override fun equals(other: Any?): Boolean {
+                            if (this === other) {
+                                return true
+                            }
+
+                            return other is Params &&
+                                bucketCount == other.bucketCount &&
+                                feedbackKey == other.feedbackKey &&
+                                p == other.p &&
+                                additionalProperties == other.additionalProperties
+                        }
+
+                        private val hashCode: Int by lazy {
+                            Objects.hash(bucketCount, feedbackKey, p, additionalProperties)
+                        }
+
+                        override fun hashCode(): Int = hashCode
+
+                        override fun toString() =
+                            "Params{bucketCount=$bucketCount, feedbackKey=$feedbackKey, p=$p, additionalProperties=$additionalProperties}"
+                    }
+
+                    override fun equals(other: Any?): Boolean {
+                        if (this === other) {
+                            return true
+                        }
+
+                        return other is Numerator &&
+                            type == other.type &&
+                            entity == other.entity &&
+                            field == other.field &&
+                            filter == other.filter &&
+                            params == other.params &&
+                            additionalProperties == other.additionalProperties
+                    }
+
+                    private val hashCode: Int by lazy {
+                        Objects.hash(type, entity, field, filter, params, additionalProperties)
+                    }
+
+                    override fun hashCode(): Int = hashCode
+
+                    override fun toString() =
+                        "Numerator{type=$type, entity=$entity, field=$field, filter=$filter, params=$params, additionalProperties=$additionalProperties}"
+                }
+
+                /** percentile p or histogram bucket_count */
+                class Params
+                @JsonCreator(mode = JsonCreator.Mode.DISABLED)
+                private constructor(
+                    private val bucketCount: JsonField<Long>,
+                    private val feedbackKey: JsonField<String>,
+                    private val p: JsonField<Double>,
+                    private val additionalProperties: MutableMap<String, JsonValue>,
+                ) {
+
+                    @JsonCreator
+                    private constructor(
+                        @JsonProperty("bucket_count")
+                        @ExcludeMissing
+                        bucketCount: JsonField<Long> = JsonMissing.of(),
+                        @JsonProperty("feedback_key")
+                        @ExcludeMissing
+                        feedbackKey: JsonField<String> = JsonMissing.of(),
+                        @JsonProperty("p") @ExcludeMissing p: JsonField<Double> = JsonMissing.of(),
+                    ) : this(bucketCount, feedbackKey, p, mutableMapOf())
+
+                    /**
+                     * @throws LangChainInvalidDataException if the JSON field has an unexpected
+                     *   type (e.g. if the server responded with an unexpected value).
+                     */
+                    fun bucketCount(): Optional<Long> = bucketCount.getOptional("bucket_count")
+
+                    /**
+                     * @throws LangChainInvalidDataException if the JSON field has an unexpected
+                     *   type (e.g. if the server responded with an unexpected value).
+                     */
+                    fun feedbackKey(): Optional<String> = feedbackKey.getOptional("feedback_key")
+
+                    /**
+                     * @throws LangChainInvalidDataException if the JSON field has an unexpected
+                     *   type (e.g. if the server responded with an unexpected value).
+                     */
+                    fun p(): Optional<Double> = p.getOptional("p")
+
+                    /**
+                     * Returns the raw JSON value of [bucketCount].
+                     *
+                     * Unlike [bucketCount], this method doesn't throw if the JSON field has an
+                     * unexpected type.
+                     */
+                    @JsonProperty("bucket_count")
+                    @ExcludeMissing
+                    fun _bucketCount(): JsonField<Long> = bucketCount
+
+                    /**
+                     * Returns the raw JSON value of [feedbackKey].
+                     *
+                     * Unlike [feedbackKey], this method doesn't throw if the JSON field has an
+                     * unexpected type.
+                     */
+                    @JsonProperty("feedback_key")
+                    @ExcludeMissing
+                    fun _feedbackKey(): JsonField<String> = feedbackKey
+
+                    /**
+                     * Returns the raw JSON value of [p].
+                     *
+                     * Unlike [p], this method doesn't throw if the JSON field has an unexpected
+                     * type.
+                     */
+                    @JsonProperty("p") @ExcludeMissing fun _p(): JsonField<Double> = p
+
+                    @JsonAnySetter
+                    private fun putAdditionalProperty(key: String, value: JsonValue) {
+                        additionalProperties.put(key, value)
+                    }
+
+                    @JsonAnyGetter
+                    @ExcludeMissing
+                    fun _additionalProperties(): Map<String, JsonValue> =
+                        Collections.unmodifiableMap(additionalProperties)
+
+                    fun toBuilder() = Builder().from(this)
+
+                    companion object {
+
+                        /** Returns a mutable builder for constructing an instance of [Params]. */
+                        @JvmStatic fun builder() = Builder()
+                    }
+
+                    /** A builder for [Params]. */
+                    class Builder internal constructor() {
+
+                        private var bucketCount: JsonField<Long> = JsonMissing.of()
+                        private var feedbackKey: JsonField<String> = JsonMissing.of()
+                        private var p: JsonField<Double> = JsonMissing.of()
+                        private var additionalProperties: MutableMap<String, JsonValue> =
+                            mutableMapOf()
+
+                        @JvmSynthetic
+                        internal fun from(params: Params) = apply {
+                            bucketCount = params.bucketCount
+                            feedbackKey = params.feedbackKey
+                            p = params.p
+                            additionalProperties = params.additionalProperties.toMutableMap()
+                        }
+
+                        fun bucketCount(bucketCount: Long) = bucketCount(JsonField.of(bucketCount))
+
+                        /**
+                         * Sets [Builder.bucketCount] to an arbitrary JSON value.
+                         *
+                         * You should usually call [Builder.bucketCount] with a well-typed [Long]
+                         * value instead. This method is primarily for setting the field to an
+                         * undocumented or not yet supported value.
+                         */
+                        fun bucketCount(bucketCount: JsonField<Long>) = apply {
+                            this.bucketCount = bucketCount
+                        }
+
+                        fun feedbackKey(feedbackKey: String) =
+                            feedbackKey(JsonField.of(feedbackKey))
+
+                        /**
+                         * Sets [Builder.feedbackKey] to an arbitrary JSON value.
+                         *
+                         * You should usually call [Builder.feedbackKey] with a well-typed [String]
+                         * value instead. This method is primarily for setting the field to an
+                         * undocumented or not yet supported value.
+                         */
+                        fun feedbackKey(feedbackKey: JsonField<String>) = apply {
+                            this.feedbackKey = feedbackKey
+                        }
+
+                        fun p(p: Double) = p(JsonField.of(p))
+
+                        /**
+                         * Sets [Builder.p] to an arbitrary JSON value.
+                         *
+                         * You should usually call [Builder.p] with a well-typed [Double] value
+                         * instead. This method is primarily for setting the field to an
+                         * undocumented or not yet supported value.
+                         */
+                        fun p(p: JsonField<Double>) = apply { this.p = p }
+
+                        fun additionalProperties(additionalProperties: Map<String, JsonValue>) =
+                            apply {
+                                this.additionalProperties.clear()
+                                putAllAdditionalProperties(additionalProperties)
+                            }
+
+                        fun putAdditionalProperty(key: String, value: JsonValue) = apply {
+                            additionalProperties.put(key, value)
+                        }
+
+                        fun putAllAdditionalProperties(
+                            additionalProperties: Map<String, JsonValue>
+                        ) = apply { this.additionalProperties.putAll(additionalProperties) }
+
+                        fun removeAdditionalProperty(key: String) = apply {
+                            additionalProperties.remove(key)
+                        }
+
+                        fun removeAllAdditionalProperties(keys: Set<String>) = apply {
+                            keys.forEach(::removeAdditionalProperty)
+                        }
+
+                        /**
+                         * Returns an immutable instance of [Params].
+                         *
+                         * Further updates to this [Builder] will not mutate the returned instance.
+                         */
+                        fun build(): Params =
+                            Params(bucketCount, feedbackKey, p, additionalProperties.toMutableMap())
+                    }
+
+                    private var validated: Boolean = false
+
+                    /**
+                     * Validates that the types of all values in this object match their expected
+                     * types recursively.
+                     *
+                     * This method is _not_ forwards compatible with new types from the API for
+                     * existing fields.
+                     *
+                     * @throws LangChainInvalidDataException if any value type in this object
+                     *   doesn't match its expected type.
+                     */
+                    fun validate(): Params = apply {
+                        if (validated) {
+                            return@apply
+                        }
+
+                        bucketCount()
+                        feedbackKey()
+                        p()
+                        validated = true
+                    }
+
+                    fun isValid(): Boolean =
+                        try {
+                            validate()
+                            true
+                        } catch (e: LangChainInvalidDataException) {
+                            false
+                        }
+
+                    /**
+                     * Returns a score indicating how many valid values are contained in this object
+                     * recursively.
+                     *
+                     * Used for best match union deserialization.
+                     */
+                    @JvmSynthetic
+                    internal fun validity(): Int =
+                        (if (bucketCount.asKnown().isPresent) 1 else 0) +
+                            (if (feedbackKey.asKnown().isPresent) 1 else 0) +
+                            (if (p.asKnown().isPresent) 1 else 0)
+
+                    override fun equals(other: Any?): Boolean {
+                        if (this === other) {
+                            return true
+                        }
+
+                        return other is Params &&
+                            bucketCount == other.bucketCount &&
+                            feedbackKey == other.feedbackKey &&
+                            p == other.p &&
+                            additionalProperties == other.additionalProperties
+                    }
+
+                    private val hashCode: Int by lazy {
+                        Objects.hash(bucketCount, feedbackKey, p, additionalProperties)
+                    }
+
+                    override fun hashCode(): Int = hashCode
+
+                    override fun toString() =
+                        "Params{bucketCount=$bucketCount, feedbackKey=$feedbackKey, p=$p, additionalProperties=$additionalProperties}"
+                }
+
+                override fun equals(other: Any?): Boolean {
+                    if (this === other) {
+                        return true
+                    }
+
+                    return other is MetricDefinition &&
+                        type == other.type &&
+                        denominator == other.denominator &&
+                        entity == other.entity &&
+                        field == other.field &&
+                        numerator == other.numerator &&
+                        params == other.params &&
+                        additionalProperties == other.additionalProperties
+                }
+
+                private val hashCode: Int by lazy {
+                    Objects.hash(
+                        type,
+                        denominator,
+                        entity,
+                        field,
+                        numerator,
+                        params,
+                        additionalProperties,
+                    )
+                }
+
+                override fun hashCode(): Int = hashCode
+
+                override fun toString() =
+                    "MetricDefinition{type=$type, denominator=$denominator, entity=$entity, field=$field, numerator=$numerator, params=$params, additionalProperties=$additionalProperties}"
+            }
+
+            override fun equals(other: Any?): Boolean {
+                if (this === other) {
+                    return true
+                }
+
+                return other is Series &&
+                    metricDefinition == other.metricDefinition &&
+                    runFilter == other.runFilter &&
+                    windowEnd == other.windowEnd &&
+                    windowStart == other.windowStart &&
+                    additionalProperties == other.additionalProperties
+            }
+
+            private val hashCode: Int by lazy {
+                Objects.hash(
+                    metricDefinition,
+                    runFilter,
+                    windowEnd,
+                    windowStart,
+                    additionalProperties,
+                )
+            }
+
+            override fun hashCode(): Int = hashCode
+
+            override fun toString() =
+                "Series{metricDefinition=$metricDefinition, runFilter=$runFilter, windowEnd=$windowEnd, windowStart=$windowStart, additionalProperties=$additionalProperties}"
+        }
+
+        override fun equals(other: Any?): Boolean {
+            if (this === other) {
+                return true
+            }
+
+            return other is Evidence &&
+                type == other.type &&
+                series == other.series &&
+                additionalProperties == other.additionalProperties
+        }
+
+        private val hashCode: Int by lazy { Objects.hash(type, series, additionalProperties) }
+
+        override fun hashCode(): Int = hashCode
+
+        override fun toString() =
+            "Evidence{type=$type, series=$series, additionalProperties=$additionalProperties}"
+    }
+
     class FixVerification
     @JsonCreator(mode = JsonCreator.Mode.DISABLED)
     private constructor(
         private val attempt: JsonField<Long>,
+        private val baselineExperimentId: JsonField<String>,
+        private val datasetId: JsonField<String>,
         private val parentDeploymentId: JsonField<String>,
         private val previewDeploymentId: JsonField<String>,
+        private val previewExperimentId: JsonField<String>,
         private val reason: JsonField<String>,
         private val rootTraceIds: JsonField<List<String>>,
         private val status: JsonField<Status>,
@@ -1210,12 +5300,21 @@ private constructor(
         @JsonCreator
         private constructor(
             @JsonProperty("attempt") @ExcludeMissing attempt: JsonField<Long> = JsonMissing.of(),
+            @JsonProperty("baseline_experiment_id")
+            @ExcludeMissing
+            baselineExperimentId: JsonField<String> = JsonMissing.of(),
+            @JsonProperty("dataset_id")
+            @ExcludeMissing
+            datasetId: JsonField<String> = JsonMissing.of(),
             @JsonProperty("parent_deployment_id")
             @ExcludeMissing
             parentDeploymentId: JsonField<String> = JsonMissing.of(),
             @JsonProperty("preview_deployment_id")
             @ExcludeMissing
             previewDeploymentId: JsonField<String> = JsonMissing.of(),
+            @JsonProperty("preview_experiment_id")
+            @ExcludeMissing
+            previewExperimentId: JsonField<String> = JsonMissing.of(),
             @JsonProperty("reason") @ExcludeMissing reason: JsonField<String> = JsonMissing.of(),
             @JsonProperty("root_trace_ids")
             @ExcludeMissing
@@ -1226,8 +5325,11 @@ private constructor(
             updatedAt: JsonField<OffsetDateTime> = JsonMissing.of(),
         ) : this(
             attempt,
+            baselineExperimentId,
+            datasetId,
             parentDeploymentId,
             previewDeploymentId,
+            previewExperimentId,
             reason,
             rootTraceIds,
             status,
@@ -1245,6 +5347,19 @@ private constructor(
          * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
          *   the server responded with an unexpected value).
          */
+        fun baselineExperimentId(): Optional<String> =
+            baselineExperimentId.getOptional("baseline_experiment_id")
+
+        /**
+         * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
+         *   the server responded with an unexpected value).
+         */
+        fun datasetId(): Optional<String> = datasetId.getOptional("dataset_id")
+
+        /**
+         * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
+         *   the server responded with an unexpected value).
+         */
         fun parentDeploymentId(): Optional<String> =
             parentDeploymentId.getOptional("parent_deployment_id")
 
@@ -1254,6 +5369,13 @@ private constructor(
          */
         fun previewDeploymentId(): Optional<String> =
             previewDeploymentId.getOptional("preview_deployment_id")
+
+        /**
+         * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
+         *   the server responded with an unexpected value).
+         */
+        fun previewExperimentId(): Optional<String> =
+            previewExperimentId.getOptional("preview_experiment_id")
 
         /**
          * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
@@ -1287,6 +5409,23 @@ private constructor(
         @JsonProperty("attempt") @ExcludeMissing fun _attempt(): JsonField<Long> = attempt
 
         /**
+         * Returns the raw JSON value of [baselineExperimentId].
+         *
+         * Unlike [baselineExperimentId], this method doesn't throw if the JSON field has an
+         * unexpected type.
+         */
+        @JsonProperty("baseline_experiment_id")
+        @ExcludeMissing
+        fun _baselineExperimentId(): JsonField<String> = baselineExperimentId
+
+        /**
+         * Returns the raw JSON value of [datasetId].
+         *
+         * Unlike [datasetId], this method doesn't throw if the JSON field has an unexpected type.
+         */
+        @JsonProperty("dataset_id") @ExcludeMissing fun _datasetId(): JsonField<String> = datasetId
+
+        /**
          * Returns the raw JSON value of [parentDeploymentId].
          *
          * Unlike [parentDeploymentId], this method doesn't throw if the JSON field has an
@@ -1305,6 +5444,16 @@ private constructor(
         @JsonProperty("preview_deployment_id")
         @ExcludeMissing
         fun _previewDeploymentId(): JsonField<String> = previewDeploymentId
+
+        /**
+         * Returns the raw JSON value of [previewExperimentId].
+         *
+         * Unlike [previewExperimentId], this method doesn't throw if the JSON field has an
+         * unexpected type.
+         */
+        @JsonProperty("preview_experiment_id")
+        @ExcludeMissing
+        fun _previewExperimentId(): JsonField<String> = previewExperimentId
 
         /**
          * Returns the raw JSON value of [reason].
@@ -1361,8 +5510,11 @@ private constructor(
         class Builder internal constructor() {
 
             private var attempt: JsonField<Long> = JsonMissing.of()
+            private var baselineExperimentId: JsonField<String> = JsonMissing.of()
+            private var datasetId: JsonField<String> = JsonMissing.of()
             private var parentDeploymentId: JsonField<String> = JsonMissing.of()
             private var previewDeploymentId: JsonField<String> = JsonMissing.of()
+            private var previewExperimentId: JsonField<String> = JsonMissing.of()
             private var reason: JsonField<String> = JsonMissing.of()
             private var rootTraceIds: JsonField<MutableList<String>>? = null
             private var status: JsonField<Status> = JsonMissing.of()
@@ -1372,8 +5524,11 @@ private constructor(
             @JvmSynthetic
             internal fun from(fixVerification: FixVerification) = apply {
                 attempt = fixVerification.attempt
+                baselineExperimentId = fixVerification.baselineExperimentId
+                datasetId = fixVerification.datasetId
                 parentDeploymentId = fixVerification.parentDeploymentId
                 previewDeploymentId = fixVerification.previewDeploymentId
+                previewExperimentId = fixVerification.previewExperimentId
                 reason = fixVerification.reason
                 rootTraceIds = fixVerification.rootTraceIds.map { it.toMutableList() }
                 status = fixVerification.status
@@ -1391,6 +5546,31 @@ private constructor(
              * supported value.
              */
             fun attempt(attempt: JsonField<Long>) = apply { this.attempt = attempt }
+
+            fun baselineExperimentId(baselineExperimentId: String) =
+                baselineExperimentId(JsonField.of(baselineExperimentId))
+
+            /**
+             * Sets [Builder.baselineExperimentId] to an arbitrary JSON value.
+             *
+             * You should usually call [Builder.baselineExperimentId] with a well-typed [String]
+             * value instead. This method is primarily for setting the field to an undocumented or
+             * not yet supported value.
+             */
+            fun baselineExperimentId(baselineExperimentId: JsonField<String>) = apply {
+                this.baselineExperimentId = baselineExperimentId
+            }
+
+            fun datasetId(datasetId: String) = datasetId(JsonField.of(datasetId))
+
+            /**
+             * Sets [Builder.datasetId] to an arbitrary JSON value.
+             *
+             * You should usually call [Builder.datasetId] with a well-typed [String] value instead.
+             * This method is primarily for setting the field to an undocumented or not yet
+             * supported value.
+             */
+            fun datasetId(datasetId: JsonField<String>) = apply { this.datasetId = datasetId }
 
             fun parentDeploymentId(parentDeploymentId: String) =
                 parentDeploymentId(JsonField.of(parentDeploymentId))
@@ -1418,6 +5598,20 @@ private constructor(
              */
             fun previewDeploymentId(previewDeploymentId: JsonField<String>) = apply {
                 this.previewDeploymentId = previewDeploymentId
+            }
+
+            fun previewExperimentId(previewExperimentId: String) =
+                previewExperimentId(JsonField.of(previewExperimentId))
+
+            /**
+             * Sets [Builder.previewExperimentId] to an arbitrary JSON value.
+             *
+             * You should usually call [Builder.previewExperimentId] with a well-typed [String]
+             * value instead. This method is primarily for setting the field to an undocumented or
+             * not yet supported value.
+             */
+            fun previewExperimentId(previewExperimentId: JsonField<String>) = apply {
+                this.previewExperimentId = previewExperimentId
             }
 
             fun reason(reason: String) = reason(JsonField.of(reason))
@@ -1507,8 +5701,11 @@ private constructor(
             fun build(): FixVerification =
                 FixVerification(
                     attempt,
+                    baselineExperimentId,
+                    datasetId,
                     parentDeploymentId,
                     previewDeploymentId,
+                    previewExperimentId,
                     reason,
                     (rootTraceIds ?: JsonMissing.of()).map { it.toImmutable() },
                     status,
@@ -1534,8 +5731,11 @@ private constructor(
             }
 
             attempt()
+            baselineExperimentId()
+            datasetId()
             parentDeploymentId()
             previewDeploymentId()
+            previewExperimentId()
             reason()
             rootTraceIds()
             status().ifPresent { it.validate() }
@@ -1560,8 +5760,11 @@ private constructor(
         @JvmSynthetic
         internal fun validity(): Int =
             (if (attempt.asKnown().isPresent) 1 else 0) +
+                (if (baselineExperimentId.asKnown().isPresent) 1 else 0) +
+                (if (datasetId.asKnown().isPresent) 1 else 0) +
                 (if (parentDeploymentId.asKnown().isPresent) 1 else 0) +
                 (if (previewDeploymentId.asKnown().isPresent) 1 else 0) +
+                (if (previewExperimentId.asKnown().isPresent) 1 else 0) +
                 (if (reason.asKnown().isPresent) 1 else 0) +
                 (rootTraceIds.asKnown().getOrNull()?.size ?: 0) +
                 (status.asKnown().getOrNull()?.validity() ?: 0) +
@@ -1743,8 +5946,11 @@ private constructor(
 
             return other is FixVerification &&
                 attempt == other.attempt &&
+                baselineExperimentId == other.baselineExperimentId &&
+                datasetId == other.datasetId &&
                 parentDeploymentId == other.parentDeploymentId &&
                 previewDeploymentId == other.previewDeploymentId &&
+                previewExperimentId == other.previewExperimentId &&
                 reason == other.reason &&
                 rootTraceIds == other.rootTraceIds &&
                 status == other.status &&
@@ -1755,8 +5961,11 @@ private constructor(
         private val hashCode: Int by lazy {
             Objects.hash(
                 attempt,
+                baselineExperimentId,
+                datasetId,
                 parentDeploymentId,
                 previewDeploymentId,
+                previewExperimentId,
                 reason,
                 rootTraceIds,
                 status,
@@ -1768,7 +5977,371 @@ private constructor(
         override fun hashCode(): Int = hashCode
 
         override fun toString() =
-            "FixVerification{attempt=$attempt, parentDeploymentId=$parentDeploymentId, previewDeploymentId=$previewDeploymentId, reason=$reason, rootTraceIds=$rootTraceIds, status=$status, updatedAt=$updatedAt, additionalProperties=$additionalProperties}"
+            "FixVerification{attempt=$attempt, baselineExperimentId=$baselineExperimentId, datasetId=$datasetId, parentDeploymentId=$parentDeploymentId, previewDeploymentId=$previewDeploymentId, previewExperimentId=$previewExperimentId, reason=$reason, rootTraceIds=$rootTraceIds, status=$status, updatedAt=$updatedAt, additionalProperties=$additionalProperties}"
+    }
+
+    class Fix
+    @JsonCreator(mode = JsonCreator.Mode.DISABLED)
+    private constructor(
+        private val id: JsonField<String>,
+        private val branch: JsonField<String>,
+        private val createdAt: JsonField<OffsetDateTime>,
+        private val prNumber: JsonField<Long>,
+        private val repoUrl: JsonField<String>,
+        private val updatedAt: JsonField<OffsetDateTime>,
+        private val additionalProperties: MutableMap<String, JsonValue>,
+    ) {
+
+        @JsonCreator
+        private constructor(
+            @JsonProperty("id") @ExcludeMissing id: JsonField<String> = JsonMissing.of(),
+            @JsonProperty("branch") @ExcludeMissing branch: JsonField<String> = JsonMissing.of(),
+            @JsonProperty("created_at")
+            @ExcludeMissing
+            createdAt: JsonField<OffsetDateTime> = JsonMissing.of(),
+            @JsonProperty("pr_number") @ExcludeMissing prNumber: JsonField<Long> = JsonMissing.of(),
+            @JsonProperty("repo_url") @ExcludeMissing repoUrl: JsonField<String> = JsonMissing.of(),
+            @JsonProperty("updated_at")
+            @ExcludeMissing
+            updatedAt: JsonField<OffsetDateTime> = JsonMissing.of(),
+        ) : this(id, branch, createdAt, prNumber, repoUrl, updatedAt, mutableMapOf())
+
+        /**
+         * @throws LangChainInvalidDataException if the JSON field has an unexpected type or is
+         *   unexpectedly missing or null (e.g. if the server responded with an unexpected value).
+         */
+        fun id(): String = id.getRequired("id")
+
+        /**
+         * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
+         *   the server responded with an unexpected value).
+         */
+        fun branch(): Optional<String> = branch.getOptional("branch")
+
+        /**
+         * @throws LangChainInvalidDataException if the JSON field has an unexpected type or is
+         *   unexpectedly missing or null (e.g. if the server responded with an unexpected value).
+         */
+        fun createdAt(): OffsetDateTime = createdAt.getRequired("created_at")
+
+        /**
+         * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
+         *   the server responded with an unexpected value).
+         */
+        fun prNumber(): Optional<Long> = prNumber.getOptional("pr_number")
+
+        /**
+         * @throws LangChainInvalidDataException if the JSON field has an unexpected type or is
+         *   unexpectedly missing or null (e.g. if the server responded with an unexpected value).
+         */
+        fun repoUrl(): String = repoUrl.getRequired("repo_url")
+
+        /**
+         * @throws LangChainInvalidDataException if the JSON field has an unexpected type or is
+         *   unexpectedly missing or null (e.g. if the server responded with an unexpected value).
+         */
+        fun updatedAt(): OffsetDateTime = updatedAt.getRequired("updated_at")
+
+        /**
+         * Returns the raw JSON value of [id].
+         *
+         * Unlike [id], this method doesn't throw if the JSON field has an unexpected type.
+         */
+        @JsonProperty("id") @ExcludeMissing fun _id(): JsonField<String> = id
+
+        /**
+         * Returns the raw JSON value of [branch].
+         *
+         * Unlike [branch], this method doesn't throw if the JSON field has an unexpected type.
+         */
+        @JsonProperty("branch") @ExcludeMissing fun _branch(): JsonField<String> = branch
+
+        /**
+         * Returns the raw JSON value of [createdAt].
+         *
+         * Unlike [createdAt], this method doesn't throw if the JSON field has an unexpected type.
+         */
+        @JsonProperty("created_at")
+        @ExcludeMissing
+        fun _createdAt(): JsonField<OffsetDateTime> = createdAt
+
+        /**
+         * Returns the raw JSON value of [prNumber].
+         *
+         * Unlike [prNumber], this method doesn't throw if the JSON field has an unexpected type.
+         */
+        @JsonProperty("pr_number") @ExcludeMissing fun _prNumber(): JsonField<Long> = prNumber
+
+        /**
+         * Returns the raw JSON value of [repoUrl].
+         *
+         * Unlike [repoUrl], this method doesn't throw if the JSON field has an unexpected type.
+         */
+        @JsonProperty("repo_url") @ExcludeMissing fun _repoUrl(): JsonField<String> = repoUrl
+
+        /**
+         * Returns the raw JSON value of [updatedAt].
+         *
+         * Unlike [updatedAt], this method doesn't throw if the JSON field has an unexpected type.
+         */
+        @JsonProperty("updated_at")
+        @ExcludeMissing
+        fun _updatedAt(): JsonField<OffsetDateTime> = updatedAt
+
+        @JsonAnySetter
+        private fun putAdditionalProperty(key: String, value: JsonValue) {
+            additionalProperties.put(key, value)
+        }
+
+        @JsonAnyGetter
+        @ExcludeMissing
+        fun _additionalProperties(): Map<String, JsonValue> =
+            Collections.unmodifiableMap(additionalProperties)
+
+        fun toBuilder() = Builder().from(this)
+
+        companion object {
+
+            /**
+             * Returns a mutable builder for constructing an instance of [Fix].
+             *
+             * The following fields are required:
+             * ```java
+             * .id()
+             * .branch()
+             * .createdAt()
+             * .prNumber()
+             * .repoUrl()
+             * .updatedAt()
+             * ```
+             */
+            @JvmStatic fun builder() = Builder()
+        }
+
+        /** A builder for [Fix]. */
+        class Builder internal constructor() {
+
+            private var id: JsonField<String>? = null
+            private var branch: JsonField<String>? = null
+            private var createdAt: JsonField<OffsetDateTime>? = null
+            private var prNumber: JsonField<Long>? = null
+            private var repoUrl: JsonField<String>? = null
+            private var updatedAt: JsonField<OffsetDateTime>? = null
+            private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
+
+            @JvmSynthetic
+            internal fun from(fix: Fix) = apply {
+                id = fix.id
+                branch = fix.branch
+                createdAt = fix.createdAt
+                prNumber = fix.prNumber
+                repoUrl = fix.repoUrl
+                updatedAt = fix.updatedAt
+                additionalProperties = fix.additionalProperties.toMutableMap()
+            }
+
+            fun id(id: String) = id(JsonField.of(id))
+
+            /**
+             * Sets [Builder.id] to an arbitrary JSON value.
+             *
+             * You should usually call [Builder.id] with a well-typed [String] value instead. This
+             * method is primarily for setting the field to an undocumented or not yet supported
+             * value.
+             */
+            fun id(id: JsonField<String>) = apply { this.id = id }
+
+            fun branch(branch: String?) = branch(JsonField.ofNullable(branch))
+
+            /** Alias for calling [Builder.branch] with `branch.orElse(null)`. */
+            fun branch(branch: Optional<String>) = branch(branch.getOrNull())
+
+            /**
+             * Sets [Builder.branch] to an arbitrary JSON value.
+             *
+             * You should usually call [Builder.branch] with a well-typed [String] value instead.
+             * This method is primarily for setting the field to an undocumented or not yet
+             * supported value.
+             */
+            fun branch(branch: JsonField<String>) = apply { this.branch = branch }
+
+            fun createdAt(createdAt: OffsetDateTime) = createdAt(JsonField.of(createdAt))
+
+            /**
+             * Sets [Builder.createdAt] to an arbitrary JSON value.
+             *
+             * You should usually call [Builder.createdAt] with a well-typed [OffsetDateTime] value
+             * instead. This method is primarily for setting the field to an undocumented or not yet
+             * supported value.
+             */
+            fun createdAt(createdAt: JsonField<OffsetDateTime>) = apply {
+                this.createdAt = createdAt
+            }
+
+            fun prNumber(prNumber: Long?) = prNumber(JsonField.ofNullable(prNumber))
+
+            /**
+             * Alias for [Builder.prNumber].
+             *
+             * This unboxed primitive overload exists for backwards compatibility.
+             */
+            fun prNumber(prNumber: Long) = prNumber(prNumber as Long?)
+
+            /** Alias for calling [Builder.prNumber] with `prNumber.orElse(null)`. */
+            fun prNumber(prNumber: Optional<Long>) = prNumber(prNumber.getOrNull())
+
+            /**
+             * Sets [Builder.prNumber] to an arbitrary JSON value.
+             *
+             * You should usually call [Builder.prNumber] with a well-typed [Long] value instead.
+             * This method is primarily for setting the field to an undocumented or not yet
+             * supported value.
+             */
+            fun prNumber(prNumber: JsonField<Long>) = apply { this.prNumber = prNumber }
+
+            fun repoUrl(repoUrl: String) = repoUrl(JsonField.of(repoUrl))
+
+            /**
+             * Sets [Builder.repoUrl] to an arbitrary JSON value.
+             *
+             * You should usually call [Builder.repoUrl] with a well-typed [String] value instead.
+             * This method is primarily for setting the field to an undocumented or not yet
+             * supported value.
+             */
+            fun repoUrl(repoUrl: JsonField<String>) = apply { this.repoUrl = repoUrl }
+
+            fun updatedAt(updatedAt: OffsetDateTime) = updatedAt(JsonField.of(updatedAt))
+
+            /**
+             * Sets [Builder.updatedAt] to an arbitrary JSON value.
+             *
+             * You should usually call [Builder.updatedAt] with a well-typed [OffsetDateTime] value
+             * instead. This method is primarily for setting the field to an undocumented or not yet
+             * supported value.
+             */
+            fun updatedAt(updatedAt: JsonField<OffsetDateTime>) = apply {
+                this.updatedAt = updatedAt
+            }
+
+            fun additionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
+                this.additionalProperties.clear()
+                putAllAdditionalProperties(additionalProperties)
+            }
+
+            fun putAdditionalProperty(key: String, value: JsonValue) = apply {
+                additionalProperties.put(key, value)
+            }
+
+            fun putAllAdditionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
+                this.additionalProperties.putAll(additionalProperties)
+            }
+
+            fun removeAdditionalProperty(key: String) = apply { additionalProperties.remove(key) }
+
+            fun removeAllAdditionalProperties(keys: Set<String>) = apply {
+                keys.forEach(::removeAdditionalProperty)
+            }
+
+            /**
+             * Returns an immutable instance of [Fix].
+             *
+             * Further updates to this [Builder] will not mutate the returned instance.
+             *
+             * The following fields are required:
+             * ```java
+             * .id()
+             * .branch()
+             * .createdAt()
+             * .prNumber()
+             * .repoUrl()
+             * .updatedAt()
+             * ```
+             *
+             * @throws IllegalStateException if any required field is unset.
+             */
+            fun build(): Fix =
+                Fix(
+                    checkRequired("id", id),
+                    checkRequired("branch", branch),
+                    checkRequired("createdAt", createdAt),
+                    checkRequired("prNumber", prNumber),
+                    checkRequired("repoUrl", repoUrl),
+                    checkRequired("updatedAt", updatedAt),
+                    additionalProperties.toMutableMap(),
+                )
+        }
+
+        private var validated: Boolean = false
+
+        /**
+         * Validates that the types of all values in this object match their expected types
+         * recursively.
+         *
+         * This method is _not_ forwards compatible with new types from the API for existing fields.
+         *
+         * @throws LangChainInvalidDataException if any value type in this object doesn't match its
+         *   expected type.
+         */
+        fun validate(): Fix = apply {
+            if (validated) {
+                return@apply
+            }
+
+            id()
+            branch()
+            createdAt()
+            prNumber()
+            repoUrl()
+            updatedAt()
+            validated = true
+        }
+
+        fun isValid(): Boolean =
+            try {
+                validate()
+                true
+            } catch (e: LangChainInvalidDataException) {
+                false
+            }
+
+        /**
+         * Returns a score indicating how many valid values are contained in this object
+         * recursively.
+         *
+         * Used for best match union deserialization.
+         */
+        @JvmSynthetic
+        internal fun validity(): Int =
+            (if (id.asKnown().isPresent) 1 else 0) +
+                (if (branch.asKnown().isPresent) 1 else 0) +
+                (if (createdAt.asKnown().isPresent) 1 else 0) +
+                (if (prNumber.asKnown().isPresent) 1 else 0) +
+                (if (repoUrl.asKnown().isPresent) 1 else 0) +
+                (if (updatedAt.asKnown().isPresent) 1 else 0)
+
+        override fun equals(other: Any?): Boolean {
+            if (this === other) {
+                return true
+            }
+
+            return other is Fix &&
+                id == other.id &&
+                branch == other.branch &&
+                createdAt == other.createdAt &&
+                prNumber == other.prNumber &&
+                repoUrl == other.repoUrl &&
+                updatedAt == other.updatedAt &&
+                additionalProperties == other.additionalProperties
+        }
+
+        private val hashCode: Int by lazy {
+            Objects.hash(id, branch, createdAt, prNumber, repoUrl, updatedAt, additionalProperties)
+        }
+
+        override fun hashCode(): Int = hashCode
+
+        override fun toString() =
+            "Fix{id=$id, branch=$branch, createdAt=$createdAt, prNumber=$prNumber, repoUrl=$repoUrl, updatedAt=$updatedAt, additionalProperties=$additionalProperties}"
     }
 
     class LinearContext
@@ -2873,7 +7446,9 @@ private constructor(
     @JsonCreator(mode = JsonCreator.Mode.DISABLED)
     private constructor(
         private val activeRevisionId: JsonField<String>,
+        private val baselineExperimentId: JsonField<String>,
         private val completedAt: JsonField<OffsetDateTime>,
+        private val datasetId: JsonField<String>,
         private val deploymentId: JsonField<String>,
         private val outcome: JsonField<Outcome>,
         private val reason: JsonField<String>,
@@ -2886,9 +7461,15 @@ private constructor(
             @JsonProperty("active_revision_id")
             @ExcludeMissing
             activeRevisionId: JsonField<String> = JsonMissing.of(),
+            @JsonProperty("baseline_experiment_id")
+            @ExcludeMissing
+            baselineExperimentId: JsonField<String> = JsonMissing.of(),
             @JsonProperty("completed_at")
             @ExcludeMissing
             completedAt: JsonField<OffsetDateTime> = JsonMissing.of(),
+            @JsonProperty("dataset_id")
+            @ExcludeMissing
+            datasetId: JsonField<String> = JsonMissing.of(),
             @JsonProperty("deployment_id")
             @ExcludeMissing
             deploymentId: JsonField<String> = JsonMissing.of(),
@@ -2899,7 +7480,9 @@ private constructor(
             rootTraceIds: JsonField<List<String>> = JsonMissing.of(),
         ) : this(
             activeRevisionId,
+            baselineExperimentId,
             completedAt,
+            datasetId,
             deploymentId,
             outcome,
             reason,
@@ -2918,7 +7501,20 @@ private constructor(
          * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
          *   the server responded with an unexpected value).
          */
+        fun baselineExperimentId(): Optional<String> =
+            baselineExperimentId.getOptional("baseline_experiment_id")
+
+        /**
+         * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
+         *   the server responded with an unexpected value).
+         */
         fun completedAt(): Optional<OffsetDateTime> = completedAt.getOptional("completed_at")
+
+        /**
+         * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
+         *   the server responded with an unexpected value).
+         */
+        fun datasetId(): Optional<String> = datasetId.getOptional("dataset_id")
 
         /**
          * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
@@ -2955,6 +7551,16 @@ private constructor(
         fun _activeRevisionId(): JsonField<String> = activeRevisionId
 
         /**
+         * Returns the raw JSON value of [baselineExperimentId].
+         *
+         * Unlike [baselineExperimentId], this method doesn't throw if the JSON field has an
+         * unexpected type.
+         */
+        @JsonProperty("baseline_experiment_id")
+        @ExcludeMissing
+        fun _baselineExperimentId(): JsonField<String> = baselineExperimentId
+
+        /**
          * Returns the raw JSON value of [completedAt].
          *
          * Unlike [completedAt], this method doesn't throw if the JSON field has an unexpected type.
@@ -2962,6 +7568,13 @@ private constructor(
         @JsonProperty("completed_at")
         @ExcludeMissing
         fun _completedAt(): JsonField<OffsetDateTime> = completedAt
+
+        /**
+         * Returns the raw JSON value of [datasetId].
+         *
+         * Unlike [datasetId], this method doesn't throw if the JSON field has an unexpected type.
+         */
+        @JsonProperty("dataset_id") @ExcludeMissing fun _datasetId(): JsonField<String> = datasetId
 
         /**
          * Returns the raw JSON value of [deploymentId].
@@ -3019,7 +7632,9 @@ private constructor(
         class Builder internal constructor() {
 
             private var activeRevisionId: JsonField<String> = JsonMissing.of()
+            private var baselineExperimentId: JsonField<String> = JsonMissing.of()
             private var completedAt: JsonField<OffsetDateTime> = JsonMissing.of()
+            private var datasetId: JsonField<String> = JsonMissing.of()
             private var deploymentId: JsonField<String> = JsonMissing.of()
             private var outcome: JsonField<Outcome> = JsonMissing.of()
             private var reason: JsonField<String> = JsonMissing.of()
@@ -3029,7 +7644,9 @@ private constructor(
             @JvmSynthetic
             internal fun from(validationResult: ValidationResult) = apply {
                 activeRevisionId = validationResult.activeRevisionId
+                baselineExperimentId = validationResult.baselineExperimentId
                 completedAt = validationResult.completedAt
+                datasetId = validationResult.datasetId
                 deploymentId = validationResult.deploymentId
                 outcome = validationResult.outcome
                 reason = validationResult.reason
@@ -3051,6 +7668,20 @@ private constructor(
                 this.activeRevisionId = activeRevisionId
             }
 
+            fun baselineExperimentId(baselineExperimentId: String) =
+                baselineExperimentId(JsonField.of(baselineExperimentId))
+
+            /**
+             * Sets [Builder.baselineExperimentId] to an arbitrary JSON value.
+             *
+             * You should usually call [Builder.baselineExperimentId] with a well-typed [String]
+             * value instead. This method is primarily for setting the field to an undocumented or
+             * not yet supported value.
+             */
+            fun baselineExperimentId(baselineExperimentId: JsonField<String>) = apply {
+                this.baselineExperimentId = baselineExperimentId
+            }
+
             fun completedAt(completedAt: OffsetDateTime) = completedAt(JsonField.of(completedAt))
 
             /**
@@ -3063,6 +7694,17 @@ private constructor(
             fun completedAt(completedAt: JsonField<OffsetDateTime>) = apply {
                 this.completedAt = completedAt
             }
+
+            fun datasetId(datasetId: String) = datasetId(JsonField.of(datasetId))
+
+            /**
+             * Sets [Builder.datasetId] to an arbitrary JSON value.
+             *
+             * You should usually call [Builder.datasetId] with a well-typed [String] value instead.
+             * This method is primarily for setting the field to an undocumented or not yet
+             * supported value.
+             */
+            fun datasetId(datasetId: JsonField<String>) = apply { this.datasetId = datasetId }
 
             fun deploymentId(deploymentId: String) = deploymentId(JsonField.of(deploymentId))
 
@@ -3151,7 +7793,9 @@ private constructor(
             fun build(): ValidationResult =
                 ValidationResult(
                     activeRevisionId,
+                    baselineExperimentId,
                     completedAt,
+                    datasetId,
                     deploymentId,
                     outcome,
                     reason,
@@ -3177,7 +7821,9 @@ private constructor(
             }
 
             activeRevisionId()
+            baselineExperimentId()
             completedAt()
+            datasetId()
             deploymentId()
             outcome().ifPresent { it.validate() }
             reason()
@@ -3202,7 +7848,9 @@ private constructor(
         @JvmSynthetic
         internal fun validity(): Int =
             (if (activeRevisionId.asKnown().isPresent) 1 else 0) +
+                (if (baselineExperimentId.asKnown().isPresent) 1 else 0) +
                 (if (completedAt.asKnown().isPresent) 1 else 0) +
+                (if (datasetId.asKnown().isPresent) 1 else 0) +
                 (if (deploymentId.asKnown().isPresent) 1 else 0) +
                 (outcome.asKnown().getOrNull()?.validity() ?: 0) +
                 (if (reason.asKnown().isPresent) 1 else 0) +
@@ -3367,7 +8015,9 @@ private constructor(
 
             return other is ValidationResult &&
                 activeRevisionId == other.activeRevisionId &&
+                baselineExperimentId == other.baselineExperimentId &&
                 completedAt == other.completedAt &&
+                datasetId == other.datasetId &&
                 deploymentId == other.deploymentId &&
                 outcome == other.outcome &&
                 reason == other.reason &&
@@ -3378,7 +8028,9 @@ private constructor(
         private val hashCode: Int by lazy {
             Objects.hash(
                 activeRevisionId,
+                baselineExperimentId,
                 completedAt,
+                datasetId,
                 deploymentId,
                 outcome,
                 reason,
@@ -3390,7 +8042,7 @@ private constructor(
         override fun hashCode(): Int = hashCode
 
         override fun toString() =
-            "ValidationResult{activeRevisionId=$activeRevisionId, completedAt=$completedAt, deploymentId=$deploymentId, outcome=$outcome, reason=$reason, rootTraceIds=$rootTraceIds, additionalProperties=$additionalProperties}"
+            "ValidationResult{activeRevisionId=$activeRevisionId, baselineExperimentId=$baselineExperimentId, completedAt=$completedAt, datasetId=$datasetId, deploymentId=$deploymentId, outcome=$outcome, reason=$reason, rootTraceIds=$rootTraceIds, additionalProperties=$additionalProperties}"
     }
 
     override fun equals(other: Any?): Boolean {
@@ -3405,12 +8057,14 @@ private constructor(
             autoResolutionState == other.autoResolutionState &&
             createdAt == other.createdAt &&
             description == other.description &&
+            evidence == other.evidence &&
             firstSeenAt == other.firstSeenAt &&
             fixBranch == other.fixBranch &&
             fixDispatchedAt == other.fixDispatchedAt &&
             fixPrNumber == other.fixPrNumber &&
             fixPrompt == other.fixPrompt &&
             fixVerification == other.fixVerification &&
+            fixes == other.fixes &&
             lastSeenAt == other.lastSeenAt &&
             linearContext == other.linearContext &&
             linearSync == other.linearSync &&
@@ -3440,12 +8094,14 @@ private constructor(
             autoResolutionState,
             createdAt,
             description,
+            evidence,
             firstSeenAt,
             fixBranch,
             fixDispatchedAt,
             fixPrNumber,
             fixPrompt,
             fixVerification,
+            fixes,
             lastSeenAt,
             linearContext,
             linearSync,
@@ -3471,5 +8127,5 @@ private constructor(
     override fun hashCode(): Int = hashCode
 
     override fun toString() =
-        "Issue{id=$id, actions=$actions, autoResolutionEvidence=$autoResolutionEvidence, autoResolutionState=$autoResolutionState, createdAt=$createdAt, description=$description, firstSeenAt=$firstSeenAt, fixBranch=$fixBranch, fixDispatchedAt=$fixDispatchedAt, fixPrNumber=$fixPrNumber, fixPrompt=$fixPrompt, fixVerification=$fixVerification, lastSeenAt=$lastSeenAt, linearContext=$linearContext, linearSync=$linearSync, name=$name, proposedContextFixes=$proposedContextFixes, proposedExamples=$proposedExamples, proposedFix=$proposedFix, proposedPromptFixes=$proposedPromptFixes, recurrencesSinceWatching=$recurrencesSinceWatching, sessionId=$sessionId, severity=$severity, status=$status, tags=$tags, tenantId=$tenantId, traces=$traces, updatedAt=$updatedAt, validationResult=$validationResult, watchingSince=$watchingSince, additionalProperties=$additionalProperties}"
+        "Issue{id=$id, actions=$actions, autoResolutionEvidence=$autoResolutionEvidence, autoResolutionState=$autoResolutionState, createdAt=$createdAt, description=$description, evidence=$evidence, firstSeenAt=$firstSeenAt, fixBranch=$fixBranch, fixDispatchedAt=$fixDispatchedAt, fixPrNumber=$fixPrNumber, fixPrompt=$fixPrompt, fixVerification=$fixVerification, fixes=$fixes, lastSeenAt=$lastSeenAt, linearContext=$linearContext, linearSync=$linearSync, name=$name, proposedContextFixes=$proposedContextFixes, proposedExamples=$proposedExamples, proposedFix=$proposedFix, proposedPromptFixes=$proposedPromptFixes, recurrencesSinceWatching=$recurrencesSinceWatching, sessionId=$sessionId, severity=$severity, status=$status, tags=$tags, tenantId=$tenantId, traces=$traces, updatedAt=$updatedAt, validationResult=$validationResult, watchingSince=$watchingSince, additionalProperties=$additionalProperties}"
 }

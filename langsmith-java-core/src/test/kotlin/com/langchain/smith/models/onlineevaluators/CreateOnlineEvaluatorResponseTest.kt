@@ -28,7 +28,9 @@ internal class CreateOnlineEvaluatorResponseTest {
                                 )
                                 .evaluatorId("evaluator_id")
                                 .language("language")
-                                .managedCodeEvaluatorKey("managed_code_evaluator_key")
+                                .managedCodeEvaluatorKey(
+                                    OnlineCodeEvaluator.ManagedCodeEvaluatorKey.VOICE_METRICS
+                                )
                                 .managedCodeEvaluatorSettings(
                                     OnlineCodeEvaluator.ManagedCodeEvaluatorSettings.builder()
                                         .putAdditionalProperty(
@@ -105,7 +107,9 @@ internal class CreateOnlineEvaluatorResponseTest {
                             .evaluatorBuildStatus(OnlineCodeEvaluator.EvaluatorBuildStatus.ENQUEUED)
                             .evaluatorId("evaluator_id")
                             .language("language")
-                            .managedCodeEvaluatorKey("managed_code_evaluator_key")
+                            .managedCodeEvaluatorKey(
+                                OnlineCodeEvaluator.ManagedCodeEvaluatorKey.VOICE_METRICS
+                            )
                             .managedCodeEvaluatorSettings(
                                 OnlineCodeEvaluator.ManagedCodeEvaluatorSettings.builder()
                                     .putAdditionalProperty(
@@ -185,7 +189,9 @@ internal class CreateOnlineEvaluatorResponseTest {
                                 )
                                 .evaluatorId("evaluator_id")
                                 .language("language")
-                                .managedCodeEvaluatorKey("managed_code_evaluator_key")
+                                .managedCodeEvaluatorKey(
+                                    OnlineCodeEvaluator.ManagedCodeEvaluatorKey.VOICE_METRICS
+                                )
                                 .managedCodeEvaluatorSettings(
                                     OnlineCodeEvaluator.ManagedCodeEvaluatorSettings.builder()
                                         .putAdditionalProperty(

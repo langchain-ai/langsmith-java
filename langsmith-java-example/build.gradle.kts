@@ -1,8 +1,8 @@
 plugins {
     application
     kotlin("jvm")
-    id("org.jetbrains.kotlin.plugin.spring") version "2.1.20"
-    id("org.springframework.boot") version "3.5.16" apply false
+    id("org.jetbrains.kotlin.plugin.spring") version "2.4.10"
+    id("org.springframework.boot") version "4.1.1" apply false
 }
 
 repositories {
@@ -10,10 +10,10 @@ repositories {
 }
 
 configurations.configureEach {
-    // CVE-2026-10532: remove once the Spring Boot BOM manages Logback >= 1.5.35.
+    // Keep the example on the latest stable Logback line.
     resolutionStrategy.force(
-        "ch.qos.logback:logback-classic:1.5.35",
-        "ch.qos.logback:logback-core:1.5.35",
+        "ch.qos.logback:logback-classic:1.6.3",
+        "ch.qos.logback:logback-core:1.6.3",
     )
 }
 
@@ -31,18 +31,18 @@ dependencies {
     implementation("com.fasterxml.jackson.core:jackson-databind:2.22.1")
 
     // Spring Boot dependencies (optional - only needed for Spring Boot example)
-    implementation(platform("org.springframework.boot:spring-boot-dependencies:3.5.16"))
+    implementation(platform("org.springframework.boot:spring-boot-dependencies:4.1.1"))
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("org.springframework.boot:spring-boot-starter")
 
     constraints {
-        implementation("org.apache.tomcat.embed:tomcat-embed-core:10.1.59")
-        implementation("org.apache.tomcat.embed:tomcat-embed-el:10.1.59")
-        implementation("org.apache.tomcat.embed:tomcat-embed-websocket:10.1.59")
+        implementation("org.apache.tomcat.embed:tomcat-embed-core:11.0.26")
+        implementation("org.apache.tomcat.embed:tomcat-embed-el:11.0.26")
+        implementation("org.apache.tomcat.embed:tomcat-embed-websocket:11.0.26")
     }
 
     // Simple logging for examples. This lets smoke tests show SDK debug/trace logs.
-    runtimeOnly("org.slf4j:slf4j-simple:2.0.17")
+    runtimeOnly("org.slf4j:slf4j-simple:2.0.20")
 }
 
 tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {

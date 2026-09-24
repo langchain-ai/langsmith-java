@@ -36,6 +36,11 @@ internal class FeedbackServiceTest {
                     .createdAt(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
                     .error(true)
                     .extendTraceRetention(true)
+                    .extra(
+                        FeedbackCreateSchema.Extra.builder()
+                            .putAdditionalProperty("foo", JsonValue.from("bar"))
+                            .build()
+                    )
                     .feedbackConfig(
                         FeedbackCreateSchema.FeedbackConfig.builder()
                             .type(FeedbackCreateSchema.FeedbackConfig.Type.CONTINUOUS)

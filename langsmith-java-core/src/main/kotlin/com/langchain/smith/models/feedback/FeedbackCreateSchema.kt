@@ -44,6 +44,7 @@ private constructor(
     private val createdAt: JsonField<OffsetDateTime>,
     private val error: JsonField<Boolean>,
     private val extendTraceRetention: JsonField<Boolean>,
+    private val extra: JsonField<Extra>,
     private val feedbackConfig: JsonField<FeedbackConfig>,
     private val feedbackGroupId: JsonField<String>,
     private val feedbackSource: JsonField<FeedbackSource>,
@@ -76,6 +77,7 @@ private constructor(
         @JsonProperty("extend_trace_retention")
         @ExcludeMissing
         extendTraceRetention: JsonField<Boolean> = JsonMissing.of(),
+        @JsonProperty("extra") @ExcludeMissing extra: JsonField<Extra> = JsonMissing.of(),
         @JsonProperty("feedback_config")
         @ExcludeMissing
         feedbackConfig: JsonField<FeedbackConfig> = JsonMissing.of(),
@@ -108,6 +110,7 @@ private constructor(
         createdAt,
         error,
         extendTraceRetention,
+        extra,
         feedbackConfig,
         feedbackGroupId,
         feedbackSource,
@@ -160,10 +163,12 @@ private constructor(
     fun createdAt(): Optional<OffsetDateTime> = createdAt.getOptional("created_at")
 
     /**
+     * Deprecated. Use `extra.error` instead. If both values are provided, `error` takes precedence.
+     *
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
      */
-    fun error(): Optional<Boolean> = error.getOptional("error")
+    @Deprecated("deprecated") fun error(): Optional<Boolean> = error.getOptional("error")
 
     /**
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
@@ -171,6 +176,12 @@ private constructor(
      */
     fun extendTraceRetention(): Optional<Boolean> =
         extendTraceRetention.getOptional("extend_trace_retention")
+
+    /**
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
+    fun extra(): Optional<Extra> = extra.getOptional("extra")
 
     /**
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
@@ -296,7 +307,10 @@ private constructor(
      *
      * Unlike [error], this method doesn't throw if the JSON field has an unexpected type.
      */
-    @JsonProperty("error") @ExcludeMissing fun _error(): JsonField<Boolean> = error
+    @Deprecated("deprecated")
+    @JsonProperty("error")
+    @ExcludeMissing
+    fun _error(): JsonField<Boolean> = error
 
     /**
      * Returns the raw JSON value of [extendTraceRetention].
@@ -307,6 +321,13 @@ private constructor(
     @JsonProperty("extend_trace_retention")
     @ExcludeMissing
     fun _extendTraceRetention(): JsonField<Boolean> = extendTraceRetention
+
+    /**
+     * Returns the raw JSON value of [extra].
+     *
+     * Unlike [extra], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    @JsonProperty("extra") @ExcludeMissing fun _extra(): JsonField<Extra> = extra
 
     /**
      * Returns the raw JSON value of [feedbackConfig].
@@ -434,6 +455,7 @@ private constructor(
         private var createdAt: JsonField<OffsetDateTime> = JsonMissing.of()
         private var error: JsonField<Boolean> = JsonMissing.of()
         private var extendTraceRetention: JsonField<Boolean> = JsonMissing.of()
+        private var extra: JsonField<Extra> = JsonMissing.of()
         private var feedbackConfig: JsonField<FeedbackConfig> = JsonMissing.of()
         private var feedbackGroupId: JsonField<String> = JsonMissing.of()
         private var feedbackSource: JsonField<FeedbackSource> = JsonMissing.of()
@@ -457,6 +479,7 @@ private constructor(
             createdAt = feedbackCreateSchema.createdAt
             error = feedbackCreateSchema.error
             extendTraceRetention = feedbackCreateSchema.extendTraceRetention
+            extra = feedbackCreateSchema.extra
             feedbackConfig = feedbackCreateSchema.feedbackConfig
             feedbackGroupId = feedbackCreateSchema.feedbackGroupId
             feedbackSource = feedbackCreateSchema.feedbackSource
@@ -557,17 +580,21 @@ private constructor(
          */
         fun createdAt(createdAt: JsonField<OffsetDateTime>) = apply { this.createdAt = createdAt }
 
-        fun error(error: Boolean?) = error(JsonField.ofNullable(error))
+        /**
+         * Deprecated. Use `extra.error` instead. If both values are provided, `error` takes
+         * precedence.
+         */
+        @Deprecated("deprecated") fun error(error: Boolean?) = error(JsonField.ofNullable(error))
 
         /**
          * Alias for [Builder.error].
          *
          * This unboxed primitive overload exists for backwards compatibility.
          */
-        fun error(error: Boolean) = error(error as Boolean?)
+        @Deprecated("deprecated") fun error(error: Boolean) = error(error as Boolean?)
 
         /** Alias for calling [Builder.error] with `error.orElse(null)`. */
-        fun error(error: Optional<Boolean>) = error(error.getOrNull())
+        @Deprecated("deprecated") fun error(error: Optional<Boolean>) = error(error.getOrNull())
 
         /**
          * Sets [Builder.error] to an arbitrary JSON value.
@@ -575,6 +602,7 @@ private constructor(
          * You should usually call [Builder.error] with a well-typed [Boolean] value instead. This
          * method is primarily for setting the field to an undocumented or not yet supported value.
          */
+        @Deprecated("deprecated")
         fun error(error: JsonField<Boolean>) = apply { this.error = error }
 
         fun extendTraceRetention(extendTraceRetention: Boolean) =
@@ -590,6 +618,19 @@ private constructor(
         fun extendTraceRetention(extendTraceRetention: JsonField<Boolean>) = apply {
             this.extendTraceRetention = extendTraceRetention
         }
+
+        fun extra(extra: Extra?) = extra(JsonField.ofNullable(extra))
+
+        /** Alias for calling [Builder.extra] with `extra.orElse(null)`. */
+        fun extra(extra: Optional<Extra>) = extra(extra.getOrNull())
+
+        /**
+         * Sets [Builder.extra] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.extra] with a well-typed [Extra] value instead. This
+         * method is primarily for setting the field to an undocumented or not yet supported value.
+         */
+        fun extra(extra: JsonField<Extra>) = apply { this.extra = extra }
 
         fun feedbackConfig(feedbackConfig: FeedbackConfig?) =
             feedbackConfig(JsonField.ofNullable(feedbackConfig))
@@ -831,6 +872,7 @@ private constructor(
                 createdAt,
                 error,
                 extendTraceRetention,
+                extra,
                 feedbackConfig,
                 feedbackGroupId,
                 feedbackSource,
@@ -869,6 +911,7 @@ private constructor(
         createdAt()
         error()
         extendTraceRetention()
+        extra().ifPresent { it.validate() }
         feedbackConfig().ifPresent { it.validate() }
         feedbackGroupId()
         feedbackSource().ifPresent { it.validate() }
@@ -906,6 +949,7 @@ private constructor(
             (if (createdAt.asKnown().isPresent) 1 else 0) +
             (if (error.asKnown().isPresent) 1 else 0) +
             (if (extendTraceRetention.asKnown().isPresent) 1 else 0) +
+            (extra.asKnown().getOrNull()?.validity() ?: 0) +
             (feedbackConfig.asKnown().getOrNull()?.validity() ?: 0) +
             (if (feedbackGroupId.asKnown().isPresent) 1 else 0) +
             (feedbackSource.asKnown().getOrNull()?.validity() ?: 0) +
@@ -1241,6 +1285,114 @@ private constructor(
 
             override fun toString() = "UnionMember0{additionalProperties=$additionalProperties}"
         }
+    }
+
+    class Extra
+    @JsonCreator
+    private constructor(
+        @com.fasterxml.jackson.annotation.JsonValue
+        private val additionalProperties: Map<String, JsonValue>
+    ) {
+
+        @JsonAnyGetter
+        @ExcludeMissing
+        fun _additionalProperties(): Map<String, JsonValue> = additionalProperties
+
+        fun toBuilder() = Builder().from(this)
+
+        companion object {
+
+            /** Returns a mutable builder for constructing an instance of [Extra]. */
+            @JvmStatic fun builder() = Builder()
+        }
+
+        /** A builder for [Extra]. */
+        class Builder internal constructor() {
+
+            private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
+
+            @JvmSynthetic
+            internal fun from(extra: Extra) = apply {
+                additionalProperties = extra.additionalProperties.toMutableMap()
+            }
+
+            fun additionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
+                this.additionalProperties.clear()
+                putAllAdditionalProperties(additionalProperties)
+            }
+
+            fun putAdditionalProperty(key: String, value: JsonValue) = apply {
+                additionalProperties.put(key, value)
+            }
+
+            fun putAllAdditionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
+                this.additionalProperties.putAll(additionalProperties)
+            }
+
+            fun removeAdditionalProperty(key: String) = apply { additionalProperties.remove(key) }
+
+            fun removeAllAdditionalProperties(keys: Set<String>) = apply {
+                keys.forEach(::removeAdditionalProperty)
+            }
+
+            /**
+             * Returns an immutable instance of [Extra].
+             *
+             * Further updates to this [Builder] will not mutate the returned instance.
+             */
+            fun build(): Extra = Extra(additionalProperties.toImmutable())
+        }
+
+        private var validated: Boolean = false
+
+        /**
+         * Validates that the types of all values in this object match their expected types
+         * recursively.
+         *
+         * This method is _not_ forwards compatible with new types from the API for existing fields.
+         *
+         * @throws LangChainInvalidDataException if any value type in this object doesn't match its
+         *   expected type.
+         */
+        fun validate(): Extra = apply {
+            if (validated) {
+                return@apply
+            }
+
+            validated = true
+        }
+
+        fun isValid(): Boolean =
+            try {
+                validate()
+                true
+            } catch (e: LangChainInvalidDataException) {
+                false
+            }
+
+        /**
+         * Returns a score indicating how many valid values are contained in this object
+         * recursively.
+         *
+         * Used for best match union deserialization.
+         */
+        @JvmSynthetic
+        internal fun validity(): Int =
+            additionalProperties.count { (_, value) -> !value.isNull() && !value.isMissing() }
+
+        override fun equals(other: Any?): Boolean {
+            if (this === other) {
+                return true
+            }
+
+            return other is Extra && additionalProperties == other.additionalProperties
+        }
+
+        private val hashCode: Int by lazy { Objects.hash(additionalProperties) }
+
+        override fun hashCode(): Int = hashCode
+
+        override fun toString() = "Extra{additionalProperties=$additionalProperties}"
     }
 
     class FeedbackConfig
@@ -2770,6 +2922,7 @@ private constructor(
             createdAt == other.createdAt &&
             error == other.error &&
             extendTraceRetention == other.extendTraceRetention &&
+            extra == other.extra &&
             feedbackConfig == other.feedbackConfig &&
             feedbackGroupId == other.feedbackGroupId &&
             feedbackSource == other.feedbackSource &&
@@ -2794,6 +2947,7 @@ private constructor(
             createdAt,
             error,
             extendTraceRetention,
+            extra,
             feedbackConfig,
             feedbackGroupId,
             feedbackSource,
@@ -2812,5 +2966,5 @@ private constructor(
     override fun hashCode(): Int = hashCode
 
     override fun toString() =
-        "FeedbackCreateSchema{key=$key, id=$id, comment=$comment, comparativeExperimentId=$comparativeExperimentId, correction=$correction, createdAt=$createdAt, error=$error, extendTraceRetention=$extendTraceRetention, feedbackConfig=$feedbackConfig, feedbackGroupId=$feedbackGroupId, feedbackSource=$feedbackSource, feedbackThreadId=$feedbackThreadId, modifiedAt=$modifiedAt, runId=$runId, score=$score, sessionId=$sessionId, startTime=$startTime, traceId=$traceId, value=$value, additionalProperties=$additionalProperties}"
+        "FeedbackCreateSchema{key=$key, id=$id, comment=$comment, comparativeExperimentId=$comparativeExperimentId, correction=$correction, createdAt=$createdAt, error=$error, extendTraceRetention=$extendTraceRetention, extra=$extra, feedbackConfig=$feedbackConfig, feedbackGroupId=$feedbackGroupId, feedbackSource=$feedbackSource, feedbackThreadId=$feedbackThreadId, modifiedAt=$modifiedAt, runId=$runId, score=$score, sessionId=$sessionId, startTime=$startTime, traceId=$traceId, value=$value, additionalProperties=$additionalProperties}"
 }
