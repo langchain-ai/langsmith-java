@@ -43,35 +43,35 @@ configurations.all {
 dependencies {
     api("com.fasterxml.jackson.core:jackson-core:$jacksonVersion")
     api("com.fasterxml.jackson.core:jackson-databind:$jacksonVersion")
-    api("com.google.errorprone:error_prone_annotations:2.33.0")
+    api("com.google.errorprone:error_prone_annotations:2.50.0")
 
     implementation("com.fasterxml.jackson.core:jackson-annotations:$jacksonAnnotationsVersion")
     implementation("com.fasterxml.jackson.datatype:jackson-datatype-jdk8:$jacksonVersion")
     implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:$jacksonVersion")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin:$jacksonVersion")
-    implementation("com.github.luben:zstd-jni:1.5.7-7")
+    implementation("com.github.luben:zstd-jni:1.5.7-19")
     implementation("org.apache.httpcomponents.core5:httpcore5:5.4.3")
-    implementation("org.apache.httpcomponents.client5:httpclient5:5.6.3")
+    implementation("org.apache.httpcomponents.client5:httpclient5:5.6.4")
 
     // OpenTelemetry dependencies
-    api("io.opentelemetry:opentelemetry-api:1.62.0")
-    api("io.opentelemetry:opentelemetry-sdk:1.62.0")
-    api("io.opentelemetry:opentelemetry-exporter-otlp:1.62.0")
-    api("io.opentelemetry.semconv:opentelemetry-semconv:1.41.1")
+    api("io.opentelemetry:opentelemetry-api:1.66.0")
+    api("io.opentelemetry:opentelemetry-sdk:1.66.0")
+    api("io.opentelemetry:opentelemetry-exporter-otlp:1.66.0")
+    api("io.opentelemetry.semconv:opentelemetry-semconv:1.44.0")
 
     // OpenAI SDK (for wrapOpenAI tracing wrapper)
-    api("com.openai:openai-java:4.30.0")
+    api("com.openai:openai-java:4.68.0")
 
     // Mustache template engine (for prompt template formatting)
     implementation("com.samskivert:jmustache:1.16")
 
     // SLF4J for logging (API only - consumers choose implementation)
-    api("org.slf4j:slf4j-api:2.0.17")
+    api("org.slf4j:slf4j-api:2.0.20")
 
     // Anthropic SDK — optional peer dependency for prompt conversion.
     // Users who call AnthropicPayload.toAnthropicParams() must add this to their own dependencies.
-    compileOnly("com.anthropic:anthropic-java:2.18.0")
-    testImplementation("com.anthropic:anthropic-java:2.18.0")
+    compileOnly("com.anthropic:anthropic-java:2.65.0")
+    testImplementation("com.anthropic:anthropic-java:2.65.0")
 
     // Security: constrain vulnerable transitive test dependencies.
     // These constraints apply to the test scope only and do not affect published artifacts.
@@ -83,14 +83,14 @@ dependencies {
         testImplementation("org.eclipse.jetty.http2:http2-common") { version { require("12.1.10") } }
         testImplementation("org.eclipse.jetty.http2:http2-hpack") { version { require("12.1.10") } }
         testImplementation("org.eclipse.jetty.http2:http2-server") { version { require("12.1.10") } }
-        testImplementation("org.bouncycastle:bcpg-jdk18on:1.85")
-        testImplementation("org.bouncycastle:bcpkix-jdk18on:1.85")
-        testImplementation("org.bouncycastle:bcprov-jdk18on:1.85")
-        testImplementation("org.apache.logging.log4j:log4j-core:2.25.5")
+        testImplementation("org.bouncycastle:bcpg-jdk18on:1.86")
+        testImplementation("org.bouncycastle:bcpkix-jdk18on:1.86")
+        testImplementation("org.bouncycastle:bcprov-jdk18on:1.86")
+        testImplementation("org.apache.logging.log4j:log4j-core:2.26.1")
         testImplementation("org.apache.opennlp:opennlp-tools") { version { require("2.5.9") } }
         testImplementation("com.github.jknack:handlebars") { version { require("4.5.2") } }
-        testImplementation("org.codehaus.plexus:plexus-utils:4.0.3")
-        testImplementation("org.apache.commons:commons-lang3:3.18.0")
+        testImplementation("org.codehaus.plexus:plexus-utils:4.1.0")
+        testImplementation("org.apache.commons:commons-lang3:3.20.0")
         testImplementation("org.apache.commons:commons-compress") { version { require("1.28.0") } }
         testImplementation("commons-fileupload:commons-fileupload") { version { require("1.6.0") } }
         testImplementation("commons-io:commons-io") { version { require("2.22.0") } }
@@ -102,20 +102,26 @@ dependencies {
 
     testImplementation(kotlin("test"))
     // Simple logging for tests only
-    testImplementation("org.slf4j:slf4j-simple:2.0.17")
+    testImplementation("org.slf4j:slf4j-simple:2.0.20")
     testImplementation(project(":langsmith-java-client-okhttp"))
-    testImplementation("org.wiremock:wiremock:4.0.0-beta.37")
-    testImplementation("org.wiremock:wiremock-junit5:4.0.0-beta.37")
+    testImplementation("org.bouncycastle:bcpkix-jdk18on:1.86")
+    testImplementation("org.bouncycastle:bcprov-jdk18on:1.86")
+    testImplementation("org.wiremock:wiremock:4.0.0-beta.38") {
+        exclude(group = "org.bouncycastle")
+    }
+    testImplementation("org.wiremock:wiremock-junit5:4.0.0-beta.38") {
+        exclude(group = "org.bouncycastle")
+    }
     testImplementation("org.assertj:assertj-core:3.27.7")
-    testImplementation("org.junit.jupiter:junit-jupiter-api:5.9.3")
-    testImplementation("org.junit.jupiter:junit-jupiter-params:5.9.3")
-    testImplementation("org.junit-pioneer:junit-pioneer:1.9.1")
-    testImplementation("org.mockito:mockito-core:5.14.2")
-    testImplementation("org.mockito:mockito-junit-jupiter:5.14.2")
+    testImplementation("org.junit.jupiter:junit-jupiter-api:5.14.4")
+    testImplementation("org.junit.jupiter:junit-jupiter-params:5.14.4")
+    testImplementation("org.junit-pioneer:junit-pioneer:2.3.0")
+    testImplementation("org.mockito:mockito-core:5.23.0")
+    testImplementation("org.mockito:mockito-junit-jupiter:5.23.0")
     testImplementation("org.mockito.kotlin:mockito-kotlin:4.1.0")
-    mockitoAgent("org.mockito:mockito-core:5.14.2") { isTransitive = false }
+    mockitoAgent("org.mockito:mockito-core:5.23.0") { isTransitive = false }
 
     // LangChain4j for testing parallel tool execution context propagation
-    testImplementation("dev.langchain4j:langchain4j:1.12.2")
-    testImplementation("dev.langchain4j:langchain4j-core:1.12.2")
+    testImplementation("dev.langchain4j:langchain4j:1.20.0")
+    testImplementation("dev.langchain4j:langchain4j-core:1.20.0")
 }
