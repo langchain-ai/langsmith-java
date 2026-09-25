@@ -51,8 +51,11 @@ internal class EvaluateRunner(
             updateExperimentMetadata(sessionId, examples)
         }
 
-        // LangSmith UI URLs are not exposed on the Java session schema yet.
-        val url: String? = null
+        val tenantId = extractTenantId(client)
+        val session = if (params.uploadResults && sessionId != null) {
+            runCatching { loadExperiment(client, sessionId) }.getOrNull()
+        } else null
+        val url = buildExperimentUrl(session, datasetId, tenantId)
 
         return ExperimentResults(
             experimentName = experimentName,
