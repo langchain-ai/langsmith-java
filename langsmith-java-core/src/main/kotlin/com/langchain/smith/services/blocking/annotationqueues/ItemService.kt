@@ -157,7 +157,10 @@ interface ItemService {
     ): ItemCreateStatusResponse =
         createStatus(queueItemId, ItemCreateStatusParams.none(), requestOptions)
 
-    /** Remove RUN or THREAD items from a single annotation queue by item ID. */
+    /**
+     * Remove RUN or THREAD items from a single annotation queue by item ID. Both active and
+     * completed items can be removed.
+     */
     fun deleteAll(queueId: String): ItemDeleteAllResponse =
         deleteAll(queueId, ItemDeleteAllParams.none())
 
