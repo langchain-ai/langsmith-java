@@ -17,6 +17,8 @@ internal class FeedbackCreateSchemaTest {
             FeedbackCreateSchema.builder()
                 .key("key")
                 .id("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                .agentEnvironment(FeedbackCreateSchema.AgentEnvironment.LOCAL)
+                .agentId("agent_id")
                 .comment("comment")
                 .comparativeExperimentId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                 .correction(
@@ -68,6 +70,9 @@ internal class FeedbackCreateSchemaTest {
 
         assertThat(feedbackCreateSchema.key()).isEqualTo("key")
         assertThat(feedbackCreateSchema.id()).contains("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+        assertThat(feedbackCreateSchema.agentEnvironment())
+            .contains(FeedbackCreateSchema.AgentEnvironment.LOCAL)
+        assertThat(feedbackCreateSchema.agentId()).contains("agent_id")
         assertThat(feedbackCreateSchema.comment()).contains("comment")
         assertThat(feedbackCreateSchema.comparativeExperimentId())
             .contains("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
@@ -138,6 +143,8 @@ internal class FeedbackCreateSchemaTest {
             FeedbackCreateSchema.builder()
                 .key("key")
                 .id("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                .agentEnvironment(FeedbackCreateSchema.AgentEnvironment.LOCAL)
+                .agentId("agent_id")
                 .comment("comment")
                 .comparativeExperimentId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                 .correction(

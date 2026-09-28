@@ -16,6 +16,8 @@ internal class RunIngestTest {
         val runIngest =
             RunIngest.builder()
                 .id("id")
+                .agentEnvironment(RunIngest.AgentEnvironment.LOCAL)
+                .agentId("agent_id")
                 .dottedOrder("dotted_order")
                 .endTime("end_time")
                 .error("error")
@@ -67,6 +69,8 @@ internal class RunIngestTest {
                 .build()
 
         assertThat(runIngest.id()).contains("id")
+        assertThat(runIngest.agentEnvironment()).contains(RunIngest.AgentEnvironment.LOCAL)
+        assertThat(runIngest.agentId()).contains("agent_id")
         assertThat(runIngest.dottedOrder()).contains("dotted_order")
         assertThat(runIngest.endTime()).contains("end_time")
         assertThat(runIngest.error()).contains("error")
@@ -130,6 +134,8 @@ internal class RunIngestTest {
         val runIngest =
             RunIngest.builder()
                 .id("id")
+                .agentEnvironment(RunIngest.AgentEnvironment.LOCAL)
+                .agentId("agent_id")
                 .dottedOrder("dotted_order")
                 .endTime("end_time")
                 .error("error")

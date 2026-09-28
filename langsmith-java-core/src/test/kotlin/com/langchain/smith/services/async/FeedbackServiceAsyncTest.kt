@@ -29,6 +29,8 @@ internal class FeedbackServiceAsyncTest {
                 FeedbackCreateSchema.builder()
                     .key("key")
                     .id("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                    .agentEnvironment(FeedbackCreateSchema.AgentEnvironment.LOCAL)
+                    .agentId("agent_id")
                     .comment("comment")
                     .comparativeExperimentId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                     .correction(

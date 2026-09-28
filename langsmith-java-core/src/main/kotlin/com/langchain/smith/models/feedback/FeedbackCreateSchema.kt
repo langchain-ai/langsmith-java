@@ -38,6 +38,8 @@ class FeedbackCreateSchema
 private constructor(
     private val key: JsonField<String>,
     private val id: JsonField<String>,
+    private val agentEnvironment: JsonField<AgentEnvironment>,
+    private val agentId: JsonField<String>,
     private val comment: JsonField<String>,
     private val comparativeExperimentId: JsonField<String>,
     private val correction: JsonField<Correction>,
@@ -63,6 +65,10 @@ private constructor(
     private constructor(
         @JsonProperty("key") @ExcludeMissing key: JsonField<String> = JsonMissing.of(),
         @JsonProperty("id") @ExcludeMissing id: JsonField<String> = JsonMissing.of(),
+        @JsonProperty("agent_environment")
+        @ExcludeMissing
+        agentEnvironment: JsonField<AgentEnvironment> = JsonMissing.of(),
+        @JsonProperty("agent_id") @ExcludeMissing agentId: JsonField<String> = JsonMissing.of(),
         @JsonProperty("comment") @ExcludeMissing comment: JsonField<String> = JsonMissing.of(),
         @JsonProperty("comparative_experiment_id")
         @ExcludeMissing
@@ -104,6 +110,8 @@ private constructor(
     ) : this(
         key,
         id,
+        agentEnvironment,
+        agentId,
         comment,
         comparativeExperimentId,
         correction,
@@ -136,6 +144,30 @@ private constructor(
      *   server responded with an unexpected value).
      */
     fun id(): Optional<String> = id.getOptional("id")
+
+    /**
+     * Experimental. Only supported in workspaces where Agent addressing is enabled; other
+     * workspaces get a 403. The Agent environment whose tracing project the feedback belongs to.
+     * Matched case-insensitively. Sent together with agent_id.
+     *
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
+    fun agentEnvironment(): Optional<AgentEnvironment> =
+        agentEnvironment.getOptional("agent_environment")
+
+    /**
+     * Experimental. Only supported in workspaces where Agent addressing is enabled; other
+     * workspaces get a 403. The Agent's id, not a UUID: 1 to 63 lowercase ASCII letters, digits, or
+     * hyphens, starting with a letter and ending with a letter or digit (e.g. support-agent).
+     * Addresses the tracing project through an Agent instead of session_id. Sent together with
+     * agent_environment, and never alongside session_id. The Agent and the environment must already
+     * exist; sending feedback does not create them.
+     *
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
+    fun agentId(): Optional<String> = agentId.getOptional("agent_id")
 
     /**
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
@@ -228,7 +260,8 @@ private constructor(
     fun score(): Optional<Score> = score.getOptional("score")
 
     /**
-     * Required. The ID of the tracing project (session) the feedback belongs to.
+     * Required unless the feedback is addressed by agent_id and agent_environment. The ID of the
+     * tracing project (session) the feedback belongs to.
      *
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
@@ -266,6 +299,23 @@ private constructor(
      * Unlike [id], this method doesn't throw if the JSON field has an unexpected type.
      */
     @JsonProperty("id") @ExcludeMissing fun _id(): JsonField<String> = id
+
+    /**
+     * Returns the raw JSON value of [agentEnvironment].
+     *
+     * Unlike [agentEnvironment], this method doesn't throw if the JSON field has an unexpected
+     * type.
+     */
+    @JsonProperty("agent_environment")
+    @ExcludeMissing
+    fun _agentEnvironment(): JsonField<AgentEnvironment> = agentEnvironment
+
+    /**
+     * Returns the raw JSON value of [agentId].
+     *
+     * Unlike [agentId], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    @JsonProperty("agent_id") @ExcludeMissing fun _agentId(): JsonField<String> = agentId
 
     /**
      * Returns the raw JSON value of [comment].
@@ -449,6 +499,8 @@ private constructor(
 
         private var key: JsonField<String>? = null
         private var id: JsonField<String> = JsonMissing.of()
+        private var agentEnvironment: JsonField<AgentEnvironment> = JsonMissing.of()
+        private var agentId: JsonField<String> = JsonMissing.of()
         private var comment: JsonField<String> = JsonMissing.of()
         private var comparativeExperimentId: JsonField<String> = JsonMissing.of()
         private var correction: JsonField<Correction> = JsonMissing.of()
@@ -473,6 +525,8 @@ private constructor(
         internal fun from(feedbackCreateSchema: FeedbackCreateSchema) = apply {
             key = feedbackCreateSchema.key
             id = feedbackCreateSchema.id
+            agentEnvironment = feedbackCreateSchema.agentEnvironment
+            agentId = feedbackCreateSchema.agentId
             comment = feedbackCreateSchema.comment
             comparativeExperimentId = feedbackCreateSchema.comparativeExperimentId
             correction = feedbackCreateSchema.correction
@@ -513,6 +567,50 @@ private constructor(
          * method is primarily for setting the field to an undocumented or not yet supported value.
          */
         fun id(id: JsonField<String>) = apply { this.id = id }
+
+        /**
+         * Experimental. Only supported in workspaces where Agent addressing is enabled; other
+         * workspaces get a 403. The Agent environment whose tracing project the feedback belongs
+         * to. Matched case-insensitively. Sent together with agent_id.
+         */
+        fun agentEnvironment(agentEnvironment: AgentEnvironment?) =
+            agentEnvironment(JsonField.ofNullable(agentEnvironment))
+
+        /** Alias for calling [Builder.agentEnvironment] with `agentEnvironment.orElse(null)`. */
+        fun agentEnvironment(agentEnvironment: Optional<AgentEnvironment>) =
+            agentEnvironment(agentEnvironment.getOrNull())
+
+        /**
+         * Sets [Builder.agentEnvironment] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.agentEnvironment] with a well-typed [AgentEnvironment]
+         * value instead. This method is primarily for setting the field to an undocumented or not
+         * yet supported value.
+         */
+        fun agentEnvironment(agentEnvironment: JsonField<AgentEnvironment>) = apply {
+            this.agentEnvironment = agentEnvironment
+        }
+
+        /**
+         * Experimental. Only supported in workspaces where Agent addressing is enabled; other
+         * workspaces get a 403. The Agent's id, not a UUID: 1 to 63 lowercase ASCII letters,
+         * digits, or hyphens, starting with a letter and ending with a letter or digit (e.g.
+         * support-agent). Addresses the tracing project through an Agent instead of session_id.
+         * Sent together with agent_environment, and never alongside session_id. The Agent and the
+         * environment must already exist; sending feedback does not create them.
+         */
+        fun agentId(agentId: String?) = agentId(JsonField.ofNullable(agentId))
+
+        /** Alias for calling [Builder.agentId] with `agentId.orElse(null)`. */
+        fun agentId(agentId: Optional<String>) = agentId(agentId.getOrNull())
+
+        /**
+         * Sets [Builder.agentId] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.agentId] with a well-typed [String] value instead. This
+         * method is primarily for setting the field to an undocumented or not yet supported value.
+         */
+        fun agentId(agentId: JsonField<String>) = apply { this.agentId = agentId }
 
         fun comment(comment: String?) = comment(JsonField.ofNullable(comment))
 
@@ -764,7 +862,10 @@ private constructor(
         /** Alias for calling [score] with `Score.ofBool(bool)`. */
         fun score(bool: Boolean) = score(Score.ofBool(bool))
 
-        /** Required. The ID of the tracing project (session) the feedback belongs to. */
+        /**
+         * Required unless the feedback is addressed by agent_id and agent_environment. The ID of
+         * the tracing project (session) the feedback belongs to.
+         */
         fun sessionId(sessionId: String?) = sessionId(JsonField.ofNullable(sessionId))
 
         /** Alias for calling [Builder.sessionId] with `sessionId.orElse(null)`. */
@@ -866,6 +967,8 @@ private constructor(
             FeedbackCreateSchema(
                 checkRequired("key", key),
                 id,
+                agentEnvironment,
+                agentId,
                 comment,
                 comparativeExperimentId,
                 correction,
@@ -905,6 +1008,8 @@ private constructor(
 
         key()
         id()
+        agentEnvironment().ifPresent { it.validate() }
+        agentId()
         comment()
         comparativeExperimentId()
         correction().ifPresent { it.validate() }
@@ -943,6 +1048,8 @@ private constructor(
     internal fun validity(): Int =
         (if (key.asKnown().isPresent) 1 else 0) +
             (if (id.asKnown().isPresent) 1 else 0) +
+            (agentEnvironment.asKnown().getOrNull()?.validity() ?: 0) +
+            (if (agentId.asKnown().isPresent) 1 else 0) +
             (if (comment.asKnown().isPresent) 1 else 0) +
             (if (comparativeExperimentId.asKnown().isPresent) 1 else 0) +
             (correction.asKnown().getOrNull()?.validity() ?: 0) +
@@ -961,6 +1068,163 @@ private constructor(
             (if (startTime.asKnown().isPresent) 1 else 0) +
             (if (traceId.asKnown().isPresent) 1 else 0) +
             (value.asKnown().getOrNull()?.validity() ?: 0)
+
+    /**
+     * Experimental. Only supported in workspaces where Agent addressing is enabled; other
+     * workspaces get a 403. The Agent environment whose tracing project the feedback belongs to.
+     * Matched case-insensitively. Sent together with agent_id.
+     */
+    class AgentEnvironment @JsonCreator private constructor(private val value: JsonField<String>) :
+        Enum {
+
+        /**
+         * Returns this class instance's raw value.
+         *
+         * This is usually only useful if this instance was deserialized from data that doesn't
+         * match any known member, and you want to know that value. For example, if the SDK is on an
+         * older version than the API, then the API may respond with new members that the SDK is
+         * unaware of.
+         */
+        @com.fasterxml.jackson.annotation.JsonValue fun _value(): JsonField<String> = value
+
+        companion object {
+
+            @JvmField val LOCAL = of("LOCAL")
+
+            @JvmField val DEVELOPMENT = of("DEVELOPMENT")
+
+            @JvmField val STAGING = of("STAGING")
+
+            @JvmField val PRODUCTION = of("PRODUCTION")
+
+            @JvmStatic fun of(value: String) = AgentEnvironment(JsonField.of(value))
+        }
+
+        /** An enum containing [AgentEnvironment]'s known values. */
+        enum class Known {
+            LOCAL,
+            DEVELOPMENT,
+            STAGING,
+            PRODUCTION,
+        }
+
+        /**
+         * An enum containing [AgentEnvironment]'s known values, as well as an [_UNKNOWN] member.
+         *
+         * An instance of [AgentEnvironment] can contain an unknown value in a couple of cases:
+         * - It was deserialized from data that doesn't match any known member. For example, if the
+         *   SDK is on an older version than the API, then the API may respond with new members that
+         *   the SDK is unaware of.
+         * - It was constructed with an arbitrary value using the [of] method.
+         */
+        enum class Value {
+            LOCAL,
+            DEVELOPMENT,
+            STAGING,
+            PRODUCTION,
+            /**
+             * An enum member indicating that [AgentEnvironment] was instantiated with an unknown
+             * value.
+             */
+            _UNKNOWN,
+        }
+
+        /**
+         * Returns an enum member corresponding to this class instance's value, or [Value._UNKNOWN]
+         * if the class was instantiated with an unknown value.
+         *
+         * Use the [known] method instead if you're certain the value is always known or if you want
+         * to throw for the unknown case.
+         */
+        fun value(): Value =
+            when (this) {
+                LOCAL -> Value.LOCAL
+                DEVELOPMENT -> Value.DEVELOPMENT
+                STAGING -> Value.STAGING
+                PRODUCTION -> Value.PRODUCTION
+                else -> Value._UNKNOWN
+            }
+
+        /**
+         * Returns an enum member corresponding to this class instance's value.
+         *
+         * Use the [value] method instead if you're uncertain the value is always known and don't
+         * want to throw for the unknown case.
+         *
+         * @throws LangChainInvalidDataException if this class instance's value is a not a known
+         *   member.
+         */
+        fun known(): Known =
+            when (this) {
+                LOCAL -> Known.LOCAL
+                DEVELOPMENT -> Known.DEVELOPMENT
+                STAGING -> Known.STAGING
+                PRODUCTION -> Known.PRODUCTION
+                else -> throw LangChainInvalidDataException("Unknown AgentEnvironment: $value")
+            }
+
+        /**
+         * Returns this class instance's primitive wire representation.
+         *
+         * This differs from the [toString] method because that method is primarily for debugging
+         * and generally doesn't throw.
+         *
+         * @throws LangChainInvalidDataException if this class instance's value does not have the
+         *   expected primitive type.
+         */
+        fun asString(): String =
+            _value().asString().orElseThrow {
+                LangChainInvalidDataException("Value is not a String")
+            }
+
+        private var validated: Boolean = false
+
+        /**
+         * Validates that the types of all values in this object match their expected types
+         * recursively.
+         *
+         * This method is _not_ forwards compatible with new types from the API for existing fields.
+         *
+         * @throws LangChainInvalidDataException if any value type in this object doesn't match its
+         *   expected type.
+         */
+        fun validate(): AgentEnvironment = apply {
+            if (validated) {
+                return@apply
+            }
+
+            known()
+            validated = true
+        }
+
+        fun isValid(): Boolean =
+            try {
+                validate()
+                true
+            } catch (e: LangChainInvalidDataException) {
+                false
+            }
+
+        /**
+         * Returns a score indicating how many valid values are contained in this object
+         * recursively.
+         *
+         * Used for best match union deserialization.
+         */
+        @JvmSynthetic internal fun validity(): Int = if (value() == Value._UNKNOWN) 0 else 1
+
+        override fun equals(other: Any?): Boolean {
+            if (this === other) {
+                return true
+            }
+
+            return other is AgentEnvironment && value == other.value
+        }
+
+        override fun hashCode() = value.hashCode()
+
+        override fun toString() = value.toString()
+    }
 
     @JsonDeserialize(using = Correction.Deserializer::class)
     @JsonSerialize(using = Correction.Serializer::class)
@@ -2916,6 +3180,8 @@ private constructor(
         return other is FeedbackCreateSchema &&
             key == other.key &&
             id == other.id &&
+            agentEnvironment == other.agentEnvironment &&
+            agentId == other.agentId &&
             comment == other.comment &&
             comparativeExperimentId == other.comparativeExperimentId &&
             correction == other.correction &&
@@ -2941,6 +3207,8 @@ private constructor(
         Objects.hash(
             key,
             id,
+            agentEnvironment,
+            agentId,
             comment,
             comparativeExperimentId,
             correction,
@@ -2966,5 +3234,5 @@ private constructor(
     override fun hashCode(): Int = hashCode
 
     override fun toString() =
-        "FeedbackCreateSchema{key=$key, id=$id, comment=$comment, comparativeExperimentId=$comparativeExperimentId, correction=$correction, createdAt=$createdAt, error=$error, extendTraceRetention=$extendTraceRetention, extra=$extra, feedbackConfig=$feedbackConfig, feedbackGroupId=$feedbackGroupId, feedbackSource=$feedbackSource, feedbackThreadId=$feedbackThreadId, modifiedAt=$modifiedAt, runId=$runId, score=$score, sessionId=$sessionId, startTime=$startTime, traceId=$traceId, value=$value, additionalProperties=$additionalProperties}"
+        "FeedbackCreateSchema{key=$key, id=$id, agentEnvironment=$agentEnvironment, agentId=$agentId, comment=$comment, comparativeExperimentId=$comparativeExperimentId, correction=$correction, createdAt=$createdAt, error=$error, extendTraceRetention=$extendTraceRetention, extra=$extra, feedbackConfig=$feedbackConfig, feedbackGroupId=$feedbackGroupId, feedbackSource=$feedbackSource, feedbackThreadId=$feedbackThreadId, modifiedAt=$modifiedAt, runId=$runId, score=$score, sessionId=$sessionId, startTime=$startTime, traceId=$traceId, value=$value, additionalProperties=$additionalProperties}"
 }

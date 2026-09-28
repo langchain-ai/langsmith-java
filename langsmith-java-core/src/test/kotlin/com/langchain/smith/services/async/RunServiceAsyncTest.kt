@@ -188,6 +188,8 @@ internal class RunServiceAsyncTest {
             runServiceAsync.create(
                 RunIngest.builder()
                     .id("id")
+                    .agentEnvironment(RunIngest.AgentEnvironment.LOCAL)
+                    .agentId("agent_id")
                     .dottedOrder("dotted_order")
                     .endTime("end_time")
                     .error("error")
@@ -259,6 +261,8 @@ internal class RunServiceAsyncTest {
                     .runIngest(
                         RunIngest.builder()
                             .id("id")
+                            .agentEnvironment(RunIngest.AgentEnvironment.LOCAL)
+                            .agentId("agent_id")
                             .dottedOrder("dotted_order")
                             .endTime("end_time")
                             .error("error")
@@ -355,6 +359,8 @@ internal class RunServiceAsyncTest {
                     .addPatch(
                         RunIngest.builder()
                             .id("id")
+                            .agentEnvironment(RunIngest.AgentEnvironment.LOCAL)
+                            .agentId("agent_id")
                             .dottedOrder("dotted_order")
                             .endTime("end_time")
                             .error("error")
@@ -408,6 +414,8 @@ internal class RunServiceAsyncTest {
                     .addPost(
                         RunIngest.builder()
                             .id("id")
+                            .agentEnvironment(RunIngest.AgentEnvironment.LOCAL)
+                            .agentId("agent_id")
                             .dottedOrder("dotted_order")
                             .endTime("end_time")
                             .error("error")
@@ -615,6 +623,8 @@ internal class RunServiceAsyncTest {
                     .runIngest(
                         RunIngest.builder()
                             .id("id")
+                            .agentEnvironment(RunIngest.AgentEnvironment.LOCAL)
+                            .agentId("agent_id")
                             .dottedOrder("dotted_order")
                             .endTime("end_time")
                             .error("error")

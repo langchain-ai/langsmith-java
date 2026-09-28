@@ -15,6 +15,8 @@ internal class RunIngestBatchParamsTest {
             .addPatch(
                 RunIngest.builder()
                     .id("id")
+                    .agentEnvironment(RunIngest.AgentEnvironment.LOCAL)
+                    .agentId("agent_id")
                     .dottedOrder("dotted_order")
                     .endTime("end_time")
                     .error("error")
@@ -68,6 +70,8 @@ internal class RunIngestBatchParamsTest {
             .addPost(
                 RunIngest.builder()
                     .id("id")
+                    .agentEnvironment(RunIngest.AgentEnvironment.LOCAL)
+                    .agentId("agent_id")
                     .dottedOrder("dotted_order")
                     .endTime("end_time")
                     .error("error")
@@ -128,6 +132,8 @@ internal class RunIngestBatchParamsTest {
                 .addPatch(
                     RunIngest.builder()
                         .id("id")
+                        .agentEnvironment(RunIngest.AgentEnvironment.LOCAL)
+                        .agentId("agent_id")
                         .dottedOrder("dotted_order")
                         .endTime("end_time")
                         .error("error")
@@ -181,6 +187,8 @@ internal class RunIngestBatchParamsTest {
                 .addPost(
                     RunIngest.builder()
                         .id("id")
+                        .agentEnvironment(RunIngest.AgentEnvironment.LOCAL)
+                        .agentId("agent_id")
                         .dottedOrder("dotted_order")
                         .endTime("end_time")
                         .error("error")
@@ -239,6 +247,8 @@ internal class RunIngestBatchParamsTest {
             .containsExactly(
                 RunIngest.builder()
                     .id("id")
+                    .agentEnvironment(RunIngest.AgentEnvironment.LOCAL)
+                    .agentId("agent_id")
                     .dottedOrder("dotted_order")
                     .endTime("end_time")
                     .error("error")
@@ -293,6 +303,8 @@ internal class RunIngestBatchParamsTest {
             .containsExactly(
                 RunIngest.builder()
                     .id("id")
+                    .agentEnvironment(RunIngest.AgentEnvironment.LOCAL)
+                    .agentId("agent_id")
                     .dottedOrder("dotted_order")
                     .endTime("end_time")
                     .error("error")

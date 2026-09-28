@@ -640,6 +640,8 @@ internal class RunServiceTest {
                     .addPatch(
                         RunIngest.builder()
                             .id("id")
+                            .agentEnvironment(RunIngest.AgentEnvironment.LOCAL)
+                            .agentId("agent_id")
                             .dottedOrder("dotted_order")
                             .endTime("end_time")
                             .error("error")
@@ -693,6 +695,8 @@ internal class RunServiceTest {
                     .addPost(
                         RunIngest.builder()
                             .id("id")
+                            .agentEnvironment(RunIngest.AgentEnvironment.LOCAL)
+                            .agentId("agent_id")
                             .dottedOrder("dotted_order")
                             .endTime("end_time")
                             .error("error")
@@ -876,6 +880,8 @@ internal class RunServiceTest {
                     .runIngest(
                         RunIngest.builder()
                             .id("id")
+                            .agentEnvironment(RunIngest.AgentEnvironment.LOCAL)
+                            .agentId("agent_id")
                             .dottedOrder("dotted_order")
                             .endTime("end_time")
                             .error("error")
