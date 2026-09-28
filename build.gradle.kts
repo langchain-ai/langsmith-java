@@ -14,6 +14,7 @@ buildscript {
                 // CVE-2026-49844.
                 "org.apache.logging.log4j:log4j-api:2.26.1",
                 "org.apache.logging.log4j:log4j-core:2.26.1",
+                "org.freemarker:freemarker:2.3.35",
             )
         }
     }
