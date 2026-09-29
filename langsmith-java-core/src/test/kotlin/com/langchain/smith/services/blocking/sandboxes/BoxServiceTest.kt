@@ -487,6 +487,7 @@ internal class BoxServiceTest {
                     .path("path")
                     .contentDisposition("content_disposition")
                     .contentType("content_type")
+                    .cspSandbox(true)
                     .addCspSandboxFlag(BoxGenerateDownloadUrlParams.CspSandboxFlag.ALLOW_DOWNLOADS)
                     .addCspSourceBundle(BoxGenerateDownloadUrlParams.CspSourceBundle.CDNJS)
                     .expiresInSeconds(0L)

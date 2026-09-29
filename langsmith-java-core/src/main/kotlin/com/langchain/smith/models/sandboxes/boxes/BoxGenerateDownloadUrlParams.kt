@@ -29,16 +29,18 @@ import kotlin.jvm.optionals.getOrNull
  * 200 with no Location header. The token pins the sandbox, the file path, the response content type
  * and disposition, and the sandbox flags, so a link cannot be repointed at another file or served
  * under a weaker policy. The file is always served with a Content-Security-Policy: a sandbox
- * directive, plus a default-src holding every fetch to the sandbox's own download host and a set of
+ * directive, plus a default-src holding every fetch to the file's own download host and a set of
  * pre-approved third-party origins. csp_sandbox_flags may loosen the sandbox with allow-downloads,
  * allow-forms, allow-modals, allow-orientation-lock, allow-pointer-lock, allow-popups,
- * allow-presentation, allow-scripts, or allow-top-navigation-by-user-activation. allow-same-origin
- * is not accepted, so a served file never shares an origin with anything. csp_source_bundles
- * selects the third-party origins: cdnjs, google-fonts, jsdelivr, and unpkg are all allowed when
- * the field is omitted, and 'none' holds the file to the sandbox alone. Because every file of one
- * sandbox is served from the same host, a page can load sibling files it has links for, but only by
- * their own link URLs. Links never expire unless expires_in_seconds is set. The link is served from
- * the sandbox service domain, not the API host.
+ * allow-presentation, allow-same-origin, allow-scripts, or allow-top-navigation-by-user-activation.
+ * Every file is served from its own host, derived from the sandbox and the path, so
+ * allow-same-origin gives a page localStorage and IndexedDB that no other file can read, and
+ * re-minting a link for the same file keeps them. csp_sandbox set to false drops the sandbox
+ * directive altogether, and csp_sandbox_flags must then be omitted. csp_source_bundles selects the
+ * third-party origins: cdnjs, google-fonts, jsdelivr, and unpkg are all allowed when the field is
+ * omitted, 'none' holds the file to its own host, and 'any' sends no default-src at all. Links
+ * never expire unless expires_in_seconds is set. The link is served from the sandbox service
+ * domain, not the API host.
  */
 class BoxGenerateDownloadUrlParams
 private constructor(
@@ -67,6 +69,14 @@ private constructor(
      *   server responded with an unexpected value).
      */
     fun contentType(): Optional<String> = body.contentType()
+
+    /**
+     * CSPSandbox false serves the file with no CSP sandbox directive; omit to keep it.
+     *
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
+    fun cspSandbox(): Optional<Boolean> = body.cspSandbox()
 
     /**
      * CSPSandboxFlags loosen the CSP sandbox the file is served under; omit for the most
@@ -115,6 +125,13 @@ private constructor(
      * Unlike [contentType], this method doesn't throw if the JSON field has an unexpected type.
      */
     fun _contentType(): JsonField<String> = body._contentType()
+
+    /**
+     * Returns the raw JSON value of [cspSandbox].
+     *
+     * Unlike [cspSandbox], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    fun _cspSandbox(): JsonField<Boolean> = body._cspSandbox()
 
     /**
      * Returns the raw JSON value of [cspSandboxFlags].
@@ -191,8 +208,8 @@ private constructor(
          * - [path]
          * - [contentDisposition]
          * - [contentType]
+         * - [cspSandbox]
          * - [cspSandboxFlags]
-         * - [cspSourceBundles]
          * - etc.
          */
         fun body(body: Body) = apply { this.body = body.toBuilder() }
@@ -232,6 +249,18 @@ private constructor(
          * value.
          */
         fun contentType(contentType: JsonField<String>) = apply { body.contentType(contentType) }
+
+        /** CSPSandbox false serves the file with no CSP sandbox directive; omit to keep it. */
+        fun cspSandbox(cspSandbox: Boolean) = apply { body.cspSandbox(cspSandbox) }
+
+        /**
+         * Sets [Builder.cspSandbox] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.cspSandbox] with a well-typed [Boolean] value instead.
+         * This method is primarily for setting the field to an undocumented or not yet supported
+         * value.
+         */
+        fun cspSandbox(cspSandbox: JsonField<Boolean>) = apply { body.cspSandbox(cspSandbox) }
 
         /**
          * CSPSandboxFlags loosen the CSP sandbox the file is served under; omit for the most
@@ -461,6 +490,7 @@ private constructor(
         private val path: JsonField<String>,
         private val contentDisposition: JsonField<String>,
         private val contentType: JsonField<String>,
+        private val cspSandbox: JsonField<Boolean>,
         private val cspSandboxFlags: JsonField<List<CspSandboxFlag>>,
         private val cspSourceBundles: JsonField<List<CspSourceBundle>>,
         private val expiresInSeconds: JsonField<Long>,
@@ -476,6 +506,9 @@ private constructor(
             @JsonProperty("content_type")
             @ExcludeMissing
             contentType: JsonField<String> = JsonMissing.of(),
+            @JsonProperty("csp_sandbox")
+            @ExcludeMissing
+            cspSandbox: JsonField<Boolean> = JsonMissing.of(),
             @JsonProperty("csp_sandbox_flags")
             @ExcludeMissing
             cspSandboxFlags: JsonField<List<CspSandboxFlag>> = JsonMissing.of(),
@@ -489,6 +522,7 @@ private constructor(
             path,
             contentDisposition,
             contentType,
+            cspSandbox,
             cspSandboxFlags,
             cspSourceBundles,
             expiresInSeconds,
@@ -513,6 +547,14 @@ private constructor(
          *   the server responded with an unexpected value).
          */
         fun contentType(): Optional<String> = contentType.getOptional("content_type")
+
+        /**
+         * CSPSandbox false serves the file with no CSP sandbox directive; omit to keep it.
+         *
+         * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
+         *   the server responded with an unexpected value).
+         */
+        fun cspSandbox(): Optional<Boolean> = cspSandbox.getOptional("csp_sandbox")
 
         /**
          * CSPSandboxFlags loosen the CSP sandbox the file is served under; omit for the most
@@ -567,6 +609,15 @@ private constructor(
         @JsonProperty("content_type")
         @ExcludeMissing
         fun _contentType(): JsonField<String> = contentType
+
+        /**
+         * Returns the raw JSON value of [cspSandbox].
+         *
+         * Unlike [cspSandbox], this method doesn't throw if the JSON field has an unexpected type.
+         */
+        @JsonProperty("csp_sandbox")
+        @ExcludeMissing
+        fun _cspSandbox(): JsonField<Boolean> = cspSandbox
 
         /**
          * Returns the raw JSON value of [cspSandboxFlags].
@@ -629,6 +680,7 @@ private constructor(
             private var path: JsonField<String>? = null
             private var contentDisposition: JsonField<String> = JsonMissing.of()
             private var contentType: JsonField<String> = JsonMissing.of()
+            private var cspSandbox: JsonField<Boolean> = JsonMissing.of()
             private var cspSandboxFlags: JsonField<MutableList<CspSandboxFlag>>? = null
             private var cspSourceBundles: JsonField<MutableList<CspSourceBundle>>? = null
             private var expiresInSeconds: JsonField<Long> = JsonMissing.of()
@@ -639,6 +691,7 @@ private constructor(
                 path = body.path
                 contentDisposition = body.contentDisposition
                 contentType = body.contentType
+                cspSandbox = body.cspSandbox
                 cspSandboxFlags = body.cspSandboxFlags.map { it.toMutableList() }
                 cspSourceBundles = body.cspSourceBundles.map { it.toMutableList() }
                 expiresInSeconds = body.expiresInSeconds
@@ -682,6 +735,18 @@ private constructor(
             fun contentType(contentType: JsonField<String>) = apply {
                 this.contentType = contentType
             }
+
+            /** CSPSandbox false serves the file with no CSP sandbox directive; omit to keep it. */
+            fun cspSandbox(cspSandbox: Boolean) = cspSandbox(JsonField.of(cspSandbox))
+
+            /**
+             * Sets [Builder.cspSandbox] to an arbitrary JSON value.
+             *
+             * You should usually call [Builder.cspSandbox] with a well-typed [Boolean] value
+             * instead. This method is primarily for setting the field to an undocumented or not yet
+             * supported value.
+             */
+            fun cspSandbox(cspSandbox: JsonField<Boolean>) = apply { this.cspSandbox = cspSandbox }
 
             /**
              * CSPSandboxFlags loosen the CSP sandbox the file is served under; omit for the most
@@ -794,6 +859,7 @@ private constructor(
                     checkRequired("path", path),
                     contentDisposition,
                     contentType,
+                    cspSandbox,
                     (cspSandboxFlags ?: JsonMissing.of()).map { it.toImmutable() },
                     (cspSourceBundles ?: JsonMissing.of()).map { it.toImmutable() },
                     expiresInSeconds,
@@ -820,6 +886,7 @@ private constructor(
             path()
             contentDisposition()
             contentType()
+            cspSandbox()
             cspSandboxFlags().ifPresent { it.forEach { it.validate() } }
             cspSourceBundles().ifPresent { it.forEach { it.validate() } }
             expiresInSeconds()
@@ -845,6 +912,7 @@ private constructor(
             (if (path.asKnown().isPresent) 1 else 0) +
                 (if (contentDisposition.asKnown().isPresent) 1 else 0) +
                 (if (contentType.asKnown().isPresent) 1 else 0) +
+                (if (cspSandbox.asKnown().isPresent) 1 else 0) +
                 (cspSandboxFlags.asKnown().getOrNull()?.sumOf { it.validity().toInt() } ?: 0) +
                 (cspSourceBundles.asKnown().getOrNull()?.sumOf { it.validity().toInt() } ?: 0) +
                 (if (expiresInSeconds.asKnown().isPresent) 1 else 0)
@@ -858,6 +926,7 @@ private constructor(
                 path == other.path &&
                 contentDisposition == other.contentDisposition &&
                 contentType == other.contentType &&
+                cspSandbox == other.cspSandbox &&
                 cspSandboxFlags == other.cspSandboxFlags &&
                 cspSourceBundles == other.cspSourceBundles &&
                 expiresInSeconds == other.expiresInSeconds &&
@@ -869,6 +938,7 @@ private constructor(
                 path,
                 contentDisposition,
                 contentType,
+                cspSandbox,
                 cspSandboxFlags,
                 cspSourceBundles,
                 expiresInSeconds,
@@ -879,7 +949,7 @@ private constructor(
         override fun hashCode(): Int = hashCode
 
         override fun toString() =
-            "Body{path=$path, contentDisposition=$contentDisposition, contentType=$contentType, cspSandboxFlags=$cspSandboxFlags, cspSourceBundles=$cspSourceBundles, expiresInSeconds=$expiresInSeconds, additionalProperties=$additionalProperties}"
+            "Body{path=$path, contentDisposition=$contentDisposition, contentType=$contentType, cspSandbox=$cspSandbox, cspSandboxFlags=$cspSandboxFlags, cspSourceBundles=$cspSourceBundles, expiresInSeconds=$expiresInSeconds, additionalProperties=$additionalProperties}"
     }
 
     class CspSandboxFlag @JsonCreator private constructor(private val value: JsonField<String>) :
@@ -917,6 +987,8 @@ private constructor(
             val ALLOW_TOP_NAVIGATION_BY_USER_ACTIVATION =
                 of("allow-top-navigation-by-user-activation")
 
+            @JvmField val ALLOW_SAME_ORIGIN = of("allow-same-origin")
+
             @JvmStatic fun of(value: String) = CspSandboxFlag(JsonField.of(value))
         }
 
@@ -931,6 +1003,7 @@ private constructor(
             ALLOW_PRESENTATION,
             ALLOW_SCRIPTS,
             ALLOW_TOP_NAVIGATION_BY_USER_ACTIVATION,
+            ALLOW_SAME_ORIGIN,
         }
 
         /**
@@ -952,6 +1025,7 @@ private constructor(
             ALLOW_PRESENTATION,
             ALLOW_SCRIPTS,
             ALLOW_TOP_NAVIGATION_BY_USER_ACTIVATION,
+            ALLOW_SAME_ORIGIN,
             /**
              * An enum member indicating that [CspSandboxFlag] was instantiated with an unknown
              * value.
@@ -978,6 +1052,7 @@ private constructor(
                 ALLOW_SCRIPTS -> Value.ALLOW_SCRIPTS
                 ALLOW_TOP_NAVIGATION_BY_USER_ACTIVATION ->
                     Value.ALLOW_TOP_NAVIGATION_BY_USER_ACTIVATION
+                ALLOW_SAME_ORIGIN -> Value.ALLOW_SAME_ORIGIN
                 else -> Value._UNKNOWN
             }
 
@@ -1002,6 +1077,7 @@ private constructor(
                 ALLOW_SCRIPTS -> Known.ALLOW_SCRIPTS
                 ALLOW_TOP_NAVIGATION_BY_USER_ACTIVATION ->
                     Known.ALLOW_TOP_NAVIGATION_BY_USER_ACTIVATION
+                ALLOW_SAME_ORIGIN -> Known.ALLOW_SAME_ORIGIN
                 else -> throw LangChainInvalidDataException("Unknown CspSandboxFlag: $value")
             }
 
@@ -1093,6 +1169,8 @@ private constructor(
 
             @JvmField val NONE = of("none")
 
+            @JvmField val ANY = of("any")
+
             @JvmStatic fun of(value: String) = CspSourceBundle(JsonField.of(value))
         }
 
@@ -1103,6 +1181,7 @@ private constructor(
             JSDELIVR,
             UNPKG,
             NONE,
+            ANY,
         }
 
         /**
@@ -1120,6 +1199,7 @@ private constructor(
             JSDELIVR,
             UNPKG,
             NONE,
+            ANY,
             /**
              * An enum member indicating that [CspSourceBundle] was instantiated with an unknown
              * value.
@@ -1141,6 +1221,7 @@ private constructor(
                 JSDELIVR -> Value.JSDELIVR
                 UNPKG -> Value.UNPKG
                 NONE -> Value.NONE
+                ANY -> Value.ANY
                 else -> Value._UNKNOWN
             }
 
@@ -1160,6 +1241,7 @@ private constructor(
                 JSDELIVR -> Known.JSDELIVR
                 UNPKG -> Known.UNPKG
                 NONE -> Known.NONE
+                ANY -> Known.ANY
                 else -> throw LangChainInvalidDataException("Unknown CspSourceBundle: $value")
             }
 
