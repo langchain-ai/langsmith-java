@@ -5,6 +5,7 @@ package com.langchain.smith.services.blocking
 import com.langchain.smith.core.ClientOptions
 import com.langchain.smith.core.RequestOptions
 import com.langchain.smith.core.checkRequired
+import com.langchain.smith.core.handlers.emptyHandler
 import com.langchain.smith.core.handlers.errorBodyHandler
 import com.langchain.smith.core.handlers.errorHandler
 import com.langchain.smith.core.handlers.jsonHandler
@@ -20,7 +21,6 @@ import com.langchain.smith.models.sessions.CustomChartsSection
 import com.langchain.smith.models.sessions.SessionCreateParams
 import com.langchain.smith.models.sessions.SessionDashboardParams
 import com.langchain.smith.models.sessions.SessionDeleteParams
-import com.langchain.smith.models.sessions.SessionDeleteResponse
 import com.langchain.smith.models.sessions.SessionListPage
 import com.langchain.smith.models.sessions.SessionListParams
 import com.langchain.smith.models.sessions.SessionRetrieveParams
@@ -73,12 +73,10 @@ class SessionServiceImpl internal constructor(private val clientOptions: ClientO
         // get /api/v1/sessions
         withRawResponse().list(params, requestOptions).parse()
 
-    override fun delete(
-        params: SessionDeleteParams,
-        requestOptions: RequestOptions,
-    ): SessionDeleteResponse =
+    override fun delete(params: SessionDeleteParams, requestOptions: RequestOptions) {
         // delete /api/v1/sessions/{session_id}
-        withRawResponse().delete(params, requestOptions).parse()
+        withRawResponse().delete(params, requestOptions)
+    }
 
     override fun dashboard(
         params: SessionDashboardParams,
@@ -229,13 +227,12 @@ class SessionServiceImpl internal constructor(private val clientOptions: ClientO
             }
         }
 
-        private val deleteHandler: Handler<SessionDeleteResponse> =
-            jsonHandler<SessionDeleteResponse>(clientOptions.jsonMapper)
+        private val deleteHandler: Handler<Void?> = emptyHandler()
 
         override fun delete(
             params: SessionDeleteParams,
             requestOptions: RequestOptions,
-        ): HttpResponseFor<SessionDeleteResponse> {
+        ): HttpResponse {
             // We check here instead of in the params builder because this can be specified
             // positionally or in the params class.
             checkRequired("sessionId", params.sessionId().getOrNull())
@@ -250,13 +247,7 @@ class SessionServiceImpl internal constructor(private val clientOptions: ClientO
             val requestOptions = requestOptions.applyDefaults(RequestOptions.from(clientOptions))
             val response = clientOptions.httpClient.execute(request, requestOptions)
             return errorHandler.handle(response).parseable {
-                response
-                    .use { deleteHandler.handle(it) }
-                    .also {
-                        if (requestOptions.responseValidation!!) {
-                            it.validate()
-                        }
-                    }
+                response.use { deleteHandler.handle(it) }
             }
         }
 

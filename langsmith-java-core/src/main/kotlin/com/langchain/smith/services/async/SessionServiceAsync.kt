@@ -4,12 +4,12 @@ package com.langchain.smith.services.async
 
 import com.langchain.smith.core.ClientOptions
 import com.langchain.smith.core.RequestOptions
+import com.langchain.smith.core.http.HttpResponse
 import com.langchain.smith.core.http.HttpResponseFor
 import com.langchain.smith.models.sessions.CustomChartsSection
 import com.langchain.smith.models.sessions.SessionCreateParams
 import com.langchain.smith.models.sessions.SessionDashboardParams
 import com.langchain.smith.models.sessions.SessionDeleteParams
-import com.langchain.smith.models.sessions.SessionDeleteResponse
 import com.langchain.smith.models.sessions.SessionListPageAsync
 import com.langchain.smith.models.sessions.SessionListParams
 import com.langchain.smith.models.sessions.SessionRetrieveParams
@@ -146,8 +146,16 @@ interface SessionServiceAsync {
     fun list(requestOptions: RequestOptions): CompletableFuture<SessionListPageAsync> =
         list(SessionListParams.none(), requestOptions)
 
-    /** Delete a specific project. */
-    fun delete(sessionId: String): CompletableFuture<SessionDeleteResponse> =
+    /**
+     * Delete a specific project.
+     *
+     * Returns 202 when deletion is accepted. Cleanup runs asynchronously. Location identifies the
+     * affected project, not a cleanup-status endpoint. For a caller with read access, GET at that
+     * URL returns 200 with the project while it is still available, or 404 after the project is
+     * removed. A 404 does not confirm that background trace cleanup has finished. Polling for
+     * cleanup completion is not supported.
+     */
+    fun delete(sessionId: String): CompletableFuture<Void?> =
         delete(sessionId, SessionDeleteParams.none())
 
     /** @see delete */
@@ -155,30 +163,27 @@ interface SessionServiceAsync {
         sessionId: String,
         params: SessionDeleteParams = SessionDeleteParams.none(),
         requestOptions: RequestOptions = RequestOptions.none(),
-    ): CompletableFuture<SessionDeleteResponse> =
+    ): CompletableFuture<Void?> =
         delete(params.toBuilder().sessionId(sessionId).build(), requestOptions)
 
     /** @see delete */
     fun delete(
         sessionId: String,
         params: SessionDeleteParams = SessionDeleteParams.none(),
-    ): CompletableFuture<SessionDeleteResponse> = delete(sessionId, params, RequestOptions.none())
+    ): CompletableFuture<Void?> = delete(sessionId, params, RequestOptions.none())
 
     /** @see delete */
     fun delete(
         params: SessionDeleteParams,
         requestOptions: RequestOptions = RequestOptions.none(),
-    ): CompletableFuture<SessionDeleteResponse>
+    ): CompletableFuture<Void?>
 
     /** @see delete */
-    fun delete(params: SessionDeleteParams): CompletableFuture<SessionDeleteResponse> =
+    fun delete(params: SessionDeleteParams): CompletableFuture<Void?> =
         delete(params, RequestOptions.none())
 
     /** @see delete */
-    fun delete(
-        sessionId: String,
-        requestOptions: RequestOptions,
-    ): CompletableFuture<SessionDeleteResponse> =
+    fun delete(sessionId: String, requestOptions: RequestOptions): CompletableFuture<Void?> =
         delete(sessionId, SessionDeleteParams.none(), requestOptions)
 
     /** Get a prebuilt dashboard for a tracing project. */
@@ -359,7 +364,7 @@ interface SessionServiceAsync {
          * Returns a raw HTTP response for `delete /api/v1/sessions/{session_id}`, but is otherwise
          * the same as [SessionServiceAsync.delete].
          */
-        fun delete(sessionId: String): CompletableFuture<HttpResponseFor<SessionDeleteResponse>> =
+        fun delete(sessionId: String): CompletableFuture<HttpResponse> =
             delete(sessionId, SessionDeleteParams.none())
 
         /** @see delete */
@@ -367,33 +372,30 @@ interface SessionServiceAsync {
             sessionId: String,
             params: SessionDeleteParams = SessionDeleteParams.none(),
             requestOptions: RequestOptions = RequestOptions.none(),
-        ): CompletableFuture<HttpResponseFor<SessionDeleteResponse>> =
+        ): CompletableFuture<HttpResponse> =
             delete(params.toBuilder().sessionId(sessionId).build(), requestOptions)
 
         /** @see delete */
         fun delete(
             sessionId: String,
             params: SessionDeleteParams = SessionDeleteParams.none(),
-        ): CompletableFuture<HttpResponseFor<SessionDeleteResponse>> =
-            delete(sessionId, params, RequestOptions.none())
+        ): CompletableFuture<HttpResponse> = delete(sessionId, params, RequestOptions.none())
 
         /** @see delete */
         fun delete(
             params: SessionDeleteParams,
             requestOptions: RequestOptions = RequestOptions.none(),
-        ): CompletableFuture<HttpResponseFor<SessionDeleteResponse>>
+        ): CompletableFuture<HttpResponse>
 
         /** @see delete */
-        fun delete(
-            params: SessionDeleteParams
-        ): CompletableFuture<HttpResponseFor<SessionDeleteResponse>> =
+        fun delete(params: SessionDeleteParams): CompletableFuture<HttpResponse> =
             delete(params, RequestOptions.none())
 
         /** @see delete */
         fun delete(
             sessionId: String,
             requestOptions: RequestOptions,
-        ): CompletableFuture<HttpResponseFor<SessionDeleteResponse>> =
+        ): CompletableFuture<HttpResponse> =
             delete(sessionId, SessionDeleteParams.none(), requestOptions)
 
         /**

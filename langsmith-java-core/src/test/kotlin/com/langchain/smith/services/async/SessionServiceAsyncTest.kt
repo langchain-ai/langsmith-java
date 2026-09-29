@@ -137,10 +137,9 @@ internal class SessionServiceAsyncTest {
                 .build()
         val sessionServiceAsync = client.sessions()
 
-        val sessionFuture = sessionServiceAsync.delete("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+        val future = sessionServiceAsync.delete("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
 
-        val session = sessionFuture.get()
-        session.validate()
+        val response = future.get()
     }
 
     @Disabled("Mock server tests are disabled")
