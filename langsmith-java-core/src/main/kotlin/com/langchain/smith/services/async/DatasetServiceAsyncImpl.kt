@@ -42,6 +42,8 @@ import com.langchain.smith.models.datasets.DatasetUploadParams
 import com.langchain.smith.models.datasets.DatasetVersion
 import com.langchain.smith.services.async.datasets.ComparativeServiceAsync
 import com.langchain.smith.services.async.datasets.ComparativeServiceAsyncImpl
+import com.langchain.smith.services.async.datasets.ExampleServiceAsync
+import com.langchain.smith.services.async.datasets.ExampleServiceAsyncImpl
 import com.langchain.smith.services.async.datasets.ExperimentRunServiceAsync
 import com.langchain.smith.services.async.datasets.ExperimentRunServiceAsyncImpl
 import com.langchain.smith.services.async.datasets.RunServiceAsync
@@ -63,6 +65,8 @@ class DatasetServiceAsyncImpl internal constructor(private val clientOptions: Cl
         WithRawResponseImpl(clientOptions)
     }
 
+    private val examples: ExampleServiceAsync by lazy { ExampleServiceAsyncImpl(clientOptions) }
+
     private val versions: VersionServiceAsync by lazy { VersionServiceAsyncImpl(clientOptions) }
 
     private val runs: RunServiceAsync by lazy { RunServiceAsyncImpl(clientOptions) }
@@ -83,6 +87,8 @@ class DatasetServiceAsyncImpl internal constructor(private val clientOptions: Cl
 
     override fun withOptions(modifier: Consumer<ClientOptions.Builder>): DatasetServiceAsync =
         DatasetServiceAsyncImpl(clientOptions.toBuilder().apply(modifier::accept).build())
+
+    override fun examples(): ExampleServiceAsync = examples
 
     override fun versions(): VersionServiceAsync = versions
 
@@ -193,6 +199,10 @@ class DatasetServiceAsyncImpl internal constructor(private val clientOptions: Cl
         private val errorHandler: Handler<HttpResponse> =
             errorHandler(errorBodyHandler(clientOptions.jsonMapper))
 
+        private val examples: ExampleServiceAsync.WithRawResponse by lazy {
+            ExampleServiceAsyncImpl.WithRawResponseImpl(clientOptions)
+        }
+
         private val versions: VersionServiceAsync.WithRawResponse by lazy {
             VersionServiceAsyncImpl.WithRawResponseImpl(clientOptions)
         }
@@ -223,6 +233,8 @@ class DatasetServiceAsyncImpl internal constructor(private val clientOptions: Cl
             DatasetServiceAsyncImpl.WithRawResponseImpl(
                 clientOptions.toBuilder().apply(modifier::accept).build()
             )
+
+        override fun examples(): ExampleServiceAsync.WithRawResponse = examples
 
         override fun versions(): VersionServiceAsync.WithRawResponse = versions
 

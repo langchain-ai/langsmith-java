@@ -29,6 +29,7 @@ import com.langchain.smith.models.datasets.DatasetUpdateTagsParams
 import com.langchain.smith.models.datasets.DatasetUploadParams
 import com.langchain.smith.models.datasets.DatasetVersion
 import com.langchain.smith.services.async.datasets.ComparativeServiceAsync
+import com.langchain.smith.services.async.datasets.ExampleServiceAsync
 import com.langchain.smith.services.async.datasets.ExperimentRunServiceAsync
 import com.langchain.smith.services.async.datasets.RunServiceAsync
 import com.langchain.smith.services.async.datasets.ShareServiceAsync
@@ -50,6 +51,8 @@ interface DatasetServiceAsync {
      * The original service is not modified.
      */
     fun withOptions(modifier: Consumer<ClientOptions.Builder>): DatasetServiceAsync
+
+    fun examples(): ExampleServiceAsync
 
     fun versions(): VersionServiceAsync
 
@@ -436,6 +439,8 @@ interface DatasetServiceAsync {
         fun withOptions(
             modifier: Consumer<ClientOptions.Builder>
         ): DatasetServiceAsync.WithRawResponse
+
+        fun examples(): ExampleServiceAsync.WithRawResponse
 
         fun versions(): VersionServiceAsync.WithRawResponse
 
