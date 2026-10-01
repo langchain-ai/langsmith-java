@@ -41,8 +41,8 @@ interface FeedbackService {
      * Create a new feedback.
      *
      * `session_id` identifies the tracing project the feedback belongs to. It is required unless
-     * the feedback is addressed by `agent_id` and `agent_environment`, which name that project
-     * through an Agent environment that already exists.
+     * the feedback is addressed by `address`, or by `agent_id` and `agent_environment`, which name
+     * that project through an Agent environment that already exists.
      */
     fun create(params: FeedbackCreateParams): FeedbackSchema = create(params, RequestOptions.none())
 

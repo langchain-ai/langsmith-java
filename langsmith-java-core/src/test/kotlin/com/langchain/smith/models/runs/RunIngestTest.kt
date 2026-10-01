@@ -5,6 +5,7 @@ package com.langchain.smith.models.runs
 import com.fasterxml.jackson.module.kotlin.jacksonTypeRef
 import com.langchain.smith.core.JsonValue
 import com.langchain.smith.core.jsonMapper
+import com.langchain.smith.models.AgentAddress
 import kotlin.jvm.optionals.getOrNull
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
@@ -16,6 +17,12 @@ internal class RunIngestTest {
         val runIngest =
             RunIngest.builder()
                 .id("id")
+                .address(
+                    AgentAddress.builder()
+                        .id("support-agent")
+                        .environment(AgentAddress.Environment.PRODUCTION)
+                        .build()
+                )
                 .agentEnvironment(RunIngest.AgentEnvironment.LOCAL)
                 .agentId("agent_id")
                 .dottedOrder("dotted_order")
@@ -69,6 +76,13 @@ internal class RunIngestTest {
                 .build()
 
         assertThat(runIngest.id()).contains("id")
+        assertThat(runIngest.address())
+            .contains(
+                AgentAddress.builder()
+                    .id("support-agent")
+                    .environment(AgentAddress.Environment.PRODUCTION)
+                    .build()
+            )
         assertThat(runIngest.agentEnvironment()).contains(RunIngest.AgentEnvironment.LOCAL)
         assertThat(runIngest.agentId()).contains("agent_id")
         assertThat(runIngest.dottedOrder()).contains("dotted_order")
@@ -134,6 +148,12 @@ internal class RunIngestTest {
         val runIngest =
             RunIngest.builder()
                 .id("id")
+                .address(
+                    AgentAddress.builder()
+                        .id("support-agent")
+                        .environment(AgentAddress.Environment.PRODUCTION)
+                        .build()
+                )
                 .agentEnvironment(RunIngest.AgentEnvironment.LOCAL)
                 .agentId("agent_id")
                 .dottedOrder("dotted_order")

@@ -26,6 +26,7 @@ import com.langchain.smith.core.checkRequired
 import com.langchain.smith.core.getOrThrow
 import com.langchain.smith.core.toImmutable
 import com.langchain.smith.errors.LangChainInvalidDataException
+import com.langchain.smith.models.AgentAddress
 import java.time.OffsetDateTime
 import java.util.Collections
 import java.util.Objects
@@ -38,6 +39,7 @@ class FeedbackCreateSchema
 private constructor(
     private val key: JsonField<String>,
     private val id: JsonField<String>,
+    private val address: JsonField<AgentAddress>,
     private val agentEnvironment: JsonField<AgentEnvironment>,
     private val agentId: JsonField<String>,
     private val comment: JsonField<String>,
@@ -65,6 +67,9 @@ private constructor(
     private constructor(
         @JsonProperty("key") @ExcludeMissing key: JsonField<String> = JsonMissing.of(),
         @JsonProperty("id") @ExcludeMissing id: JsonField<String> = JsonMissing.of(),
+        @JsonProperty("address")
+        @ExcludeMissing
+        address: JsonField<AgentAddress> = JsonMissing.of(),
         @JsonProperty("agent_environment")
         @ExcludeMissing
         agentEnvironment: JsonField<AgentEnvironment> = JsonMissing.of(),
@@ -110,6 +115,7 @@ private constructor(
     ) : this(
         key,
         id,
+        address,
         agentEnvironment,
         agentId,
         comment,
@@ -146,9 +152,20 @@ private constructor(
     fun id(): Optional<String> = id.getOptional("id")
 
     /**
-     * Experimental. Only supported in workspaces where Agent addressing is enabled; other
-     * workspaces get a 403. The Agent environment whose tracing project the feedback belongs to.
-     * Matched case-insensitively. Sent together with agent_id.
+     * Beta. Only supported in workspaces where Agent addressing is enabled; other workspaces get
+     * a 403. Addresses the tracing project through an Agent environment instead of session_id.
+     * Never combined with agent_id, agent_environment, or session_id. The Agent and the environment
+     * must already exist; sending feedback does not create them.
+     *
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
+    fun address(): Optional<AgentAddress> = address.getOptional("address")
+
+    /**
+     * Beta. Only supported in workspaces where Agent addressing is enabled; other workspaces get
+     * a 403. The Agent environment whose tracing project the feedback belongs to. Matched
+     * case-insensitively. Sent together with agent_id.
      *
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
@@ -157,12 +174,12 @@ private constructor(
         agentEnvironment.getOptional("agent_environment")
 
     /**
-     * Experimental. Only supported in workspaces where Agent addressing is enabled; other
-     * workspaces get a 403. The Agent's id, not a UUID: 1 to 63 lowercase ASCII letters, digits, or
-     * hyphens, starting with a letter and ending with a letter or digit (e.g. support-agent).
-     * Addresses the tracing project through an Agent instead of session_id. Sent together with
-     * agent_environment, and never alongside session_id. The Agent and the environment must already
-     * exist; sending feedback does not create them.
+     * Beta. Only supported in workspaces where Agent addressing is enabled; other workspaces get
+     * a 403. The Agent's id, not a UUID: 1 to 63 lowercase ASCII letters, digits, or hyphens,
+     * starting with a letter and ending with a letter or digit (e.g. support-agent). Addresses the
+     * tracing project through an Agent instead of session_id. Sent together with agent_environment,
+     * and never alongside session_id. The Agent and the environment must already exist; sending
+     * feedback does not create them.
      *
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
@@ -299,6 +316,13 @@ private constructor(
      * Unlike [id], this method doesn't throw if the JSON field has an unexpected type.
      */
     @JsonProperty("id") @ExcludeMissing fun _id(): JsonField<String> = id
+
+    /**
+     * Returns the raw JSON value of [address].
+     *
+     * Unlike [address], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    @JsonProperty("address") @ExcludeMissing fun _address(): JsonField<AgentAddress> = address
 
     /**
      * Returns the raw JSON value of [agentEnvironment].
@@ -499,6 +523,7 @@ private constructor(
 
         private var key: JsonField<String>? = null
         private var id: JsonField<String> = JsonMissing.of()
+        private var address: JsonField<AgentAddress> = JsonMissing.of()
         private var agentEnvironment: JsonField<AgentEnvironment> = JsonMissing.of()
         private var agentId: JsonField<String> = JsonMissing.of()
         private var comment: JsonField<String> = JsonMissing.of()
@@ -525,6 +550,7 @@ private constructor(
         internal fun from(feedbackCreateSchema: FeedbackCreateSchema) = apply {
             key = feedbackCreateSchema.key
             id = feedbackCreateSchema.id
+            address = feedbackCreateSchema.address
             agentEnvironment = feedbackCreateSchema.agentEnvironment
             agentId = feedbackCreateSchema.agentId
             comment = feedbackCreateSchema.comment
@@ -569,9 +595,26 @@ private constructor(
         fun id(id: JsonField<String>) = apply { this.id = id }
 
         /**
-         * Experimental. Only supported in workspaces where Agent addressing is enabled; other
-         * workspaces get a 403. The Agent environment whose tracing project the feedback belongs
-         * to. Matched case-insensitively. Sent together with agent_id.
+         * Beta. Only supported in workspaces where Agent addressing is enabled; other workspaces
+         * get a 403. Addresses the tracing project through an Agent environment instead of
+         * session_id. Never combined with agent_id, agent_environment, or session_id. The Agent and
+         * the environment must already exist; sending feedback does not create them.
+         */
+        fun address(address: AgentAddress) = address(JsonField.of(address))
+
+        /**
+         * Sets [Builder.address] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.address] with a well-typed [AgentAddress] value instead.
+         * This method is primarily for setting the field to an undocumented or not yet supported
+         * value.
+         */
+        fun address(address: JsonField<AgentAddress>) = apply { this.address = address }
+
+        /**
+         * Beta. Only supported in workspaces where Agent addressing is enabled; other workspaces
+         * get a 403. The Agent environment whose tracing project the feedback belongs to. Matched
+         * case-insensitively. Sent together with agent_id.
          */
         fun agentEnvironment(agentEnvironment: AgentEnvironment?) =
             agentEnvironment(JsonField.ofNullable(agentEnvironment))
@@ -592,12 +635,12 @@ private constructor(
         }
 
         /**
-         * Experimental. Only supported in workspaces where Agent addressing is enabled; other
-         * workspaces get a 403. The Agent's id, not a UUID: 1 to 63 lowercase ASCII letters,
-         * digits, or hyphens, starting with a letter and ending with a letter or digit (e.g.
-         * support-agent). Addresses the tracing project through an Agent instead of session_id.
-         * Sent together with agent_environment, and never alongside session_id. The Agent and the
-         * environment must already exist; sending feedback does not create them.
+         * Beta. Only supported in workspaces where Agent addressing is enabled; other workspaces
+         * get a 403. The Agent's id, not a UUID: 1 to 63 lowercase ASCII letters, digits, or
+         * hyphens, starting with a letter and ending with a letter or digit (e.g. support-agent).
+         * Addresses the tracing project through an Agent instead of session_id. Sent together with
+         * agent_environment, and never alongside session_id. The Agent and the environment must
+         * already exist; sending feedback does not create them.
          */
         fun agentId(agentId: String?) = agentId(JsonField.ofNullable(agentId))
 
@@ -967,6 +1010,7 @@ private constructor(
             FeedbackCreateSchema(
                 checkRequired("key", key),
                 id,
+                address,
                 agentEnvironment,
                 agentId,
                 comment,
@@ -1008,6 +1052,7 @@ private constructor(
 
         key()
         id()
+        address().ifPresent { it.validate() }
         agentEnvironment().ifPresent { it.validate() }
         agentId()
         comment()
@@ -1048,6 +1093,7 @@ private constructor(
     internal fun validity(): Int =
         (if (key.asKnown().isPresent) 1 else 0) +
             (if (id.asKnown().isPresent) 1 else 0) +
+            (address.asKnown().getOrNull()?.validity() ?: 0) +
             (agentEnvironment.asKnown().getOrNull()?.validity() ?: 0) +
             (if (agentId.asKnown().isPresent) 1 else 0) +
             (if (comment.asKnown().isPresent) 1 else 0) +
@@ -1070,9 +1116,9 @@ private constructor(
             (value.asKnown().getOrNull()?.validity() ?: 0)
 
     /**
-     * Experimental. Only supported in workspaces where Agent addressing is enabled; other
-     * workspaces get a 403. The Agent environment whose tracing project the feedback belongs to.
-     * Matched case-insensitively. Sent together with agent_id.
+     * Beta. Only supported in workspaces where Agent addressing is enabled; other workspaces get
+     * a 403. The Agent environment whose tracing project the feedback belongs to. Matched
+     * case-insensitively. Sent together with agent_id.
      */
     class AgentEnvironment @JsonCreator private constructor(private val value: JsonField<String>) :
         Enum {
@@ -3180,6 +3226,7 @@ private constructor(
         return other is FeedbackCreateSchema &&
             key == other.key &&
             id == other.id &&
+            address == other.address &&
             agentEnvironment == other.agentEnvironment &&
             agentId == other.agentId &&
             comment == other.comment &&
@@ -3207,6 +3254,7 @@ private constructor(
         Objects.hash(
             key,
             id,
+            address,
             agentEnvironment,
             agentId,
             comment,
@@ -3234,5 +3282,5 @@ private constructor(
     override fun hashCode(): Int = hashCode
 
     override fun toString() =
-        "FeedbackCreateSchema{key=$key, id=$id, agentEnvironment=$agentEnvironment, agentId=$agentId, comment=$comment, comparativeExperimentId=$comparativeExperimentId, correction=$correction, createdAt=$createdAt, error=$error, extendTraceRetention=$extendTraceRetention, extra=$extra, feedbackConfig=$feedbackConfig, feedbackGroupId=$feedbackGroupId, feedbackSource=$feedbackSource, feedbackThreadId=$feedbackThreadId, modifiedAt=$modifiedAt, runId=$runId, score=$score, sessionId=$sessionId, startTime=$startTime, traceId=$traceId, value=$value, additionalProperties=$additionalProperties}"
+        "FeedbackCreateSchema{key=$key, id=$id, address=$address, agentEnvironment=$agentEnvironment, agentId=$agentId, comment=$comment, comparativeExperimentId=$comparativeExperimentId, correction=$correction, createdAt=$createdAt, error=$error, extendTraceRetention=$extendTraceRetention, extra=$extra, feedbackConfig=$feedbackConfig, feedbackGroupId=$feedbackGroupId, feedbackSource=$feedbackSource, feedbackThreadId=$feedbackThreadId, modifiedAt=$modifiedAt, runId=$runId, score=$score, sessionId=$sessionId, startTime=$startTime, traceId=$traceId, value=$value, additionalProperties=$additionalProperties}"
 }

@@ -5,6 +5,7 @@ package com.langchain.smith.models.feedback
 import com.fasterxml.jackson.module.kotlin.jacksonTypeRef
 import com.langchain.smith.core.JsonValue
 import com.langchain.smith.core.jsonMapper
+import com.langchain.smith.models.AgentAddress
 import java.time.OffsetDateTime
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
@@ -17,6 +18,12 @@ internal class FeedbackCreateSchemaTest {
             FeedbackCreateSchema.builder()
                 .key("key")
                 .id("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                .address(
+                    AgentAddress.builder()
+                        .id("support-agent")
+                        .environment(AgentAddress.Environment.PRODUCTION)
+                        .build()
+                )
                 .agentEnvironment(FeedbackCreateSchema.AgentEnvironment.LOCAL)
                 .agentId("agent_id")
                 .comment("comment")
@@ -70,6 +77,13 @@ internal class FeedbackCreateSchemaTest {
 
         assertThat(feedbackCreateSchema.key()).isEqualTo("key")
         assertThat(feedbackCreateSchema.id()).contains("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+        assertThat(feedbackCreateSchema.address())
+            .contains(
+                AgentAddress.builder()
+                    .id("support-agent")
+                    .environment(AgentAddress.Environment.PRODUCTION)
+                    .build()
+            )
         assertThat(feedbackCreateSchema.agentEnvironment())
             .contains(FeedbackCreateSchema.AgentEnvironment.LOCAL)
         assertThat(feedbackCreateSchema.agentId()).contains("agent_id")
@@ -143,6 +157,12 @@ internal class FeedbackCreateSchemaTest {
             FeedbackCreateSchema.builder()
                 .key("key")
                 .id("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                .address(
+                    AgentAddress.builder()
+                        .id("support-agent")
+                        .environment(AgentAddress.Environment.PRODUCTION)
+                        .build()
+                )
                 .agentEnvironment(FeedbackCreateSchema.AgentEnvironment.LOCAL)
                 .agentId("agent_id")
                 .comment("comment")

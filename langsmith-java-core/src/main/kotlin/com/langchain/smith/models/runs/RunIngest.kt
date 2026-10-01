@@ -15,6 +15,7 @@ import com.langchain.smith.core.JsonValue
 import com.langchain.smith.core.checkKnown
 import com.langchain.smith.core.toImmutable
 import com.langchain.smith.errors.LangChainInvalidDataException
+import com.langchain.smith.models.AgentAddress
 import java.util.Collections
 import java.util.Objects
 import java.util.Optional
@@ -24,6 +25,7 @@ class RunIngest
 @JsonCreator(mode = JsonCreator.Mode.DISABLED)
 private constructor(
     private val id: JsonField<String>,
+    private val address: JsonField<AgentAddress>,
     private val agentEnvironment: JsonField<AgentEnvironment>,
     private val agentId: JsonField<String>,
     private val dottedOrder: JsonField<String>,
@@ -53,6 +55,9 @@ private constructor(
     @JsonCreator
     private constructor(
         @JsonProperty("id") @ExcludeMissing id: JsonField<String> = JsonMissing.of(),
+        @JsonProperty("address")
+        @ExcludeMissing
+        address: JsonField<AgentAddress> = JsonMissing.of(),
         @JsonProperty("agent_environment")
         @ExcludeMissing
         agentEnvironment: JsonField<AgentEnvironment> = JsonMissing.of(),
@@ -93,6 +98,7 @@ private constructor(
         @JsonProperty("trace_id") @ExcludeMissing traceId: JsonField<String> = JsonMissing.of(),
     ) : this(
         id,
+        address,
         agentEnvironment,
         agentId,
         dottedOrder,
@@ -126,8 +132,18 @@ private constructor(
     fun id(): Optional<String> = id.getOptional("id")
 
     /**
-     * Experimental. The Agent environment the run belongs to, case-insensitive; requires agent_id.
-     * Only workspaces enabled for Agent addressing accept it; others get a 403.
+     * Beta. Addresses the run to an Agent environment in place of session_id or session_name.
+     * Cannot be combined with agent_id or agent_environment. Only workspaces enabled for Agent
+     * addressing accept it; others get a 403.
+     *
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
+    fun address(): Optional<AgentAddress> = address.getOptional("address")
+
+    /**
+     * Beta. The Agent environment the run belongs to, case-insensitive; requires agent_id. Only
+     * workspaces enabled for Agent addressing accept it; others get a 403.
      *
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
@@ -136,8 +152,9 @@ private constructor(
         agentEnvironment.getOptional("agent_environment")
 
     /**
-     * Experimental. Addresses the run to an Agent, with agent_environment, in place of session_id
-     * or session_name. Only workspaces enabled for Agent addressing accept it; others get a 403.
+     * Beta, superseded by address. Addresses the run to an Agent, with agent_environment, in place
+     * of session_id or session_name. Only workspaces enabled for Agent addressing accept it; others
+     * get a 403.
      *
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
@@ -273,6 +290,13 @@ private constructor(
      * Unlike [id], this method doesn't throw if the JSON field has an unexpected type.
      */
     @JsonProperty("id") @ExcludeMissing fun _id(): JsonField<String> = id
+
+    /**
+     * Returns the raw JSON value of [address].
+     *
+     * Unlike [address], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    @JsonProperty("address") @ExcludeMissing fun _address(): JsonField<AgentAddress> = address
 
     /**
      * Returns the raw JSON value of [agentEnvironment].
@@ -474,6 +498,7 @@ private constructor(
     class Builder internal constructor() {
 
         private var id: JsonField<String> = JsonMissing.of()
+        private var address: JsonField<AgentAddress> = JsonMissing.of()
         private var agentEnvironment: JsonField<AgentEnvironment> = JsonMissing.of()
         private var agentId: JsonField<String> = JsonMissing.of()
         private var dottedOrder: JsonField<String> = JsonMissing.of()
@@ -502,6 +527,7 @@ private constructor(
         @JvmSynthetic
         internal fun from(runIngest: RunIngest) = apply {
             id = runIngest.id
+            address = runIngest.address
             agentEnvironment = runIngest.agentEnvironment
             agentId = runIngest.agentId
             dottedOrder = runIngest.dottedOrder
@@ -539,8 +565,24 @@ private constructor(
         fun id(id: JsonField<String>) = apply { this.id = id }
 
         /**
-         * Experimental. The Agent environment the run belongs to, case-insensitive; requires
-         * agent_id. Only workspaces enabled for Agent addressing accept it; others get a 403.
+         * Beta. Addresses the run to an Agent environment in place of session_id or session_name.
+         * Cannot be combined with agent_id or agent_environment. Only workspaces enabled for Agent
+         * addressing accept it; others get a 403.
+         */
+        fun address(address: AgentAddress) = address(JsonField.of(address))
+
+        /**
+         * Sets [Builder.address] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.address] with a well-typed [AgentAddress] value instead.
+         * This method is primarily for setting the field to an undocumented or not yet supported
+         * value.
+         */
+        fun address(address: JsonField<AgentAddress>) = apply { this.address = address }
+
+        /**
+         * Beta. The Agent environment the run belongs to, case-insensitive; requires agent_id. Only
+         * workspaces enabled for Agent addressing accept it; others get a 403.
          */
         fun agentEnvironment(agentEnvironment: AgentEnvironment) =
             agentEnvironment(JsonField.of(agentEnvironment))
@@ -557,9 +599,9 @@ private constructor(
         }
 
         /**
-         * Experimental. Addresses the run to an Agent, with agent_environment, in place of
-         * session_id or session_name. Only workspaces enabled for Agent addressing accept it;
-         * others get a 403.
+         * Beta, superseded by address. Addresses the run to an Agent, with agent_environment, in
+         * place of session_id or session_name. Only workspaces enabled for Agent addressing accept
+         * it; others get a 403.
          */
         fun agentId(agentId: String) = agentId(JsonField.of(agentId))
 
@@ -862,6 +904,7 @@ private constructor(
         fun build(): RunIngest =
             RunIngest(
                 id,
+                address,
                 agentEnvironment,
                 agentId,
                 dottedOrder,
@@ -905,6 +948,7 @@ private constructor(
         }
 
         id()
+        address().ifPresent { it.validate() }
         agentEnvironment().ifPresent { it.validate() }
         agentId()
         dottedOrder()
@@ -946,6 +990,7 @@ private constructor(
     @JvmSynthetic
     internal fun validity(): Int =
         (if (id.asKnown().isPresent) 1 else 0) +
+            (address.asKnown().getOrNull()?.validity() ?: 0) +
             (agentEnvironment.asKnown().getOrNull()?.validity() ?: 0) +
             (if (agentId.asKnown().isPresent) 1 else 0) +
             (if (dottedOrder.asKnown().isPresent) 1 else 0) +
@@ -970,8 +1015,8 @@ private constructor(
             (if (traceId.asKnown().isPresent) 1 else 0)
 
     /**
-     * Experimental. The Agent environment the run belongs to, case-insensitive; requires agent_id.
-     * Only workspaces enabled for Agent addressing accept it; others get a 403.
+     * Beta. The Agent environment the run belongs to, case-insensitive; requires agent_id. Only
+     * workspaces enabled for Agent addressing accept it; others get a 403.
      */
     class AgentEnvironment @JsonCreator private constructor(private val value: JsonField<String>) :
         Enum {
@@ -2054,6 +2099,7 @@ private constructor(
 
         return other is RunIngest &&
             id == other.id &&
+            address == other.address &&
             agentEnvironment == other.agentEnvironment &&
             agentId == other.agentId &&
             dottedOrder == other.dottedOrder &&
@@ -2083,6 +2129,7 @@ private constructor(
     private val hashCode: Int by lazy {
         Objects.hash(
             id,
+            address,
             agentEnvironment,
             agentId,
             dottedOrder,
@@ -2113,5 +2160,5 @@ private constructor(
     override fun hashCode(): Int = hashCode
 
     override fun toString() =
-        "RunIngest{id=$id, agentEnvironment=$agentEnvironment, agentId=$agentId, dottedOrder=$dottedOrder, endTime=$endTime, error=$error, events=$events, extra=$extra, inputAttachments=$inputAttachments, inputs=$inputs, name=$name, outputAttachments=$outputAttachments, outputs=$outputs, parentRunId=$parentRunId, referenceExampleId=$referenceExampleId, runType=$runType, serialized=$serialized, sessionId=$sessionId, sessionName=$sessionName, startTime=$startTime, status=$status, tags=$tags, traceId=$traceId, attachments=$attachments, additionalProperties=$additionalProperties}"
+        "RunIngest{id=$id, address=$address, agentEnvironment=$agentEnvironment, agentId=$agentId, dottedOrder=$dottedOrder, endTime=$endTime, error=$error, events=$events, extra=$extra, inputAttachments=$inputAttachments, inputs=$inputs, name=$name, outputAttachments=$outputAttachments, outputs=$outputs, parentRunId=$parentRunId, referenceExampleId=$referenceExampleId, runType=$runType, serialized=$serialized, sessionId=$sessionId, sessionName=$sessionName, startTime=$startTime, status=$status, tags=$tags, traceId=$traceId, attachments=$attachments, additionalProperties=$additionalProperties}"
 }

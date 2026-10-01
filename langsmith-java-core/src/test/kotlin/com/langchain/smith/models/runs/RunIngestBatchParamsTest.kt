@@ -3,6 +3,7 @@
 package com.langchain.smith.models.runs
 
 import com.langchain.smith.core.JsonValue
+import com.langchain.smith.models.AgentAddress
 import kotlin.jvm.optionals.getOrNull
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
@@ -15,6 +16,12 @@ internal class RunIngestBatchParamsTest {
             .addPatch(
                 RunIngest.builder()
                     .id("id")
+                    .address(
+                        AgentAddress.builder()
+                            .id("support-agent")
+                            .environment(AgentAddress.Environment.PRODUCTION)
+                            .build()
+                    )
                     .agentEnvironment(RunIngest.AgentEnvironment.LOCAL)
                     .agentId("agent_id")
                     .dottedOrder("dotted_order")
@@ -70,6 +77,12 @@ internal class RunIngestBatchParamsTest {
             .addPost(
                 RunIngest.builder()
                     .id("id")
+                    .address(
+                        AgentAddress.builder()
+                            .id("support-agent")
+                            .environment(AgentAddress.Environment.PRODUCTION)
+                            .build()
+                    )
                     .agentEnvironment(RunIngest.AgentEnvironment.LOCAL)
                     .agentId("agent_id")
                     .dottedOrder("dotted_order")
@@ -132,6 +145,12 @@ internal class RunIngestBatchParamsTest {
                 .addPatch(
                     RunIngest.builder()
                         .id("id")
+                        .address(
+                            AgentAddress.builder()
+                                .id("support-agent")
+                                .environment(AgentAddress.Environment.PRODUCTION)
+                                .build()
+                        )
                         .agentEnvironment(RunIngest.AgentEnvironment.LOCAL)
                         .agentId("agent_id")
                         .dottedOrder("dotted_order")
@@ -187,6 +206,12 @@ internal class RunIngestBatchParamsTest {
                 .addPost(
                     RunIngest.builder()
                         .id("id")
+                        .address(
+                            AgentAddress.builder()
+                                .id("support-agent")
+                                .environment(AgentAddress.Environment.PRODUCTION)
+                                .build()
+                        )
                         .agentEnvironment(RunIngest.AgentEnvironment.LOCAL)
                         .agentId("agent_id")
                         .dottedOrder("dotted_order")
@@ -247,6 +272,12 @@ internal class RunIngestBatchParamsTest {
             .containsExactly(
                 RunIngest.builder()
                     .id("id")
+                    .address(
+                        AgentAddress.builder()
+                            .id("support-agent")
+                            .environment(AgentAddress.Environment.PRODUCTION)
+                            .build()
+                    )
                     .agentEnvironment(RunIngest.AgentEnvironment.LOCAL)
                     .agentId("agent_id")
                     .dottedOrder("dotted_order")
@@ -303,6 +334,12 @@ internal class RunIngestBatchParamsTest {
             .containsExactly(
                 RunIngest.builder()
                     .id("id")
+                    .address(
+                        AgentAddress.builder()
+                            .id("support-agent")
+                            .environment(AgentAddress.Environment.PRODUCTION)
+                            .build()
+                    )
                     .agentEnvironment(RunIngest.AgentEnvironment.LOCAL)
                     .agentId("agent_id")
                     .dottedOrder("dotted_order")
