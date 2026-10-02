@@ -42,6 +42,8 @@ import com.langchain.smith.models.datasets.DatasetUploadParams
 import com.langchain.smith.models.datasets.DatasetVersion
 import com.langchain.smith.services.blocking.datasets.ComparativeService
 import com.langchain.smith.services.blocking.datasets.ComparativeServiceImpl
+import com.langchain.smith.services.blocking.datasets.ExampleService
+import com.langchain.smith.services.blocking.datasets.ExampleServiceImpl
 import com.langchain.smith.services.blocking.datasets.ExperimentRunService
 import com.langchain.smith.services.blocking.datasets.ExperimentRunServiceImpl
 import com.langchain.smith.services.blocking.datasets.RunService
@@ -62,6 +64,8 @@ class DatasetServiceImpl internal constructor(private val clientOptions: ClientO
         WithRawResponseImpl(clientOptions)
     }
 
+    private val examples: ExampleService by lazy { ExampleServiceImpl(clientOptions) }
+
     private val versions: VersionService by lazy { VersionServiceImpl(clientOptions) }
 
     private val runs: RunService by lazy { RunServiceImpl(clientOptions) }
@@ -80,6 +84,8 @@ class DatasetServiceImpl internal constructor(private val clientOptions: ClientO
 
     override fun withOptions(modifier: Consumer<ClientOptions.Builder>): DatasetService =
         DatasetServiceImpl(clientOptions.toBuilder().apply(modifier::accept).build())
+
+    override fun examples(): ExampleService = examples
 
     override fun versions(): VersionService = versions
 
@@ -178,6 +184,10 @@ class DatasetServiceImpl internal constructor(private val clientOptions: ClientO
         private val errorHandler: Handler<HttpResponse> =
             errorHandler(errorBodyHandler(clientOptions.jsonMapper))
 
+        private val examples: ExampleService.WithRawResponse by lazy {
+            ExampleServiceImpl.WithRawResponseImpl(clientOptions)
+        }
+
         private val versions: VersionService.WithRawResponse by lazy {
             VersionServiceImpl.WithRawResponseImpl(clientOptions)
         }
@@ -208,6 +218,8 @@ class DatasetServiceImpl internal constructor(private val clientOptions: ClientO
             DatasetServiceImpl.WithRawResponseImpl(
                 clientOptions.toBuilder().apply(modifier::accept).build()
             )
+
+        override fun examples(): ExampleService.WithRawResponse = examples
 
         override fun versions(): VersionService.WithRawResponse = versions
 

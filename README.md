@@ -87,6 +87,18 @@ export LANGSMITH_PROJECT_ID="your-project-id"
 
 All examples are available in [`langsmith-java-example`](langsmith-java-example).
 
+## Sandbox tracing metadata
+
+Operations through `SandboxClient` and its `Sandbox` handles add `sandbox_id` to the active
+LangSmith run and `langsmith.metadata.sandbox_id` to the current OpenTelemetry span, without
+creating spans or making additional requests. If a run uses multiple sandboxes, the most recently
+used sandbox ID is recorded; other metadata is preserved.
+
+Pass a sandbox UUID, or use `create()` or `retrieve()` to learn the canonical ID. Calls by an
+unresolved name omit the metadata rather than recording the name as an ID. `attach()` remains
+lazy and does not annotate traces. Direct calls through the generated
+`client.sandboxes().boxes()` services are not instrumented.
+
 ## Client configuration
 
 Configure the client using system properties or environment variables:

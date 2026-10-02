@@ -11,7 +11,7 @@ configurations.matching { it.name in setOf("testCompileClasspath", "testRuntimeC
 dependencies {
     api(project(":langsmith-java-core"))
 
-    implementation("com.squareup.okhttp3:okhttp:4.12.0")
+    implementation("com.squareup.okhttp3:okhttp:5.5.0")
 
     constraints {
         testImplementation("org.eclipse.jetty:jetty-server") { version { require("12.1.10") } }
@@ -32,6 +32,12 @@ dependencies {
 
     testImplementation(kotlin("test"))
     testImplementation("org.assertj:assertj-core:3.27.7")
-    testImplementation("org.wiremock:wiremock:4.0.0-beta.37")
-    testImplementation("org.wiremock:wiremock-junit5:4.0.0-beta.37")
+    testImplementation("org.bouncycastle:bcpkix-jdk18on:1.86")
+    testImplementation("org.bouncycastle:bcprov-jdk18on:1.86")
+    testImplementation("org.wiremock:wiremock:4.0.0-beta.38") {
+        exclude(group = "org.bouncycastle")
+    }
+    testImplementation("org.wiremock:wiremock-junit5:4.0.0-beta.38") {
+        exclude(group = "org.bouncycastle")
+    }
 }

@@ -40,10 +40,11 @@ private constructor(
 
     /**
      * Access selects the login mode, mutually exclusive with the minted token. Omit the field for
-     * token mode: mint a short-lived service token (default). "restricted" — LangSmith login: any
-     * user with SandboxesRead on the sandbox. "workspace" — LangSmith login: any member of the
-     * owning workspace. "off" — remove an existing LangSmith login grant and mint a token. A
-     * LangSmith login grant is durable; token mode is refused (409) while one exists.
+     * token mode: mint a short-lived service token (default). "restricted" — LangSmith login: the
+     * sandbox's creator, or any user with SandboxesExec on it (admins by default). "workspace" —
+     * LangSmith login: any member of the owning workspace. "off" — remove an existing LangSmith
+     * login grant and mint a token. A LangSmith login grant is durable; token mode is refused (409)
+     * while one exists.
      *
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
@@ -139,10 +140,10 @@ private constructor(
         /**
          * Access selects the login mode, mutually exclusive with the minted token. Omit the field
          * for token mode: mint a short-lived service token (default). "restricted" — LangSmith
-         * login: any user with SandboxesRead on the sandbox. "workspace" — LangSmith login: any
-         * member of the owning workspace. "off" — remove an existing LangSmith login grant and mint
-         * a token. A LangSmith login grant is durable; token mode is refused (409) while one
-         * exists.
+         * login: the sandbox's creator, or any user with SandboxesExec on it (admins by default).
+         * "workspace" — LangSmith login: any member of the owning workspace. "off" — remove an
+         * existing LangSmith login grant and mint a token. A LangSmith login grant is durable;
+         * token mode is refused (409) while one exists.
          */
         fun access(access: Access) = apply { body.access(access) }
 
@@ -343,10 +344,10 @@ private constructor(
         /**
          * Access selects the login mode, mutually exclusive with the minted token. Omit the field
          * for token mode: mint a short-lived service token (default). "restricted" — LangSmith
-         * login: any user with SandboxesRead on the sandbox. "workspace" — LangSmith login: any
-         * member of the owning workspace. "off" — remove an existing LangSmith login grant and mint
-         * a token. A LangSmith login grant is durable; token mode is refused (409) while one
-         * exists.
+         * login: the sandbox's creator, or any user with SandboxesExec on it (admins by default).
+         * "workspace" — LangSmith login: any member of the owning workspace. "off" — remove an
+         * existing LangSmith login grant and mint a token. A LangSmith login grant is durable;
+         * token mode is refused (409) while one exists.
          *
          * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
          *   the server responded with an unexpected value).
@@ -426,10 +427,10 @@ private constructor(
             /**
              * Access selects the login mode, mutually exclusive with the minted token. Omit the
              * field for token mode: mint a short-lived service token (default). "restricted" —
-             * LangSmith login: any user with SandboxesRead on the sandbox. "workspace" — LangSmith
-             * login: any member of the owning workspace. "off" — remove an existing LangSmith login
-             * grant and mint a token. A LangSmith login grant is durable; token mode is refused
-             * (409) while one exists.
+             * LangSmith login: the sandbox's creator, or any user with SandboxesExec on it (admins
+             * by default). "workspace" — LangSmith login: any member of the owning workspace. "off"
+             * — remove an existing LangSmith login grant and mint a token. A LangSmith login grant
+             * is durable; token mode is refused (409) while one exists.
              */
             fun access(access: Access) = access(JsonField.of(access))
 
@@ -561,10 +562,11 @@ private constructor(
 
     /**
      * Access selects the login mode, mutually exclusive with the minted token. Omit the field for
-     * token mode: mint a short-lived service token (default). "restricted" — LangSmith login: any
-     * user with SandboxesRead on the sandbox. "workspace" — LangSmith login: any member of the
-     * owning workspace. "off" — remove an existing LangSmith login grant and mint a token. A
-     * LangSmith login grant is durable; token mode is refused (409) while one exists.
+     * token mode: mint a short-lived service token (default). "restricted" — LangSmith login: the
+     * sandbox's creator, or any user with SandboxesExec on it (admins by default). "workspace" —
+     * LangSmith login: any member of the owning workspace. "off" — remove an existing LangSmith
+     * login grant and mint a token. A LangSmith login grant is durable; token mode is refused (409)
+     * while one exists.
      */
     class Access @JsonCreator private constructor(private val value: JsonField<String>) : Enum {
 

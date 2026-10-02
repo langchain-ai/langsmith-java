@@ -18,7 +18,9 @@ internal class CreateOnlineCodeEvaluatorRequestTest {
                 .code("code")
                 .dependencies("dependencies")
                 .language("language")
-                .managedCodeEvaluatorKey("managed_code_evaluator_key")
+                .managedCodeEvaluatorKey(
+                    CreateOnlineCodeEvaluatorRequest.ManagedCodeEvaluatorKey.VOICE_METRICS
+                )
                 .managedCodeEvaluatorSettings(
                     CreateOnlineCodeEvaluatorRequest.ManagedCodeEvaluatorSettings.builder()
                         .putAdditionalProperty(
@@ -35,7 +37,7 @@ internal class CreateOnlineCodeEvaluatorRequestTest {
         assertThat(createOnlineCodeEvaluatorRequest.dependencies()).contains("dependencies")
         assertThat(createOnlineCodeEvaluatorRequest.language()).contains("language")
         assertThat(createOnlineCodeEvaluatorRequest.managedCodeEvaluatorKey())
-            .contains("managed_code_evaluator_key")
+            .contains(CreateOnlineCodeEvaluatorRequest.ManagedCodeEvaluatorKey.VOICE_METRICS)
         assertThat(createOnlineCodeEvaluatorRequest.managedCodeEvaluatorSettings())
             .contains(
                 CreateOnlineCodeEvaluatorRequest.ManagedCodeEvaluatorSettings.builder()
@@ -57,7 +59,9 @@ internal class CreateOnlineCodeEvaluatorRequestTest {
                 .code("code")
                 .dependencies("dependencies")
                 .language("language")
-                .managedCodeEvaluatorKey("managed_code_evaluator_key")
+                .managedCodeEvaluatorKey(
+                    CreateOnlineCodeEvaluatorRequest.ManagedCodeEvaluatorKey.VOICE_METRICS
+                )
                 .managedCodeEvaluatorSettings(
                     CreateOnlineCodeEvaluatorRequest.ManagedCodeEvaluatorSettings.builder()
                         .putAdditionalProperty(

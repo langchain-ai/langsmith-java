@@ -5,12 +5,12 @@ package com.langchain.smith.services.blocking
 import com.google.errorprone.annotations.MustBeClosed
 import com.langchain.smith.core.ClientOptions
 import com.langchain.smith.core.RequestOptions
+import com.langchain.smith.core.http.HttpResponse
 import com.langchain.smith.core.http.HttpResponseFor
 import com.langchain.smith.models.sessions.CustomChartsSection
 import com.langchain.smith.models.sessions.SessionCreateParams
 import com.langchain.smith.models.sessions.SessionDashboardParams
 import com.langchain.smith.models.sessions.SessionDeleteParams
-import com.langchain.smith.models.sessions.SessionDeleteResponse
 import com.langchain.smith.models.sessions.SessionListPage
 import com.langchain.smith.models.sessions.SessionListParams
 import com.langchain.smith.models.sessions.SessionRetrieveParams
@@ -137,36 +137,36 @@ interface SessionService {
     fun list(requestOptions: RequestOptions): SessionListPage =
         list(SessionListParams.none(), requestOptions)
 
-    /** Delete a specific project. */
-    fun delete(sessionId: String): SessionDeleteResponse =
-        delete(sessionId, SessionDeleteParams.none())
+    /**
+     * Delete a specific project.
+     *
+     * Returns 202 when deletion is accepted. Cleanup runs asynchronously. Location identifies the
+     * affected project, not a cleanup-status endpoint. For a caller with read access, GET at that
+     * URL returns 200 with the project while it is still available, or 404 after the project is
+     * removed. A 404 does not confirm that background trace cleanup has finished. Polling for
+     * cleanup completion is not supported.
+     */
+    fun delete(sessionId: String) = delete(sessionId, SessionDeleteParams.none())
 
     /** @see delete */
     fun delete(
         sessionId: String,
         params: SessionDeleteParams = SessionDeleteParams.none(),
         requestOptions: RequestOptions = RequestOptions.none(),
-    ): SessionDeleteResponse =
-        delete(params.toBuilder().sessionId(sessionId).build(), requestOptions)
+    ) = delete(params.toBuilder().sessionId(sessionId).build(), requestOptions)
 
     /** @see delete */
-    fun delete(
-        sessionId: String,
-        params: SessionDeleteParams = SessionDeleteParams.none(),
-    ): SessionDeleteResponse = delete(sessionId, params, RequestOptions.none())
+    fun delete(sessionId: String, params: SessionDeleteParams = SessionDeleteParams.none()) =
+        delete(sessionId, params, RequestOptions.none())
 
     /** @see delete */
-    fun delete(
-        params: SessionDeleteParams,
-        requestOptions: RequestOptions = RequestOptions.none(),
-    ): SessionDeleteResponse
+    fun delete(params: SessionDeleteParams, requestOptions: RequestOptions = RequestOptions.none())
 
     /** @see delete */
-    fun delete(params: SessionDeleteParams): SessionDeleteResponse =
-        delete(params, RequestOptions.none())
+    fun delete(params: SessionDeleteParams) = delete(params, RequestOptions.none())
 
     /** @see delete */
-    fun delete(sessionId: String, requestOptions: RequestOptions): SessionDeleteResponse =
+    fun delete(sessionId: String, requestOptions: RequestOptions) =
         delete(sessionId, SessionDeleteParams.none(), requestOptions)
 
     /** Get a prebuilt dashboard for a tracing project. */
@@ -352,8 +352,7 @@ interface SessionService {
          * the same as [SessionService.delete].
          */
         @MustBeClosed
-        fun delete(sessionId: String): HttpResponseFor<SessionDeleteResponse> =
-            delete(sessionId, SessionDeleteParams.none())
+        fun delete(sessionId: String): HttpResponse = delete(sessionId, SessionDeleteParams.none())
 
         /** @see delete */
         @MustBeClosed
@@ -361,34 +360,30 @@ interface SessionService {
             sessionId: String,
             params: SessionDeleteParams = SessionDeleteParams.none(),
             requestOptions: RequestOptions = RequestOptions.none(),
-        ): HttpResponseFor<SessionDeleteResponse> =
-            delete(params.toBuilder().sessionId(sessionId).build(), requestOptions)
+        ): HttpResponse = delete(params.toBuilder().sessionId(sessionId).build(), requestOptions)
 
         /** @see delete */
         @MustBeClosed
         fun delete(
             sessionId: String,
             params: SessionDeleteParams = SessionDeleteParams.none(),
-        ): HttpResponseFor<SessionDeleteResponse> = delete(sessionId, params, RequestOptions.none())
+        ): HttpResponse = delete(sessionId, params, RequestOptions.none())
 
         /** @see delete */
         @MustBeClosed
         fun delete(
             params: SessionDeleteParams,
             requestOptions: RequestOptions = RequestOptions.none(),
-        ): HttpResponseFor<SessionDeleteResponse>
+        ): HttpResponse
 
         /** @see delete */
         @MustBeClosed
-        fun delete(params: SessionDeleteParams): HttpResponseFor<SessionDeleteResponse> =
+        fun delete(params: SessionDeleteParams): HttpResponse =
             delete(params, RequestOptions.none())
 
         /** @see delete */
         @MustBeClosed
-        fun delete(
-            sessionId: String,
-            requestOptions: RequestOptions,
-        ): HttpResponseFor<SessionDeleteResponse> =
+        fun delete(sessionId: String, requestOptions: RequestOptions): HttpResponse =
             delete(sessionId, SessionDeleteParams.none(), requestOptions)
 
         /**

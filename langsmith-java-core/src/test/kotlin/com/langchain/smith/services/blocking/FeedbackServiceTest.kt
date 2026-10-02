@@ -4,6 +4,7 @@ package com.langchain.smith.services.blocking
 
 import com.langchain.smith.client.okhttp.LangsmithOkHttpClient
 import com.langchain.smith.core.JsonValue
+import com.langchain.smith.models.AgentAddress
 import com.langchain.smith.models.feedback.AppFeedbackSource
 import com.langchain.smith.models.feedback.FeedbackCreateSchema
 import com.langchain.smith.models.feedback.FeedbackRetrieveParams
@@ -26,6 +27,14 @@ internal class FeedbackServiceTest {
                 FeedbackCreateSchema.builder()
                     .key("key")
                     .id("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                    .address(
+                        AgentAddress.builder()
+                            .id("support-agent")
+                            .environment(AgentAddress.Environment.PRODUCTION)
+                            .build()
+                    )
+                    .agentEnvironment(FeedbackCreateSchema.AgentEnvironment.LOCAL)
+                    .agentId("agent_id")
                     .comment("comment")
                     .comparativeExperimentId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                     .correction(
@@ -36,6 +45,11 @@ internal class FeedbackServiceTest {
                     .createdAt(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
                     .error(true)
                     .extendTraceRetention(true)
+                    .extra(
+                        FeedbackCreateSchema.Extra.builder()
+                            .putAdditionalProperty("foo", JsonValue.from("bar"))
+                            .build()
+                    )
                     .feedbackConfig(
                         FeedbackCreateSchema.FeedbackConfig.builder()
                             .type(FeedbackCreateSchema.FeedbackConfig.Type.CONTINUOUS)

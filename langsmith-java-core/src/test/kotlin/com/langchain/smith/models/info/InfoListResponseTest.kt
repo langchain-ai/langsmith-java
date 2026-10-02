@@ -31,6 +31,7 @@ internal class InfoListResponseTest {
                         .customerName("customer_name")
                         .build()
                 )
+                .engineGitHubWebBaseUrl("https://example.com")
                 .gitSha("git_sha")
                 .instanceFlags(
                     InfoListResponse.InstanceFlags.builder()
@@ -68,6 +69,7 @@ internal class InfoListResponseTest {
                     .customerName("customer_name")
                     .build()
             )
+        assertThat(infoListResponse.engineGitHubWebBaseUrl()).contains("https://example.com")
         assertThat(infoListResponse.gitSha()).contains("git_sha")
         assertThat(infoListResponse.instanceFlags())
             .contains(
@@ -110,6 +112,7 @@ internal class InfoListResponseTest {
                         .customerName("customer_name")
                         .build()
                 )
+                .engineGitHubWebBaseUrl("https://example.com")
                 .gitSha("git_sha")
                 .instanceFlags(
                     InfoListResponse.InstanceFlags.builder()

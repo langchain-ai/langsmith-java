@@ -22,19 +22,126 @@ internal class IssueTest {
                 .autoResolutionState("auto_resolution_state")
                 .createdAt("created_at")
                 .description("description")
+                .evidence(
+                    Issue.Evidence.builder()
+                        .type(Issue.Evidence.Type.SERIES)
+                        .series(
+                            Issue.Evidence.Series.builder()
+                                .metricDefinition(
+                                    Issue.Evidence.Series.MetricDefinition.builder()
+                                        .type(Issue.Evidence.Series.MetricDefinition.Type.COUNT)
+                                        .denominator(
+                                            Issue.Evidence.Series.MetricDefinition.Denominator
+                                                .builder()
+                                                .type(
+                                                    Issue.Evidence.Series.MetricDefinition
+                                                        .Denominator
+                                                        .Type
+                                                        .COUNT
+                                                )
+                                                .entity(
+                                                    Issue.Evidence.Series.MetricDefinition
+                                                        .Denominator
+                                                        .Entity
+                                                        .RUN
+                                                )
+                                                .field(
+                                                    Issue.Evidence.Series.MetricDefinition
+                                                        .Denominator
+                                                        .Field
+                                                        .LATENCY_SECONDS
+                                                )
+                                                .filter("filter")
+                                                .params(
+                                                    Issue.Evidence.Series.MetricDefinition
+                                                        .Denominator
+                                                        .Params
+                                                        .builder()
+                                                        .bucketCount(0L)
+                                                        .feedbackKey("feedback_key")
+                                                        .p(0.0)
+                                                        .build()
+                                                )
+                                                .build()
+                                        )
+                                        .entity(Issue.Evidence.Series.MetricDefinition.Entity.RUN)
+                                        .field(
+                                            Issue.Evidence.Series.MetricDefinition.Field
+                                                .LATENCY_SECONDS
+                                        )
+                                        .numerator(
+                                            Issue.Evidence.Series.MetricDefinition.Numerator
+                                                .builder()
+                                                .type(
+                                                    Issue.Evidence.Series.MetricDefinition.Numerator
+                                                        .Type
+                                                        .COUNT
+                                                )
+                                                .entity(
+                                                    Issue.Evidence.Series.MetricDefinition.Numerator
+                                                        .Entity
+                                                        .RUN
+                                                )
+                                                .field(
+                                                    Issue.Evidence.Series.MetricDefinition.Numerator
+                                                        .Field
+                                                        .LATENCY_SECONDS
+                                                )
+                                                .filter("filter")
+                                                .params(
+                                                    Issue.Evidence.Series.MetricDefinition.Numerator
+                                                        .Params
+                                                        .builder()
+                                                        .bucketCount(0L)
+                                                        .feedbackKey("feedback_key")
+                                                        .p(0.0)
+                                                        .build()
+                                                )
+                                                .build()
+                                        )
+                                        .params(
+                                            Issue.Evidence.Series.MetricDefinition.Params.builder()
+                                                .bucketCount(0L)
+                                                .feedbackKey("feedback_key")
+                                                .p(0.0)
+                                                .build()
+                                        )
+                                        .build()
+                                )
+                                .runFilter("run_filter")
+                                .windowEnd(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
+                                .windowStart(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
+                                .build()
+                        )
+                        .build()
+                )
                 .firstSeenAt("first_seen_at")
                 .fixBranch("fix_branch")
                 .fixDispatchedAt("fix_dispatched_at")
+                .fixHandoffBotUserId("fix_handoff_bot_user_id")
                 .fixPrNumber(0L)
                 .fixPrompt("fix_prompt")
                 .fixVerification(
                     Issue.FixVerification.builder()
                         .attempt(0L)
+                        .baselineExperimentId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                        .datasetId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                         .parentDeploymentId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                         .previewDeploymentId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                        .previewExperimentId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                         .reason("reason")
                         .addRootTraceId("string")
                         .status(Issue.FixVerification.Status.AWAITING_PREVIEW)
+                        .updatedAt(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
+                        .build()
+                )
+                .addFix(
+                    Issue.Fix.builder()
+                        .id("id")
+                        .branch("branch")
+                        .createdAt(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
+                        .prNumber(0L)
+                        .repoUrl("repo_url")
                         .updatedAt(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
                         .build()
                 )
@@ -73,7 +180,9 @@ internal class IssueTest {
                 .validationResult(
                     Issue.ValidationResult.builder()
                         .activeRevisionId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                        .baselineExperimentId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                         .completedAt(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
+                        .datasetId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                         .deploymentId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                         .outcome(Issue.ValidationResult.Outcome.REPRODUCED)
                         .reason("reason")
@@ -89,20 +198,122 @@ internal class IssueTest {
         assertThat(issue.autoResolutionState()).contains("auto_resolution_state")
         assertThat(issue.createdAt()).contains("created_at")
         assertThat(issue.description()).contains("description")
+        assertThat(issue.evidence())
+            .contains(
+                Issue.Evidence.builder()
+                    .type(Issue.Evidence.Type.SERIES)
+                    .series(
+                        Issue.Evidence.Series.builder()
+                            .metricDefinition(
+                                Issue.Evidence.Series.MetricDefinition.builder()
+                                    .type(Issue.Evidence.Series.MetricDefinition.Type.COUNT)
+                                    .denominator(
+                                        Issue.Evidence.Series.MetricDefinition.Denominator.builder()
+                                            .type(
+                                                Issue.Evidence.Series.MetricDefinition.Denominator
+                                                    .Type
+                                                    .COUNT
+                                            )
+                                            .entity(
+                                                Issue.Evidence.Series.MetricDefinition.Denominator
+                                                    .Entity
+                                                    .RUN
+                                            )
+                                            .field(
+                                                Issue.Evidence.Series.MetricDefinition.Denominator
+                                                    .Field
+                                                    .LATENCY_SECONDS
+                                            )
+                                            .filter("filter")
+                                            .params(
+                                                Issue.Evidence.Series.MetricDefinition.Denominator
+                                                    .Params
+                                                    .builder()
+                                                    .bucketCount(0L)
+                                                    .feedbackKey("feedback_key")
+                                                    .p(0.0)
+                                                    .build()
+                                            )
+                                            .build()
+                                    )
+                                    .entity(Issue.Evidence.Series.MetricDefinition.Entity.RUN)
+                                    .field(
+                                        Issue.Evidence.Series.MetricDefinition.Field.LATENCY_SECONDS
+                                    )
+                                    .numerator(
+                                        Issue.Evidence.Series.MetricDefinition.Numerator.builder()
+                                            .type(
+                                                Issue.Evidence.Series.MetricDefinition.Numerator
+                                                    .Type
+                                                    .COUNT
+                                            )
+                                            .entity(
+                                                Issue.Evidence.Series.MetricDefinition.Numerator
+                                                    .Entity
+                                                    .RUN
+                                            )
+                                            .field(
+                                                Issue.Evidence.Series.MetricDefinition.Numerator
+                                                    .Field
+                                                    .LATENCY_SECONDS
+                                            )
+                                            .filter("filter")
+                                            .params(
+                                                Issue.Evidence.Series.MetricDefinition.Numerator
+                                                    .Params
+                                                    .builder()
+                                                    .bucketCount(0L)
+                                                    .feedbackKey("feedback_key")
+                                                    .p(0.0)
+                                                    .build()
+                                            )
+                                            .build()
+                                    )
+                                    .params(
+                                        Issue.Evidence.Series.MetricDefinition.Params.builder()
+                                            .bucketCount(0L)
+                                            .feedbackKey("feedback_key")
+                                            .p(0.0)
+                                            .build()
+                                    )
+                                    .build()
+                            )
+                            .runFilter("run_filter")
+                            .windowEnd(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
+                            .windowStart(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
+                            .build()
+                    )
+                    .build()
+            )
         assertThat(issue.firstSeenAt()).contains("first_seen_at")
         assertThat(issue.fixBranch()).contains("fix_branch")
         assertThat(issue.fixDispatchedAt()).contains("fix_dispatched_at")
+        assertThat(issue.fixHandoffBotUserId()).contains("fix_handoff_bot_user_id")
         assertThat(issue.fixPrNumber()).contains(0L)
         assertThat(issue.fixPrompt()).contains("fix_prompt")
         assertThat(issue.fixVerification())
             .contains(
                 Issue.FixVerification.builder()
                     .attempt(0L)
+                    .baselineExperimentId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                    .datasetId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                     .parentDeploymentId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                     .previewDeploymentId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                    .previewExperimentId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                     .reason("reason")
                     .addRootTraceId("string")
                     .status(Issue.FixVerification.Status.AWAITING_PREVIEW)
+                    .updatedAt(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
+                    .build()
+            )
+        assertThat(issue.fixes().getOrNull())
+            .containsExactly(
+                Issue.Fix.builder()
+                    .id("id")
+                    .branch("branch")
+                    .createdAt(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
+                    .prNumber(0L)
+                    .repoUrl("repo_url")
                     .updatedAt(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
                     .build()
             )
@@ -147,7 +358,9 @@ internal class IssueTest {
             .contains(
                 Issue.ValidationResult.builder()
                     .activeRevisionId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                    .baselineExperimentId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                     .completedAt(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
+                    .datasetId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                     .deploymentId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                     .outcome(Issue.ValidationResult.Outcome.REPRODUCED)
                     .reason("reason")
@@ -168,19 +381,126 @@ internal class IssueTest {
                 .autoResolutionState("auto_resolution_state")
                 .createdAt("created_at")
                 .description("description")
+                .evidence(
+                    Issue.Evidence.builder()
+                        .type(Issue.Evidence.Type.SERIES)
+                        .series(
+                            Issue.Evidence.Series.builder()
+                                .metricDefinition(
+                                    Issue.Evidence.Series.MetricDefinition.builder()
+                                        .type(Issue.Evidence.Series.MetricDefinition.Type.COUNT)
+                                        .denominator(
+                                            Issue.Evidence.Series.MetricDefinition.Denominator
+                                                .builder()
+                                                .type(
+                                                    Issue.Evidence.Series.MetricDefinition
+                                                        .Denominator
+                                                        .Type
+                                                        .COUNT
+                                                )
+                                                .entity(
+                                                    Issue.Evidence.Series.MetricDefinition
+                                                        .Denominator
+                                                        .Entity
+                                                        .RUN
+                                                )
+                                                .field(
+                                                    Issue.Evidence.Series.MetricDefinition
+                                                        .Denominator
+                                                        .Field
+                                                        .LATENCY_SECONDS
+                                                )
+                                                .filter("filter")
+                                                .params(
+                                                    Issue.Evidence.Series.MetricDefinition
+                                                        .Denominator
+                                                        .Params
+                                                        .builder()
+                                                        .bucketCount(0L)
+                                                        .feedbackKey("feedback_key")
+                                                        .p(0.0)
+                                                        .build()
+                                                )
+                                                .build()
+                                        )
+                                        .entity(Issue.Evidence.Series.MetricDefinition.Entity.RUN)
+                                        .field(
+                                            Issue.Evidence.Series.MetricDefinition.Field
+                                                .LATENCY_SECONDS
+                                        )
+                                        .numerator(
+                                            Issue.Evidence.Series.MetricDefinition.Numerator
+                                                .builder()
+                                                .type(
+                                                    Issue.Evidence.Series.MetricDefinition.Numerator
+                                                        .Type
+                                                        .COUNT
+                                                )
+                                                .entity(
+                                                    Issue.Evidence.Series.MetricDefinition.Numerator
+                                                        .Entity
+                                                        .RUN
+                                                )
+                                                .field(
+                                                    Issue.Evidence.Series.MetricDefinition.Numerator
+                                                        .Field
+                                                        .LATENCY_SECONDS
+                                                )
+                                                .filter("filter")
+                                                .params(
+                                                    Issue.Evidence.Series.MetricDefinition.Numerator
+                                                        .Params
+                                                        .builder()
+                                                        .bucketCount(0L)
+                                                        .feedbackKey("feedback_key")
+                                                        .p(0.0)
+                                                        .build()
+                                                )
+                                                .build()
+                                        )
+                                        .params(
+                                            Issue.Evidence.Series.MetricDefinition.Params.builder()
+                                                .bucketCount(0L)
+                                                .feedbackKey("feedback_key")
+                                                .p(0.0)
+                                                .build()
+                                        )
+                                        .build()
+                                )
+                                .runFilter("run_filter")
+                                .windowEnd(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
+                                .windowStart(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
+                                .build()
+                        )
+                        .build()
+                )
                 .firstSeenAt("first_seen_at")
                 .fixBranch("fix_branch")
                 .fixDispatchedAt("fix_dispatched_at")
+                .fixHandoffBotUserId("fix_handoff_bot_user_id")
                 .fixPrNumber(0L)
                 .fixPrompt("fix_prompt")
                 .fixVerification(
                     Issue.FixVerification.builder()
                         .attempt(0L)
+                        .baselineExperimentId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                        .datasetId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                         .parentDeploymentId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                         .previewDeploymentId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                        .previewExperimentId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                         .reason("reason")
                         .addRootTraceId("string")
                         .status(Issue.FixVerification.Status.AWAITING_PREVIEW)
+                        .updatedAt(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
+                        .build()
+                )
+                .addFix(
+                    Issue.Fix.builder()
+                        .id("id")
+                        .branch("branch")
+                        .createdAt(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
+                        .prNumber(0L)
+                        .repoUrl("repo_url")
                         .updatedAt(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
                         .build()
                 )
@@ -219,7 +539,9 @@ internal class IssueTest {
                 .validationResult(
                     Issue.ValidationResult.builder()
                         .activeRevisionId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                        .baselineExperimentId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                         .completedAt(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
+                        .datasetId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                         .deploymentId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                         .outcome(Issue.ValidationResult.Outcome.REPRODUCED)
                         .reason("reason")

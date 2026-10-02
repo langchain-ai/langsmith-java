@@ -4,6 +4,7 @@ package com.langchain.smith.client
 
 import com.langchain.smith.core.ClientOptions
 import com.langchain.smith.services.async.AnnotationQueueServiceAsync
+import com.langchain.smith.services.async.ChartServiceAsync
 import com.langchain.smith.services.async.CommitServiceAsync
 import com.langchain.smith.services.async.DatasetServiceAsync
 import com.langchain.smith.services.async.EvaluatorServiceAsync
@@ -75,6 +76,8 @@ interface LangsmithClientAsync {
 
     fun threads(): ThreadServiceAsync
 
+    fun charts(): ChartServiceAsync
+
     fun traces(): TraceServiceAsync
 
     fun evaluators(): EvaluatorServiceAsync
@@ -141,6 +144,8 @@ interface LangsmithClientAsync {
         fun runs(): RunServiceAsync.WithRawResponse
 
         fun threads(): ThreadServiceAsync.WithRawResponse
+
+        fun charts(): ChartServiceAsync.WithRawResponse
 
         fun traces(): TraceServiceAsync.WithRawResponse
 

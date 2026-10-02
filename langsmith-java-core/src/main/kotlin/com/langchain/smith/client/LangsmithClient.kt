@@ -4,6 +4,7 @@ package com.langchain.smith.client
 
 import com.langchain.smith.core.ClientOptions
 import com.langchain.smith.services.blocking.AnnotationQueueService
+import com.langchain.smith.services.blocking.ChartService
 import com.langchain.smith.services.blocking.CommitService
 import com.langchain.smith.services.blocking.DatasetService
 import com.langchain.smith.services.blocking.EvaluatorService
@@ -75,6 +76,8 @@ interface LangsmithClient {
 
     fun threads(): ThreadService
 
+    fun charts(): ChartService
+
     fun traces(): TraceService
 
     fun evaluators(): EvaluatorService
@@ -137,6 +140,8 @@ interface LangsmithClient {
         fun runs(): RunService.WithRawResponse
 
         fun threads(): ThreadService.WithRawResponse
+
+        fun charts(): ChartService.WithRawResponse
 
         fun traces(): TraceService.WithRawResponse
 

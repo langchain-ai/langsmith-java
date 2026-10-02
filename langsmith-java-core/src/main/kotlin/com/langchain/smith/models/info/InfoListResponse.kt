@@ -23,6 +23,7 @@ private constructor(
     private val batchIngestConfig: JsonField<BatchIngestConfig>,
     private val billingInstallationId: JsonField<String>,
     private val customerInfo: JsonField<CustomerInfo>,
+    private val engineGitHubWebBaseUrl: JsonField<String>,
     private val gitSha: JsonField<String>,
     private val instanceFlags: JsonField<InstanceFlags>,
     private val licenseExpirationTime: JsonField<String>,
@@ -42,6 +43,9 @@ private constructor(
         @JsonProperty("customer_info")
         @ExcludeMissing
         customerInfo: JsonField<CustomerInfo> = JsonMissing.of(),
+        @JsonProperty("engine_github_web_base_url")
+        @ExcludeMissing
+        engineGitHubWebBaseUrl: JsonField<String> = JsonMissing.of(),
         @JsonProperty("git_sha") @ExcludeMissing gitSha: JsonField<String> = JsonMissing.of(),
         @JsonProperty("instance_flags")
         @ExcludeMissing
@@ -57,6 +61,7 @@ private constructor(
         batchIngestConfig,
         billingInstallationId,
         customerInfo,
+        engineGitHubWebBaseUrl,
         gitSha,
         instanceFlags,
         licenseExpirationTime,
@@ -87,6 +92,13 @@ private constructor(
      *   server responded with an unexpected value).
      */
     fun customerInfo(): Optional<CustomerInfo> = customerInfo.getOptional("customer_info")
+
+    /**
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
+    fun engineGitHubWebBaseUrl(): Optional<String> =
+        engineGitHubWebBaseUrl.getOptional("engine_github_web_base_url")
 
     /**
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
@@ -147,6 +159,16 @@ private constructor(
     @JsonProperty("customer_info")
     @ExcludeMissing
     fun _customerInfo(): JsonField<CustomerInfo> = customerInfo
+
+    /**
+     * Returns the raw JSON value of [engineGitHubWebBaseUrl].
+     *
+     * Unlike [engineGitHubWebBaseUrl], this method doesn't throw if the JSON field has an
+     * unexpected type.
+     */
+    @JsonProperty("engine_github_web_base_url")
+    @ExcludeMissing
+    fun _engineGitHubWebBaseUrl(): JsonField<String> = engineGitHubWebBaseUrl
 
     /**
      * Returns the raw JSON value of [gitSha].
@@ -214,6 +236,7 @@ private constructor(
         private var batchIngestConfig: JsonField<BatchIngestConfig> = JsonMissing.of()
         private var billingInstallationId: JsonField<String> = JsonMissing.of()
         private var customerInfo: JsonField<CustomerInfo> = JsonMissing.of()
+        private var engineGitHubWebBaseUrl: JsonField<String> = JsonMissing.of()
         private var gitSha: JsonField<String> = JsonMissing.of()
         private var instanceFlags: JsonField<InstanceFlags> = JsonMissing.of()
         private var licenseExpirationTime: JsonField<String> = JsonMissing.of()
@@ -226,6 +249,7 @@ private constructor(
             batchIngestConfig = infoListResponse.batchIngestConfig
             billingInstallationId = infoListResponse.billingInstallationId
             customerInfo = infoListResponse.customerInfo
+            engineGitHubWebBaseUrl = infoListResponse.engineGitHubWebBaseUrl
             gitSha = infoListResponse.gitSha
             instanceFlags = infoListResponse.instanceFlags
             licenseExpirationTime = infoListResponse.licenseExpirationTime
@@ -277,6 +301,20 @@ private constructor(
          */
         fun customerInfo(customerInfo: JsonField<CustomerInfo>) = apply {
             this.customerInfo = customerInfo
+        }
+
+        fun engineGitHubWebBaseUrl(engineGitHubWebBaseUrl: String) =
+            engineGitHubWebBaseUrl(JsonField.of(engineGitHubWebBaseUrl))
+
+        /**
+         * Sets [Builder.engineGitHubWebBaseUrl] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.engineGitHubWebBaseUrl] with a well-typed [String] value
+         * instead. This method is primarily for setting the field to an undocumented or not yet
+         * supported value.
+         */
+        fun engineGitHubWebBaseUrl(engineGitHubWebBaseUrl: JsonField<String>) = apply {
+            this.engineGitHubWebBaseUrl = engineGitHubWebBaseUrl
         }
 
         fun gitSha(gitSha: String) = gitSha(JsonField.of(gitSha))
@@ -368,6 +406,7 @@ private constructor(
                 batchIngestConfig,
                 billingInstallationId,
                 customerInfo,
+                engineGitHubWebBaseUrl,
                 gitSha,
                 instanceFlags,
                 licenseExpirationTime,
@@ -395,6 +434,7 @@ private constructor(
         batchIngestConfig().ifPresent { it.validate() }
         billingInstallationId()
         customerInfo().ifPresent { it.validate() }
+        engineGitHubWebBaseUrl()
         gitSha()
         instanceFlags().ifPresent { it.validate() }
         licenseExpirationTime()
@@ -421,6 +461,7 @@ private constructor(
         (batchIngestConfig.asKnown().getOrNull()?.validity() ?: 0) +
             (if (billingInstallationId.asKnown().isPresent) 1 else 0) +
             (customerInfo.asKnown().getOrNull()?.validity() ?: 0) +
+            (if (engineGitHubWebBaseUrl.asKnown().isPresent) 1 else 0) +
             (if (gitSha.asKnown().isPresent) 1 else 0) +
             (instanceFlags.asKnown().getOrNull()?.validity() ?: 0) +
             (if (licenseExpirationTime.asKnown().isPresent) 1 else 0) +
@@ -1411,6 +1452,7 @@ private constructor(
             batchIngestConfig == other.batchIngestConfig &&
             billingInstallationId == other.billingInstallationId &&
             customerInfo == other.customerInfo &&
+            engineGitHubWebBaseUrl == other.engineGitHubWebBaseUrl &&
             gitSha == other.gitSha &&
             instanceFlags == other.instanceFlags &&
             licenseExpirationTime == other.licenseExpirationTime &&
@@ -1424,6 +1466,7 @@ private constructor(
             batchIngestConfig,
             billingInstallationId,
             customerInfo,
+            engineGitHubWebBaseUrl,
             gitSha,
             instanceFlags,
             licenseExpirationTime,
@@ -1436,5 +1479,5 @@ private constructor(
     override fun hashCode(): Int = hashCode
 
     override fun toString() =
-        "InfoListResponse{batchIngestConfig=$batchIngestConfig, billingInstallationId=$billingInstallationId, customerInfo=$customerInfo, gitSha=$gitSha, instanceFlags=$instanceFlags, licenseExpirationTime=$licenseExpirationTime, sdkVersions=$sdkVersions, version=$version, additionalProperties=$additionalProperties}"
+        "InfoListResponse{batchIngestConfig=$batchIngestConfig, billingInstallationId=$billingInstallationId, customerInfo=$customerInfo, engineGitHubWebBaseUrl=$engineGitHubWebBaseUrl, gitSha=$gitSha, instanceFlags=$instanceFlags, licenseExpirationTime=$licenseExpirationTime, sdkVersions=$sdkVersions, version=$version, additionalProperties=$additionalProperties}"
 }

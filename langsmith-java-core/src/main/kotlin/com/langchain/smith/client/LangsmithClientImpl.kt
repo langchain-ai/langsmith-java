@@ -6,6 +6,8 @@ import com.langchain.smith.core.ClientOptions
 import com.langchain.smith.core.getPackageVersion
 import com.langchain.smith.services.blocking.AnnotationQueueService
 import com.langchain.smith.services.blocking.AnnotationQueueServiceImpl
+import com.langchain.smith.services.blocking.ChartService
+import com.langchain.smith.services.blocking.ChartServiceImpl
 import com.langchain.smith.services.blocking.CommitService
 import com.langchain.smith.services.blocking.CommitServiceImpl
 import com.langchain.smith.services.blocking.DatasetService
@@ -79,6 +81,8 @@ class LangsmithClientImpl(private val clientOptions: ClientOptions) : LangsmithC
 
     private val threads: ThreadService by lazy { ThreadServiceImpl(clientOptionsWithUserAgent) }
 
+    private val charts: ChartService by lazy { ChartServiceImpl(clientOptionsWithUserAgent) }
+
     private val traces: TraceService by lazy { TraceServiceImpl(clientOptionsWithUserAgent) }
 
     private val evaluators: EvaluatorService by lazy {
@@ -135,6 +139,8 @@ class LangsmithClientImpl(private val clientOptions: ClientOptions) : LangsmithC
     override fun runs(): RunService = runs.value
 
     override fun threads(): ThreadService = threads
+
+    override fun charts(): ChartService = charts
 
     override fun traces(): TraceService = traces
 
@@ -198,6 +204,10 @@ class LangsmithClientImpl(private val clientOptions: ClientOptions) : LangsmithC
 
         private val threads: ThreadService.WithRawResponse by lazy {
             ThreadServiceImpl.WithRawResponseImpl(clientOptions)
+        }
+
+        private val charts: ChartService.WithRawResponse by lazy {
+            ChartServiceImpl.WithRawResponseImpl(clientOptions)
         }
 
         private val traces: TraceService.WithRawResponse by lazy {
@@ -272,6 +282,8 @@ class LangsmithClientImpl(private val clientOptions: ClientOptions) : LangsmithC
         override fun runs(): RunService.WithRawResponse = runs
 
         override fun threads(): ThreadService.WithRawResponse = threads
+
+        override fun charts(): ChartService.WithRawResponse = charts
 
         override fun traces(): TraceService.WithRawResponse = traces
 

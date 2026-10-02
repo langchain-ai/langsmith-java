@@ -26,6 +26,7 @@ import com.langchain.smith.core.checkRequired
 import com.langchain.smith.core.getOrThrow
 import com.langchain.smith.core.toImmutable
 import com.langchain.smith.errors.LangChainInvalidDataException
+import com.langchain.smith.models.AgentAddress
 import java.time.OffsetDateTime
 import java.util.Collections
 import java.util.Objects
@@ -38,12 +39,16 @@ class FeedbackCreateSchema
 private constructor(
     private val key: JsonField<String>,
     private val id: JsonField<String>,
+    private val address: JsonField<AgentAddress>,
+    private val agentEnvironment: JsonField<AgentEnvironment>,
+    private val agentId: JsonField<String>,
     private val comment: JsonField<String>,
     private val comparativeExperimentId: JsonField<String>,
     private val correction: JsonField<Correction>,
     private val createdAt: JsonField<OffsetDateTime>,
     private val error: JsonField<Boolean>,
     private val extendTraceRetention: JsonField<Boolean>,
+    private val extra: JsonField<Extra>,
     private val feedbackConfig: JsonField<FeedbackConfig>,
     private val feedbackGroupId: JsonField<String>,
     private val feedbackSource: JsonField<FeedbackSource>,
@@ -62,6 +67,13 @@ private constructor(
     private constructor(
         @JsonProperty("key") @ExcludeMissing key: JsonField<String> = JsonMissing.of(),
         @JsonProperty("id") @ExcludeMissing id: JsonField<String> = JsonMissing.of(),
+        @JsonProperty("address")
+        @ExcludeMissing
+        address: JsonField<AgentAddress> = JsonMissing.of(),
+        @JsonProperty("agent_environment")
+        @ExcludeMissing
+        agentEnvironment: JsonField<AgentEnvironment> = JsonMissing.of(),
+        @JsonProperty("agent_id") @ExcludeMissing agentId: JsonField<String> = JsonMissing.of(),
         @JsonProperty("comment") @ExcludeMissing comment: JsonField<String> = JsonMissing.of(),
         @JsonProperty("comparative_experiment_id")
         @ExcludeMissing
@@ -76,6 +88,7 @@ private constructor(
         @JsonProperty("extend_trace_retention")
         @ExcludeMissing
         extendTraceRetention: JsonField<Boolean> = JsonMissing.of(),
+        @JsonProperty("extra") @ExcludeMissing extra: JsonField<Extra> = JsonMissing.of(),
         @JsonProperty("feedback_config")
         @ExcludeMissing
         feedbackConfig: JsonField<FeedbackConfig> = JsonMissing.of(),
@@ -102,12 +115,16 @@ private constructor(
     ) : this(
         key,
         id,
+        address,
+        agentEnvironment,
+        agentId,
         comment,
         comparativeExperimentId,
         correction,
         createdAt,
         error,
         extendTraceRetention,
+        extra,
         feedbackConfig,
         feedbackGroupId,
         feedbackSource,
@@ -135,6 +152,41 @@ private constructor(
     fun id(): Optional<String> = id.getOptional("id")
 
     /**
+     * Beta. Only supported in workspaces where Agent addressing is enabled; other workspaces get
+     * a 403. Addresses the tracing project through an Agent environment instead of session_id.
+     * Never combined with agent_id, agent_environment, or session_id. The Agent and the environment
+     * must already exist; sending feedback does not create them.
+     *
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
+    fun address(): Optional<AgentAddress> = address.getOptional("address")
+
+    /**
+     * Beta. Only supported in workspaces where Agent addressing is enabled; other workspaces get
+     * a 403. The Agent environment whose tracing project the feedback belongs to. Matched
+     * case-insensitively. Sent together with agent_id.
+     *
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
+    fun agentEnvironment(): Optional<AgentEnvironment> =
+        agentEnvironment.getOptional("agent_environment")
+
+    /**
+     * Beta. Only supported in workspaces where Agent addressing is enabled; other workspaces get
+     * a 403. The Agent's id, not a UUID: 1 to 63 lowercase ASCII letters, digits, or hyphens,
+     * starting with a letter and ending with a letter or digit (e.g. support-agent). Addresses the
+     * tracing project through an Agent instead of session_id. Sent together with agent_environment,
+     * and never alongside session_id. The Agent and the environment must already exist; sending
+     * feedback does not create them.
+     *
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
+    fun agentId(): Optional<String> = agentId.getOptional("agent_id")
+
+    /**
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
      */
@@ -160,10 +212,12 @@ private constructor(
     fun createdAt(): Optional<OffsetDateTime> = createdAt.getOptional("created_at")
 
     /**
+     * Deprecated. Use `extra.error` instead. If both values are provided, `error` takes precedence.
+     *
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
      */
-    fun error(): Optional<Boolean> = error.getOptional("error")
+    @Deprecated("deprecated") fun error(): Optional<Boolean> = error.getOptional("error")
 
     /**
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
@@ -171,6 +225,12 @@ private constructor(
      */
     fun extendTraceRetention(): Optional<Boolean> =
         extendTraceRetention.getOptional("extend_trace_retention")
+
+    /**
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
+    fun extra(): Optional<Extra> = extra.getOptional("extra")
 
     /**
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
@@ -217,7 +277,8 @@ private constructor(
     fun score(): Optional<Score> = score.getOptional("score")
 
     /**
-     * Required. The ID of the tracing project (session) the feedback belongs to.
+     * Required unless the feedback is addressed by agent_id and agent_environment. The ID of the
+     * tracing project (session) the feedback belongs to.
      *
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
@@ -255,6 +316,30 @@ private constructor(
      * Unlike [id], this method doesn't throw if the JSON field has an unexpected type.
      */
     @JsonProperty("id") @ExcludeMissing fun _id(): JsonField<String> = id
+
+    /**
+     * Returns the raw JSON value of [address].
+     *
+     * Unlike [address], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    @JsonProperty("address") @ExcludeMissing fun _address(): JsonField<AgentAddress> = address
+
+    /**
+     * Returns the raw JSON value of [agentEnvironment].
+     *
+     * Unlike [agentEnvironment], this method doesn't throw if the JSON field has an unexpected
+     * type.
+     */
+    @JsonProperty("agent_environment")
+    @ExcludeMissing
+    fun _agentEnvironment(): JsonField<AgentEnvironment> = agentEnvironment
+
+    /**
+     * Returns the raw JSON value of [agentId].
+     *
+     * Unlike [agentId], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    @JsonProperty("agent_id") @ExcludeMissing fun _agentId(): JsonField<String> = agentId
 
     /**
      * Returns the raw JSON value of [comment].
@@ -296,7 +381,10 @@ private constructor(
      *
      * Unlike [error], this method doesn't throw if the JSON field has an unexpected type.
      */
-    @JsonProperty("error") @ExcludeMissing fun _error(): JsonField<Boolean> = error
+    @Deprecated("deprecated")
+    @JsonProperty("error")
+    @ExcludeMissing
+    fun _error(): JsonField<Boolean> = error
 
     /**
      * Returns the raw JSON value of [extendTraceRetention].
@@ -307,6 +395,13 @@ private constructor(
     @JsonProperty("extend_trace_retention")
     @ExcludeMissing
     fun _extendTraceRetention(): JsonField<Boolean> = extendTraceRetention
+
+    /**
+     * Returns the raw JSON value of [extra].
+     *
+     * Unlike [extra], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    @JsonProperty("extra") @ExcludeMissing fun _extra(): JsonField<Extra> = extra
 
     /**
      * Returns the raw JSON value of [feedbackConfig].
@@ -428,12 +523,16 @@ private constructor(
 
         private var key: JsonField<String>? = null
         private var id: JsonField<String> = JsonMissing.of()
+        private var address: JsonField<AgentAddress> = JsonMissing.of()
+        private var agentEnvironment: JsonField<AgentEnvironment> = JsonMissing.of()
+        private var agentId: JsonField<String> = JsonMissing.of()
         private var comment: JsonField<String> = JsonMissing.of()
         private var comparativeExperimentId: JsonField<String> = JsonMissing.of()
         private var correction: JsonField<Correction> = JsonMissing.of()
         private var createdAt: JsonField<OffsetDateTime> = JsonMissing.of()
         private var error: JsonField<Boolean> = JsonMissing.of()
         private var extendTraceRetention: JsonField<Boolean> = JsonMissing.of()
+        private var extra: JsonField<Extra> = JsonMissing.of()
         private var feedbackConfig: JsonField<FeedbackConfig> = JsonMissing.of()
         private var feedbackGroupId: JsonField<String> = JsonMissing.of()
         private var feedbackSource: JsonField<FeedbackSource> = JsonMissing.of()
@@ -451,12 +550,16 @@ private constructor(
         internal fun from(feedbackCreateSchema: FeedbackCreateSchema) = apply {
             key = feedbackCreateSchema.key
             id = feedbackCreateSchema.id
+            address = feedbackCreateSchema.address
+            agentEnvironment = feedbackCreateSchema.agentEnvironment
+            agentId = feedbackCreateSchema.agentId
             comment = feedbackCreateSchema.comment
             comparativeExperimentId = feedbackCreateSchema.comparativeExperimentId
             correction = feedbackCreateSchema.correction
             createdAt = feedbackCreateSchema.createdAt
             error = feedbackCreateSchema.error
             extendTraceRetention = feedbackCreateSchema.extendTraceRetention
+            extra = feedbackCreateSchema.extra
             feedbackConfig = feedbackCreateSchema.feedbackConfig
             feedbackGroupId = feedbackCreateSchema.feedbackGroupId
             feedbackSource = feedbackCreateSchema.feedbackSource
@@ -490,6 +593,67 @@ private constructor(
          * method is primarily for setting the field to an undocumented or not yet supported value.
          */
         fun id(id: JsonField<String>) = apply { this.id = id }
+
+        /**
+         * Beta. Only supported in workspaces where Agent addressing is enabled; other workspaces
+         * get a 403. Addresses the tracing project through an Agent environment instead of
+         * session_id. Never combined with agent_id, agent_environment, or session_id. The Agent and
+         * the environment must already exist; sending feedback does not create them.
+         */
+        fun address(address: AgentAddress) = address(JsonField.of(address))
+
+        /**
+         * Sets [Builder.address] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.address] with a well-typed [AgentAddress] value instead.
+         * This method is primarily for setting the field to an undocumented or not yet supported
+         * value.
+         */
+        fun address(address: JsonField<AgentAddress>) = apply { this.address = address }
+
+        /**
+         * Beta. Only supported in workspaces where Agent addressing is enabled; other workspaces
+         * get a 403. The Agent environment whose tracing project the feedback belongs to. Matched
+         * case-insensitively. Sent together with agent_id.
+         */
+        fun agentEnvironment(agentEnvironment: AgentEnvironment?) =
+            agentEnvironment(JsonField.ofNullable(agentEnvironment))
+
+        /** Alias for calling [Builder.agentEnvironment] with `agentEnvironment.orElse(null)`. */
+        fun agentEnvironment(agentEnvironment: Optional<AgentEnvironment>) =
+            agentEnvironment(agentEnvironment.getOrNull())
+
+        /**
+         * Sets [Builder.agentEnvironment] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.agentEnvironment] with a well-typed [AgentEnvironment]
+         * value instead. This method is primarily for setting the field to an undocumented or not
+         * yet supported value.
+         */
+        fun agentEnvironment(agentEnvironment: JsonField<AgentEnvironment>) = apply {
+            this.agentEnvironment = agentEnvironment
+        }
+
+        /**
+         * Beta. Only supported in workspaces where Agent addressing is enabled; other workspaces
+         * get a 403. The Agent's id, not a UUID: 1 to 63 lowercase ASCII letters, digits, or
+         * hyphens, starting with a letter and ending with a letter or digit (e.g. support-agent).
+         * Addresses the tracing project through an Agent instead of session_id. Sent together with
+         * agent_environment, and never alongside session_id. The Agent and the environment must
+         * already exist; sending feedback does not create them.
+         */
+        fun agentId(agentId: String?) = agentId(JsonField.ofNullable(agentId))
+
+        /** Alias for calling [Builder.agentId] with `agentId.orElse(null)`. */
+        fun agentId(agentId: Optional<String>) = agentId(agentId.getOrNull())
+
+        /**
+         * Sets [Builder.agentId] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.agentId] with a well-typed [String] value instead. This
+         * method is primarily for setting the field to an undocumented or not yet supported value.
+         */
+        fun agentId(agentId: JsonField<String>) = apply { this.agentId = agentId }
 
         fun comment(comment: String?) = comment(JsonField.ofNullable(comment))
 
@@ -557,17 +721,21 @@ private constructor(
          */
         fun createdAt(createdAt: JsonField<OffsetDateTime>) = apply { this.createdAt = createdAt }
 
-        fun error(error: Boolean?) = error(JsonField.ofNullable(error))
+        /**
+         * Deprecated. Use `extra.error` instead. If both values are provided, `error` takes
+         * precedence.
+         */
+        @Deprecated("deprecated") fun error(error: Boolean?) = error(JsonField.ofNullable(error))
 
         /**
          * Alias for [Builder.error].
          *
          * This unboxed primitive overload exists for backwards compatibility.
          */
-        fun error(error: Boolean) = error(error as Boolean?)
+        @Deprecated("deprecated") fun error(error: Boolean) = error(error as Boolean?)
 
         /** Alias for calling [Builder.error] with `error.orElse(null)`. */
-        fun error(error: Optional<Boolean>) = error(error.getOrNull())
+        @Deprecated("deprecated") fun error(error: Optional<Boolean>) = error(error.getOrNull())
 
         /**
          * Sets [Builder.error] to an arbitrary JSON value.
@@ -575,6 +743,7 @@ private constructor(
          * You should usually call [Builder.error] with a well-typed [Boolean] value instead. This
          * method is primarily for setting the field to an undocumented or not yet supported value.
          */
+        @Deprecated("deprecated")
         fun error(error: JsonField<Boolean>) = apply { this.error = error }
 
         fun extendTraceRetention(extendTraceRetention: Boolean) =
@@ -590,6 +759,19 @@ private constructor(
         fun extendTraceRetention(extendTraceRetention: JsonField<Boolean>) = apply {
             this.extendTraceRetention = extendTraceRetention
         }
+
+        fun extra(extra: Extra?) = extra(JsonField.ofNullable(extra))
+
+        /** Alias for calling [Builder.extra] with `extra.orElse(null)`. */
+        fun extra(extra: Optional<Extra>) = extra(extra.getOrNull())
+
+        /**
+         * Sets [Builder.extra] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.extra] with a well-typed [Extra] value instead. This
+         * method is primarily for setting the field to an undocumented or not yet supported value.
+         */
+        fun extra(extra: JsonField<Extra>) = apply { this.extra = extra }
 
         fun feedbackConfig(feedbackConfig: FeedbackConfig?) =
             feedbackConfig(JsonField.ofNullable(feedbackConfig))
@@ -723,7 +905,10 @@ private constructor(
         /** Alias for calling [score] with `Score.ofBool(bool)`. */
         fun score(bool: Boolean) = score(Score.ofBool(bool))
 
-        /** Required. The ID of the tracing project (session) the feedback belongs to. */
+        /**
+         * Required unless the feedback is addressed by agent_id and agent_environment. The ID of
+         * the tracing project (session) the feedback belongs to.
+         */
         fun sessionId(sessionId: String?) = sessionId(JsonField.ofNullable(sessionId))
 
         /** Alias for calling [Builder.sessionId] with `sessionId.orElse(null)`. */
@@ -825,12 +1010,16 @@ private constructor(
             FeedbackCreateSchema(
                 checkRequired("key", key),
                 id,
+                address,
+                agentEnvironment,
+                agentId,
                 comment,
                 comparativeExperimentId,
                 correction,
                 createdAt,
                 error,
                 extendTraceRetention,
+                extra,
                 feedbackConfig,
                 feedbackGroupId,
                 feedbackSource,
@@ -863,12 +1052,16 @@ private constructor(
 
         key()
         id()
+        address().ifPresent { it.validate() }
+        agentEnvironment().ifPresent { it.validate() }
+        agentId()
         comment()
         comparativeExperimentId()
         correction().ifPresent { it.validate() }
         createdAt()
         error()
         extendTraceRetention()
+        extra().ifPresent { it.validate() }
         feedbackConfig().ifPresent { it.validate() }
         feedbackGroupId()
         feedbackSource().ifPresent { it.validate() }
@@ -900,12 +1093,16 @@ private constructor(
     internal fun validity(): Int =
         (if (key.asKnown().isPresent) 1 else 0) +
             (if (id.asKnown().isPresent) 1 else 0) +
+            (address.asKnown().getOrNull()?.validity() ?: 0) +
+            (agentEnvironment.asKnown().getOrNull()?.validity() ?: 0) +
+            (if (agentId.asKnown().isPresent) 1 else 0) +
             (if (comment.asKnown().isPresent) 1 else 0) +
             (if (comparativeExperimentId.asKnown().isPresent) 1 else 0) +
             (correction.asKnown().getOrNull()?.validity() ?: 0) +
             (if (createdAt.asKnown().isPresent) 1 else 0) +
             (if (error.asKnown().isPresent) 1 else 0) +
             (if (extendTraceRetention.asKnown().isPresent) 1 else 0) +
+            (extra.asKnown().getOrNull()?.validity() ?: 0) +
             (feedbackConfig.asKnown().getOrNull()?.validity() ?: 0) +
             (if (feedbackGroupId.asKnown().isPresent) 1 else 0) +
             (feedbackSource.asKnown().getOrNull()?.validity() ?: 0) +
@@ -917,6 +1114,163 @@ private constructor(
             (if (startTime.asKnown().isPresent) 1 else 0) +
             (if (traceId.asKnown().isPresent) 1 else 0) +
             (value.asKnown().getOrNull()?.validity() ?: 0)
+
+    /**
+     * Beta. Only supported in workspaces where Agent addressing is enabled; other workspaces get
+     * a 403. The Agent environment whose tracing project the feedback belongs to. Matched
+     * case-insensitively. Sent together with agent_id.
+     */
+    class AgentEnvironment @JsonCreator private constructor(private val value: JsonField<String>) :
+        Enum {
+
+        /**
+         * Returns this class instance's raw value.
+         *
+         * This is usually only useful if this instance was deserialized from data that doesn't
+         * match any known member, and you want to know that value. For example, if the SDK is on an
+         * older version than the API, then the API may respond with new members that the SDK is
+         * unaware of.
+         */
+        @com.fasterxml.jackson.annotation.JsonValue fun _value(): JsonField<String> = value
+
+        companion object {
+
+            @JvmField val LOCAL = of("LOCAL")
+
+            @JvmField val DEVELOPMENT = of("DEVELOPMENT")
+
+            @JvmField val STAGING = of("STAGING")
+
+            @JvmField val PRODUCTION = of("PRODUCTION")
+
+            @JvmStatic fun of(value: String) = AgentEnvironment(JsonField.of(value))
+        }
+
+        /** An enum containing [AgentEnvironment]'s known values. */
+        enum class Known {
+            LOCAL,
+            DEVELOPMENT,
+            STAGING,
+            PRODUCTION,
+        }
+
+        /**
+         * An enum containing [AgentEnvironment]'s known values, as well as an [_UNKNOWN] member.
+         *
+         * An instance of [AgentEnvironment] can contain an unknown value in a couple of cases:
+         * - It was deserialized from data that doesn't match any known member. For example, if the
+         *   SDK is on an older version than the API, then the API may respond with new members that
+         *   the SDK is unaware of.
+         * - It was constructed with an arbitrary value using the [of] method.
+         */
+        enum class Value {
+            LOCAL,
+            DEVELOPMENT,
+            STAGING,
+            PRODUCTION,
+            /**
+             * An enum member indicating that [AgentEnvironment] was instantiated with an unknown
+             * value.
+             */
+            _UNKNOWN,
+        }
+
+        /**
+         * Returns an enum member corresponding to this class instance's value, or [Value._UNKNOWN]
+         * if the class was instantiated with an unknown value.
+         *
+         * Use the [known] method instead if you're certain the value is always known or if you want
+         * to throw for the unknown case.
+         */
+        fun value(): Value =
+            when (this) {
+                LOCAL -> Value.LOCAL
+                DEVELOPMENT -> Value.DEVELOPMENT
+                STAGING -> Value.STAGING
+                PRODUCTION -> Value.PRODUCTION
+                else -> Value._UNKNOWN
+            }
+
+        /**
+         * Returns an enum member corresponding to this class instance's value.
+         *
+         * Use the [value] method instead if you're uncertain the value is always known and don't
+         * want to throw for the unknown case.
+         *
+         * @throws LangChainInvalidDataException if this class instance's value is a not a known
+         *   member.
+         */
+        fun known(): Known =
+            when (this) {
+                LOCAL -> Known.LOCAL
+                DEVELOPMENT -> Known.DEVELOPMENT
+                STAGING -> Known.STAGING
+                PRODUCTION -> Known.PRODUCTION
+                else -> throw LangChainInvalidDataException("Unknown AgentEnvironment: $value")
+            }
+
+        /**
+         * Returns this class instance's primitive wire representation.
+         *
+         * This differs from the [toString] method because that method is primarily for debugging
+         * and generally doesn't throw.
+         *
+         * @throws LangChainInvalidDataException if this class instance's value does not have the
+         *   expected primitive type.
+         */
+        fun asString(): String =
+            _value().asString().orElseThrow {
+                LangChainInvalidDataException("Value is not a String")
+            }
+
+        private var validated: Boolean = false
+
+        /**
+         * Validates that the types of all values in this object match their expected types
+         * recursively.
+         *
+         * This method is _not_ forwards compatible with new types from the API for existing fields.
+         *
+         * @throws LangChainInvalidDataException if any value type in this object doesn't match its
+         *   expected type.
+         */
+        fun validate(): AgentEnvironment = apply {
+            if (validated) {
+                return@apply
+            }
+
+            known()
+            validated = true
+        }
+
+        fun isValid(): Boolean =
+            try {
+                validate()
+                true
+            } catch (e: LangChainInvalidDataException) {
+                false
+            }
+
+        /**
+         * Returns a score indicating how many valid values are contained in this object
+         * recursively.
+         *
+         * Used for best match union deserialization.
+         */
+        @JvmSynthetic internal fun validity(): Int = if (value() == Value._UNKNOWN) 0 else 1
+
+        override fun equals(other: Any?): Boolean {
+            if (this === other) {
+                return true
+            }
+
+            return other is AgentEnvironment && value == other.value
+        }
+
+        override fun hashCode() = value.hashCode()
+
+        override fun toString() = value.toString()
+    }
 
     @JsonDeserialize(using = Correction.Deserializer::class)
     @JsonSerialize(using = Correction.Serializer::class)
@@ -1241,6 +1595,114 @@ private constructor(
 
             override fun toString() = "UnionMember0{additionalProperties=$additionalProperties}"
         }
+    }
+
+    class Extra
+    @JsonCreator
+    private constructor(
+        @com.fasterxml.jackson.annotation.JsonValue
+        private val additionalProperties: Map<String, JsonValue>
+    ) {
+
+        @JsonAnyGetter
+        @ExcludeMissing
+        fun _additionalProperties(): Map<String, JsonValue> = additionalProperties
+
+        fun toBuilder() = Builder().from(this)
+
+        companion object {
+
+            /** Returns a mutable builder for constructing an instance of [Extra]. */
+            @JvmStatic fun builder() = Builder()
+        }
+
+        /** A builder for [Extra]. */
+        class Builder internal constructor() {
+
+            private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
+
+            @JvmSynthetic
+            internal fun from(extra: Extra) = apply {
+                additionalProperties = extra.additionalProperties.toMutableMap()
+            }
+
+            fun additionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
+                this.additionalProperties.clear()
+                putAllAdditionalProperties(additionalProperties)
+            }
+
+            fun putAdditionalProperty(key: String, value: JsonValue) = apply {
+                additionalProperties.put(key, value)
+            }
+
+            fun putAllAdditionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
+                this.additionalProperties.putAll(additionalProperties)
+            }
+
+            fun removeAdditionalProperty(key: String) = apply { additionalProperties.remove(key) }
+
+            fun removeAllAdditionalProperties(keys: Set<String>) = apply {
+                keys.forEach(::removeAdditionalProperty)
+            }
+
+            /**
+             * Returns an immutable instance of [Extra].
+             *
+             * Further updates to this [Builder] will not mutate the returned instance.
+             */
+            fun build(): Extra = Extra(additionalProperties.toImmutable())
+        }
+
+        private var validated: Boolean = false
+
+        /**
+         * Validates that the types of all values in this object match their expected types
+         * recursively.
+         *
+         * This method is _not_ forwards compatible with new types from the API for existing fields.
+         *
+         * @throws LangChainInvalidDataException if any value type in this object doesn't match its
+         *   expected type.
+         */
+        fun validate(): Extra = apply {
+            if (validated) {
+                return@apply
+            }
+
+            validated = true
+        }
+
+        fun isValid(): Boolean =
+            try {
+                validate()
+                true
+            } catch (e: LangChainInvalidDataException) {
+                false
+            }
+
+        /**
+         * Returns a score indicating how many valid values are contained in this object
+         * recursively.
+         *
+         * Used for best match union deserialization.
+         */
+        @JvmSynthetic
+        internal fun validity(): Int =
+            additionalProperties.count { (_, value) -> !value.isNull() && !value.isMissing() }
+
+        override fun equals(other: Any?): Boolean {
+            if (this === other) {
+                return true
+            }
+
+            return other is Extra && additionalProperties == other.additionalProperties
+        }
+
+        private val hashCode: Int by lazy { Objects.hash(additionalProperties) }
+
+        override fun hashCode(): Int = hashCode
+
+        override fun toString() = "Extra{additionalProperties=$additionalProperties}"
     }
 
     class FeedbackConfig
@@ -2764,12 +3226,16 @@ private constructor(
         return other is FeedbackCreateSchema &&
             key == other.key &&
             id == other.id &&
+            address == other.address &&
+            agentEnvironment == other.agentEnvironment &&
+            agentId == other.agentId &&
             comment == other.comment &&
             comparativeExperimentId == other.comparativeExperimentId &&
             correction == other.correction &&
             createdAt == other.createdAt &&
             error == other.error &&
             extendTraceRetention == other.extendTraceRetention &&
+            extra == other.extra &&
             feedbackConfig == other.feedbackConfig &&
             feedbackGroupId == other.feedbackGroupId &&
             feedbackSource == other.feedbackSource &&
@@ -2788,12 +3254,16 @@ private constructor(
         Objects.hash(
             key,
             id,
+            address,
+            agentEnvironment,
+            agentId,
             comment,
             comparativeExperimentId,
             correction,
             createdAt,
             error,
             extendTraceRetention,
+            extra,
             feedbackConfig,
             feedbackGroupId,
             feedbackSource,
@@ -2812,5 +3282,5 @@ private constructor(
     override fun hashCode(): Int = hashCode
 
     override fun toString() =
-        "FeedbackCreateSchema{key=$key, id=$id, comment=$comment, comparativeExperimentId=$comparativeExperimentId, correction=$correction, createdAt=$createdAt, error=$error, extendTraceRetention=$extendTraceRetention, feedbackConfig=$feedbackConfig, feedbackGroupId=$feedbackGroupId, feedbackSource=$feedbackSource, feedbackThreadId=$feedbackThreadId, modifiedAt=$modifiedAt, runId=$runId, score=$score, sessionId=$sessionId, startTime=$startTime, traceId=$traceId, value=$value, additionalProperties=$additionalProperties}"
+        "FeedbackCreateSchema{key=$key, id=$id, address=$address, agentEnvironment=$agentEnvironment, agentId=$agentId, comment=$comment, comparativeExperimentId=$comparativeExperimentId, correction=$correction, createdAt=$createdAt, error=$error, extendTraceRetention=$extendTraceRetention, extra=$extra, feedbackConfig=$feedbackConfig, feedbackGroupId=$feedbackGroupId, feedbackSource=$feedbackSource, feedbackThreadId=$feedbackThreadId, modifiedAt=$modifiedAt, runId=$runId, score=$score, sessionId=$sessionId, startTime=$startTime, traceId=$traceId, value=$value, additionalProperties=$additionalProperties}"
 }

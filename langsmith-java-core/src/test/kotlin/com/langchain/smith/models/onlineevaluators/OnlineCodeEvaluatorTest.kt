@@ -21,7 +21,7 @@ internal class OnlineCodeEvaluatorTest {
                 .evaluatorBuildStatus(OnlineCodeEvaluator.EvaluatorBuildStatus.ENQUEUED)
                 .evaluatorId("evaluator_id")
                 .language("language")
-                .managedCodeEvaluatorKey("managed_code_evaluator_key")
+                .managedCodeEvaluatorKey(OnlineCodeEvaluator.ManagedCodeEvaluatorKey.VOICE_METRICS)
                 .managedCodeEvaluatorSettings(
                     OnlineCodeEvaluator.ManagedCodeEvaluatorSettings.builder()
                         .putAdditionalProperty(
@@ -42,7 +42,7 @@ internal class OnlineCodeEvaluatorTest {
         assertThat(onlineCodeEvaluator.evaluatorId()).contains("evaluator_id")
         assertThat(onlineCodeEvaluator.language()).contains("language")
         assertThat(onlineCodeEvaluator.managedCodeEvaluatorKey())
-            .contains("managed_code_evaluator_key")
+            .contains(OnlineCodeEvaluator.ManagedCodeEvaluatorKey.VOICE_METRICS)
         assertThat(onlineCodeEvaluator.managedCodeEvaluatorSettings())
             .contains(
                 OnlineCodeEvaluator.ManagedCodeEvaluatorSettings.builder()
@@ -67,7 +67,7 @@ internal class OnlineCodeEvaluatorTest {
                 .evaluatorBuildStatus(OnlineCodeEvaluator.EvaluatorBuildStatus.ENQUEUED)
                 .evaluatorId("evaluator_id")
                 .language("language")
-                .managedCodeEvaluatorKey("managed_code_evaluator_key")
+                .managedCodeEvaluatorKey(OnlineCodeEvaluator.ManagedCodeEvaluatorKey.VOICE_METRICS)
                 .managedCodeEvaluatorSettings(
                     OnlineCodeEvaluator.ManagedCodeEvaluatorSettings.builder()
                         .putAdditionalProperty(

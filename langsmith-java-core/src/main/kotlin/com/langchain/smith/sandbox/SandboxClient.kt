@@ -6,7 +6,11 @@ import com.langchain.smith.core.RequestOptions
 import com.langchain.smith.core.Timeout
 import com.langchain.smith.models.sandboxes.SandboxResponse
 import com.langchain.smith.models.sandboxes.boxes.BoxCreateParams
+import com.langchain.smith.tracing.getCurrentRunTree
+import io.opentelemetry.api.trace.Span
 import java.time.Duration
+import java.util.UUID
+import java.util.concurrent.ConcurrentHashMap
 
 /**
  * Runs commands inside a LangSmith sandbox.
@@ -33,6 +37,7 @@ private constructor(
 
     private val http = SandboxHttp(clientOptions)
     private val files = SandboxFileOps(http)
+    private val sandboxIds = ConcurrentHashMap<String, String>()
 
     // Built here so callers never have to construct a second client for the lifecycle calls the
     // generated services own. It shares the caller's options and is deliberately never closed.
@@ -49,7 +54,7 @@ private constructor(
 
     /** Creates a sandbox with explicit settings. Prefer [create] unless you need one of them. */
     fun create(params: BoxCreateParams): Sandbox {
-        val created = boxes.create(params)
+        val created = boxes.create(params).also { recordSandbox(it) }
         // Prefer the ID: a sandbox can be renamed, and the route accepts either.
         val ref =
             created.id().orElseGet {
@@ -99,6 +104,7 @@ private constructor(
      */
     fun stream(sandboxId: String, request: ExecRequest, handler: ExecOutputHandler): ExecResult {
         requireSandboxId(sandboxId)
+        annotateSandbox(sandboxId)
         return SandboxExecStream(http, config, sandboxId, request, handler, requestOptions).run()
     }
 
@@ -106,6 +112,7 @@ private constructor(
     fun readFile(sandboxId: String, path: String): ByteArray {
         requireSandboxId(sandboxId)
         require(path.isNotEmpty()) { "path must not be empty" }
+        annotateSandbox(sandboxId)
         return files.readFile(sandboxId, path)
     }
 
@@ -117,6 +124,7 @@ private constructor(
     fun writeFile(sandboxId: String, path: String, content: ByteArray): UploadResult {
         requireSandboxId(sandboxId)
         require(path.isNotEmpty()) { "path must not be empty" }
+        annotateSandbox(sandboxId)
         return files.writeFile(sandboxId, path, content)
     }
 
@@ -127,6 +135,7 @@ private constructor(
     /** Finds files under an absolute root path matching a glob pattern. */
     fun glob(sandboxId: String, request: GlobRequest): GlobResult {
         requireSandboxId(sandboxId)
+        annotateSandbox(sandboxId)
         return files.glob(sandboxId, request)
     }
 
@@ -144,6 +153,7 @@ private constructor(
     /** Searches file contents under an absolute root path for literal text. */
     fun grep(sandboxId: String, request: GrepRequest): GrepResult {
         requireSandboxId(sandboxId)
+        annotateSandbox(sandboxId)
         return files.grep(sandboxId, request)
     }
 
@@ -158,7 +168,8 @@ private constructor(
     /** Current metadata for a sandbox, by name or ID. */
     fun retrieve(sandboxId: String): SandboxResponse {
         requireSandboxId(sandboxId)
-        return boxes.retrieve(sandboxId)
+        annotateSandbox(sandboxId)
+        return boxes.retrieve(sandboxId).also { recordSandbox(it, sandboxId) }
     }
 
     /**
@@ -167,14 +178,39 @@ private constructor(
      */
     fun stop(sandboxId: String) {
         requireSandboxId(sandboxId)
+        annotateSandbox(sandboxId)
         boxes.stop(sandboxId)
     }
 
     /** Deletes a sandbox and its filesystem. */
     fun delete(sandboxId: String) {
         requireSandboxId(sandboxId)
+        annotateSandbox(sandboxId)
         boxes.delete(sandboxId)
+        val id = sandboxIds[sandboxId] ?: sandboxId
+        sandboxIds.entries.removeIf { it.value == id }
     }
+
+    private fun recordSandbox(response: SandboxResponse, ref: String? = null) {
+        val id = response.id().orElse(null)?.takeIf { it.isNotEmpty() } ?: return
+        sandboxIds[id] = id
+        response.name().ifPresent { sandboxIds[it] = id }
+        ref?.let { sandboxIds[it] = id }
+        annotateSandbox(id)
+    }
+
+    private fun annotateSandbox(ref: String) {
+        val id = sandboxIds[ref] ?: ref.takeIf { isSandboxUuid(it) } ?: return
+        getCurrentRunTree()?.metadata?.put("sandbox_id", id)
+        Span.current().setAttribute("langsmith.metadata.sandbox_id", id)
+    }
+
+    private fun isSandboxUuid(ref: String): Boolean =
+        try {
+            UUID.fromString(ref).toString().equals(ref, ignoreCase = true)
+        } catch (_: IllegalArgumentException) {
+            false
+        }
 
     private fun requireSandboxId(sandboxId: String) {
         require(sandboxId.isNotEmpty()) { "sandboxId must not be empty" }

@@ -30,6 +30,7 @@ import com.langchain.smith.models.datasets.DatasetUpdateTagsParams
 import com.langchain.smith.models.datasets.DatasetUploadParams
 import com.langchain.smith.models.datasets.DatasetVersion
 import com.langchain.smith.services.blocking.datasets.ComparativeService
+import com.langchain.smith.services.blocking.datasets.ExampleService
 import com.langchain.smith.services.blocking.datasets.ExperimentRunService
 import com.langchain.smith.services.blocking.datasets.RunService
 import com.langchain.smith.services.blocking.datasets.ShareService
@@ -50,6 +51,8 @@ interface DatasetService {
      * The original service is not modified.
      */
     fun withOptions(modifier: Consumer<ClientOptions.Builder>): DatasetService
+
+    fun examples(): ExampleService
 
     fun versions(): VersionService
 
@@ -400,6 +403,8 @@ interface DatasetService {
          * The original service is not modified.
          */
         fun withOptions(modifier: Consumer<ClientOptions.Builder>): DatasetService.WithRawResponse
+
+        fun examples(): ExampleService.WithRawResponse
 
         fun versions(): VersionService.WithRawResponse
 
