@@ -1,5 +1,53 @@
 # Changelog
 
+## [0.1.0-beta.24](https://github.com/langchain-ai/langsmith-java/compare/v0.1.0-beta.23...v0.1.0-beta.24) (2026-10-02)
+
+
+### ⚠ BREAKING CHANGES
+
+* **projects:** delete returns 202 with Location header instead of 200
+
+### Features
+
+* add AgentAddress type and address field to runs and feedback ([b2967b4](https://github.com/langchain-ai/langsmith-java/commit/b2967b4d332a1ffbc6b321211155fe5a04a99884))
+* add match_headers field to header injection rules ([f2f0475](https://github.com/langchain-ai/langsmith-java/commit/f2f0475c3d4a7cb30b59073e4981fd08fed3566e))
+* add require_attachments optional boolean field to request ([9e9caa0](https://github.com/langchain-ai/langsmith-java/commit/9e9caa09379be6faca4181503ccf861dba98d132))
+* add slack_handoff and fix_handoff_bot_user_id fields to webhook responses ([bf49ddc](https://github.com/langchain-ai/langsmith-java/commit/bf49ddcad0af18a189b030fbf914896c95cc087e))
+* **charts:** add preview method endpoint ([f8909c7](https://github.com/langchain-ai/langsmith-java/commit/f8909c7e047a3e5a2f7674639fcc29c139284be8))
+* **datasets:** add delete example endpoint ([06323b1](https://github.com/langchain-ai/langsmith-java/commit/06323b19d0db47e4d15513d0a4400d6bd3937c4c))
+* **deployments:** add baseline/preview experiment and dataset id fields ([b557c70](https://github.com/langchain-ai/langsmith-java/commit/b557c70b9f91c825d8adcaa21e5c32acaf481fa1))
+* include sandbox IDs in active trace metadata ([#66](https://github.com/langchain-ai/langsmith-java/issues/66)) ([e0cde97](https://github.com/langchain-ai/langsmith-java/commit/e0cde972ab3b70c459c8a9d94e82fdb8b7c63598))
+* **info:** add engine_github_web_base_url field to info response ([8a72be0](https://github.com/langchain-ai/langsmith-java/commit/8a72be0ebe5e411b7ba1f25a72c5d862465da07d))
+* **issues:** add evidence and runs-analytics metric schemas to Issue model ([1470b30](https://github.com/langchain-ai/langsmith-java/commit/1470b30c22bcbd491aef8a3a07b96b6b3e80f727))
+* **issues:** add fixes array to Issue response with new Fix schema ([d912fa3](https://github.com/langchain-ai/langsmith-java/commit/d912fa302704975f38f13b70aa75647ffa3e1345))
+* **projects:** add optional extra field to project schema ([18144ea](https://github.com/langchain-ai/langsmith-java/commit/18144ea86be25a7a407a1242a0e410bcc14f510b))
+* **runs:** add tag_value_id filter query parameter ([6790e9e](https://github.com/langchain-ai/langsmith-java/commit/6790e9e8b0c76589f5fcafd6eb43bebbc10c7c99))
+* **sandboxes:** add csp_sandbox field and new enum values for download-url ([71b43c5](https://github.com/langchain-ai/langsmith-java/commit/71b43c507c76bbfc0e7931cde1071a69c65bb713))
+
+
+### Bug Fixes
+
+* **evaluators:** type managed_code_evaluator_key as an enum ([f7066c1](https://github.com/langchain-ai/langsmith-java/commit/f7066c139c8f3b855d4229a5b881630a4889fab4))
+* **projects:** delete returns 202 with Location header instead of 200 ([4b59190](https://github.com/langchain-ai/langsmith-java/commit/4b59190c4bbfdd9f41a528bff3679002d884b18f))
+* **runs:** deprecate error field in favour of extra.error ([2f5d72f](https://github.com/langchain-ai/langsmith-java/commit/2f5d72fe2c7412813d75bf92403152e507049797))
+* update Bouncy Castle to 1.85 ([#61](https://github.com/langchain-ai/langsmith-java/issues/61)) ([491be50](https://github.com/langchain-ai/langsmith-java/commit/491be507f5ceaf7dabaf1a780bd34c9220412c1f))
+
+
+### Reverts
+
+* **stlc:** isolate SDK builds from publishing credentials ([#43780](https://github.com/langchain-ai/langsmith-java/issues/43780)) ([825ce1f](https://github.com/langchain-ai/langsmith-java/commit/825ce1f9f0279331b39d9d20e273cc05816c9362))
+
+
+### Chores
+
+* **annotation-queues:** note delete items removes active and completed ([e3ba128](https://github.com/langchain-ai/langsmith-java/commit/e3ba1286a801847bc29b5325ea114d8cd3981393))
+* **sandboxes:** update access field description for restricted mode ([c49a9a4](https://github.com/langchain-ai/langsmith-java/commit/c49a9a43a947920f1c4a7bc2ae09594054858603))
+
+
+### Build System
+
+* modernize dependencies ([#62](https://github.com/langchain-ai/langsmith-java/issues/62)) ([2ae6d47](https://github.com/langchain-ai/langsmith-java/commit/2ae6d47261cc7b84d7fbe75676b69cb28ca59b31))
+
 ## [0.1.0-beta.23](https://github.com/langchain-ai/langsmith-java/compare/v0.1.0-beta.22...v0.1.0-beta.23) (2026-09-21)
 
 
