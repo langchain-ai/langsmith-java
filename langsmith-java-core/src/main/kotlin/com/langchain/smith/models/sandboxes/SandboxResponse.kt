@@ -14992,6 +14992,7 @@ private constructor(
             private val envVars: JsonField<EnvVars>,
             private val gcp: JsonField<Gcp>,
             private val headers: JsonField<List<Header>>,
+            private val matchHeaders: JsonField<List<String>>,
             private val matchHosts: JsonField<List<String>>,
             private val matchPaths: JsonField<List<String>>,
             private val type: JsonField<String>,
@@ -15015,6 +15016,9 @@ private constructor(
                 @JsonProperty("headers")
                 @ExcludeMissing
                 headers: JsonField<List<Header>> = JsonMissing.of(),
+                @JsonProperty("match_headers")
+                @ExcludeMissing
+                matchHeaders: JsonField<List<String>> = JsonMissing.of(),
                 @JsonProperty("match_hosts")
                 @ExcludeMissing
                 matchHosts: JsonField<List<String>> = JsonMissing.of(),
@@ -15030,6 +15034,7 @@ private constructor(
                 envVars,
                 gcp,
                 headers,
+                matchHeaders,
                 matchHosts,
                 matchPaths,
                 type,
@@ -15087,6 +15092,18 @@ private constructor(
              *   if the server responded with an unexpected value).
              */
             fun headers(): Optional<List<Header>> = headers.getOptional("headers")
+
+            /**
+             * MatchHeaders restricts a header injection rule to requests carrying every listed
+             * header, each written "name: value" with a lowercase name and an exact value. Pair
+             * with headers of the same name to swap a placeholder the sandbox sends (e.g.
+             * "authorization: Bearer account-b") for a real credential, so one host can serve
+             * several accounts. Rules are evaluated in order and the first match wins.
+             *
+             * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g.
+             *   if the server responded with an unexpected value).
+             */
+            fun matchHeaders(): Optional<List<String>> = matchHeaders.getOptional("match_headers")
 
             /**
              * MatchHosts is only accepted for header injection rules. Provider auth rules use
@@ -15164,6 +15181,16 @@ private constructor(
             fun _headers(): JsonField<List<Header>> = headers
 
             /**
+             * Returns the raw JSON value of [matchHeaders].
+             *
+             * Unlike [matchHeaders], this method doesn't throw if the JSON field has an unexpected
+             * type.
+             */
+            @JsonProperty("match_headers")
+            @ExcludeMissing
+            fun _matchHeaders(): JsonField<List<String>> = matchHeaders
+
+            /**
              * Returns the raw JSON value of [matchHosts].
              *
              * Unlike [matchHosts], this method doesn't throw if the JSON field has an unexpected
@@ -15225,6 +15252,7 @@ private constructor(
                 private var envVars: JsonField<EnvVars> = JsonMissing.of()
                 private var gcp: JsonField<Gcp> = JsonMissing.of()
                 private var headers: JsonField<MutableList<Header>>? = null
+                private var matchHeaders: JsonField<MutableList<String>>? = null
                 private var matchHosts: JsonField<MutableList<String>>? = null
                 private var matchPaths: JsonField<MutableList<String>>? = null
                 private var type: JsonField<String> = JsonMissing.of()
@@ -15239,6 +15267,7 @@ private constructor(
                     envVars = rule.envVars
                     gcp = rule.gcp
                     headers = rule.headers.map { it.toMutableList() }
+                    matchHeaders = rule.matchHeaders.map { it.toMutableList() }
                     matchHosts = rule.matchHosts.map { it.toMutableList() }
                     matchPaths = rule.matchPaths.map { it.toMutableList() }
                     type = rule.type
@@ -15365,6 +15394,39 @@ private constructor(
                 }
 
                 /**
+                 * MatchHeaders restricts a header injection rule to requests carrying every listed
+                 * header, each written "name: value" with a lowercase name and an exact value. Pair
+                 * with headers of the same name to swap a placeholder the sandbox sends (e.g.
+                 * "authorization: Bearer account-b") for a real credential, so one host can serve
+                 * several accounts. Rules are evaluated in order and the first match wins.
+                 */
+                fun matchHeaders(matchHeaders: List<String>) =
+                    matchHeaders(JsonField.of(matchHeaders))
+
+                /**
+                 * Sets [Builder.matchHeaders] to an arbitrary JSON value.
+                 *
+                 * You should usually call [Builder.matchHeaders] with a well-typed `List<String>`
+                 * value instead. This method is primarily for setting the field to an undocumented
+                 * or not yet supported value.
+                 */
+                fun matchHeaders(matchHeaders: JsonField<List<String>>) = apply {
+                    this.matchHeaders = matchHeaders.map { it.toMutableList() }
+                }
+
+                /**
+                 * Adds a single [String] to [matchHeaders].
+                 *
+                 * @throws IllegalStateException if the field was previously set to a non-list.
+                 */
+                fun addMatchHeader(matchHeader: String) = apply {
+                    matchHeaders =
+                        (matchHeaders ?: JsonField.of(mutableListOf())).also {
+                            checkKnown("matchHeaders", it).add(matchHeader)
+                        }
+                }
+
+                /**
                  * MatchHosts is only accepted for header injection rules. Provider auth rules use
                  * built-in host matching.
                  */
@@ -15472,6 +15534,7 @@ private constructor(
                         envVars,
                         gcp,
                         (headers ?: JsonMissing.of()).map { it.toImmutable() },
+                        (matchHeaders ?: JsonMissing.of()).map { it.toImmutable() },
                         (matchHosts ?: JsonMissing.of()).map { it.toImmutable() },
                         (matchPaths ?: JsonMissing.of()).map { it.toImmutable() },
                         type,
@@ -15503,6 +15566,7 @@ private constructor(
                 envVars().ifPresent { it.validate() }
                 gcp().ifPresent { it.validate() }
                 headers().ifPresent { it.forEach { it.validate() } }
+                matchHeaders()
                 matchHosts()
                 matchPaths()
                 type()
@@ -15532,6 +15596,7 @@ private constructor(
                     (envVars.asKnown().getOrNull()?.validity() ?: 0) +
                     (gcp.asKnown().getOrNull()?.validity() ?: 0) +
                     (headers.asKnown().getOrNull()?.sumOf { it.validity().toInt() } ?: 0) +
+                    (matchHeaders.asKnown().getOrNull()?.size ?: 0) +
                     (matchHosts.asKnown().getOrNull()?.size ?: 0) +
                     (matchPaths.asKnown().getOrNull()?.size ?: 0) +
                     (if (type.asKnown().isPresent) 1 else 0)
@@ -18433,6 +18498,7 @@ private constructor(
                     envVars == other.envVars &&
                     gcp == other.gcp &&
                     headers == other.headers &&
+                    matchHeaders == other.matchHeaders &&
                     matchHosts == other.matchHosts &&
                     matchPaths == other.matchPaths &&
                     type == other.type &&
@@ -18448,6 +18514,7 @@ private constructor(
                     envVars,
                     gcp,
                     headers,
+                    matchHeaders,
                     matchHosts,
                     matchPaths,
                     type,
@@ -18458,7 +18525,7 @@ private constructor(
             override fun hashCode(): Int = hashCode
 
             override fun toString() =
-                "Rule{name=$name, aws=$aws, description=$description, enabled=$enabled, envVars=$envVars, gcp=$gcp, headers=$headers, matchHosts=$matchHosts, matchPaths=$matchPaths, type=$type, additionalProperties=$additionalProperties}"
+                "Rule{name=$name, aws=$aws, description=$description, enabled=$enabled, envVars=$envVars, gcp=$gcp, headers=$headers, matchHeaders=$matchHeaders, matchHosts=$matchHosts, matchPaths=$matchPaths, type=$type, additionalProperties=$additionalProperties}"
         }
 
         override fun equals(other: Any?): Boolean {
