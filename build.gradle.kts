@@ -5,7 +5,7 @@ buildscript {
             // constraints once the plugins resolve versions at or above these floors.
             force(
                 // CVE-2026-54512, CVE-2026-54513, and CVE-2026-54515.
-                "com.fasterxml.jackson.core:jackson-databind:2.22.1",
+                "com.fasterxml.jackson.core:jackson-databind:2.22.3",
                 // CVE-2026-64607.
                 "org.apache.httpcomponents.client5:httpclient5:5.6.4",
                 // CVE-2026-54399 and CVE-2026-54428.
@@ -36,7 +36,7 @@ allprojects {
     configurations.matching { it.name.startsWith("dokka") }.configureEach {
         // Keep Dokka worker classpaths on patched transitive dependency versions.
         resolutionStrategy.force(
-            "com.fasterxml.jackson.core:jackson-databind:2.22.1",
+            "com.fasterxml.jackson.core:jackson-databind:2.22.3",
             "org.jsoup:jsoup:1.23.2",
         )
     }
