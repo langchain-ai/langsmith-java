@@ -3,7 +3,6 @@
 package com.langchain.smith.models.feedback
 
 import com.langchain.smith.core.JsonValue
-import com.langchain.smith.models.AgentAddress
 import java.time.OffsetDateTime
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
@@ -17,14 +16,7 @@ internal class FeedbackCreateParamsTest {
                 FeedbackCreateSchema.builder()
                     .key("key")
                     .id("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                    .address(
-                        AgentAddress.builder()
-                            .id("support-agent")
-                            .environment(AgentAddress.Environment.PRODUCTION)
-                            .build()
-                    )
-                    .agentEnvironment(FeedbackCreateSchema.AgentEnvironment.LOCAL)
-                    .agentId("agent_id")
+                    .address("lrn:agents/support-agent/environments/production")
                     .comment("comment")
                     .comparativeExperimentId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                     .correction(
@@ -85,14 +77,7 @@ internal class FeedbackCreateParamsTest {
                     FeedbackCreateSchema.builder()
                         .key("key")
                         .id("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                        .address(
-                            AgentAddress.builder()
-                                .id("support-agent")
-                                .environment(AgentAddress.Environment.PRODUCTION)
-                                .build()
-                        )
-                        .agentEnvironment(FeedbackCreateSchema.AgentEnvironment.LOCAL)
-                        .agentId("agent_id")
+                        .address("lrn:agents/support-agent/environments/production")
                         .comment("comment")
                         .comparativeExperimentId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                         .correction(
@@ -151,14 +136,7 @@ internal class FeedbackCreateParamsTest {
                 FeedbackCreateSchema.builder()
                     .key("key")
                     .id("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                    .address(
-                        AgentAddress.builder()
-                            .id("support-agent")
-                            .environment(AgentAddress.Environment.PRODUCTION)
-                            .build()
-                    )
-                    .agentEnvironment(FeedbackCreateSchema.AgentEnvironment.LOCAL)
-                    .agentId("agent_id")
+                    .address("lrn:agents/support-agent/environments/production")
                     .comment("comment")
                     .comparativeExperimentId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                     .correction(

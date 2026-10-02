@@ -38,6 +38,7 @@ allprojects {
         resolutionStrategy.force(
             "com.fasterxml.jackson.core:jackson-databind:2.22.1",
             "org.jsoup:jsoup:1.23.2",
+            "org.freemarker:freemarker:2.3.35",
         )
     }
 
