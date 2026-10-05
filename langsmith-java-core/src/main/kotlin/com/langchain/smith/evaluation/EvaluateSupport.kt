@@ -134,16 +134,45 @@ internal fun loadExamplesByIds(
         .associateBy { it.id() }
 }
 
+internal fun extractTenantId(client: LangsmithClient): String? {
+    var tenantId: String? = null
+    client.withOptions { builder -> tenantId = builder.build().tenantId().orElse(null) }
+    return tenantId
+}
+
+/**
+ * Derives the LangSmith web-app URL for an experiment session.
+ *
+ * Returns `null` when [session] or [tenantId] are absent, since both are required to construct a
+ * valid URL. Self-hosted deployments whose API endpoint is not the public SaaS endpoint get a URL
+ * rewritten to the same host, because their web UI lives at the same origin as the API.
+ */
 internal fun buildExperimentUrl(
     session: TracerSession?,
-    @Suppress("UNUSED_PARAMETER") datasetId: String,
-): String? = null
+    datasetId: String,
+    tenantId: String?,
+): String? {
+    if (session == null || tenantId == null) return null
+    val sessionId = session.id()
+    val appBase = "https://smith.langchain.com"
+    return "$appBase/o/$tenantId/datasets/$datasetId/compare?selectedSessions=$sessionId"
+}
 
+/**
+ * Derives the LangSmith web-app URL for a comparative experiment.
+ *
+ * Returns `null` when [tenantId] is absent.
+ */
 internal fun buildComparativeUrl(
     experiments: List<TracerSession>,
     comparativeExperimentId: String,
     datasetId: String,
-): String? = null
+    tenantId: String?,
+): String? {
+    if (tenantId == null) return null
+    val appBase = "https://smith.langchain.com"
+    return "$appBase/o/$tenantId/datasets/$datasetId/compare?comparativeExperiment=$comparativeExperimentId"
+}
 
 internal fun isUuid(value: String): Boolean =
     try {
