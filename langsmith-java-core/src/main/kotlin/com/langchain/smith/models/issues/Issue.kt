@@ -34,7 +34,6 @@ private constructor(
     private val firstSeenAt: JsonField<String>,
     private val fixBranch: JsonField<String>,
     private val fixDispatchedAt: JsonField<String>,
-    private val fixHandoffBotUserId: JsonField<String>,
     private val fixPrNumber: JsonField<Long>,
     private val fixPrompt: JsonField<String>,
     private val fixVerification: JsonField<FixVerification>,
@@ -82,9 +81,6 @@ private constructor(
         @JsonProperty("fix_dispatched_at")
         @ExcludeMissing
         fixDispatchedAt: JsonField<String> = JsonMissing.of(),
-        @JsonProperty("fix_handoff_bot_user_id")
-        @ExcludeMissing
-        fixHandoffBotUserId: JsonField<String> = JsonMissing.of(),
         @JsonProperty("fix_pr_number")
         @ExcludeMissing
         fixPrNumber: JsonField<Long> = JsonMissing.of(),
@@ -142,7 +138,6 @@ private constructor(
         firstSeenAt,
         fixBranch,
         fixDispatchedAt,
-        fixHandoffBotUserId,
         fixPrNumber,
         fixPrompt,
         fixVerification,
@@ -240,16 +235,6 @@ private constructor(
      *   server responded with an unexpected value).
      */
     fun fixDispatchedAt(): Optional<String> = fixDispatchedAt.getOptional("fix_dispatched_at")
-
-    /**
-     * Non-nil once the issue is handed off to a coding agent; Engine skips its own fix run while it
-     * is set.
-     *
-     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
-     *   server responded with an unexpected value).
-     */
-    fun fixHandoffBotUserId(): Optional<String> =
-        fixHandoffBotUserId.getOptional("fix_handoff_bot_user_id")
 
     /**
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
@@ -463,16 +448,6 @@ private constructor(
     fun _fixDispatchedAt(): JsonField<String> = fixDispatchedAt
 
     /**
-     * Returns the raw JSON value of [fixHandoffBotUserId].
-     *
-     * Unlike [fixHandoffBotUserId], this method doesn't throw if the JSON field has an unexpected
-     * type.
-     */
-    @JsonProperty("fix_handoff_bot_user_id")
-    @ExcludeMissing
-    fun _fixHandoffBotUserId(): JsonField<String> = fixHandoffBotUserId
-
-    /**
      * Returns the raw JSON value of [fixPrNumber].
      *
      * Unlike [fixPrNumber], this method doesn't throw if the JSON field has an unexpected type.
@@ -675,7 +650,6 @@ private constructor(
         private var firstSeenAt: JsonField<String> = JsonMissing.of()
         private var fixBranch: JsonField<String> = JsonMissing.of()
         private var fixDispatchedAt: JsonField<String> = JsonMissing.of()
-        private var fixHandoffBotUserId: JsonField<String> = JsonMissing.of()
         private var fixPrNumber: JsonField<Long> = JsonMissing.of()
         private var fixPrompt: JsonField<String> = JsonMissing.of()
         private var fixVerification: JsonField<FixVerification> = JsonMissing.of()
@@ -712,7 +686,6 @@ private constructor(
             firstSeenAt = issue.firstSeenAt
             fixBranch = issue.fixBranch
             fixDispatchedAt = issue.fixDispatchedAt
-            fixHandoffBotUserId = issue.fixHandoffBotUserId
             fixPrNumber = issue.fixPrNumber
             fixPrompt = issue.fixPrompt
             fixVerification = issue.fixVerification
@@ -841,30 +814,6 @@ private constructor(
          */
         fun fixDispatchedAt(fixDispatchedAt: JsonField<String>) = apply {
             this.fixDispatchedAt = fixDispatchedAt
-        }
-
-        /**
-         * Non-nil once the issue is handed off to a coding agent; Engine skips its own fix run
-         * while it is set.
-         */
-        fun fixHandoffBotUserId(fixHandoffBotUserId: String?) =
-            fixHandoffBotUserId(JsonField.ofNullable(fixHandoffBotUserId))
-
-        /**
-         * Alias for calling [Builder.fixHandoffBotUserId] with `fixHandoffBotUserId.orElse(null)`.
-         */
-        fun fixHandoffBotUserId(fixHandoffBotUserId: Optional<String>) =
-            fixHandoffBotUserId(fixHandoffBotUserId.getOrNull())
-
-        /**
-         * Sets [Builder.fixHandoffBotUserId] to an arbitrary JSON value.
-         *
-         * You should usually call [Builder.fixHandoffBotUserId] with a well-typed [String] value
-         * instead. This method is primarily for setting the field to an undocumented or not yet
-         * supported value.
-         */
-        fun fixHandoffBotUserId(fixHandoffBotUserId: JsonField<String>) = apply {
-            this.fixHandoffBotUserId = fixHandoffBotUserId
         }
 
         fun fixPrNumber(fixPrNumber: Long) = fixPrNumber(JsonField.of(fixPrNumber))
@@ -1222,7 +1171,6 @@ private constructor(
                 firstSeenAt,
                 fixBranch,
                 fixDispatchedAt,
-                fixHandoffBotUserId,
                 fixPrNumber,
                 fixPrompt,
                 fixVerification,
@@ -1272,7 +1220,6 @@ private constructor(
         firstSeenAt()
         fixBranch()
         fixDispatchedAt()
-        fixHandoffBotUserId()
         fixPrNumber()
         fixPrompt()
         fixVerification().ifPresent { it.validate() }
@@ -1320,7 +1267,6 @@ private constructor(
             (if (firstSeenAt.asKnown().isPresent) 1 else 0) +
             (if (fixBranch.asKnown().isPresent) 1 else 0) +
             (if (fixDispatchedAt.asKnown().isPresent) 1 else 0) +
-            (if (fixHandoffBotUserId.asKnown().isPresent) 1 else 0) +
             (if (fixPrNumber.asKnown().isPresent) 1 else 0) +
             (if (fixPrompt.asKnown().isPresent) 1 else 0) +
             (fixVerification.asKnown().getOrNull()?.validity() ?: 0) +
@@ -8115,7 +8061,6 @@ private constructor(
             firstSeenAt == other.firstSeenAt &&
             fixBranch == other.fixBranch &&
             fixDispatchedAt == other.fixDispatchedAt &&
-            fixHandoffBotUserId == other.fixHandoffBotUserId &&
             fixPrNumber == other.fixPrNumber &&
             fixPrompt == other.fixPrompt &&
             fixVerification == other.fixVerification &&
@@ -8153,7 +8098,6 @@ private constructor(
             firstSeenAt,
             fixBranch,
             fixDispatchedAt,
-            fixHandoffBotUserId,
             fixPrNumber,
             fixPrompt,
             fixVerification,
@@ -8183,5 +8127,5 @@ private constructor(
     override fun hashCode(): Int = hashCode
 
     override fun toString() =
-        "Issue{id=$id, actions=$actions, autoResolutionEvidence=$autoResolutionEvidence, autoResolutionState=$autoResolutionState, createdAt=$createdAt, description=$description, evidence=$evidence, firstSeenAt=$firstSeenAt, fixBranch=$fixBranch, fixDispatchedAt=$fixDispatchedAt, fixHandoffBotUserId=$fixHandoffBotUserId, fixPrNumber=$fixPrNumber, fixPrompt=$fixPrompt, fixVerification=$fixVerification, fixes=$fixes, lastSeenAt=$lastSeenAt, linearContext=$linearContext, linearSync=$linearSync, name=$name, proposedContextFixes=$proposedContextFixes, proposedExamples=$proposedExamples, proposedFix=$proposedFix, proposedPromptFixes=$proposedPromptFixes, recurrencesSinceWatching=$recurrencesSinceWatching, sessionId=$sessionId, severity=$severity, status=$status, tags=$tags, tenantId=$tenantId, traces=$traces, updatedAt=$updatedAt, validationResult=$validationResult, watchingSince=$watchingSince, additionalProperties=$additionalProperties}"
+        "Issue{id=$id, actions=$actions, autoResolutionEvidence=$autoResolutionEvidence, autoResolutionState=$autoResolutionState, createdAt=$createdAt, description=$description, evidence=$evidence, firstSeenAt=$firstSeenAt, fixBranch=$fixBranch, fixDispatchedAt=$fixDispatchedAt, fixPrNumber=$fixPrNumber, fixPrompt=$fixPrompt, fixVerification=$fixVerification, fixes=$fixes, lastSeenAt=$lastSeenAt, linearContext=$linearContext, linearSync=$linearSync, name=$name, proposedContextFixes=$proposedContextFixes, proposedExamples=$proposedExamples, proposedFix=$proposedFix, proposedPromptFixes=$proposedPromptFixes, recurrencesSinceWatching=$recurrencesSinceWatching, sessionId=$sessionId, severity=$severity, status=$status, tags=$tags, tenantId=$tenantId, traces=$traces, updatedAt=$updatedAt, validationResult=$validationResult, watchingSince=$watchingSince, additionalProperties=$additionalProperties}"
 }

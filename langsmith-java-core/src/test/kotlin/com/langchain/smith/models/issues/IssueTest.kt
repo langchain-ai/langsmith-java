@@ -118,7 +118,6 @@ internal class IssueTest {
                 .firstSeenAt("first_seen_at")
                 .fixBranch("fix_branch")
                 .fixDispatchedAt("fix_dispatched_at")
-                .fixHandoffBotUserId("fix_handoff_bot_user_id")
                 .fixPrNumber(0L)
                 .fixPrompt("fix_prompt")
                 .fixVerification(
@@ -288,7 +287,6 @@ internal class IssueTest {
         assertThat(issue.firstSeenAt()).contains("first_seen_at")
         assertThat(issue.fixBranch()).contains("fix_branch")
         assertThat(issue.fixDispatchedAt()).contains("fix_dispatched_at")
-        assertThat(issue.fixHandoffBotUserId()).contains("fix_handoff_bot_user_id")
         assertThat(issue.fixPrNumber()).contains(0L)
         assertThat(issue.fixPrompt()).contains("fix_prompt")
         assertThat(issue.fixVerification())
@@ -477,7 +475,6 @@ internal class IssueTest {
                 .firstSeenAt("first_seen_at")
                 .fixBranch("fix_branch")
                 .fixDispatchedAt("fix_dispatched_at")
-                .fixHandoffBotUserId("fix_handoff_bot_user_id")
                 .fixPrNumber(0L)
                 .fixPrompt("fix_prompt")
                 .fixVerification(
