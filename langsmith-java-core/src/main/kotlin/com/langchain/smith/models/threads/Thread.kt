@@ -33,6 +33,7 @@ private constructor(
     private val maxStartTime: JsonField<OffsetDateTime>,
     private val minStartTime: JsonField<OffsetDateTime>,
     private val numErroredTurns: JsonField<Long>,
+    private val queryMetadata: JsonValue,
     private val startTime: JsonField<OffsetDateTime>,
     private val threadId: JsonField<String>,
     private val totalCost: JsonField<Double>,
@@ -77,6 +78,7 @@ private constructor(
         @JsonProperty("num_errored_turns")
         @ExcludeMissing
         numErroredTurns: JsonField<Long> = JsonMissing.of(),
+        @JsonProperty("query_metadata") @ExcludeMissing queryMetadata: JsonValue = JsonMissing.of(),
         @JsonProperty("start_time")
         @ExcludeMissing
         startTime: JsonField<OffsetDateTime> = JsonMissing.of(),
@@ -105,6 +107,7 @@ private constructor(
         maxStartTime,
         minStartTime,
         numErroredTurns,
+        queryMetadata,
         startTime,
         threadId,
         totalCost,
@@ -220,6 +223,17 @@ private constructor(
      *   server responded with an unexpected value).
      */
     fun numErroredTurns(): Optional<Long> = numErroredTurns.getOptional("num_errored_turns")
+
+    /**
+     * `query_metadata` describes why this thread matched the query, including `sem_filter_score`
+     * when a semantic filter is used. Returned automatically, or null when unavailable.
+     *
+     * This arbitrary value can be deserialized into a custom type using the `convert` method:
+     * ```java
+     * MyClass myObject = thread.queryMetadata().convert(MyClass.class);
+     * ```
+     */
+    @JsonProperty("query_metadata") @ExcludeMissing fun _queryMetadata(): JsonValue = queryMetadata
 
     /**
      * `start_time` is a reference start time for this row (RFC3339 date-time), such as for sorting.
@@ -478,6 +492,7 @@ private constructor(
         private var maxStartTime: JsonField<OffsetDateTime> = JsonMissing.of()
         private var minStartTime: JsonField<OffsetDateTime> = JsonMissing.of()
         private var numErroredTurns: JsonField<Long> = JsonMissing.of()
+        private var queryMetadata: JsonValue = JsonMissing.of()
         private var startTime: JsonField<OffsetDateTime> = JsonMissing.of()
         private var threadId: JsonField<String> = JsonMissing.of()
         private var totalCost: JsonField<Double> = JsonMissing.of()
@@ -501,6 +516,7 @@ private constructor(
             maxStartTime = thread.maxStartTime
             minStartTime = thread.minStartTime
             numErroredTurns = thread.numErroredTurns
+            queryMetadata = thread.queryMetadata
             startTime = thread.startTime
             threadId = thread.threadId
             totalCost = thread.totalCost
@@ -695,6 +711,13 @@ private constructor(
         }
 
         /**
+         * `query_metadata` describes why this thread matched the query, including
+         * `sem_filter_score` when a semantic filter is used. Returned automatically, or null when
+         * unavailable.
+         */
+        fun queryMetadata(queryMetadata: JsonValue) = apply { this.queryMetadata = queryMetadata }
+
+        /**
          * `start_time` is a reference start time for this row (RFC3339 date-time), such as for
          * sorting.
          */
@@ -840,6 +863,7 @@ private constructor(
                 maxStartTime,
                 minStartTime,
                 numErroredTurns,
+                queryMetadata,
                 startTime,
                 threadId,
                 totalCost,
@@ -1282,6 +1306,7 @@ private constructor(
             maxStartTime == other.maxStartTime &&
             minStartTime == other.minStartTime &&
             numErroredTurns == other.numErroredTurns &&
+            queryMetadata == other.queryMetadata &&
             startTime == other.startTime &&
             threadId == other.threadId &&
             totalCost == other.totalCost &&
@@ -1306,6 +1331,7 @@ private constructor(
             maxStartTime,
             minStartTime,
             numErroredTurns,
+            queryMetadata,
             startTime,
             threadId,
             totalCost,
@@ -1320,5 +1346,5 @@ private constructor(
     override fun hashCode(): Int = hashCode
 
     override fun toString() =
-        "Thread{count=$count, feedbackStats=$feedbackStats, firstInputs=$firstInputs, firstTraceId=$firstTraceId, lastError=$lastError, lastOutputs=$lastOutputs, lastTraceId=$lastTraceId, latencyP50=$latencyP50, latencyP99=$latencyP99, maxStartTime=$maxStartTime, minStartTime=$minStartTime, numErroredTurns=$numErroredTurns, startTime=$startTime, threadId=$threadId, totalCost=$totalCost, totalCostDetails=$totalCostDetails, totalTokenDetails=$totalTokenDetails, totalTokens=$totalTokens, traceId=$traceId, additionalProperties=$additionalProperties}"
+        "Thread{count=$count, feedbackStats=$feedbackStats, firstInputs=$firstInputs, firstTraceId=$firstTraceId, lastError=$lastError, lastOutputs=$lastOutputs, lastTraceId=$lastTraceId, latencyP50=$latencyP50, latencyP99=$latencyP99, maxStartTime=$maxStartTime, minStartTime=$minStartTime, numErroredTurns=$numErroredTurns, queryMetadata=$queryMetadata, startTime=$startTime, threadId=$threadId, totalCost=$totalCost, totalCostDetails=$totalCostDetails, totalTokenDetails=$totalTokenDetails, totalTokens=$totalTokens, traceId=$traceId, additionalProperties=$additionalProperties}"
 }

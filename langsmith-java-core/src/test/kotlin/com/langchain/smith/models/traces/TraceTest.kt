@@ -17,6 +17,7 @@ internal class TraceTest {
     fun create() {
         val trace =
             Trace.builder()
+                .queryMetadata(JsonValue.from(mapOf<String, Any>()))
                 .rootRun(
                     Run.builder()
                         .id("018e4c7e-a9fb-7ef0-a5b6-6ea3a82e9327")
@@ -141,6 +142,7 @@ internal class TraceTest {
                                 .build()
                         )
                         .promptTokens(200L)
+                        .queryMetadata(JsonValue.from(mapOf<String, Any>()))
                         .referenceDatasetId("c3d4e5f6-a7b8-4c5d-0e1f-2a3b4c5d6e7f")
                         .referenceExampleId("b2c3d4e5-f6a7-4b5c-9d0e-1f2a3b4c5d6e")
                         .runType(RunType.LLM)
@@ -167,6 +169,7 @@ internal class TraceTest {
                 )
                 .build()
 
+        assertThat(trace._queryMetadata()).isEqualTo(JsonValue.from(mapOf<String, Any>()))
         assertThat(trace.rootRun())
             .contains(
                 Run.builder()
@@ -292,6 +295,7 @@ internal class TraceTest {
                             .build()
                     )
                     .promptTokens(200L)
+                    .queryMetadata(JsonValue.from(mapOf<String, Any>()))
                     .referenceDatasetId("c3d4e5f6-a7b8-4c5d-0e1f-2a3b4c5d6e7f")
                     .referenceExampleId("b2c3d4e5-f6a7-4b5c-9d0e-1f2a3b4c5d6e")
                     .runType(RunType.LLM)
@@ -324,6 +328,7 @@ internal class TraceTest {
         val jsonMapper = jsonMapper()
         val trace =
             Trace.builder()
+                .queryMetadata(JsonValue.from(mapOf<String, Any>()))
                 .rootRun(
                     Run.builder()
                         .id("018e4c7e-a9fb-7ef0-a5b6-6ea3a82e9327")
@@ -448,6 +453,7 @@ internal class TraceTest {
                                 .build()
                         )
                         .promptTokens(200L)
+                        .queryMetadata(JsonValue.from(mapOf<String, Any>()))
                         .referenceDatasetId("c3d4e5f6-a7b8-4c5d-0e1f-2a3b4c5d6e7f")
                         .referenceExampleId("b2c3d4e5-f6a7-4b5c-9d0e-1f2a3b4c5d6e")
                         .runType(RunType.LLM)
