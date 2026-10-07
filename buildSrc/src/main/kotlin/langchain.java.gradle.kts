@@ -47,7 +47,7 @@ tasks.withType<Test>().configureEach {
 val palantir by configurations.creating {
     resolutionStrategy {
         // CVE-2026-54515: remove once Palantir resolves jackson-databind >= 2.21.5.
-        force("com.fasterxml.jackson.core:jackson-databind:2.22.1")
+        force("com.fasterxml.jackson.core:jackson-databind:2.22.3")
     }
 }
 dependencies {
