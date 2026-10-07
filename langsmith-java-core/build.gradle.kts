@@ -19,7 +19,7 @@ sourceSets.main {
     resources.srcDir(generateVersionProperties)
 }
 
-val jacksonVersion = "2.22.1"
+val jacksonVersion = "2.22.3"
 val jacksonAnnotationsVersion = "2.22"
 
 configurations.matching { it.name in setOf("testCompileClasspath", "testRuntimeClasspath") }.configureEach {
