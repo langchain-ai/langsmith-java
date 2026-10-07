@@ -8518,6 +8518,47 @@ private constructor(
 
                                 @JvmField val COMPLETION_TOKENS = of("completion_tokens")
 
+                                @JvmField
+                                val PROMPT_TOKEN_DETAILS_CACHE_CREATION =
+                                    of("prompt_token_details.cache_creation")
+
+                                @JvmField
+                                val PROMPT_TOKEN_DETAILS_CACHE_READ =
+                                    of("prompt_token_details.cache_read")
+
+                                @JvmField
+                                val PROMPT_TOKEN_DETAILS_EPHEMERAL_1H_INPUT_TOKENS =
+                                    of("prompt_token_details.ephemeral_1h_input_tokens")
+
+                                @JvmField
+                                val PROMPT_TOKEN_DETAILS_EPHEMERAL_5M_INPUT_TOKENS =
+                                    of("prompt_token_details.ephemeral_5m_input_tokens")
+
+                                @JvmField
+                                val PROMPT_TOKEN_DETAILS_AUDIO = of("prompt_token_details.audio")
+
+                                @JvmField
+                                val PROMPT_TOKEN_DETAILS_IMAGE = of("prompt_token_details.image")
+
+                                @JvmField
+                                val PROMPT_TOKEN_DETAILS_VIDEO = of("prompt_token_details.video")
+
+                                @JvmField
+                                val COMPLETION_TOKEN_DETAILS_REASONING =
+                                    of("completion_token_details.reasoning")
+
+                                @JvmField
+                                val COMPLETION_TOKEN_DETAILS_AUDIO =
+                                    of("completion_token_details.audio")
+
+                                @JvmField
+                                val COMPLETION_TOKEN_DETAILS_IMAGE =
+                                    of("completion_token_details.image")
+
+                                @JvmField
+                                val COMPLETION_TOKEN_DETAILS_VIDEO =
+                                    of("completion_token_details.video")
+
                                 @JvmField val TOTAL_COST = of("total_cost")
 
                                 @JvmField val PROMPT_COST = of("prompt_cost")
@@ -8536,6 +8577,17 @@ private constructor(
                                 TOTAL_TOKENS,
                                 PROMPT_TOKENS,
                                 COMPLETION_TOKENS,
+                                PROMPT_TOKEN_DETAILS_CACHE_CREATION,
+                                PROMPT_TOKEN_DETAILS_CACHE_READ,
+                                PROMPT_TOKEN_DETAILS_EPHEMERAL_1H_INPUT_TOKENS,
+                                PROMPT_TOKEN_DETAILS_EPHEMERAL_5M_INPUT_TOKENS,
+                                PROMPT_TOKEN_DETAILS_AUDIO,
+                                PROMPT_TOKEN_DETAILS_IMAGE,
+                                PROMPT_TOKEN_DETAILS_VIDEO,
+                                COMPLETION_TOKEN_DETAILS_REASONING,
+                                COMPLETION_TOKEN_DETAILS_AUDIO,
+                                COMPLETION_TOKEN_DETAILS_IMAGE,
+                                COMPLETION_TOKEN_DETAILS_VIDEO,
                                 TOTAL_COST,
                                 PROMPT_COST,
                                 COMPLETION_COST,
@@ -8559,6 +8611,17 @@ private constructor(
                                 TOTAL_TOKENS,
                                 PROMPT_TOKENS,
                                 COMPLETION_TOKENS,
+                                PROMPT_TOKEN_DETAILS_CACHE_CREATION,
+                                PROMPT_TOKEN_DETAILS_CACHE_READ,
+                                PROMPT_TOKEN_DETAILS_EPHEMERAL_1H_INPUT_TOKENS,
+                                PROMPT_TOKEN_DETAILS_EPHEMERAL_5M_INPUT_TOKENS,
+                                PROMPT_TOKEN_DETAILS_AUDIO,
+                                PROMPT_TOKEN_DETAILS_IMAGE,
+                                PROMPT_TOKEN_DETAILS_VIDEO,
+                                COMPLETION_TOKEN_DETAILS_REASONING,
+                                COMPLETION_TOKEN_DETAILS_AUDIO,
+                                COMPLETION_TOKEN_DETAILS_IMAGE,
+                                COMPLETION_TOKEN_DETAILS_VIDEO,
                                 TOTAL_COST,
                                 PROMPT_COST,
                                 COMPLETION_COST,
@@ -8585,6 +8648,25 @@ private constructor(
                                     TOTAL_TOKENS -> Value.TOTAL_TOKENS
                                     PROMPT_TOKENS -> Value.PROMPT_TOKENS
                                     COMPLETION_TOKENS -> Value.COMPLETION_TOKENS
+                                    PROMPT_TOKEN_DETAILS_CACHE_CREATION ->
+                                        Value.PROMPT_TOKEN_DETAILS_CACHE_CREATION
+                                    PROMPT_TOKEN_DETAILS_CACHE_READ ->
+                                        Value.PROMPT_TOKEN_DETAILS_CACHE_READ
+                                    PROMPT_TOKEN_DETAILS_EPHEMERAL_1H_INPUT_TOKENS ->
+                                        Value.PROMPT_TOKEN_DETAILS_EPHEMERAL_1H_INPUT_TOKENS
+                                    PROMPT_TOKEN_DETAILS_EPHEMERAL_5M_INPUT_TOKENS ->
+                                        Value.PROMPT_TOKEN_DETAILS_EPHEMERAL_5M_INPUT_TOKENS
+                                    PROMPT_TOKEN_DETAILS_AUDIO -> Value.PROMPT_TOKEN_DETAILS_AUDIO
+                                    PROMPT_TOKEN_DETAILS_IMAGE -> Value.PROMPT_TOKEN_DETAILS_IMAGE
+                                    PROMPT_TOKEN_DETAILS_VIDEO -> Value.PROMPT_TOKEN_DETAILS_VIDEO
+                                    COMPLETION_TOKEN_DETAILS_REASONING ->
+                                        Value.COMPLETION_TOKEN_DETAILS_REASONING
+                                    COMPLETION_TOKEN_DETAILS_AUDIO ->
+                                        Value.COMPLETION_TOKEN_DETAILS_AUDIO
+                                    COMPLETION_TOKEN_DETAILS_IMAGE ->
+                                        Value.COMPLETION_TOKEN_DETAILS_IMAGE
+                                    COMPLETION_TOKEN_DETAILS_VIDEO ->
+                                        Value.COMPLETION_TOKEN_DETAILS_VIDEO
                                     TOTAL_COST -> Value.TOTAL_COST
                                     PROMPT_COST -> Value.PROMPT_COST
                                     COMPLETION_COST -> Value.COMPLETION_COST
@@ -8608,6 +8690,25 @@ private constructor(
                                     TOTAL_TOKENS -> Known.TOTAL_TOKENS
                                     PROMPT_TOKENS -> Known.PROMPT_TOKENS
                                     COMPLETION_TOKENS -> Known.COMPLETION_TOKENS
+                                    PROMPT_TOKEN_DETAILS_CACHE_CREATION ->
+                                        Known.PROMPT_TOKEN_DETAILS_CACHE_CREATION
+                                    PROMPT_TOKEN_DETAILS_CACHE_READ ->
+                                        Known.PROMPT_TOKEN_DETAILS_CACHE_READ
+                                    PROMPT_TOKEN_DETAILS_EPHEMERAL_1H_INPUT_TOKENS ->
+                                        Known.PROMPT_TOKEN_DETAILS_EPHEMERAL_1H_INPUT_TOKENS
+                                    PROMPT_TOKEN_DETAILS_EPHEMERAL_5M_INPUT_TOKENS ->
+                                        Known.PROMPT_TOKEN_DETAILS_EPHEMERAL_5M_INPUT_TOKENS
+                                    PROMPT_TOKEN_DETAILS_AUDIO -> Known.PROMPT_TOKEN_DETAILS_AUDIO
+                                    PROMPT_TOKEN_DETAILS_IMAGE -> Known.PROMPT_TOKEN_DETAILS_IMAGE
+                                    PROMPT_TOKEN_DETAILS_VIDEO -> Known.PROMPT_TOKEN_DETAILS_VIDEO
+                                    COMPLETION_TOKEN_DETAILS_REASONING ->
+                                        Known.COMPLETION_TOKEN_DETAILS_REASONING
+                                    COMPLETION_TOKEN_DETAILS_AUDIO ->
+                                        Known.COMPLETION_TOKEN_DETAILS_AUDIO
+                                    COMPLETION_TOKEN_DETAILS_IMAGE ->
+                                        Known.COMPLETION_TOKEN_DETAILS_IMAGE
+                                    COMPLETION_TOKEN_DETAILS_VIDEO ->
+                                        Known.COMPLETION_TOKEN_DETAILS_VIDEO
                                     TOTAL_COST -> Known.TOTAL_COST
                                     PROMPT_COST -> Known.PROMPT_COST
                                     COMPLETION_COST -> Known.COMPLETION_COST
@@ -9708,6 +9809,47 @@ private constructor(
 
                                 @JvmField val COMPLETION_TOKENS = of("completion_tokens")
 
+                                @JvmField
+                                val PROMPT_TOKEN_DETAILS_CACHE_CREATION =
+                                    of("prompt_token_details.cache_creation")
+
+                                @JvmField
+                                val PROMPT_TOKEN_DETAILS_CACHE_READ =
+                                    of("prompt_token_details.cache_read")
+
+                                @JvmField
+                                val PROMPT_TOKEN_DETAILS_EPHEMERAL_1H_INPUT_TOKENS =
+                                    of("prompt_token_details.ephemeral_1h_input_tokens")
+
+                                @JvmField
+                                val PROMPT_TOKEN_DETAILS_EPHEMERAL_5M_INPUT_TOKENS =
+                                    of("prompt_token_details.ephemeral_5m_input_tokens")
+
+                                @JvmField
+                                val PROMPT_TOKEN_DETAILS_AUDIO = of("prompt_token_details.audio")
+
+                                @JvmField
+                                val PROMPT_TOKEN_DETAILS_IMAGE = of("prompt_token_details.image")
+
+                                @JvmField
+                                val PROMPT_TOKEN_DETAILS_VIDEO = of("prompt_token_details.video")
+
+                                @JvmField
+                                val COMPLETION_TOKEN_DETAILS_REASONING =
+                                    of("completion_token_details.reasoning")
+
+                                @JvmField
+                                val COMPLETION_TOKEN_DETAILS_AUDIO =
+                                    of("completion_token_details.audio")
+
+                                @JvmField
+                                val COMPLETION_TOKEN_DETAILS_IMAGE =
+                                    of("completion_token_details.image")
+
+                                @JvmField
+                                val COMPLETION_TOKEN_DETAILS_VIDEO =
+                                    of("completion_token_details.video")
+
                                 @JvmField val TOTAL_COST = of("total_cost")
 
                                 @JvmField val PROMPT_COST = of("prompt_cost")
@@ -9726,6 +9868,17 @@ private constructor(
                                 TOTAL_TOKENS,
                                 PROMPT_TOKENS,
                                 COMPLETION_TOKENS,
+                                PROMPT_TOKEN_DETAILS_CACHE_CREATION,
+                                PROMPT_TOKEN_DETAILS_CACHE_READ,
+                                PROMPT_TOKEN_DETAILS_EPHEMERAL_1H_INPUT_TOKENS,
+                                PROMPT_TOKEN_DETAILS_EPHEMERAL_5M_INPUT_TOKENS,
+                                PROMPT_TOKEN_DETAILS_AUDIO,
+                                PROMPT_TOKEN_DETAILS_IMAGE,
+                                PROMPT_TOKEN_DETAILS_VIDEO,
+                                COMPLETION_TOKEN_DETAILS_REASONING,
+                                COMPLETION_TOKEN_DETAILS_AUDIO,
+                                COMPLETION_TOKEN_DETAILS_IMAGE,
+                                COMPLETION_TOKEN_DETAILS_VIDEO,
                                 TOTAL_COST,
                                 PROMPT_COST,
                                 COMPLETION_COST,
@@ -9749,6 +9902,17 @@ private constructor(
                                 TOTAL_TOKENS,
                                 PROMPT_TOKENS,
                                 COMPLETION_TOKENS,
+                                PROMPT_TOKEN_DETAILS_CACHE_CREATION,
+                                PROMPT_TOKEN_DETAILS_CACHE_READ,
+                                PROMPT_TOKEN_DETAILS_EPHEMERAL_1H_INPUT_TOKENS,
+                                PROMPT_TOKEN_DETAILS_EPHEMERAL_5M_INPUT_TOKENS,
+                                PROMPT_TOKEN_DETAILS_AUDIO,
+                                PROMPT_TOKEN_DETAILS_IMAGE,
+                                PROMPT_TOKEN_DETAILS_VIDEO,
+                                COMPLETION_TOKEN_DETAILS_REASONING,
+                                COMPLETION_TOKEN_DETAILS_AUDIO,
+                                COMPLETION_TOKEN_DETAILS_IMAGE,
+                                COMPLETION_TOKEN_DETAILS_VIDEO,
                                 TOTAL_COST,
                                 PROMPT_COST,
                                 COMPLETION_COST,
@@ -9775,6 +9939,25 @@ private constructor(
                                     TOTAL_TOKENS -> Value.TOTAL_TOKENS
                                     PROMPT_TOKENS -> Value.PROMPT_TOKENS
                                     COMPLETION_TOKENS -> Value.COMPLETION_TOKENS
+                                    PROMPT_TOKEN_DETAILS_CACHE_CREATION ->
+                                        Value.PROMPT_TOKEN_DETAILS_CACHE_CREATION
+                                    PROMPT_TOKEN_DETAILS_CACHE_READ ->
+                                        Value.PROMPT_TOKEN_DETAILS_CACHE_READ
+                                    PROMPT_TOKEN_DETAILS_EPHEMERAL_1H_INPUT_TOKENS ->
+                                        Value.PROMPT_TOKEN_DETAILS_EPHEMERAL_1H_INPUT_TOKENS
+                                    PROMPT_TOKEN_DETAILS_EPHEMERAL_5M_INPUT_TOKENS ->
+                                        Value.PROMPT_TOKEN_DETAILS_EPHEMERAL_5M_INPUT_TOKENS
+                                    PROMPT_TOKEN_DETAILS_AUDIO -> Value.PROMPT_TOKEN_DETAILS_AUDIO
+                                    PROMPT_TOKEN_DETAILS_IMAGE -> Value.PROMPT_TOKEN_DETAILS_IMAGE
+                                    PROMPT_TOKEN_DETAILS_VIDEO -> Value.PROMPT_TOKEN_DETAILS_VIDEO
+                                    COMPLETION_TOKEN_DETAILS_REASONING ->
+                                        Value.COMPLETION_TOKEN_DETAILS_REASONING
+                                    COMPLETION_TOKEN_DETAILS_AUDIO ->
+                                        Value.COMPLETION_TOKEN_DETAILS_AUDIO
+                                    COMPLETION_TOKEN_DETAILS_IMAGE ->
+                                        Value.COMPLETION_TOKEN_DETAILS_IMAGE
+                                    COMPLETION_TOKEN_DETAILS_VIDEO ->
+                                        Value.COMPLETION_TOKEN_DETAILS_VIDEO
                                     TOTAL_COST -> Value.TOTAL_COST
                                     PROMPT_COST -> Value.PROMPT_COST
                                     COMPLETION_COST -> Value.COMPLETION_COST
@@ -9798,6 +9981,25 @@ private constructor(
                                     TOTAL_TOKENS -> Known.TOTAL_TOKENS
                                     PROMPT_TOKENS -> Known.PROMPT_TOKENS
                                     COMPLETION_TOKENS -> Known.COMPLETION_TOKENS
+                                    PROMPT_TOKEN_DETAILS_CACHE_CREATION ->
+                                        Known.PROMPT_TOKEN_DETAILS_CACHE_CREATION
+                                    PROMPT_TOKEN_DETAILS_CACHE_READ ->
+                                        Known.PROMPT_TOKEN_DETAILS_CACHE_READ
+                                    PROMPT_TOKEN_DETAILS_EPHEMERAL_1H_INPUT_TOKENS ->
+                                        Known.PROMPT_TOKEN_DETAILS_EPHEMERAL_1H_INPUT_TOKENS
+                                    PROMPT_TOKEN_DETAILS_EPHEMERAL_5M_INPUT_TOKENS ->
+                                        Known.PROMPT_TOKEN_DETAILS_EPHEMERAL_5M_INPUT_TOKENS
+                                    PROMPT_TOKEN_DETAILS_AUDIO -> Known.PROMPT_TOKEN_DETAILS_AUDIO
+                                    PROMPT_TOKEN_DETAILS_IMAGE -> Known.PROMPT_TOKEN_DETAILS_IMAGE
+                                    PROMPT_TOKEN_DETAILS_VIDEO -> Known.PROMPT_TOKEN_DETAILS_VIDEO
+                                    COMPLETION_TOKEN_DETAILS_REASONING ->
+                                        Known.COMPLETION_TOKEN_DETAILS_REASONING
+                                    COMPLETION_TOKEN_DETAILS_AUDIO ->
+                                        Known.COMPLETION_TOKEN_DETAILS_AUDIO
+                                    COMPLETION_TOKEN_DETAILS_IMAGE ->
+                                        Known.COMPLETION_TOKEN_DETAILS_IMAGE
+                                    COMPLETION_TOKEN_DETAILS_VIDEO ->
+                                        Known.COMPLETION_TOKEN_DETAILS_VIDEO
                                     TOTAL_COST -> Known.TOTAL_COST
                                     PROMPT_COST -> Known.PROMPT_COST
                                     COMPLETION_COST -> Known.COMPLETION_COST
@@ -13039,6 +13241,50 @@ private constructor(
 
                                         @JvmField val COMPLETION_TOKENS = of("completion_tokens")
 
+                                        @JvmField
+                                        val PROMPT_TOKEN_DETAILS_CACHE_CREATION =
+                                            of("prompt_token_details.cache_creation")
+
+                                        @JvmField
+                                        val PROMPT_TOKEN_DETAILS_CACHE_READ =
+                                            of("prompt_token_details.cache_read")
+
+                                        @JvmField
+                                        val PROMPT_TOKEN_DETAILS_EPHEMERAL_1H_INPUT_TOKENS =
+                                            of("prompt_token_details.ephemeral_1h_input_tokens")
+
+                                        @JvmField
+                                        val PROMPT_TOKEN_DETAILS_EPHEMERAL_5M_INPUT_TOKENS =
+                                            of("prompt_token_details.ephemeral_5m_input_tokens")
+
+                                        @JvmField
+                                        val PROMPT_TOKEN_DETAILS_AUDIO =
+                                            of("prompt_token_details.audio")
+
+                                        @JvmField
+                                        val PROMPT_TOKEN_DETAILS_IMAGE =
+                                            of("prompt_token_details.image")
+
+                                        @JvmField
+                                        val PROMPT_TOKEN_DETAILS_VIDEO =
+                                            of("prompt_token_details.video")
+
+                                        @JvmField
+                                        val COMPLETION_TOKEN_DETAILS_REASONING =
+                                            of("completion_token_details.reasoning")
+
+                                        @JvmField
+                                        val COMPLETION_TOKEN_DETAILS_AUDIO =
+                                            of("completion_token_details.audio")
+
+                                        @JvmField
+                                        val COMPLETION_TOKEN_DETAILS_IMAGE =
+                                            of("completion_token_details.image")
+
+                                        @JvmField
+                                        val COMPLETION_TOKEN_DETAILS_VIDEO =
+                                            of("completion_token_details.video")
+
                                         @JvmField val TOTAL_COST = of("total_cost")
 
                                         @JvmField val PROMPT_COST = of("prompt_cost")
@@ -13058,6 +13304,17 @@ private constructor(
                                         TOTAL_TOKENS,
                                         PROMPT_TOKENS,
                                         COMPLETION_TOKENS,
+                                        PROMPT_TOKEN_DETAILS_CACHE_CREATION,
+                                        PROMPT_TOKEN_DETAILS_CACHE_READ,
+                                        PROMPT_TOKEN_DETAILS_EPHEMERAL_1H_INPUT_TOKENS,
+                                        PROMPT_TOKEN_DETAILS_EPHEMERAL_5M_INPUT_TOKENS,
+                                        PROMPT_TOKEN_DETAILS_AUDIO,
+                                        PROMPT_TOKEN_DETAILS_IMAGE,
+                                        PROMPT_TOKEN_DETAILS_VIDEO,
+                                        COMPLETION_TOKEN_DETAILS_REASONING,
+                                        COMPLETION_TOKEN_DETAILS_AUDIO,
+                                        COMPLETION_TOKEN_DETAILS_IMAGE,
+                                        COMPLETION_TOKEN_DETAILS_VIDEO,
                                         TOTAL_COST,
                                         PROMPT_COST,
                                         COMPLETION_COST,
@@ -13083,6 +13340,17 @@ private constructor(
                                         TOTAL_TOKENS,
                                         PROMPT_TOKENS,
                                         COMPLETION_TOKENS,
+                                        PROMPT_TOKEN_DETAILS_CACHE_CREATION,
+                                        PROMPT_TOKEN_DETAILS_CACHE_READ,
+                                        PROMPT_TOKEN_DETAILS_EPHEMERAL_1H_INPUT_TOKENS,
+                                        PROMPT_TOKEN_DETAILS_EPHEMERAL_5M_INPUT_TOKENS,
+                                        PROMPT_TOKEN_DETAILS_AUDIO,
+                                        PROMPT_TOKEN_DETAILS_IMAGE,
+                                        PROMPT_TOKEN_DETAILS_VIDEO,
+                                        COMPLETION_TOKEN_DETAILS_REASONING,
+                                        COMPLETION_TOKEN_DETAILS_AUDIO,
+                                        COMPLETION_TOKEN_DETAILS_IMAGE,
+                                        COMPLETION_TOKEN_DETAILS_VIDEO,
                                         TOTAL_COST,
                                         PROMPT_COST,
                                         COMPLETION_COST,
@@ -13109,6 +13377,28 @@ private constructor(
                                             TOTAL_TOKENS -> Value.TOTAL_TOKENS
                                             PROMPT_TOKENS -> Value.PROMPT_TOKENS
                                             COMPLETION_TOKENS -> Value.COMPLETION_TOKENS
+                                            PROMPT_TOKEN_DETAILS_CACHE_CREATION ->
+                                                Value.PROMPT_TOKEN_DETAILS_CACHE_CREATION
+                                            PROMPT_TOKEN_DETAILS_CACHE_READ ->
+                                                Value.PROMPT_TOKEN_DETAILS_CACHE_READ
+                                            PROMPT_TOKEN_DETAILS_EPHEMERAL_1H_INPUT_TOKENS ->
+                                                Value.PROMPT_TOKEN_DETAILS_EPHEMERAL_1H_INPUT_TOKENS
+                                            PROMPT_TOKEN_DETAILS_EPHEMERAL_5M_INPUT_TOKENS ->
+                                                Value.PROMPT_TOKEN_DETAILS_EPHEMERAL_5M_INPUT_TOKENS
+                                            PROMPT_TOKEN_DETAILS_AUDIO ->
+                                                Value.PROMPT_TOKEN_DETAILS_AUDIO
+                                            PROMPT_TOKEN_DETAILS_IMAGE ->
+                                                Value.PROMPT_TOKEN_DETAILS_IMAGE
+                                            PROMPT_TOKEN_DETAILS_VIDEO ->
+                                                Value.PROMPT_TOKEN_DETAILS_VIDEO
+                                            COMPLETION_TOKEN_DETAILS_REASONING ->
+                                                Value.COMPLETION_TOKEN_DETAILS_REASONING
+                                            COMPLETION_TOKEN_DETAILS_AUDIO ->
+                                                Value.COMPLETION_TOKEN_DETAILS_AUDIO
+                                            COMPLETION_TOKEN_DETAILS_IMAGE ->
+                                                Value.COMPLETION_TOKEN_DETAILS_IMAGE
+                                            COMPLETION_TOKEN_DETAILS_VIDEO ->
+                                                Value.COMPLETION_TOKEN_DETAILS_VIDEO
                                             TOTAL_COST -> Value.TOTAL_COST
                                             PROMPT_COST -> Value.PROMPT_COST
                                             COMPLETION_COST -> Value.COMPLETION_COST
@@ -13133,6 +13423,28 @@ private constructor(
                                             TOTAL_TOKENS -> Known.TOTAL_TOKENS
                                             PROMPT_TOKENS -> Known.PROMPT_TOKENS
                                             COMPLETION_TOKENS -> Known.COMPLETION_TOKENS
+                                            PROMPT_TOKEN_DETAILS_CACHE_CREATION ->
+                                                Known.PROMPT_TOKEN_DETAILS_CACHE_CREATION
+                                            PROMPT_TOKEN_DETAILS_CACHE_READ ->
+                                                Known.PROMPT_TOKEN_DETAILS_CACHE_READ
+                                            PROMPT_TOKEN_DETAILS_EPHEMERAL_1H_INPUT_TOKENS ->
+                                                Known.PROMPT_TOKEN_DETAILS_EPHEMERAL_1H_INPUT_TOKENS
+                                            PROMPT_TOKEN_DETAILS_EPHEMERAL_5M_INPUT_TOKENS ->
+                                                Known.PROMPT_TOKEN_DETAILS_EPHEMERAL_5M_INPUT_TOKENS
+                                            PROMPT_TOKEN_DETAILS_AUDIO ->
+                                                Known.PROMPT_TOKEN_DETAILS_AUDIO
+                                            PROMPT_TOKEN_DETAILS_IMAGE ->
+                                                Known.PROMPT_TOKEN_DETAILS_IMAGE
+                                            PROMPT_TOKEN_DETAILS_VIDEO ->
+                                                Known.PROMPT_TOKEN_DETAILS_VIDEO
+                                            COMPLETION_TOKEN_DETAILS_REASONING ->
+                                                Known.COMPLETION_TOKEN_DETAILS_REASONING
+                                            COMPLETION_TOKEN_DETAILS_AUDIO ->
+                                                Known.COMPLETION_TOKEN_DETAILS_AUDIO
+                                            COMPLETION_TOKEN_DETAILS_IMAGE ->
+                                                Known.COMPLETION_TOKEN_DETAILS_IMAGE
+                                            COMPLETION_TOKEN_DETAILS_VIDEO ->
+                                                Known.COMPLETION_TOKEN_DETAILS_VIDEO
                                             TOTAL_COST -> Known.TOTAL_COST
                                             PROMPT_COST -> Known.PROMPT_COST
                                             COMPLETION_COST -> Known.COMPLETION_COST
@@ -14302,6 +14614,50 @@ private constructor(
 
                                         @JvmField val COMPLETION_TOKENS = of("completion_tokens")
 
+                                        @JvmField
+                                        val PROMPT_TOKEN_DETAILS_CACHE_CREATION =
+                                            of("prompt_token_details.cache_creation")
+
+                                        @JvmField
+                                        val PROMPT_TOKEN_DETAILS_CACHE_READ =
+                                            of("prompt_token_details.cache_read")
+
+                                        @JvmField
+                                        val PROMPT_TOKEN_DETAILS_EPHEMERAL_1H_INPUT_TOKENS =
+                                            of("prompt_token_details.ephemeral_1h_input_tokens")
+
+                                        @JvmField
+                                        val PROMPT_TOKEN_DETAILS_EPHEMERAL_5M_INPUT_TOKENS =
+                                            of("prompt_token_details.ephemeral_5m_input_tokens")
+
+                                        @JvmField
+                                        val PROMPT_TOKEN_DETAILS_AUDIO =
+                                            of("prompt_token_details.audio")
+
+                                        @JvmField
+                                        val PROMPT_TOKEN_DETAILS_IMAGE =
+                                            of("prompt_token_details.image")
+
+                                        @JvmField
+                                        val PROMPT_TOKEN_DETAILS_VIDEO =
+                                            of("prompt_token_details.video")
+
+                                        @JvmField
+                                        val COMPLETION_TOKEN_DETAILS_REASONING =
+                                            of("completion_token_details.reasoning")
+
+                                        @JvmField
+                                        val COMPLETION_TOKEN_DETAILS_AUDIO =
+                                            of("completion_token_details.audio")
+
+                                        @JvmField
+                                        val COMPLETION_TOKEN_DETAILS_IMAGE =
+                                            of("completion_token_details.image")
+
+                                        @JvmField
+                                        val COMPLETION_TOKEN_DETAILS_VIDEO =
+                                            of("completion_token_details.video")
+
                                         @JvmField val TOTAL_COST = of("total_cost")
 
                                         @JvmField val PROMPT_COST = of("prompt_cost")
@@ -14321,6 +14677,17 @@ private constructor(
                                         TOTAL_TOKENS,
                                         PROMPT_TOKENS,
                                         COMPLETION_TOKENS,
+                                        PROMPT_TOKEN_DETAILS_CACHE_CREATION,
+                                        PROMPT_TOKEN_DETAILS_CACHE_READ,
+                                        PROMPT_TOKEN_DETAILS_EPHEMERAL_1H_INPUT_TOKENS,
+                                        PROMPT_TOKEN_DETAILS_EPHEMERAL_5M_INPUT_TOKENS,
+                                        PROMPT_TOKEN_DETAILS_AUDIO,
+                                        PROMPT_TOKEN_DETAILS_IMAGE,
+                                        PROMPT_TOKEN_DETAILS_VIDEO,
+                                        COMPLETION_TOKEN_DETAILS_REASONING,
+                                        COMPLETION_TOKEN_DETAILS_AUDIO,
+                                        COMPLETION_TOKEN_DETAILS_IMAGE,
+                                        COMPLETION_TOKEN_DETAILS_VIDEO,
                                         TOTAL_COST,
                                         PROMPT_COST,
                                         COMPLETION_COST,
@@ -14346,6 +14713,17 @@ private constructor(
                                         TOTAL_TOKENS,
                                         PROMPT_TOKENS,
                                         COMPLETION_TOKENS,
+                                        PROMPT_TOKEN_DETAILS_CACHE_CREATION,
+                                        PROMPT_TOKEN_DETAILS_CACHE_READ,
+                                        PROMPT_TOKEN_DETAILS_EPHEMERAL_1H_INPUT_TOKENS,
+                                        PROMPT_TOKEN_DETAILS_EPHEMERAL_5M_INPUT_TOKENS,
+                                        PROMPT_TOKEN_DETAILS_AUDIO,
+                                        PROMPT_TOKEN_DETAILS_IMAGE,
+                                        PROMPT_TOKEN_DETAILS_VIDEO,
+                                        COMPLETION_TOKEN_DETAILS_REASONING,
+                                        COMPLETION_TOKEN_DETAILS_AUDIO,
+                                        COMPLETION_TOKEN_DETAILS_IMAGE,
+                                        COMPLETION_TOKEN_DETAILS_VIDEO,
                                         TOTAL_COST,
                                         PROMPT_COST,
                                         COMPLETION_COST,
@@ -14372,6 +14750,28 @@ private constructor(
                                             TOTAL_TOKENS -> Value.TOTAL_TOKENS
                                             PROMPT_TOKENS -> Value.PROMPT_TOKENS
                                             COMPLETION_TOKENS -> Value.COMPLETION_TOKENS
+                                            PROMPT_TOKEN_DETAILS_CACHE_CREATION ->
+                                                Value.PROMPT_TOKEN_DETAILS_CACHE_CREATION
+                                            PROMPT_TOKEN_DETAILS_CACHE_READ ->
+                                                Value.PROMPT_TOKEN_DETAILS_CACHE_READ
+                                            PROMPT_TOKEN_DETAILS_EPHEMERAL_1H_INPUT_TOKENS ->
+                                                Value.PROMPT_TOKEN_DETAILS_EPHEMERAL_1H_INPUT_TOKENS
+                                            PROMPT_TOKEN_DETAILS_EPHEMERAL_5M_INPUT_TOKENS ->
+                                                Value.PROMPT_TOKEN_DETAILS_EPHEMERAL_5M_INPUT_TOKENS
+                                            PROMPT_TOKEN_DETAILS_AUDIO ->
+                                                Value.PROMPT_TOKEN_DETAILS_AUDIO
+                                            PROMPT_TOKEN_DETAILS_IMAGE ->
+                                                Value.PROMPT_TOKEN_DETAILS_IMAGE
+                                            PROMPT_TOKEN_DETAILS_VIDEO ->
+                                                Value.PROMPT_TOKEN_DETAILS_VIDEO
+                                            COMPLETION_TOKEN_DETAILS_REASONING ->
+                                                Value.COMPLETION_TOKEN_DETAILS_REASONING
+                                            COMPLETION_TOKEN_DETAILS_AUDIO ->
+                                                Value.COMPLETION_TOKEN_DETAILS_AUDIO
+                                            COMPLETION_TOKEN_DETAILS_IMAGE ->
+                                                Value.COMPLETION_TOKEN_DETAILS_IMAGE
+                                            COMPLETION_TOKEN_DETAILS_VIDEO ->
+                                                Value.COMPLETION_TOKEN_DETAILS_VIDEO
                                             TOTAL_COST -> Value.TOTAL_COST
                                             PROMPT_COST -> Value.PROMPT_COST
                                             COMPLETION_COST -> Value.COMPLETION_COST
@@ -14396,6 +14796,28 @@ private constructor(
                                             TOTAL_TOKENS -> Known.TOTAL_TOKENS
                                             PROMPT_TOKENS -> Known.PROMPT_TOKENS
                                             COMPLETION_TOKENS -> Known.COMPLETION_TOKENS
+                                            PROMPT_TOKEN_DETAILS_CACHE_CREATION ->
+                                                Known.PROMPT_TOKEN_DETAILS_CACHE_CREATION
+                                            PROMPT_TOKEN_DETAILS_CACHE_READ ->
+                                                Known.PROMPT_TOKEN_DETAILS_CACHE_READ
+                                            PROMPT_TOKEN_DETAILS_EPHEMERAL_1H_INPUT_TOKENS ->
+                                                Known.PROMPT_TOKEN_DETAILS_EPHEMERAL_1H_INPUT_TOKENS
+                                            PROMPT_TOKEN_DETAILS_EPHEMERAL_5M_INPUT_TOKENS ->
+                                                Known.PROMPT_TOKEN_DETAILS_EPHEMERAL_5M_INPUT_TOKENS
+                                            PROMPT_TOKEN_DETAILS_AUDIO ->
+                                                Known.PROMPT_TOKEN_DETAILS_AUDIO
+                                            PROMPT_TOKEN_DETAILS_IMAGE ->
+                                                Known.PROMPT_TOKEN_DETAILS_IMAGE
+                                            PROMPT_TOKEN_DETAILS_VIDEO ->
+                                                Known.PROMPT_TOKEN_DETAILS_VIDEO
+                                            COMPLETION_TOKEN_DETAILS_REASONING ->
+                                                Known.COMPLETION_TOKEN_DETAILS_REASONING
+                                            COMPLETION_TOKEN_DETAILS_AUDIO ->
+                                                Known.COMPLETION_TOKEN_DETAILS_AUDIO
+                                            COMPLETION_TOKEN_DETAILS_IMAGE ->
+                                                Known.COMPLETION_TOKEN_DETAILS_IMAGE
+                                            COMPLETION_TOKEN_DETAILS_VIDEO ->
+                                                Known.COMPLETION_TOKEN_DETAILS_VIDEO
                                             TOTAL_COST -> Known.TOTAL_COST
                                             PROMPT_COST -> Known.PROMPT_COST
                                             COMPLETION_COST -> Known.COMPLETION_COST
@@ -17251,6 +17673,50 @@ private constructor(
 
                                         @JvmField val COMPLETION_TOKENS = of("completion_tokens")
 
+                                        @JvmField
+                                        val PROMPT_TOKEN_DETAILS_CACHE_CREATION =
+                                            of("prompt_token_details.cache_creation")
+
+                                        @JvmField
+                                        val PROMPT_TOKEN_DETAILS_CACHE_READ =
+                                            of("prompt_token_details.cache_read")
+
+                                        @JvmField
+                                        val PROMPT_TOKEN_DETAILS_EPHEMERAL_1H_INPUT_TOKENS =
+                                            of("prompt_token_details.ephemeral_1h_input_tokens")
+
+                                        @JvmField
+                                        val PROMPT_TOKEN_DETAILS_EPHEMERAL_5M_INPUT_TOKENS =
+                                            of("prompt_token_details.ephemeral_5m_input_tokens")
+
+                                        @JvmField
+                                        val PROMPT_TOKEN_DETAILS_AUDIO =
+                                            of("prompt_token_details.audio")
+
+                                        @JvmField
+                                        val PROMPT_TOKEN_DETAILS_IMAGE =
+                                            of("prompt_token_details.image")
+
+                                        @JvmField
+                                        val PROMPT_TOKEN_DETAILS_VIDEO =
+                                            of("prompt_token_details.video")
+
+                                        @JvmField
+                                        val COMPLETION_TOKEN_DETAILS_REASONING =
+                                            of("completion_token_details.reasoning")
+
+                                        @JvmField
+                                        val COMPLETION_TOKEN_DETAILS_AUDIO =
+                                            of("completion_token_details.audio")
+
+                                        @JvmField
+                                        val COMPLETION_TOKEN_DETAILS_IMAGE =
+                                            of("completion_token_details.image")
+
+                                        @JvmField
+                                        val COMPLETION_TOKEN_DETAILS_VIDEO =
+                                            of("completion_token_details.video")
+
                                         @JvmField val TOTAL_COST = of("total_cost")
 
                                         @JvmField val PROMPT_COST = of("prompt_cost")
@@ -17270,6 +17736,17 @@ private constructor(
                                         TOTAL_TOKENS,
                                         PROMPT_TOKENS,
                                         COMPLETION_TOKENS,
+                                        PROMPT_TOKEN_DETAILS_CACHE_CREATION,
+                                        PROMPT_TOKEN_DETAILS_CACHE_READ,
+                                        PROMPT_TOKEN_DETAILS_EPHEMERAL_1H_INPUT_TOKENS,
+                                        PROMPT_TOKEN_DETAILS_EPHEMERAL_5M_INPUT_TOKENS,
+                                        PROMPT_TOKEN_DETAILS_AUDIO,
+                                        PROMPT_TOKEN_DETAILS_IMAGE,
+                                        PROMPT_TOKEN_DETAILS_VIDEO,
+                                        COMPLETION_TOKEN_DETAILS_REASONING,
+                                        COMPLETION_TOKEN_DETAILS_AUDIO,
+                                        COMPLETION_TOKEN_DETAILS_IMAGE,
+                                        COMPLETION_TOKEN_DETAILS_VIDEO,
                                         TOTAL_COST,
                                         PROMPT_COST,
                                         COMPLETION_COST,
@@ -17295,6 +17772,17 @@ private constructor(
                                         TOTAL_TOKENS,
                                         PROMPT_TOKENS,
                                         COMPLETION_TOKENS,
+                                        PROMPT_TOKEN_DETAILS_CACHE_CREATION,
+                                        PROMPT_TOKEN_DETAILS_CACHE_READ,
+                                        PROMPT_TOKEN_DETAILS_EPHEMERAL_1H_INPUT_TOKENS,
+                                        PROMPT_TOKEN_DETAILS_EPHEMERAL_5M_INPUT_TOKENS,
+                                        PROMPT_TOKEN_DETAILS_AUDIO,
+                                        PROMPT_TOKEN_DETAILS_IMAGE,
+                                        PROMPT_TOKEN_DETAILS_VIDEO,
+                                        COMPLETION_TOKEN_DETAILS_REASONING,
+                                        COMPLETION_TOKEN_DETAILS_AUDIO,
+                                        COMPLETION_TOKEN_DETAILS_IMAGE,
+                                        COMPLETION_TOKEN_DETAILS_VIDEO,
                                         TOTAL_COST,
                                         PROMPT_COST,
                                         COMPLETION_COST,
@@ -17321,6 +17809,28 @@ private constructor(
                                             TOTAL_TOKENS -> Value.TOTAL_TOKENS
                                             PROMPT_TOKENS -> Value.PROMPT_TOKENS
                                             COMPLETION_TOKENS -> Value.COMPLETION_TOKENS
+                                            PROMPT_TOKEN_DETAILS_CACHE_CREATION ->
+                                                Value.PROMPT_TOKEN_DETAILS_CACHE_CREATION
+                                            PROMPT_TOKEN_DETAILS_CACHE_READ ->
+                                                Value.PROMPT_TOKEN_DETAILS_CACHE_READ
+                                            PROMPT_TOKEN_DETAILS_EPHEMERAL_1H_INPUT_TOKENS ->
+                                                Value.PROMPT_TOKEN_DETAILS_EPHEMERAL_1H_INPUT_TOKENS
+                                            PROMPT_TOKEN_DETAILS_EPHEMERAL_5M_INPUT_TOKENS ->
+                                                Value.PROMPT_TOKEN_DETAILS_EPHEMERAL_5M_INPUT_TOKENS
+                                            PROMPT_TOKEN_DETAILS_AUDIO ->
+                                                Value.PROMPT_TOKEN_DETAILS_AUDIO
+                                            PROMPT_TOKEN_DETAILS_IMAGE ->
+                                                Value.PROMPT_TOKEN_DETAILS_IMAGE
+                                            PROMPT_TOKEN_DETAILS_VIDEO ->
+                                                Value.PROMPT_TOKEN_DETAILS_VIDEO
+                                            COMPLETION_TOKEN_DETAILS_REASONING ->
+                                                Value.COMPLETION_TOKEN_DETAILS_REASONING
+                                            COMPLETION_TOKEN_DETAILS_AUDIO ->
+                                                Value.COMPLETION_TOKEN_DETAILS_AUDIO
+                                            COMPLETION_TOKEN_DETAILS_IMAGE ->
+                                                Value.COMPLETION_TOKEN_DETAILS_IMAGE
+                                            COMPLETION_TOKEN_DETAILS_VIDEO ->
+                                                Value.COMPLETION_TOKEN_DETAILS_VIDEO
                                             TOTAL_COST -> Value.TOTAL_COST
                                             PROMPT_COST -> Value.PROMPT_COST
                                             COMPLETION_COST -> Value.COMPLETION_COST
@@ -17345,6 +17855,28 @@ private constructor(
                                             TOTAL_TOKENS -> Known.TOTAL_TOKENS
                                             PROMPT_TOKENS -> Known.PROMPT_TOKENS
                                             COMPLETION_TOKENS -> Known.COMPLETION_TOKENS
+                                            PROMPT_TOKEN_DETAILS_CACHE_CREATION ->
+                                                Known.PROMPT_TOKEN_DETAILS_CACHE_CREATION
+                                            PROMPT_TOKEN_DETAILS_CACHE_READ ->
+                                                Known.PROMPT_TOKEN_DETAILS_CACHE_READ
+                                            PROMPT_TOKEN_DETAILS_EPHEMERAL_1H_INPUT_TOKENS ->
+                                                Known.PROMPT_TOKEN_DETAILS_EPHEMERAL_1H_INPUT_TOKENS
+                                            PROMPT_TOKEN_DETAILS_EPHEMERAL_5M_INPUT_TOKENS ->
+                                                Known.PROMPT_TOKEN_DETAILS_EPHEMERAL_5M_INPUT_TOKENS
+                                            PROMPT_TOKEN_DETAILS_AUDIO ->
+                                                Known.PROMPT_TOKEN_DETAILS_AUDIO
+                                            PROMPT_TOKEN_DETAILS_IMAGE ->
+                                                Known.PROMPT_TOKEN_DETAILS_IMAGE
+                                            PROMPT_TOKEN_DETAILS_VIDEO ->
+                                                Known.PROMPT_TOKEN_DETAILS_VIDEO
+                                            COMPLETION_TOKEN_DETAILS_REASONING ->
+                                                Known.COMPLETION_TOKEN_DETAILS_REASONING
+                                            COMPLETION_TOKEN_DETAILS_AUDIO ->
+                                                Known.COMPLETION_TOKEN_DETAILS_AUDIO
+                                            COMPLETION_TOKEN_DETAILS_IMAGE ->
+                                                Known.COMPLETION_TOKEN_DETAILS_IMAGE
+                                            COMPLETION_TOKEN_DETAILS_VIDEO ->
+                                                Known.COMPLETION_TOKEN_DETAILS_VIDEO
                                             TOTAL_COST -> Known.TOTAL_COST
                                             PROMPT_COST -> Known.PROMPT_COST
                                             COMPLETION_COST -> Known.COMPLETION_COST
@@ -18514,6 +19046,50 @@ private constructor(
 
                                         @JvmField val COMPLETION_TOKENS = of("completion_tokens")
 
+                                        @JvmField
+                                        val PROMPT_TOKEN_DETAILS_CACHE_CREATION =
+                                            of("prompt_token_details.cache_creation")
+
+                                        @JvmField
+                                        val PROMPT_TOKEN_DETAILS_CACHE_READ =
+                                            of("prompt_token_details.cache_read")
+
+                                        @JvmField
+                                        val PROMPT_TOKEN_DETAILS_EPHEMERAL_1H_INPUT_TOKENS =
+                                            of("prompt_token_details.ephemeral_1h_input_tokens")
+
+                                        @JvmField
+                                        val PROMPT_TOKEN_DETAILS_EPHEMERAL_5M_INPUT_TOKENS =
+                                            of("prompt_token_details.ephemeral_5m_input_tokens")
+
+                                        @JvmField
+                                        val PROMPT_TOKEN_DETAILS_AUDIO =
+                                            of("prompt_token_details.audio")
+
+                                        @JvmField
+                                        val PROMPT_TOKEN_DETAILS_IMAGE =
+                                            of("prompt_token_details.image")
+
+                                        @JvmField
+                                        val PROMPT_TOKEN_DETAILS_VIDEO =
+                                            of("prompt_token_details.video")
+
+                                        @JvmField
+                                        val COMPLETION_TOKEN_DETAILS_REASONING =
+                                            of("completion_token_details.reasoning")
+
+                                        @JvmField
+                                        val COMPLETION_TOKEN_DETAILS_AUDIO =
+                                            of("completion_token_details.audio")
+
+                                        @JvmField
+                                        val COMPLETION_TOKEN_DETAILS_IMAGE =
+                                            of("completion_token_details.image")
+
+                                        @JvmField
+                                        val COMPLETION_TOKEN_DETAILS_VIDEO =
+                                            of("completion_token_details.video")
+
                                         @JvmField val TOTAL_COST = of("total_cost")
 
                                         @JvmField val PROMPT_COST = of("prompt_cost")
@@ -18533,6 +19109,17 @@ private constructor(
                                         TOTAL_TOKENS,
                                         PROMPT_TOKENS,
                                         COMPLETION_TOKENS,
+                                        PROMPT_TOKEN_DETAILS_CACHE_CREATION,
+                                        PROMPT_TOKEN_DETAILS_CACHE_READ,
+                                        PROMPT_TOKEN_DETAILS_EPHEMERAL_1H_INPUT_TOKENS,
+                                        PROMPT_TOKEN_DETAILS_EPHEMERAL_5M_INPUT_TOKENS,
+                                        PROMPT_TOKEN_DETAILS_AUDIO,
+                                        PROMPT_TOKEN_DETAILS_IMAGE,
+                                        PROMPT_TOKEN_DETAILS_VIDEO,
+                                        COMPLETION_TOKEN_DETAILS_REASONING,
+                                        COMPLETION_TOKEN_DETAILS_AUDIO,
+                                        COMPLETION_TOKEN_DETAILS_IMAGE,
+                                        COMPLETION_TOKEN_DETAILS_VIDEO,
                                         TOTAL_COST,
                                         PROMPT_COST,
                                         COMPLETION_COST,
@@ -18558,6 +19145,17 @@ private constructor(
                                         TOTAL_TOKENS,
                                         PROMPT_TOKENS,
                                         COMPLETION_TOKENS,
+                                        PROMPT_TOKEN_DETAILS_CACHE_CREATION,
+                                        PROMPT_TOKEN_DETAILS_CACHE_READ,
+                                        PROMPT_TOKEN_DETAILS_EPHEMERAL_1H_INPUT_TOKENS,
+                                        PROMPT_TOKEN_DETAILS_EPHEMERAL_5M_INPUT_TOKENS,
+                                        PROMPT_TOKEN_DETAILS_AUDIO,
+                                        PROMPT_TOKEN_DETAILS_IMAGE,
+                                        PROMPT_TOKEN_DETAILS_VIDEO,
+                                        COMPLETION_TOKEN_DETAILS_REASONING,
+                                        COMPLETION_TOKEN_DETAILS_AUDIO,
+                                        COMPLETION_TOKEN_DETAILS_IMAGE,
+                                        COMPLETION_TOKEN_DETAILS_VIDEO,
                                         TOTAL_COST,
                                         PROMPT_COST,
                                         COMPLETION_COST,
@@ -18584,6 +19182,28 @@ private constructor(
                                             TOTAL_TOKENS -> Value.TOTAL_TOKENS
                                             PROMPT_TOKENS -> Value.PROMPT_TOKENS
                                             COMPLETION_TOKENS -> Value.COMPLETION_TOKENS
+                                            PROMPT_TOKEN_DETAILS_CACHE_CREATION ->
+                                                Value.PROMPT_TOKEN_DETAILS_CACHE_CREATION
+                                            PROMPT_TOKEN_DETAILS_CACHE_READ ->
+                                                Value.PROMPT_TOKEN_DETAILS_CACHE_READ
+                                            PROMPT_TOKEN_DETAILS_EPHEMERAL_1H_INPUT_TOKENS ->
+                                                Value.PROMPT_TOKEN_DETAILS_EPHEMERAL_1H_INPUT_TOKENS
+                                            PROMPT_TOKEN_DETAILS_EPHEMERAL_5M_INPUT_TOKENS ->
+                                                Value.PROMPT_TOKEN_DETAILS_EPHEMERAL_5M_INPUT_TOKENS
+                                            PROMPT_TOKEN_DETAILS_AUDIO ->
+                                                Value.PROMPT_TOKEN_DETAILS_AUDIO
+                                            PROMPT_TOKEN_DETAILS_IMAGE ->
+                                                Value.PROMPT_TOKEN_DETAILS_IMAGE
+                                            PROMPT_TOKEN_DETAILS_VIDEO ->
+                                                Value.PROMPT_TOKEN_DETAILS_VIDEO
+                                            COMPLETION_TOKEN_DETAILS_REASONING ->
+                                                Value.COMPLETION_TOKEN_DETAILS_REASONING
+                                            COMPLETION_TOKEN_DETAILS_AUDIO ->
+                                                Value.COMPLETION_TOKEN_DETAILS_AUDIO
+                                            COMPLETION_TOKEN_DETAILS_IMAGE ->
+                                                Value.COMPLETION_TOKEN_DETAILS_IMAGE
+                                            COMPLETION_TOKEN_DETAILS_VIDEO ->
+                                                Value.COMPLETION_TOKEN_DETAILS_VIDEO
                                             TOTAL_COST -> Value.TOTAL_COST
                                             PROMPT_COST -> Value.PROMPT_COST
                                             COMPLETION_COST -> Value.COMPLETION_COST
@@ -18608,6 +19228,28 @@ private constructor(
                                             TOTAL_TOKENS -> Known.TOTAL_TOKENS
                                             PROMPT_TOKENS -> Known.PROMPT_TOKENS
                                             COMPLETION_TOKENS -> Known.COMPLETION_TOKENS
+                                            PROMPT_TOKEN_DETAILS_CACHE_CREATION ->
+                                                Known.PROMPT_TOKEN_DETAILS_CACHE_CREATION
+                                            PROMPT_TOKEN_DETAILS_CACHE_READ ->
+                                                Known.PROMPT_TOKEN_DETAILS_CACHE_READ
+                                            PROMPT_TOKEN_DETAILS_EPHEMERAL_1H_INPUT_TOKENS ->
+                                                Known.PROMPT_TOKEN_DETAILS_EPHEMERAL_1H_INPUT_TOKENS
+                                            PROMPT_TOKEN_DETAILS_EPHEMERAL_5M_INPUT_TOKENS ->
+                                                Known.PROMPT_TOKEN_DETAILS_EPHEMERAL_5M_INPUT_TOKENS
+                                            PROMPT_TOKEN_DETAILS_AUDIO ->
+                                                Known.PROMPT_TOKEN_DETAILS_AUDIO
+                                            PROMPT_TOKEN_DETAILS_IMAGE ->
+                                                Known.PROMPT_TOKEN_DETAILS_IMAGE
+                                            PROMPT_TOKEN_DETAILS_VIDEO ->
+                                                Known.PROMPT_TOKEN_DETAILS_VIDEO
+                                            COMPLETION_TOKEN_DETAILS_REASONING ->
+                                                Known.COMPLETION_TOKEN_DETAILS_REASONING
+                                            COMPLETION_TOKEN_DETAILS_AUDIO ->
+                                                Known.COMPLETION_TOKEN_DETAILS_AUDIO
+                                            COMPLETION_TOKEN_DETAILS_IMAGE ->
+                                                Known.COMPLETION_TOKEN_DETAILS_IMAGE
+                                            COMPLETION_TOKEN_DETAILS_VIDEO ->
+                                                Known.COMPLETION_TOKEN_DETAILS_VIDEO
                                             TOTAL_COST -> Known.TOTAL_COST
                                             PROMPT_COST -> Known.PROMPT_COST
                                             COMPLETION_COST -> Known.COMPLETION_COST
@@ -29927,6 +30569,47 @@ private constructor(
 
                                 @JvmField val COMPLETION_TOKENS = of("completion_tokens")
 
+                                @JvmField
+                                val PROMPT_TOKEN_DETAILS_CACHE_CREATION =
+                                    of("prompt_token_details.cache_creation")
+
+                                @JvmField
+                                val PROMPT_TOKEN_DETAILS_CACHE_READ =
+                                    of("prompt_token_details.cache_read")
+
+                                @JvmField
+                                val PROMPT_TOKEN_DETAILS_EPHEMERAL_1H_INPUT_TOKENS =
+                                    of("prompt_token_details.ephemeral_1h_input_tokens")
+
+                                @JvmField
+                                val PROMPT_TOKEN_DETAILS_EPHEMERAL_5M_INPUT_TOKENS =
+                                    of("prompt_token_details.ephemeral_5m_input_tokens")
+
+                                @JvmField
+                                val PROMPT_TOKEN_DETAILS_AUDIO = of("prompt_token_details.audio")
+
+                                @JvmField
+                                val PROMPT_TOKEN_DETAILS_IMAGE = of("prompt_token_details.image")
+
+                                @JvmField
+                                val PROMPT_TOKEN_DETAILS_VIDEO = of("prompt_token_details.video")
+
+                                @JvmField
+                                val COMPLETION_TOKEN_DETAILS_REASONING =
+                                    of("completion_token_details.reasoning")
+
+                                @JvmField
+                                val COMPLETION_TOKEN_DETAILS_AUDIO =
+                                    of("completion_token_details.audio")
+
+                                @JvmField
+                                val COMPLETION_TOKEN_DETAILS_IMAGE =
+                                    of("completion_token_details.image")
+
+                                @JvmField
+                                val COMPLETION_TOKEN_DETAILS_VIDEO =
+                                    of("completion_token_details.video")
+
                                 @JvmField val TOTAL_COST = of("total_cost")
 
                                 @JvmField val PROMPT_COST = of("prompt_cost")
@@ -29945,6 +30628,17 @@ private constructor(
                                 TOTAL_TOKENS,
                                 PROMPT_TOKENS,
                                 COMPLETION_TOKENS,
+                                PROMPT_TOKEN_DETAILS_CACHE_CREATION,
+                                PROMPT_TOKEN_DETAILS_CACHE_READ,
+                                PROMPT_TOKEN_DETAILS_EPHEMERAL_1H_INPUT_TOKENS,
+                                PROMPT_TOKEN_DETAILS_EPHEMERAL_5M_INPUT_TOKENS,
+                                PROMPT_TOKEN_DETAILS_AUDIO,
+                                PROMPT_TOKEN_DETAILS_IMAGE,
+                                PROMPT_TOKEN_DETAILS_VIDEO,
+                                COMPLETION_TOKEN_DETAILS_REASONING,
+                                COMPLETION_TOKEN_DETAILS_AUDIO,
+                                COMPLETION_TOKEN_DETAILS_IMAGE,
+                                COMPLETION_TOKEN_DETAILS_VIDEO,
                                 TOTAL_COST,
                                 PROMPT_COST,
                                 COMPLETION_COST,
@@ -29968,6 +30662,17 @@ private constructor(
                                 TOTAL_TOKENS,
                                 PROMPT_TOKENS,
                                 COMPLETION_TOKENS,
+                                PROMPT_TOKEN_DETAILS_CACHE_CREATION,
+                                PROMPT_TOKEN_DETAILS_CACHE_READ,
+                                PROMPT_TOKEN_DETAILS_EPHEMERAL_1H_INPUT_TOKENS,
+                                PROMPT_TOKEN_DETAILS_EPHEMERAL_5M_INPUT_TOKENS,
+                                PROMPT_TOKEN_DETAILS_AUDIO,
+                                PROMPT_TOKEN_DETAILS_IMAGE,
+                                PROMPT_TOKEN_DETAILS_VIDEO,
+                                COMPLETION_TOKEN_DETAILS_REASONING,
+                                COMPLETION_TOKEN_DETAILS_AUDIO,
+                                COMPLETION_TOKEN_DETAILS_IMAGE,
+                                COMPLETION_TOKEN_DETAILS_VIDEO,
                                 TOTAL_COST,
                                 PROMPT_COST,
                                 COMPLETION_COST,
@@ -29994,6 +30699,25 @@ private constructor(
                                     TOTAL_TOKENS -> Value.TOTAL_TOKENS
                                     PROMPT_TOKENS -> Value.PROMPT_TOKENS
                                     COMPLETION_TOKENS -> Value.COMPLETION_TOKENS
+                                    PROMPT_TOKEN_DETAILS_CACHE_CREATION ->
+                                        Value.PROMPT_TOKEN_DETAILS_CACHE_CREATION
+                                    PROMPT_TOKEN_DETAILS_CACHE_READ ->
+                                        Value.PROMPT_TOKEN_DETAILS_CACHE_READ
+                                    PROMPT_TOKEN_DETAILS_EPHEMERAL_1H_INPUT_TOKENS ->
+                                        Value.PROMPT_TOKEN_DETAILS_EPHEMERAL_1H_INPUT_TOKENS
+                                    PROMPT_TOKEN_DETAILS_EPHEMERAL_5M_INPUT_TOKENS ->
+                                        Value.PROMPT_TOKEN_DETAILS_EPHEMERAL_5M_INPUT_TOKENS
+                                    PROMPT_TOKEN_DETAILS_AUDIO -> Value.PROMPT_TOKEN_DETAILS_AUDIO
+                                    PROMPT_TOKEN_DETAILS_IMAGE -> Value.PROMPT_TOKEN_DETAILS_IMAGE
+                                    PROMPT_TOKEN_DETAILS_VIDEO -> Value.PROMPT_TOKEN_DETAILS_VIDEO
+                                    COMPLETION_TOKEN_DETAILS_REASONING ->
+                                        Value.COMPLETION_TOKEN_DETAILS_REASONING
+                                    COMPLETION_TOKEN_DETAILS_AUDIO ->
+                                        Value.COMPLETION_TOKEN_DETAILS_AUDIO
+                                    COMPLETION_TOKEN_DETAILS_IMAGE ->
+                                        Value.COMPLETION_TOKEN_DETAILS_IMAGE
+                                    COMPLETION_TOKEN_DETAILS_VIDEO ->
+                                        Value.COMPLETION_TOKEN_DETAILS_VIDEO
                                     TOTAL_COST -> Value.TOTAL_COST
                                     PROMPT_COST -> Value.PROMPT_COST
                                     COMPLETION_COST -> Value.COMPLETION_COST
@@ -30017,6 +30741,25 @@ private constructor(
                                     TOTAL_TOKENS -> Known.TOTAL_TOKENS
                                     PROMPT_TOKENS -> Known.PROMPT_TOKENS
                                     COMPLETION_TOKENS -> Known.COMPLETION_TOKENS
+                                    PROMPT_TOKEN_DETAILS_CACHE_CREATION ->
+                                        Known.PROMPT_TOKEN_DETAILS_CACHE_CREATION
+                                    PROMPT_TOKEN_DETAILS_CACHE_READ ->
+                                        Known.PROMPT_TOKEN_DETAILS_CACHE_READ
+                                    PROMPT_TOKEN_DETAILS_EPHEMERAL_1H_INPUT_TOKENS ->
+                                        Known.PROMPT_TOKEN_DETAILS_EPHEMERAL_1H_INPUT_TOKENS
+                                    PROMPT_TOKEN_DETAILS_EPHEMERAL_5M_INPUT_TOKENS ->
+                                        Known.PROMPT_TOKEN_DETAILS_EPHEMERAL_5M_INPUT_TOKENS
+                                    PROMPT_TOKEN_DETAILS_AUDIO -> Known.PROMPT_TOKEN_DETAILS_AUDIO
+                                    PROMPT_TOKEN_DETAILS_IMAGE -> Known.PROMPT_TOKEN_DETAILS_IMAGE
+                                    PROMPT_TOKEN_DETAILS_VIDEO -> Known.PROMPT_TOKEN_DETAILS_VIDEO
+                                    COMPLETION_TOKEN_DETAILS_REASONING ->
+                                        Known.COMPLETION_TOKEN_DETAILS_REASONING
+                                    COMPLETION_TOKEN_DETAILS_AUDIO ->
+                                        Known.COMPLETION_TOKEN_DETAILS_AUDIO
+                                    COMPLETION_TOKEN_DETAILS_IMAGE ->
+                                        Known.COMPLETION_TOKEN_DETAILS_IMAGE
+                                    COMPLETION_TOKEN_DETAILS_VIDEO ->
+                                        Known.COMPLETION_TOKEN_DETAILS_VIDEO
                                     TOTAL_COST -> Known.TOTAL_COST
                                     PROMPT_COST -> Known.PROMPT_COST
                                     COMPLETION_COST -> Known.COMPLETION_COST
@@ -31117,6 +31860,47 @@ private constructor(
 
                                 @JvmField val COMPLETION_TOKENS = of("completion_tokens")
 
+                                @JvmField
+                                val PROMPT_TOKEN_DETAILS_CACHE_CREATION =
+                                    of("prompt_token_details.cache_creation")
+
+                                @JvmField
+                                val PROMPT_TOKEN_DETAILS_CACHE_READ =
+                                    of("prompt_token_details.cache_read")
+
+                                @JvmField
+                                val PROMPT_TOKEN_DETAILS_EPHEMERAL_1H_INPUT_TOKENS =
+                                    of("prompt_token_details.ephemeral_1h_input_tokens")
+
+                                @JvmField
+                                val PROMPT_TOKEN_DETAILS_EPHEMERAL_5M_INPUT_TOKENS =
+                                    of("prompt_token_details.ephemeral_5m_input_tokens")
+
+                                @JvmField
+                                val PROMPT_TOKEN_DETAILS_AUDIO = of("prompt_token_details.audio")
+
+                                @JvmField
+                                val PROMPT_TOKEN_DETAILS_IMAGE = of("prompt_token_details.image")
+
+                                @JvmField
+                                val PROMPT_TOKEN_DETAILS_VIDEO = of("prompt_token_details.video")
+
+                                @JvmField
+                                val COMPLETION_TOKEN_DETAILS_REASONING =
+                                    of("completion_token_details.reasoning")
+
+                                @JvmField
+                                val COMPLETION_TOKEN_DETAILS_AUDIO =
+                                    of("completion_token_details.audio")
+
+                                @JvmField
+                                val COMPLETION_TOKEN_DETAILS_IMAGE =
+                                    of("completion_token_details.image")
+
+                                @JvmField
+                                val COMPLETION_TOKEN_DETAILS_VIDEO =
+                                    of("completion_token_details.video")
+
                                 @JvmField val TOTAL_COST = of("total_cost")
 
                                 @JvmField val PROMPT_COST = of("prompt_cost")
@@ -31135,6 +31919,17 @@ private constructor(
                                 TOTAL_TOKENS,
                                 PROMPT_TOKENS,
                                 COMPLETION_TOKENS,
+                                PROMPT_TOKEN_DETAILS_CACHE_CREATION,
+                                PROMPT_TOKEN_DETAILS_CACHE_READ,
+                                PROMPT_TOKEN_DETAILS_EPHEMERAL_1H_INPUT_TOKENS,
+                                PROMPT_TOKEN_DETAILS_EPHEMERAL_5M_INPUT_TOKENS,
+                                PROMPT_TOKEN_DETAILS_AUDIO,
+                                PROMPT_TOKEN_DETAILS_IMAGE,
+                                PROMPT_TOKEN_DETAILS_VIDEO,
+                                COMPLETION_TOKEN_DETAILS_REASONING,
+                                COMPLETION_TOKEN_DETAILS_AUDIO,
+                                COMPLETION_TOKEN_DETAILS_IMAGE,
+                                COMPLETION_TOKEN_DETAILS_VIDEO,
                                 TOTAL_COST,
                                 PROMPT_COST,
                                 COMPLETION_COST,
@@ -31158,6 +31953,17 @@ private constructor(
                                 TOTAL_TOKENS,
                                 PROMPT_TOKENS,
                                 COMPLETION_TOKENS,
+                                PROMPT_TOKEN_DETAILS_CACHE_CREATION,
+                                PROMPT_TOKEN_DETAILS_CACHE_READ,
+                                PROMPT_TOKEN_DETAILS_EPHEMERAL_1H_INPUT_TOKENS,
+                                PROMPT_TOKEN_DETAILS_EPHEMERAL_5M_INPUT_TOKENS,
+                                PROMPT_TOKEN_DETAILS_AUDIO,
+                                PROMPT_TOKEN_DETAILS_IMAGE,
+                                PROMPT_TOKEN_DETAILS_VIDEO,
+                                COMPLETION_TOKEN_DETAILS_REASONING,
+                                COMPLETION_TOKEN_DETAILS_AUDIO,
+                                COMPLETION_TOKEN_DETAILS_IMAGE,
+                                COMPLETION_TOKEN_DETAILS_VIDEO,
                                 TOTAL_COST,
                                 PROMPT_COST,
                                 COMPLETION_COST,
@@ -31184,6 +31990,25 @@ private constructor(
                                     TOTAL_TOKENS -> Value.TOTAL_TOKENS
                                     PROMPT_TOKENS -> Value.PROMPT_TOKENS
                                     COMPLETION_TOKENS -> Value.COMPLETION_TOKENS
+                                    PROMPT_TOKEN_DETAILS_CACHE_CREATION ->
+                                        Value.PROMPT_TOKEN_DETAILS_CACHE_CREATION
+                                    PROMPT_TOKEN_DETAILS_CACHE_READ ->
+                                        Value.PROMPT_TOKEN_DETAILS_CACHE_READ
+                                    PROMPT_TOKEN_DETAILS_EPHEMERAL_1H_INPUT_TOKENS ->
+                                        Value.PROMPT_TOKEN_DETAILS_EPHEMERAL_1H_INPUT_TOKENS
+                                    PROMPT_TOKEN_DETAILS_EPHEMERAL_5M_INPUT_TOKENS ->
+                                        Value.PROMPT_TOKEN_DETAILS_EPHEMERAL_5M_INPUT_TOKENS
+                                    PROMPT_TOKEN_DETAILS_AUDIO -> Value.PROMPT_TOKEN_DETAILS_AUDIO
+                                    PROMPT_TOKEN_DETAILS_IMAGE -> Value.PROMPT_TOKEN_DETAILS_IMAGE
+                                    PROMPT_TOKEN_DETAILS_VIDEO -> Value.PROMPT_TOKEN_DETAILS_VIDEO
+                                    COMPLETION_TOKEN_DETAILS_REASONING ->
+                                        Value.COMPLETION_TOKEN_DETAILS_REASONING
+                                    COMPLETION_TOKEN_DETAILS_AUDIO ->
+                                        Value.COMPLETION_TOKEN_DETAILS_AUDIO
+                                    COMPLETION_TOKEN_DETAILS_IMAGE ->
+                                        Value.COMPLETION_TOKEN_DETAILS_IMAGE
+                                    COMPLETION_TOKEN_DETAILS_VIDEO ->
+                                        Value.COMPLETION_TOKEN_DETAILS_VIDEO
                                     TOTAL_COST -> Value.TOTAL_COST
                                     PROMPT_COST -> Value.PROMPT_COST
                                     COMPLETION_COST -> Value.COMPLETION_COST
@@ -31207,6 +32032,25 @@ private constructor(
                                     TOTAL_TOKENS -> Known.TOTAL_TOKENS
                                     PROMPT_TOKENS -> Known.PROMPT_TOKENS
                                     COMPLETION_TOKENS -> Known.COMPLETION_TOKENS
+                                    PROMPT_TOKEN_DETAILS_CACHE_CREATION ->
+                                        Known.PROMPT_TOKEN_DETAILS_CACHE_CREATION
+                                    PROMPT_TOKEN_DETAILS_CACHE_READ ->
+                                        Known.PROMPT_TOKEN_DETAILS_CACHE_READ
+                                    PROMPT_TOKEN_DETAILS_EPHEMERAL_1H_INPUT_TOKENS ->
+                                        Known.PROMPT_TOKEN_DETAILS_EPHEMERAL_1H_INPUT_TOKENS
+                                    PROMPT_TOKEN_DETAILS_EPHEMERAL_5M_INPUT_TOKENS ->
+                                        Known.PROMPT_TOKEN_DETAILS_EPHEMERAL_5M_INPUT_TOKENS
+                                    PROMPT_TOKEN_DETAILS_AUDIO -> Known.PROMPT_TOKEN_DETAILS_AUDIO
+                                    PROMPT_TOKEN_DETAILS_IMAGE -> Known.PROMPT_TOKEN_DETAILS_IMAGE
+                                    PROMPT_TOKEN_DETAILS_VIDEO -> Known.PROMPT_TOKEN_DETAILS_VIDEO
+                                    COMPLETION_TOKEN_DETAILS_REASONING ->
+                                        Known.COMPLETION_TOKEN_DETAILS_REASONING
+                                    COMPLETION_TOKEN_DETAILS_AUDIO ->
+                                        Known.COMPLETION_TOKEN_DETAILS_AUDIO
+                                    COMPLETION_TOKEN_DETAILS_IMAGE ->
+                                        Known.COMPLETION_TOKEN_DETAILS_IMAGE
+                                    COMPLETION_TOKEN_DETAILS_VIDEO ->
+                                        Known.COMPLETION_TOKEN_DETAILS_VIDEO
                                     TOTAL_COST -> Known.TOTAL_COST
                                     PROMPT_COST -> Known.PROMPT_COST
                                     COMPLETION_COST -> Known.COMPLETION_COST
@@ -34448,6 +35292,50 @@ private constructor(
 
                                         @JvmField val COMPLETION_TOKENS = of("completion_tokens")
 
+                                        @JvmField
+                                        val PROMPT_TOKEN_DETAILS_CACHE_CREATION =
+                                            of("prompt_token_details.cache_creation")
+
+                                        @JvmField
+                                        val PROMPT_TOKEN_DETAILS_CACHE_READ =
+                                            of("prompt_token_details.cache_read")
+
+                                        @JvmField
+                                        val PROMPT_TOKEN_DETAILS_EPHEMERAL_1H_INPUT_TOKENS =
+                                            of("prompt_token_details.ephemeral_1h_input_tokens")
+
+                                        @JvmField
+                                        val PROMPT_TOKEN_DETAILS_EPHEMERAL_5M_INPUT_TOKENS =
+                                            of("prompt_token_details.ephemeral_5m_input_tokens")
+
+                                        @JvmField
+                                        val PROMPT_TOKEN_DETAILS_AUDIO =
+                                            of("prompt_token_details.audio")
+
+                                        @JvmField
+                                        val PROMPT_TOKEN_DETAILS_IMAGE =
+                                            of("prompt_token_details.image")
+
+                                        @JvmField
+                                        val PROMPT_TOKEN_DETAILS_VIDEO =
+                                            of("prompt_token_details.video")
+
+                                        @JvmField
+                                        val COMPLETION_TOKEN_DETAILS_REASONING =
+                                            of("completion_token_details.reasoning")
+
+                                        @JvmField
+                                        val COMPLETION_TOKEN_DETAILS_AUDIO =
+                                            of("completion_token_details.audio")
+
+                                        @JvmField
+                                        val COMPLETION_TOKEN_DETAILS_IMAGE =
+                                            of("completion_token_details.image")
+
+                                        @JvmField
+                                        val COMPLETION_TOKEN_DETAILS_VIDEO =
+                                            of("completion_token_details.video")
+
                                         @JvmField val TOTAL_COST = of("total_cost")
 
                                         @JvmField val PROMPT_COST = of("prompt_cost")
@@ -34467,6 +35355,17 @@ private constructor(
                                         TOTAL_TOKENS,
                                         PROMPT_TOKENS,
                                         COMPLETION_TOKENS,
+                                        PROMPT_TOKEN_DETAILS_CACHE_CREATION,
+                                        PROMPT_TOKEN_DETAILS_CACHE_READ,
+                                        PROMPT_TOKEN_DETAILS_EPHEMERAL_1H_INPUT_TOKENS,
+                                        PROMPT_TOKEN_DETAILS_EPHEMERAL_5M_INPUT_TOKENS,
+                                        PROMPT_TOKEN_DETAILS_AUDIO,
+                                        PROMPT_TOKEN_DETAILS_IMAGE,
+                                        PROMPT_TOKEN_DETAILS_VIDEO,
+                                        COMPLETION_TOKEN_DETAILS_REASONING,
+                                        COMPLETION_TOKEN_DETAILS_AUDIO,
+                                        COMPLETION_TOKEN_DETAILS_IMAGE,
+                                        COMPLETION_TOKEN_DETAILS_VIDEO,
                                         TOTAL_COST,
                                         PROMPT_COST,
                                         COMPLETION_COST,
@@ -34492,6 +35391,17 @@ private constructor(
                                         TOTAL_TOKENS,
                                         PROMPT_TOKENS,
                                         COMPLETION_TOKENS,
+                                        PROMPT_TOKEN_DETAILS_CACHE_CREATION,
+                                        PROMPT_TOKEN_DETAILS_CACHE_READ,
+                                        PROMPT_TOKEN_DETAILS_EPHEMERAL_1H_INPUT_TOKENS,
+                                        PROMPT_TOKEN_DETAILS_EPHEMERAL_5M_INPUT_TOKENS,
+                                        PROMPT_TOKEN_DETAILS_AUDIO,
+                                        PROMPT_TOKEN_DETAILS_IMAGE,
+                                        PROMPT_TOKEN_DETAILS_VIDEO,
+                                        COMPLETION_TOKEN_DETAILS_REASONING,
+                                        COMPLETION_TOKEN_DETAILS_AUDIO,
+                                        COMPLETION_TOKEN_DETAILS_IMAGE,
+                                        COMPLETION_TOKEN_DETAILS_VIDEO,
                                         TOTAL_COST,
                                         PROMPT_COST,
                                         COMPLETION_COST,
@@ -34518,6 +35428,28 @@ private constructor(
                                             TOTAL_TOKENS -> Value.TOTAL_TOKENS
                                             PROMPT_TOKENS -> Value.PROMPT_TOKENS
                                             COMPLETION_TOKENS -> Value.COMPLETION_TOKENS
+                                            PROMPT_TOKEN_DETAILS_CACHE_CREATION ->
+                                                Value.PROMPT_TOKEN_DETAILS_CACHE_CREATION
+                                            PROMPT_TOKEN_DETAILS_CACHE_READ ->
+                                                Value.PROMPT_TOKEN_DETAILS_CACHE_READ
+                                            PROMPT_TOKEN_DETAILS_EPHEMERAL_1H_INPUT_TOKENS ->
+                                                Value.PROMPT_TOKEN_DETAILS_EPHEMERAL_1H_INPUT_TOKENS
+                                            PROMPT_TOKEN_DETAILS_EPHEMERAL_5M_INPUT_TOKENS ->
+                                                Value.PROMPT_TOKEN_DETAILS_EPHEMERAL_5M_INPUT_TOKENS
+                                            PROMPT_TOKEN_DETAILS_AUDIO ->
+                                                Value.PROMPT_TOKEN_DETAILS_AUDIO
+                                            PROMPT_TOKEN_DETAILS_IMAGE ->
+                                                Value.PROMPT_TOKEN_DETAILS_IMAGE
+                                            PROMPT_TOKEN_DETAILS_VIDEO ->
+                                                Value.PROMPT_TOKEN_DETAILS_VIDEO
+                                            COMPLETION_TOKEN_DETAILS_REASONING ->
+                                                Value.COMPLETION_TOKEN_DETAILS_REASONING
+                                            COMPLETION_TOKEN_DETAILS_AUDIO ->
+                                                Value.COMPLETION_TOKEN_DETAILS_AUDIO
+                                            COMPLETION_TOKEN_DETAILS_IMAGE ->
+                                                Value.COMPLETION_TOKEN_DETAILS_IMAGE
+                                            COMPLETION_TOKEN_DETAILS_VIDEO ->
+                                                Value.COMPLETION_TOKEN_DETAILS_VIDEO
                                             TOTAL_COST -> Value.TOTAL_COST
                                             PROMPT_COST -> Value.PROMPT_COST
                                             COMPLETION_COST -> Value.COMPLETION_COST
@@ -34542,6 +35474,28 @@ private constructor(
                                             TOTAL_TOKENS -> Known.TOTAL_TOKENS
                                             PROMPT_TOKENS -> Known.PROMPT_TOKENS
                                             COMPLETION_TOKENS -> Known.COMPLETION_TOKENS
+                                            PROMPT_TOKEN_DETAILS_CACHE_CREATION ->
+                                                Known.PROMPT_TOKEN_DETAILS_CACHE_CREATION
+                                            PROMPT_TOKEN_DETAILS_CACHE_READ ->
+                                                Known.PROMPT_TOKEN_DETAILS_CACHE_READ
+                                            PROMPT_TOKEN_DETAILS_EPHEMERAL_1H_INPUT_TOKENS ->
+                                                Known.PROMPT_TOKEN_DETAILS_EPHEMERAL_1H_INPUT_TOKENS
+                                            PROMPT_TOKEN_DETAILS_EPHEMERAL_5M_INPUT_TOKENS ->
+                                                Known.PROMPT_TOKEN_DETAILS_EPHEMERAL_5M_INPUT_TOKENS
+                                            PROMPT_TOKEN_DETAILS_AUDIO ->
+                                                Known.PROMPT_TOKEN_DETAILS_AUDIO
+                                            PROMPT_TOKEN_DETAILS_IMAGE ->
+                                                Known.PROMPT_TOKEN_DETAILS_IMAGE
+                                            PROMPT_TOKEN_DETAILS_VIDEO ->
+                                                Known.PROMPT_TOKEN_DETAILS_VIDEO
+                                            COMPLETION_TOKEN_DETAILS_REASONING ->
+                                                Known.COMPLETION_TOKEN_DETAILS_REASONING
+                                            COMPLETION_TOKEN_DETAILS_AUDIO ->
+                                                Known.COMPLETION_TOKEN_DETAILS_AUDIO
+                                            COMPLETION_TOKEN_DETAILS_IMAGE ->
+                                                Known.COMPLETION_TOKEN_DETAILS_IMAGE
+                                            COMPLETION_TOKEN_DETAILS_VIDEO ->
+                                                Known.COMPLETION_TOKEN_DETAILS_VIDEO
                                             TOTAL_COST -> Known.TOTAL_COST
                                             PROMPT_COST -> Known.PROMPT_COST
                                             COMPLETION_COST -> Known.COMPLETION_COST
@@ -35711,6 +36665,50 @@ private constructor(
 
                                         @JvmField val COMPLETION_TOKENS = of("completion_tokens")
 
+                                        @JvmField
+                                        val PROMPT_TOKEN_DETAILS_CACHE_CREATION =
+                                            of("prompt_token_details.cache_creation")
+
+                                        @JvmField
+                                        val PROMPT_TOKEN_DETAILS_CACHE_READ =
+                                            of("prompt_token_details.cache_read")
+
+                                        @JvmField
+                                        val PROMPT_TOKEN_DETAILS_EPHEMERAL_1H_INPUT_TOKENS =
+                                            of("prompt_token_details.ephemeral_1h_input_tokens")
+
+                                        @JvmField
+                                        val PROMPT_TOKEN_DETAILS_EPHEMERAL_5M_INPUT_TOKENS =
+                                            of("prompt_token_details.ephemeral_5m_input_tokens")
+
+                                        @JvmField
+                                        val PROMPT_TOKEN_DETAILS_AUDIO =
+                                            of("prompt_token_details.audio")
+
+                                        @JvmField
+                                        val PROMPT_TOKEN_DETAILS_IMAGE =
+                                            of("prompt_token_details.image")
+
+                                        @JvmField
+                                        val PROMPT_TOKEN_DETAILS_VIDEO =
+                                            of("prompt_token_details.video")
+
+                                        @JvmField
+                                        val COMPLETION_TOKEN_DETAILS_REASONING =
+                                            of("completion_token_details.reasoning")
+
+                                        @JvmField
+                                        val COMPLETION_TOKEN_DETAILS_AUDIO =
+                                            of("completion_token_details.audio")
+
+                                        @JvmField
+                                        val COMPLETION_TOKEN_DETAILS_IMAGE =
+                                            of("completion_token_details.image")
+
+                                        @JvmField
+                                        val COMPLETION_TOKEN_DETAILS_VIDEO =
+                                            of("completion_token_details.video")
+
                                         @JvmField val TOTAL_COST = of("total_cost")
 
                                         @JvmField val PROMPT_COST = of("prompt_cost")
@@ -35730,6 +36728,17 @@ private constructor(
                                         TOTAL_TOKENS,
                                         PROMPT_TOKENS,
                                         COMPLETION_TOKENS,
+                                        PROMPT_TOKEN_DETAILS_CACHE_CREATION,
+                                        PROMPT_TOKEN_DETAILS_CACHE_READ,
+                                        PROMPT_TOKEN_DETAILS_EPHEMERAL_1H_INPUT_TOKENS,
+                                        PROMPT_TOKEN_DETAILS_EPHEMERAL_5M_INPUT_TOKENS,
+                                        PROMPT_TOKEN_DETAILS_AUDIO,
+                                        PROMPT_TOKEN_DETAILS_IMAGE,
+                                        PROMPT_TOKEN_DETAILS_VIDEO,
+                                        COMPLETION_TOKEN_DETAILS_REASONING,
+                                        COMPLETION_TOKEN_DETAILS_AUDIO,
+                                        COMPLETION_TOKEN_DETAILS_IMAGE,
+                                        COMPLETION_TOKEN_DETAILS_VIDEO,
                                         TOTAL_COST,
                                         PROMPT_COST,
                                         COMPLETION_COST,
@@ -35755,6 +36764,17 @@ private constructor(
                                         TOTAL_TOKENS,
                                         PROMPT_TOKENS,
                                         COMPLETION_TOKENS,
+                                        PROMPT_TOKEN_DETAILS_CACHE_CREATION,
+                                        PROMPT_TOKEN_DETAILS_CACHE_READ,
+                                        PROMPT_TOKEN_DETAILS_EPHEMERAL_1H_INPUT_TOKENS,
+                                        PROMPT_TOKEN_DETAILS_EPHEMERAL_5M_INPUT_TOKENS,
+                                        PROMPT_TOKEN_DETAILS_AUDIO,
+                                        PROMPT_TOKEN_DETAILS_IMAGE,
+                                        PROMPT_TOKEN_DETAILS_VIDEO,
+                                        COMPLETION_TOKEN_DETAILS_REASONING,
+                                        COMPLETION_TOKEN_DETAILS_AUDIO,
+                                        COMPLETION_TOKEN_DETAILS_IMAGE,
+                                        COMPLETION_TOKEN_DETAILS_VIDEO,
                                         TOTAL_COST,
                                         PROMPT_COST,
                                         COMPLETION_COST,
@@ -35781,6 +36801,28 @@ private constructor(
                                             TOTAL_TOKENS -> Value.TOTAL_TOKENS
                                             PROMPT_TOKENS -> Value.PROMPT_TOKENS
                                             COMPLETION_TOKENS -> Value.COMPLETION_TOKENS
+                                            PROMPT_TOKEN_DETAILS_CACHE_CREATION ->
+                                                Value.PROMPT_TOKEN_DETAILS_CACHE_CREATION
+                                            PROMPT_TOKEN_DETAILS_CACHE_READ ->
+                                                Value.PROMPT_TOKEN_DETAILS_CACHE_READ
+                                            PROMPT_TOKEN_DETAILS_EPHEMERAL_1H_INPUT_TOKENS ->
+                                                Value.PROMPT_TOKEN_DETAILS_EPHEMERAL_1H_INPUT_TOKENS
+                                            PROMPT_TOKEN_DETAILS_EPHEMERAL_5M_INPUT_TOKENS ->
+                                                Value.PROMPT_TOKEN_DETAILS_EPHEMERAL_5M_INPUT_TOKENS
+                                            PROMPT_TOKEN_DETAILS_AUDIO ->
+                                                Value.PROMPT_TOKEN_DETAILS_AUDIO
+                                            PROMPT_TOKEN_DETAILS_IMAGE ->
+                                                Value.PROMPT_TOKEN_DETAILS_IMAGE
+                                            PROMPT_TOKEN_DETAILS_VIDEO ->
+                                                Value.PROMPT_TOKEN_DETAILS_VIDEO
+                                            COMPLETION_TOKEN_DETAILS_REASONING ->
+                                                Value.COMPLETION_TOKEN_DETAILS_REASONING
+                                            COMPLETION_TOKEN_DETAILS_AUDIO ->
+                                                Value.COMPLETION_TOKEN_DETAILS_AUDIO
+                                            COMPLETION_TOKEN_DETAILS_IMAGE ->
+                                                Value.COMPLETION_TOKEN_DETAILS_IMAGE
+                                            COMPLETION_TOKEN_DETAILS_VIDEO ->
+                                                Value.COMPLETION_TOKEN_DETAILS_VIDEO
                                             TOTAL_COST -> Value.TOTAL_COST
                                             PROMPT_COST -> Value.PROMPT_COST
                                             COMPLETION_COST -> Value.COMPLETION_COST
@@ -35805,6 +36847,28 @@ private constructor(
                                             TOTAL_TOKENS -> Known.TOTAL_TOKENS
                                             PROMPT_TOKENS -> Known.PROMPT_TOKENS
                                             COMPLETION_TOKENS -> Known.COMPLETION_TOKENS
+                                            PROMPT_TOKEN_DETAILS_CACHE_CREATION ->
+                                                Known.PROMPT_TOKEN_DETAILS_CACHE_CREATION
+                                            PROMPT_TOKEN_DETAILS_CACHE_READ ->
+                                                Known.PROMPT_TOKEN_DETAILS_CACHE_READ
+                                            PROMPT_TOKEN_DETAILS_EPHEMERAL_1H_INPUT_TOKENS ->
+                                                Known.PROMPT_TOKEN_DETAILS_EPHEMERAL_1H_INPUT_TOKENS
+                                            PROMPT_TOKEN_DETAILS_EPHEMERAL_5M_INPUT_TOKENS ->
+                                                Known.PROMPT_TOKEN_DETAILS_EPHEMERAL_5M_INPUT_TOKENS
+                                            PROMPT_TOKEN_DETAILS_AUDIO ->
+                                                Known.PROMPT_TOKEN_DETAILS_AUDIO
+                                            PROMPT_TOKEN_DETAILS_IMAGE ->
+                                                Known.PROMPT_TOKEN_DETAILS_IMAGE
+                                            PROMPT_TOKEN_DETAILS_VIDEO ->
+                                                Known.PROMPT_TOKEN_DETAILS_VIDEO
+                                            COMPLETION_TOKEN_DETAILS_REASONING ->
+                                                Known.COMPLETION_TOKEN_DETAILS_REASONING
+                                            COMPLETION_TOKEN_DETAILS_AUDIO ->
+                                                Known.COMPLETION_TOKEN_DETAILS_AUDIO
+                                            COMPLETION_TOKEN_DETAILS_IMAGE ->
+                                                Known.COMPLETION_TOKEN_DETAILS_IMAGE
+                                            COMPLETION_TOKEN_DETAILS_VIDEO ->
+                                                Known.COMPLETION_TOKEN_DETAILS_VIDEO
                                             TOTAL_COST -> Known.TOTAL_COST
                                             PROMPT_COST -> Known.PROMPT_COST
                                             COMPLETION_COST -> Known.COMPLETION_COST
@@ -38660,6 +39724,50 @@ private constructor(
 
                                         @JvmField val COMPLETION_TOKENS = of("completion_tokens")
 
+                                        @JvmField
+                                        val PROMPT_TOKEN_DETAILS_CACHE_CREATION =
+                                            of("prompt_token_details.cache_creation")
+
+                                        @JvmField
+                                        val PROMPT_TOKEN_DETAILS_CACHE_READ =
+                                            of("prompt_token_details.cache_read")
+
+                                        @JvmField
+                                        val PROMPT_TOKEN_DETAILS_EPHEMERAL_1H_INPUT_TOKENS =
+                                            of("prompt_token_details.ephemeral_1h_input_tokens")
+
+                                        @JvmField
+                                        val PROMPT_TOKEN_DETAILS_EPHEMERAL_5M_INPUT_TOKENS =
+                                            of("prompt_token_details.ephemeral_5m_input_tokens")
+
+                                        @JvmField
+                                        val PROMPT_TOKEN_DETAILS_AUDIO =
+                                            of("prompt_token_details.audio")
+
+                                        @JvmField
+                                        val PROMPT_TOKEN_DETAILS_IMAGE =
+                                            of("prompt_token_details.image")
+
+                                        @JvmField
+                                        val PROMPT_TOKEN_DETAILS_VIDEO =
+                                            of("prompt_token_details.video")
+
+                                        @JvmField
+                                        val COMPLETION_TOKEN_DETAILS_REASONING =
+                                            of("completion_token_details.reasoning")
+
+                                        @JvmField
+                                        val COMPLETION_TOKEN_DETAILS_AUDIO =
+                                            of("completion_token_details.audio")
+
+                                        @JvmField
+                                        val COMPLETION_TOKEN_DETAILS_IMAGE =
+                                            of("completion_token_details.image")
+
+                                        @JvmField
+                                        val COMPLETION_TOKEN_DETAILS_VIDEO =
+                                            of("completion_token_details.video")
+
                                         @JvmField val TOTAL_COST = of("total_cost")
 
                                         @JvmField val PROMPT_COST = of("prompt_cost")
@@ -38679,6 +39787,17 @@ private constructor(
                                         TOTAL_TOKENS,
                                         PROMPT_TOKENS,
                                         COMPLETION_TOKENS,
+                                        PROMPT_TOKEN_DETAILS_CACHE_CREATION,
+                                        PROMPT_TOKEN_DETAILS_CACHE_READ,
+                                        PROMPT_TOKEN_DETAILS_EPHEMERAL_1H_INPUT_TOKENS,
+                                        PROMPT_TOKEN_DETAILS_EPHEMERAL_5M_INPUT_TOKENS,
+                                        PROMPT_TOKEN_DETAILS_AUDIO,
+                                        PROMPT_TOKEN_DETAILS_IMAGE,
+                                        PROMPT_TOKEN_DETAILS_VIDEO,
+                                        COMPLETION_TOKEN_DETAILS_REASONING,
+                                        COMPLETION_TOKEN_DETAILS_AUDIO,
+                                        COMPLETION_TOKEN_DETAILS_IMAGE,
+                                        COMPLETION_TOKEN_DETAILS_VIDEO,
                                         TOTAL_COST,
                                         PROMPT_COST,
                                         COMPLETION_COST,
@@ -38704,6 +39823,17 @@ private constructor(
                                         TOTAL_TOKENS,
                                         PROMPT_TOKENS,
                                         COMPLETION_TOKENS,
+                                        PROMPT_TOKEN_DETAILS_CACHE_CREATION,
+                                        PROMPT_TOKEN_DETAILS_CACHE_READ,
+                                        PROMPT_TOKEN_DETAILS_EPHEMERAL_1H_INPUT_TOKENS,
+                                        PROMPT_TOKEN_DETAILS_EPHEMERAL_5M_INPUT_TOKENS,
+                                        PROMPT_TOKEN_DETAILS_AUDIO,
+                                        PROMPT_TOKEN_DETAILS_IMAGE,
+                                        PROMPT_TOKEN_DETAILS_VIDEO,
+                                        COMPLETION_TOKEN_DETAILS_REASONING,
+                                        COMPLETION_TOKEN_DETAILS_AUDIO,
+                                        COMPLETION_TOKEN_DETAILS_IMAGE,
+                                        COMPLETION_TOKEN_DETAILS_VIDEO,
                                         TOTAL_COST,
                                         PROMPT_COST,
                                         COMPLETION_COST,
@@ -38730,6 +39860,28 @@ private constructor(
                                             TOTAL_TOKENS -> Value.TOTAL_TOKENS
                                             PROMPT_TOKENS -> Value.PROMPT_TOKENS
                                             COMPLETION_TOKENS -> Value.COMPLETION_TOKENS
+                                            PROMPT_TOKEN_DETAILS_CACHE_CREATION ->
+                                                Value.PROMPT_TOKEN_DETAILS_CACHE_CREATION
+                                            PROMPT_TOKEN_DETAILS_CACHE_READ ->
+                                                Value.PROMPT_TOKEN_DETAILS_CACHE_READ
+                                            PROMPT_TOKEN_DETAILS_EPHEMERAL_1H_INPUT_TOKENS ->
+                                                Value.PROMPT_TOKEN_DETAILS_EPHEMERAL_1H_INPUT_TOKENS
+                                            PROMPT_TOKEN_DETAILS_EPHEMERAL_5M_INPUT_TOKENS ->
+                                                Value.PROMPT_TOKEN_DETAILS_EPHEMERAL_5M_INPUT_TOKENS
+                                            PROMPT_TOKEN_DETAILS_AUDIO ->
+                                                Value.PROMPT_TOKEN_DETAILS_AUDIO
+                                            PROMPT_TOKEN_DETAILS_IMAGE ->
+                                                Value.PROMPT_TOKEN_DETAILS_IMAGE
+                                            PROMPT_TOKEN_DETAILS_VIDEO ->
+                                                Value.PROMPT_TOKEN_DETAILS_VIDEO
+                                            COMPLETION_TOKEN_DETAILS_REASONING ->
+                                                Value.COMPLETION_TOKEN_DETAILS_REASONING
+                                            COMPLETION_TOKEN_DETAILS_AUDIO ->
+                                                Value.COMPLETION_TOKEN_DETAILS_AUDIO
+                                            COMPLETION_TOKEN_DETAILS_IMAGE ->
+                                                Value.COMPLETION_TOKEN_DETAILS_IMAGE
+                                            COMPLETION_TOKEN_DETAILS_VIDEO ->
+                                                Value.COMPLETION_TOKEN_DETAILS_VIDEO
                                             TOTAL_COST -> Value.TOTAL_COST
                                             PROMPT_COST -> Value.PROMPT_COST
                                             COMPLETION_COST -> Value.COMPLETION_COST
@@ -38754,6 +39906,28 @@ private constructor(
                                             TOTAL_TOKENS -> Known.TOTAL_TOKENS
                                             PROMPT_TOKENS -> Known.PROMPT_TOKENS
                                             COMPLETION_TOKENS -> Known.COMPLETION_TOKENS
+                                            PROMPT_TOKEN_DETAILS_CACHE_CREATION ->
+                                                Known.PROMPT_TOKEN_DETAILS_CACHE_CREATION
+                                            PROMPT_TOKEN_DETAILS_CACHE_READ ->
+                                                Known.PROMPT_TOKEN_DETAILS_CACHE_READ
+                                            PROMPT_TOKEN_DETAILS_EPHEMERAL_1H_INPUT_TOKENS ->
+                                                Known.PROMPT_TOKEN_DETAILS_EPHEMERAL_1H_INPUT_TOKENS
+                                            PROMPT_TOKEN_DETAILS_EPHEMERAL_5M_INPUT_TOKENS ->
+                                                Known.PROMPT_TOKEN_DETAILS_EPHEMERAL_5M_INPUT_TOKENS
+                                            PROMPT_TOKEN_DETAILS_AUDIO ->
+                                                Known.PROMPT_TOKEN_DETAILS_AUDIO
+                                            PROMPT_TOKEN_DETAILS_IMAGE ->
+                                                Known.PROMPT_TOKEN_DETAILS_IMAGE
+                                            PROMPT_TOKEN_DETAILS_VIDEO ->
+                                                Known.PROMPT_TOKEN_DETAILS_VIDEO
+                                            COMPLETION_TOKEN_DETAILS_REASONING ->
+                                                Known.COMPLETION_TOKEN_DETAILS_REASONING
+                                            COMPLETION_TOKEN_DETAILS_AUDIO ->
+                                                Known.COMPLETION_TOKEN_DETAILS_AUDIO
+                                            COMPLETION_TOKEN_DETAILS_IMAGE ->
+                                                Known.COMPLETION_TOKEN_DETAILS_IMAGE
+                                            COMPLETION_TOKEN_DETAILS_VIDEO ->
+                                                Known.COMPLETION_TOKEN_DETAILS_VIDEO
                                             TOTAL_COST -> Known.TOTAL_COST
                                             PROMPT_COST -> Known.PROMPT_COST
                                             COMPLETION_COST -> Known.COMPLETION_COST
@@ -39923,6 +41097,50 @@ private constructor(
 
                                         @JvmField val COMPLETION_TOKENS = of("completion_tokens")
 
+                                        @JvmField
+                                        val PROMPT_TOKEN_DETAILS_CACHE_CREATION =
+                                            of("prompt_token_details.cache_creation")
+
+                                        @JvmField
+                                        val PROMPT_TOKEN_DETAILS_CACHE_READ =
+                                            of("prompt_token_details.cache_read")
+
+                                        @JvmField
+                                        val PROMPT_TOKEN_DETAILS_EPHEMERAL_1H_INPUT_TOKENS =
+                                            of("prompt_token_details.ephemeral_1h_input_tokens")
+
+                                        @JvmField
+                                        val PROMPT_TOKEN_DETAILS_EPHEMERAL_5M_INPUT_TOKENS =
+                                            of("prompt_token_details.ephemeral_5m_input_tokens")
+
+                                        @JvmField
+                                        val PROMPT_TOKEN_DETAILS_AUDIO =
+                                            of("prompt_token_details.audio")
+
+                                        @JvmField
+                                        val PROMPT_TOKEN_DETAILS_IMAGE =
+                                            of("prompt_token_details.image")
+
+                                        @JvmField
+                                        val PROMPT_TOKEN_DETAILS_VIDEO =
+                                            of("prompt_token_details.video")
+
+                                        @JvmField
+                                        val COMPLETION_TOKEN_DETAILS_REASONING =
+                                            of("completion_token_details.reasoning")
+
+                                        @JvmField
+                                        val COMPLETION_TOKEN_DETAILS_AUDIO =
+                                            of("completion_token_details.audio")
+
+                                        @JvmField
+                                        val COMPLETION_TOKEN_DETAILS_IMAGE =
+                                            of("completion_token_details.image")
+
+                                        @JvmField
+                                        val COMPLETION_TOKEN_DETAILS_VIDEO =
+                                            of("completion_token_details.video")
+
                                         @JvmField val TOTAL_COST = of("total_cost")
 
                                         @JvmField val PROMPT_COST = of("prompt_cost")
@@ -39942,6 +41160,17 @@ private constructor(
                                         TOTAL_TOKENS,
                                         PROMPT_TOKENS,
                                         COMPLETION_TOKENS,
+                                        PROMPT_TOKEN_DETAILS_CACHE_CREATION,
+                                        PROMPT_TOKEN_DETAILS_CACHE_READ,
+                                        PROMPT_TOKEN_DETAILS_EPHEMERAL_1H_INPUT_TOKENS,
+                                        PROMPT_TOKEN_DETAILS_EPHEMERAL_5M_INPUT_TOKENS,
+                                        PROMPT_TOKEN_DETAILS_AUDIO,
+                                        PROMPT_TOKEN_DETAILS_IMAGE,
+                                        PROMPT_TOKEN_DETAILS_VIDEO,
+                                        COMPLETION_TOKEN_DETAILS_REASONING,
+                                        COMPLETION_TOKEN_DETAILS_AUDIO,
+                                        COMPLETION_TOKEN_DETAILS_IMAGE,
+                                        COMPLETION_TOKEN_DETAILS_VIDEO,
                                         TOTAL_COST,
                                         PROMPT_COST,
                                         COMPLETION_COST,
@@ -39967,6 +41196,17 @@ private constructor(
                                         TOTAL_TOKENS,
                                         PROMPT_TOKENS,
                                         COMPLETION_TOKENS,
+                                        PROMPT_TOKEN_DETAILS_CACHE_CREATION,
+                                        PROMPT_TOKEN_DETAILS_CACHE_READ,
+                                        PROMPT_TOKEN_DETAILS_EPHEMERAL_1H_INPUT_TOKENS,
+                                        PROMPT_TOKEN_DETAILS_EPHEMERAL_5M_INPUT_TOKENS,
+                                        PROMPT_TOKEN_DETAILS_AUDIO,
+                                        PROMPT_TOKEN_DETAILS_IMAGE,
+                                        PROMPT_TOKEN_DETAILS_VIDEO,
+                                        COMPLETION_TOKEN_DETAILS_REASONING,
+                                        COMPLETION_TOKEN_DETAILS_AUDIO,
+                                        COMPLETION_TOKEN_DETAILS_IMAGE,
+                                        COMPLETION_TOKEN_DETAILS_VIDEO,
                                         TOTAL_COST,
                                         PROMPT_COST,
                                         COMPLETION_COST,
@@ -39993,6 +41233,28 @@ private constructor(
                                             TOTAL_TOKENS -> Value.TOTAL_TOKENS
                                             PROMPT_TOKENS -> Value.PROMPT_TOKENS
                                             COMPLETION_TOKENS -> Value.COMPLETION_TOKENS
+                                            PROMPT_TOKEN_DETAILS_CACHE_CREATION ->
+                                                Value.PROMPT_TOKEN_DETAILS_CACHE_CREATION
+                                            PROMPT_TOKEN_DETAILS_CACHE_READ ->
+                                                Value.PROMPT_TOKEN_DETAILS_CACHE_READ
+                                            PROMPT_TOKEN_DETAILS_EPHEMERAL_1H_INPUT_TOKENS ->
+                                                Value.PROMPT_TOKEN_DETAILS_EPHEMERAL_1H_INPUT_TOKENS
+                                            PROMPT_TOKEN_DETAILS_EPHEMERAL_5M_INPUT_TOKENS ->
+                                                Value.PROMPT_TOKEN_DETAILS_EPHEMERAL_5M_INPUT_TOKENS
+                                            PROMPT_TOKEN_DETAILS_AUDIO ->
+                                                Value.PROMPT_TOKEN_DETAILS_AUDIO
+                                            PROMPT_TOKEN_DETAILS_IMAGE ->
+                                                Value.PROMPT_TOKEN_DETAILS_IMAGE
+                                            PROMPT_TOKEN_DETAILS_VIDEO ->
+                                                Value.PROMPT_TOKEN_DETAILS_VIDEO
+                                            COMPLETION_TOKEN_DETAILS_REASONING ->
+                                                Value.COMPLETION_TOKEN_DETAILS_REASONING
+                                            COMPLETION_TOKEN_DETAILS_AUDIO ->
+                                                Value.COMPLETION_TOKEN_DETAILS_AUDIO
+                                            COMPLETION_TOKEN_DETAILS_IMAGE ->
+                                                Value.COMPLETION_TOKEN_DETAILS_IMAGE
+                                            COMPLETION_TOKEN_DETAILS_VIDEO ->
+                                                Value.COMPLETION_TOKEN_DETAILS_VIDEO
                                             TOTAL_COST -> Value.TOTAL_COST
                                             PROMPT_COST -> Value.PROMPT_COST
                                             COMPLETION_COST -> Value.COMPLETION_COST
@@ -40017,6 +41279,28 @@ private constructor(
                                             TOTAL_TOKENS -> Known.TOTAL_TOKENS
                                             PROMPT_TOKENS -> Known.PROMPT_TOKENS
                                             COMPLETION_TOKENS -> Known.COMPLETION_TOKENS
+                                            PROMPT_TOKEN_DETAILS_CACHE_CREATION ->
+                                                Known.PROMPT_TOKEN_DETAILS_CACHE_CREATION
+                                            PROMPT_TOKEN_DETAILS_CACHE_READ ->
+                                                Known.PROMPT_TOKEN_DETAILS_CACHE_READ
+                                            PROMPT_TOKEN_DETAILS_EPHEMERAL_1H_INPUT_TOKENS ->
+                                                Known.PROMPT_TOKEN_DETAILS_EPHEMERAL_1H_INPUT_TOKENS
+                                            PROMPT_TOKEN_DETAILS_EPHEMERAL_5M_INPUT_TOKENS ->
+                                                Known.PROMPT_TOKEN_DETAILS_EPHEMERAL_5M_INPUT_TOKENS
+                                            PROMPT_TOKEN_DETAILS_AUDIO ->
+                                                Known.PROMPT_TOKEN_DETAILS_AUDIO
+                                            PROMPT_TOKEN_DETAILS_IMAGE ->
+                                                Known.PROMPT_TOKEN_DETAILS_IMAGE
+                                            PROMPT_TOKEN_DETAILS_VIDEO ->
+                                                Known.PROMPT_TOKEN_DETAILS_VIDEO
+                                            COMPLETION_TOKEN_DETAILS_REASONING ->
+                                                Known.COMPLETION_TOKEN_DETAILS_REASONING
+                                            COMPLETION_TOKEN_DETAILS_AUDIO ->
+                                                Known.COMPLETION_TOKEN_DETAILS_AUDIO
+                                            COMPLETION_TOKEN_DETAILS_IMAGE ->
+                                                Known.COMPLETION_TOKEN_DETAILS_IMAGE
+                                            COMPLETION_TOKEN_DETAILS_VIDEO ->
+                                                Known.COMPLETION_TOKEN_DETAILS_VIDEO
                                             TOTAL_COST -> Known.TOTAL_COST
                                             PROMPT_COST -> Known.PROMPT_COST
                                             COMPLETION_COST -> Known.COMPLETION_COST
