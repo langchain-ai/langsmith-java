@@ -20,6 +20,7 @@ internal class TraceQueryPageResponseTest {
             TraceQueryPageResponse.builder()
                 .addItem(
                     Trace.builder()
+                        .queryMetadata(JsonValue.from(mapOf<String, Any>()))
                         .rootRun(
                             Run.builder()
                                 .id("018e4c7e-a9fb-7ef0-a5b6-6ea3a82e9327")
@@ -147,6 +148,7 @@ internal class TraceQueryPageResponseTest {
                                         .build()
                                 )
                                 .promptTokens(200L)
+                                .queryMetadata(JsonValue.from(mapOf<String, Any>()))
                                 .referenceDatasetId("c3d4e5f6-a7b8-4c5d-0e1f-2a3b4c5d6e7f")
                                 .referenceExampleId("b2c3d4e5-f6a7-4b5c-9d0e-1f2a3b4c5d6e")
                                 .runType(RunType.LLM)
@@ -181,6 +183,7 @@ internal class TraceQueryPageResponseTest {
         assertThat(traceQueryPageResponse.items().getOrNull())
             .containsExactly(
                 Trace.builder()
+                    .queryMetadata(JsonValue.from(mapOf<String, Any>()))
                     .rootRun(
                         Run.builder()
                             .id("018e4c7e-a9fb-7ef0-a5b6-6ea3a82e9327")
@@ -306,6 +309,7 @@ internal class TraceQueryPageResponseTest {
                                     .build()
                             )
                             .promptTokens(200L)
+                            .queryMetadata(JsonValue.from(mapOf<String, Any>()))
                             .referenceDatasetId("c3d4e5f6-a7b8-4c5d-0e1f-2a3b4c5d6e7f")
                             .referenceExampleId("b2c3d4e5-f6a7-4b5c-9d0e-1f2a3b4c5d6e")
                             .runType(RunType.LLM)
@@ -342,6 +346,7 @@ internal class TraceQueryPageResponseTest {
             TraceQueryPageResponse.builder()
                 .addItem(
                     Trace.builder()
+                        .queryMetadata(JsonValue.from(mapOf<String, Any>()))
                         .rootRun(
                             Run.builder()
                                 .id("018e4c7e-a9fb-7ef0-a5b6-6ea3a82e9327")
@@ -469,6 +474,7 @@ internal class TraceQueryPageResponseTest {
                                         .build()
                                 )
                                 .promptTokens(200L)
+                                .queryMetadata(JsonValue.from(mapOf<String, Any>()))
                                 .referenceDatasetId("c3d4e5f6-a7b8-4c5d-0e1f-2a3b4c5d6e7f")
                                 .referenceExampleId("b2c3d4e5-f6a7-4b5c-9d0e-1f2a3b4c5d6e")
                                 .runType(RunType.LLM)

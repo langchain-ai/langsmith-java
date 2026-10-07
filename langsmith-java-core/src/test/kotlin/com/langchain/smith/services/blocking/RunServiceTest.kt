@@ -23,7 +23,6 @@ import com.langchain.smith.core.http.Headers
 import com.langchain.smith.core.http.HttpClient
 import com.langchain.smith.core.http.HttpRequest
 import com.langchain.smith.core.http.HttpResponse
-import com.langchain.smith.models.AgentAddress
 import com.langchain.smith.models.runs.RunAttachment
 import com.langchain.smith.models.runs.RunCreateParams
 import com.langchain.smith.models.runs.RunGetUrlParams
@@ -641,14 +640,7 @@ internal class RunServiceTest {
                     .addPatch(
                         RunIngest.builder()
                             .id("id")
-                            .address(
-                                AgentAddress.builder()
-                                    .id("support-agent")
-                                    .environment(AgentAddress.Environment.PRODUCTION)
-                                    .build()
-                            )
-                            .agentEnvironment(RunIngest.AgentEnvironment.LOCAL)
-                            .agentId("agent_id")
+                            .address("lrn:agents/support-agent/environments/production")
                             .dottedOrder("dotted_order")
                             .endTime("end_time")
                             .error("error")
@@ -702,14 +694,7 @@ internal class RunServiceTest {
                     .addPost(
                         RunIngest.builder()
                             .id("id")
-                            .address(
-                                AgentAddress.builder()
-                                    .id("support-agent")
-                                    .environment(AgentAddress.Environment.PRODUCTION)
-                                    .build()
-                            )
-                            .agentEnvironment(RunIngest.AgentEnvironment.LOCAL)
-                            .agentId("agent_id")
+                            .address("lrn:agents/support-agent/environments/production")
                             .dottedOrder("dotted_order")
                             .endTime("end_time")
                             .error("error")
@@ -893,14 +878,7 @@ internal class RunServiceTest {
                     .runIngest(
                         RunIngest.builder()
                             .id("id")
-                            .address(
-                                AgentAddress.builder()
-                                    .id("support-agent")
-                                    .environment(AgentAddress.Environment.PRODUCTION)
-                                    .build()
-                            )
-                            .agentEnvironment(RunIngest.AgentEnvironment.LOCAL)
-                            .agentId("agent_id")
+                            .address("lrn:agents/support-agent/environments/production")
                             .dottedOrder("dotted_order")
                             .endTime("end_time")
                             .error("error")

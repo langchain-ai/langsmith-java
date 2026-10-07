@@ -57,6 +57,7 @@ private constructor(
     private val promptCostDetails: JsonField<PromptCostDetails>,
     private val promptTokenDetails: JsonField<PromptTokenDetails>,
     private val promptTokens: JsonField<Long>,
+    private val queryMetadata: JsonValue,
     private val referenceDatasetId: JsonField<String>,
     private val referenceExampleId: JsonField<String>,
     private val runType: JsonField<RunType>,
@@ -150,6 +151,7 @@ private constructor(
         @JsonProperty("prompt_tokens")
         @ExcludeMissing
         promptTokens: JsonField<Long> = JsonMissing.of(),
+        @JsonProperty("query_metadata") @ExcludeMissing queryMetadata: JsonValue = JsonMissing.of(),
         @JsonProperty("reference_dataset_id")
         @ExcludeMissing
         referenceDatasetId: JsonField<String> = JsonMissing.of(),
@@ -207,6 +209,7 @@ private constructor(
         promptCostDetails,
         promptTokenDetails,
         promptTokens,
+        queryMetadata,
         referenceDatasetId,
         referenceExampleId,
         runType,
@@ -509,6 +512,17 @@ private constructor(
      *   server responded with an unexpected value).
      */
     fun promptTokens(): Optional<Long> = promptTokens.getOptional("prompt_tokens")
+
+    /**
+     * `query_metadata` describes this query result, including `sem_filter_score` when a semantic
+     * filter is used. Returned automatically by run queries, or null when unavailable.
+     *
+     * This arbitrary value can be deserialized into a custom type using the `convert` method:
+     * ```java
+     * MyClass myObject = run.queryMetadata().convert(MyClass.class);
+     * ```
+     */
+    @JsonProperty("query_metadata") @ExcludeMissing fun _queryMetadata(): JsonValue = queryMetadata
 
     /**
      * `reference_dataset_id` is the dataset UUID for the reference example, if any.
@@ -1047,6 +1061,7 @@ private constructor(
         private var promptCostDetails: JsonField<PromptCostDetails> = JsonMissing.of()
         private var promptTokenDetails: JsonField<PromptTokenDetails> = JsonMissing.of()
         private var promptTokens: JsonField<Long> = JsonMissing.of()
+        private var queryMetadata: JsonValue = JsonMissing.of()
         private var referenceDatasetId: JsonField<String> = JsonMissing.of()
         private var referenceExampleId: JsonField<String> = JsonMissing.of()
         private var runType: JsonField<RunType> = JsonMissing.of()
@@ -1097,6 +1112,7 @@ private constructor(
             promptCostDetails = run.promptCostDetails
             promptTokenDetails = run.promptTokenDetails
             promptTokens = run.promptTokens
+            queryMetadata = run.queryMetadata
             referenceDatasetId = run.referenceDatasetId
             referenceExampleId = run.referenceExampleId
             runType = run.runType
@@ -1614,6 +1630,12 @@ private constructor(
          */
         fun promptTokens(promptTokens: JsonField<Long>) = apply { this.promptTokens = promptTokens }
 
+        /**
+         * `query_metadata` describes this query result, including `sem_filter_score` when a
+         * semantic filter is used. Returned automatically by run queries, or null when unavailable.
+         */
+        fun queryMetadata(queryMetadata: JsonValue) = apply { this.queryMetadata = queryMetadata }
+
         /** `reference_dataset_id` is the dataset UUID for the reference example, if any. */
         fun referenceDatasetId(referenceDatasetId: String) =
             referenceDatasetId(JsonField.of(referenceDatasetId))
@@ -1848,6 +1870,7 @@ private constructor(
                 promptCostDetails,
                 promptTokenDetails,
                 promptTokens,
+                queryMetadata,
                 referenceDatasetId,
                 referenceExampleId,
                 runType,
@@ -4238,6 +4261,7 @@ private constructor(
             promptCostDetails == other.promptCostDetails &&
             promptTokenDetails == other.promptTokenDetails &&
             promptTokens == other.promptTokens &&
+            queryMetadata == other.queryMetadata &&
             referenceDatasetId == other.referenceDatasetId &&
             referenceExampleId == other.referenceExampleId &&
             runType == other.runType &&
@@ -4289,6 +4313,7 @@ private constructor(
             promptCostDetails,
             promptTokenDetails,
             promptTokens,
+            queryMetadata,
             referenceDatasetId,
             referenceExampleId,
             runType,
@@ -4308,5 +4333,5 @@ private constructor(
     override fun hashCode(): Int = hashCode
 
     override fun toString() =
-        "Run{id=$id, appPath=$appPath, attachments=$attachments, completionCost=$completionCost, completionCostDetails=$completionCostDetails, completionTokenDetails=$completionTokenDetails, completionTokens=$completionTokens, dottedOrder=$dottedOrder, endTime=$endTime, error=$error, errorPreview=$errorPreview, events=$events, extra=$extra, feedbackStats=$feedbackStats, firstTokenTime=$firstTokenTime, inputs=$inputs, inputsPreview=$inputsPreview, isInDataset=$isInDataset, isRoot=$isRoot, lastQueuedAt=$lastQueuedAt, latencySeconds=$latencySeconds, lsUserId=$lsUserId, manifest=$manifest, metadata=$metadata, name=$name, outputs=$outputs, outputsPreview=$outputsPreview, parentRunIds=$parentRunIds, priceModelId=$priceModelId, projectId=$projectId, promptCost=$promptCost, promptCostDetails=$promptCostDetails, promptTokenDetails=$promptTokenDetails, promptTokens=$promptTokens, referenceDatasetId=$referenceDatasetId, referenceExampleId=$referenceExampleId, runType=$runType, shareUrl=$shareUrl, startTime=$startTime, status=$status, tags=$tags, threadEvaluationTime=$threadEvaluationTime, threadId=$threadId, totalCost=$totalCost, totalTokens=$totalTokens, traceId=$traceId, additionalProperties=$additionalProperties}"
+        "Run{id=$id, appPath=$appPath, attachments=$attachments, completionCost=$completionCost, completionCostDetails=$completionCostDetails, completionTokenDetails=$completionTokenDetails, completionTokens=$completionTokens, dottedOrder=$dottedOrder, endTime=$endTime, error=$error, errorPreview=$errorPreview, events=$events, extra=$extra, feedbackStats=$feedbackStats, firstTokenTime=$firstTokenTime, inputs=$inputs, inputsPreview=$inputsPreview, isInDataset=$isInDataset, isRoot=$isRoot, lastQueuedAt=$lastQueuedAt, latencySeconds=$latencySeconds, lsUserId=$lsUserId, manifest=$manifest, metadata=$metadata, name=$name, outputs=$outputs, outputsPreview=$outputsPreview, parentRunIds=$parentRunIds, priceModelId=$priceModelId, projectId=$projectId, promptCost=$promptCost, promptCostDetails=$promptCostDetails, promptTokenDetails=$promptTokenDetails, promptTokens=$promptTokens, queryMetadata=$queryMetadata, referenceDatasetId=$referenceDatasetId, referenceExampleId=$referenceExampleId, runType=$runType, shareUrl=$shareUrl, startTime=$startTime, status=$status, tags=$tags, threadEvaluationTime=$threadEvaluationTime, threadId=$threadId, totalCost=$totalCost, totalTokens=$totalTokens, traceId=$traceId, additionalProperties=$additionalProperties}"
 }

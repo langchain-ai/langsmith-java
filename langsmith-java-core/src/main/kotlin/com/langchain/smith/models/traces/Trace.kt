@@ -20,6 +20,7 @@ import kotlin.jvm.optionals.getOrNull
 class Trace
 @JsonCreator(mode = JsonCreator.Mode.DISABLED)
 private constructor(
+    private val queryMetadata: JsonValue,
     private val rootRun: JsonField<Run>,
     private val traceAggregates: JsonField<TraceAggregates>,
     private val additionalProperties: MutableMap<String, JsonValue>,
@@ -27,11 +28,23 @@ private constructor(
 
     @JsonCreator
     private constructor(
+        @JsonProperty("query_metadata") @ExcludeMissing queryMetadata: JsonValue = JsonMissing.of(),
         @JsonProperty("root_run") @ExcludeMissing rootRun: JsonField<Run> = JsonMissing.of(),
         @JsonProperty("trace_aggregates")
         @ExcludeMissing
         traceAggregates: JsonField<TraceAggregates> = JsonMissing.of(),
-    ) : this(rootRun, traceAggregates, mutableMapOf())
+    ) : this(queryMetadata, rootRun, traceAggregates, mutableMapOf())
+
+    /**
+     * `query_metadata` describes why this trace matched the query, including `sem_filter_score`
+     * when a semantic filter is used. Returned automatically, or null when unavailable.
+     *
+     * This arbitrary value can be deserialized into a custom type using the `convert` method:
+     * ```java
+     * MyClass myObject = trace.queryMetadata().convert(MyClass.class);
+     * ```
+     */
+    @JsonProperty("query_metadata") @ExcludeMissing fun _queryMetadata(): JsonValue = queryMetadata
 
     /**
      * `root_run` is the trace's root run. Which properties are populated is controlled by `selects`
@@ -90,16 +103,24 @@ private constructor(
     /** A builder for [Trace]. */
     class Builder internal constructor() {
 
+        private var queryMetadata: JsonValue = JsonMissing.of()
         private var rootRun: JsonField<Run> = JsonMissing.of()
         private var traceAggregates: JsonField<TraceAggregates> = JsonMissing.of()
         private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
 
         @JvmSynthetic
         internal fun from(trace: Trace) = apply {
+            queryMetadata = trace.queryMetadata
             rootRun = trace.rootRun
             traceAggregates = trace.traceAggregates
             additionalProperties = trace.additionalProperties.toMutableMap()
         }
+
+        /**
+         * `query_metadata` describes why this trace matched the query, including `sem_filter_score`
+         * when a semantic filter is used. Returned automatically, or null when unavailable.
+         */
+        fun queryMetadata(queryMetadata: JsonValue) = apply { this.queryMetadata = queryMetadata }
 
         /**
          * `root_run` is the trace's root run. Which properties are populated is controlled by
@@ -158,7 +179,8 @@ private constructor(
          *
          * Further updates to this [Builder] will not mutate the returned instance.
          */
-        fun build(): Trace = Trace(rootRun, traceAggregates, additionalProperties.toMutableMap())
+        fun build(): Trace =
+            Trace(queryMetadata, rootRun, traceAggregates, additionalProperties.toMutableMap())
     }
 
     private var validated: Boolean = false
@@ -205,17 +227,18 @@ private constructor(
         }
 
         return other is Trace &&
+            queryMetadata == other.queryMetadata &&
             rootRun == other.rootRun &&
             traceAggregates == other.traceAggregates &&
             additionalProperties == other.additionalProperties
     }
 
     private val hashCode: Int by lazy {
-        Objects.hash(rootRun, traceAggregates, additionalProperties)
+        Objects.hash(queryMetadata, rootRun, traceAggregates, additionalProperties)
     }
 
     override fun hashCode(): Int = hashCode
 
     override fun toString() =
-        "Trace{rootRun=$rootRun, traceAggregates=$traceAggregates, additionalProperties=$additionalProperties}"
+        "Trace{queryMetadata=$queryMetadata, rootRun=$rootRun, traceAggregates=$traceAggregates, additionalProperties=$additionalProperties}"
 }

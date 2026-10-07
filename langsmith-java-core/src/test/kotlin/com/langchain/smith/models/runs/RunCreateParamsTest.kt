@@ -3,7 +3,6 @@
 package com.langchain.smith.models.runs
 
 import com.langchain.smith.core.JsonValue
-import com.langchain.smith.models.AgentAddress
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
@@ -15,14 +14,7 @@ internal class RunCreateParamsTest {
             .runIngest(
                 RunIngest.builder()
                     .id("id")
-                    .address(
-                        AgentAddress.builder()
-                            .id("support-agent")
-                            .environment(AgentAddress.Environment.PRODUCTION)
-                            .build()
-                    )
-                    .agentEnvironment(RunIngest.AgentEnvironment.LOCAL)
-                    .agentId("agent_id")
+                    .address("lrn:agents/support-agent/environments/production")
                     .dottedOrder("dotted_order")
                     .endTime("end_time")
                     .error("error")
@@ -83,14 +75,7 @@ internal class RunCreateParamsTest {
                 .runIngest(
                     RunIngest.builder()
                         .id("id")
-                        .address(
-                            AgentAddress.builder()
-                                .id("support-agent")
-                                .environment(AgentAddress.Environment.PRODUCTION)
-                                .build()
-                        )
-                        .agentEnvironment(RunIngest.AgentEnvironment.LOCAL)
-                        .agentId("agent_id")
+                        .address("lrn:agents/support-agent/environments/production")
                         .dottedOrder("dotted_order")
                         .endTime("end_time")
                         .error("error")
@@ -149,14 +134,7 @@ internal class RunCreateParamsTest {
             .isEqualTo(
                 RunIngest.builder()
                     .id("id")
-                    .address(
-                        AgentAddress.builder()
-                            .id("support-agent")
-                            .environment(AgentAddress.Environment.PRODUCTION)
-                            .build()
-                    )
-                    .agentEnvironment(RunIngest.AgentEnvironment.LOCAL)
-                    .agentId("agent_id")
+                    .address("lrn:agents/support-agent/environments/production")
                     .dottedOrder("dotted_order")
                     .endTime("end_time")
                     .error("error")

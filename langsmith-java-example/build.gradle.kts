@@ -1,3 +1,14 @@
+buildscript {
+    configurations.classpath {
+        resolutionStrategy {
+            force(
+                "tools.jackson.core:jackson-core:3.1.7",
+                "tools.jackson.core:jackson-databind:3.1.7",
+            )
+        }
+    }
+}
+
 plugins {
     application
     kotlin("jvm")
@@ -28,7 +39,7 @@ dependencies {
     implementation(kotlin("stdlib"))
 
     // Jackson for JSON handling in examples
-    implementation("com.fasterxml.jackson.core:jackson-databind:2.22.1")
+    implementation("com.fasterxml.jackson.core:jackson-databind:2.22.3")
 
     // Spring Boot dependencies (optional - only needed for Spring Boot example)
     implementation(platform("org.springframework.boot:spring-boot-dependencies:4.1.1"))
@@ -36,6 +47,8 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter")
 
     constraints {
+        implementation("tools.jackson.core:jackson-core:3.1.7")
+        implementation("tools.jackson.core:jackson-databind:3.1.7")
         implementation("org.apache.tomcat.embed:tomcat-embed-core:11.0.26")
         implementation("org.apache.tomcat.embed:tomcat-embed-el:11.0.26")
         implementation("org.apache.tomcat.embed:tomcat-embed-websocket:11.0.26")
