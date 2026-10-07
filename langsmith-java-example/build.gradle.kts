@@ -1,3 +1,14 @@
+buildscript {
+    configurations.classpath {
+        resolutionStrategy {
+            force(
+                "tools.jackson.core:jackson-core:3.1.7",
+                "tools.jackson.core:jackson-databind:3.1.7",
+            )
+        }
+    }
+}
+
 plugins {
     application
     kotlin("jvm")
