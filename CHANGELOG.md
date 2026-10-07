@@ -1,5 +1,26 @@
 # Changelog
 
+## [0.1.0-beta.25](https://github.com/langchain-ai/langsmith-java/compare/v0.1.0-beta.24...v0.1.0-beta.25) (2026-10-07)
+
+
+### ⚠ BREAKING CHANGES
+
+* **issues:** add required message field to bot mention, remove fix_handoff_bot_user_id
+* **feedback:** replace agent_id/agent_environment fields with address string
+
+### Features
+
+* add can_use_teams field to instance info response ([f6279da](https://github.com/langchain-ai/langsmith-java/commit/f6279da67f2cf73ee32cd11ba4e4e8f634bbfe61))
+* **feedback:** replace agent_id/agent_environment fields with address string ([873ac18](https://github.com/langchain-ai/langsmith-java/commit/873ac18dff3b16ed1f35f8c5058207818250fb07))
+* **issues:** add required message field to bot mention, remove fix_handoff_bot_user_id ([2115f4c](https://github.com/langchain-ai/langsmith-java/commit/2115f4cd7ff0189d4bcf946471c90d3f91040883))
+
+
+### Bug Fixes
+
+* pin Jackson 3 in example buildscript classpath ([#71](https://github.com/langchain-ai/langsmith-java/issues/71)) ([f9a4ade](https://github.com/langchain-ai/langsmith-java/commit/f9a4ade998f27ae0038f48ffc7d7bb304bdfc975))
+* pin patched FreeMarker in Dokka workers ([#67](https://github.com/langchain-ai/langsmith-java/issues/67)) ([bb8bc34](https://github.com/langchain-ai/langsmith-java/commit/bb8bc3420197015e74bdf7924aab2ca6a633e6b5))
+* upgrade Jackson to patched dependency versions ([#70](https://github.com/langchain-ai/langsmith-java/issues/70)) ([fe079c1](https://github.com/langchain-ai/langsmith-java/commit/fe079c1e0565e48f8fb0901ec0c29c53edd3406f))
+
 ## [0.1.0-beta.24](https://github.com/langchain-ai/langsmith-java/compare/v0.1.0-beta.23...v0.1.0-beta.24) (2026-10-02)
 
 
