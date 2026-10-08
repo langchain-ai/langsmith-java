@@ -22,6 +22,7 @@ internal class OnlineEvaluatorListPageResponseTest {
                             OnlineCodeEvaluator.builder()
                                 .advancedFeaturesEnabled(true)
                                 .code("code")
+                                .codeEvaluatorInput(OnlineCodeEvaluator.CodeEvaluatorInput.THREAD)
                                 .dependencies("dependencies")
                                 .evaluatorBuildError("evaluator_build_error")
                                 .evaluatorBuildStatus(
@@ -104,6 +105,7 @@ internal class OnlineEvaluatorListPageResponseTest {
                         OnlineCodeEvaluator.builder()
                             .advancedFeaturesEnabled(true)
                             .code("code")
+                            .codeEvaluatorInput(OnlineCodeEvaluator.CodeEvaluatorInput.THREAD)
                             .dependencies("dependencies")
                             .evaluatorBuildError("evaluator_build_error")
                             .evaluatorBuildStatus(OnlineCodeEvaluator.EvaluatorBuildStatus.ENQUEUED)
@@ -185,6 +187,7 @@ internal class OnlineEvaluatorListPageResponseTest {
                             OnlineCodeEvaluator.builder()
                                 .advancedFeaturesEnabled(true)
                                 .code("code")
+                                .codeEvaluatorInput(OnlineCodeEvaluator.CodeEvaluatorInput.THREAD)
                                 .dependencies("dependencies")
                                 .evaluatorBuildError("evaluator_build_error")
                                 .evaluatorBuildStatus(

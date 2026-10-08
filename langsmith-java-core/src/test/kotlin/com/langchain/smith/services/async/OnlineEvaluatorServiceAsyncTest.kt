@@ -37,6 +37,9 @@ internal class OnlineEvaluatorServiceAsyncTest {
                         CreateOnlineCodeEvaluatorRequest.builder()
                             .advancedFeaturesEnabled(true)
                             .code("code")
+                            .codeEvaluatorInput(
+                                CreateOnlineCodeEvaluatorRequest.CodeEvaluatorInput.THREAD
+                            )
                             .dependencies("dependencies")
                             .language("language")
                             .managedCodeEvaluatorKey(
@@ -110,6 +113,9 @@ internal class OnlineEvaluatorServiceAsyncTest {
                                 UpdateOnlineCodeEvaluatorRequest.builder()
                                     .advancedFeaturesEnabled(true)
                                     .code("code")
+                                    .codeEvaluatorInput(
+                                        UpdateOnlineCodeEvaluatorRequest.CodeEvaluatorInput.THREAD
+                                    )
                                     .dependencies("dependencies")
                                     .language("language")
                                     .managedCodeEvaluatorSettings(
