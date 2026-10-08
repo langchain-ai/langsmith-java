@@ -396,13 +396,20 @@ private fun toJsonValueMap(data: Map<String, Any?>?): Map<String, JsonValue> =
     data?.mapValues { (_, v) -> JsonValue.from(v) } ?: emptyMap()
 
 private val runtimeMetadata: Map<String, JsonValue> by lazy {
-    mapOf(
-        "runtime" to JsonValue.from("java"),
-        "runtime_version" to JsonValue.from(getJavaVersion()),
-        "sdk" to JsonValue.from("langsmith-java"),
-        "sdk_version" to JsonValue.from(getPackageVersion()),
-    )
+    buildMap {
+        put("runtime", JsonValue.from("java"))
+        put("runtime_version", JsonValue.from(getJavaVersion()))
+        put("sdk", JsonValue.from("langsmith-java"))
+        put("sdk_version", JsonValue.from(getPackageVersion()))
+        resolveRevisionId()?.let { put("revision_id", JsonValue.from(it)) }
+    }
 }
+
+/** `LANGSMITH_REVISION_ID`, falling back to the legacy `LANGCHAIN_REVISION_ID`. */
+internal fun resolveRevisionId(getenv: (String) -> String? = System::getenv): String? =
+    listOf("LANGSMITH_REVISION_ID", "LANGCHAIN_REVISION_ID").firstNotNullOfOrNull { name ->
+        getenv(name)?.takeIf { it.isNotBlank() }
+    }
 
 private fun buildRuntimeMetadata(userMetadata: Map<String, Any>?): Map<String, JsonValue> =
     if (userMetadata.isNullOrEmpty()) {
