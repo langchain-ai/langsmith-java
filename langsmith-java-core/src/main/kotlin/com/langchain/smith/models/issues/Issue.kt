@@ -3137,6 +3137,44 @@ private constructor(
                             val COMPLETION_TOKEN_DETAILS_VIDEO =
                                 of("completion_token_details.video")
 
+                            @JvmField
+                            val PROMPT_COST_DETAILS_CACHE_CREATION =
+                                of("prompt_cost_details.cache_creation")
+
+                            @JvmField
+                            val PROMPT_COST_DETAILS_CACHE_READ =
+                                of("prompt_cost_details.cache_read")
+
+                            @JvmField
+                            val PROMPT_COST_DETAILS_EPHEMERAL_1H_INPUT_TOKENS =
+                                of("prompt_cost_details.ephemeral_1h_input_tokens")
+
+                            @JvmField
+                            val PROMPT_COST_DETAILS_EPHEMERAL_5M_INPUT_TOKENS =
+                                of("prompt_cost_details.ephemeral_5m_input_tokens")
+
+                            @JvmField
+                            val PROMPT_COST_DETAILS_AUDIO = of("prompt_cost_details.audio")
+
+                            @JvmField
+                            val PROMPT_COST_DETAILS_IMAGE = of("prompt_cost_details.image")
+
+                            @JvmField
+                            val PROMPT_COST_DETAILS_VIDEO = of("prompt_cost_details.video")
+
+                            @JvmField
+                            val COMPLETION_COST_DETAILS_REASONING =
+                                of("completion_cost_details.reasoning")
+
+                            @JvmField
+                            val COMPLETION_COST_DETAILS_AUDIO = of("completion_cost_details.audio")
+
+                            @JvmField
+                            val COMPLETION_COST_DETAILS_IMAGE = of("completion_cost_details.image")
+
+                            @JvmField
+                            val COMPLETION_COST_DETAILS_VIDEO = of("completion_cost_details.video")
+
                             @JvmStatic fun of(value: String) = Field(JsonField.of(value))
                         }
 
@@ -3162,6 +3200,17 @@ private constructor(
                             COMPLETION_TOKEN_DETAILS_AUDIO,
                             COMPLETION_TOKEN_DETAILS_IMAGE,
                             COMPLETION_TOKEN_DETAILS_VIDEO,
+                            PROMPT_COST_DETAILS_CACHE_CREATION,
+                            PROMPT_COST_DETAILS_CACHE_READ,
+                            PROMPT_COST_DETAILS_EPHEMERAL_1H_INPUT_TOKENS,
+                            PROMPT_COST_DETAILS_EPHEMERAL_5M_INPUT_TOKENS,
+                            PROMPT_COST_DETAILS_AUDIO,
+                            PROMPT_COST_DETAILS_IMAGE,
+                            PROMPT_COST_DETAILS_VIDEO,
+                            COMPLETION_COST_DETAILS_REASONING,
+                            COMPLETION_COST_DETAILS_AUDIO,
+                            COMPLETION_COST_DETAILS_IMAGE,
+                            COMPLETION_COST_DETAILS_VIDEO,
                         }
 
                         /**
@@ -3195,6 +3244,17 @@ private constructor(
                             COMPLETION_TOKEN_DETAILS_AUDIO,
                             COMPLETION_TOKEN_DETAILS_IMAGE,
                             COMPLETION_TOKEN_DETAILS_VIDEO,
+                            PROMPT_COST_DETAILS_CACHE_CREATION,
+                            PROMPT_COST_DETAILS_CACHE_READ,
+                            PROMPT_COST_DETAILS_EPHEMERAL_1H_INPUT_TOKENS,
+                            PROMPT_COST_DETAILS_EPHEMERAL_5M_INPUT_TOKENS,
+                            PROMPT_COST_DETAILS_AUDIO,
+                            PROMPT_COST_DETAILS_IMAGE,
+                            PROMPT_COST_DETAILS_VIDEO,
+                            COMPLETION_COST_DETAILS_REASONING,
+                            COMPLETION_COST_DETAILS_AUDIO,
+                            COMPLETION_COST_DETAILS_IMAGE,
+                            COMPLETION_COST_DETAILS_VIDEO,
                             /**
                              * An enum member indicating that [Field] was instantiated with an
                              * unknown value.
@@ -3239,6 +3299,22 @@ private constructor(
                                     Value.COMPLETION_TOKEN_DETAILS_IMAGE
                                 COMPLETION_TOKEN_DETAILS_VIDEO ->
                                     Value.COMPLETION_TOKEN_DETAILS_VIDEO
+                                PROMPT_COST_DETAILS_CACHE_CREATION ->
+                                    Value.PROMPT_COST_DETAILS_CACHE_CREATION
+                                PROMPT_COST_DETAILS_CACHE_READ ->
+                                    Value.PROMPT_COST_DETAILS_CACHE_READ
+                                PROMPT_COST_DETAILS_EPHEMERAL_1H_INPUT_TOKENS ->
+                                    Value.PROMPT_COST_DETAILS_EPHEMERAL_1H_INPUT_TOKENS
+                                PROMPT_COST_DETAILS_EPHEMERAL_5M_INPUT_TOKENS ->
+                                    Value.PROMPT_COST_DETAILS_EPHEMERAL_5M_INPUT_TOKENS
+                                PROMPT_COST_DETAILS_AUDIO -> Value.PROMPT_COST_DETAILS_AUDIO
+                                PROMPT_COST_DETAILS_IMAGE -> Value.PROMPT_COST_DETAILS_IMAGE
+                                PROMPT_COST_DETAILS_VIDEO -> Value.PROMPT_COST_DETAILS_VIDEO
+                                COMPLETION_COST_DETAILS_REASONING ->
+                                    Value.COMPLETION_COST_DETAILS_REASONING
+                                COMPLETION_COST_DETAILS_AUDIO -> Value.COMPLETION_COST_DETAILS_AUDIO
+                                COMPLETION_COST_DETAILS_IMAGE -> Value.COMPLETION_COST_DETAILS_IMAGE
+                                COMPLETION_COST_DETAILS_VIDEO -> Value.COMPLETION_COST_DETAILS_VIDEO
                                 else -> Value._UNKNOWN
                             }
 
@@ -3281,6 +3357,22 @@ private constructor(
                                     Known.COMPLETION_TOKEN_DETAILS_IMAGE
                                 COMPLETION_TOKEN_DETAILS_VIDEO ->
                                     Known.COMPLETION_TOKEN_DETAILS_VIDEO
+                                PROMPT_COST_DETAILS_CACHE_CREATION ->
+                                    Known.PROMPT_COST_DETAILS_CACHE_CREATION
+                                PROMPT_COST_DETAILS_CACHE_READ ->
+                                    Known.PROMPT_COST_DETAILS_CACHE_READ
+                                PROMPT_COST_DETAILS_EPHEMERAL_1H_INPUT_TOKENS ->
+                                    Known.PROMPT_COST_DETAILS_EPHEMERAL_1H_INPUT_TOKENS
+                                PROMPT_COST_DETAILS_EPHEMERAL_5M_INPUT_TOKENS ->
+                                    Known.PROMPT_COST_DETAILS_EPHEMERAL_5M_INPUT_TOKENS
+                                PROMPT_COST_DETAILS_AUDIO -> Known.PROMPT_COST_DETAILS_AUDIO
+                                PROMPT_COST_DETAILS_IMAGE -> Known.PROMPT_COST_DETAILS_IMAGE
+                                PROMPT_COST_DETAILS_VIDEO -> Known.PROMPT_COST_DETAILS_VIDEO
+                                COMPLETION_COST_DETAILS_REASONING ->
+                                    Known.COMPLETION_COST_DETAILS_REASONING
+                                COMPLETION_COST_DETAILS_AUDIO -> Known.COMPLETION_COST_DETAILS_AUDIO
+                                COMPLETION_COST_DETAILS_IMAGE -> Known.COMPLETION_COST_DETAILS_IMAGE
+                                COMPLETION_COST_DETAILS_VIDEO -> Known.COMPLETION_COST_DETAILS_VIDEO
                                 else -> throw LangChainInvalidDataException("Unknown Field: $value")
                             }
 
@@ -3838,6 +3930,40 @@ private constructor(
                         @JvmField
                         val COMPLETION_TOKEN_DETAILS_VIDEO = of("completion_token_details.video")
 
+                        @JvmField
+                        val PROMPT_COST_DETAILS_CACHE_CREATION =
+                            of("prompt_cost_details.cache_creation")
+
+                        @JvmField
+                        val PROMPT_COST_DETAILS_CACHE_READ = of("prompt_cost_details.cache_read")
+
+                        @JvmField
+                        val PROMPT_COST_DETAILS_EPHEMERAL_1H_INPUT_TOKENS =
+                            of("prompt_cost_details.ephemeral_1h_input_tokens")
+
+                        @JvmField
+                        val PROMPT_COST_DETAILS_EPHEMERAL_5M_INPUT_TOKENS =
+                            of("prompt_cost_details.ephemeral_5m_input_tokens")
+
+                        @JvmField val PROMPT_COST_DETAILS_AUDIO = of("prompt_cost_details.audio")
+
+                        @JvmField val PROMPT_COST_DETAILS_IMAGE = of("prompt_cost_details.image")
+
+                        @JvmField val PROMPT_COST_DETAILS_VIDEO = of("prompt_cost_details.video")
+
+                        @JvmField
+                        val COMPLETION_COST_DETAILS_REASONING =
+                            of("completion_cost_details.reasoning")
+
+                        @JvmField
+                        val COMPLETION_COST_DETAILS_AUDIO = of("completion_cost_details.audio")
+
+                        @JvmField
+                        val COMPLETION_COST_DETAILS_IMAGE = of("completion_cost_details.image")
+
+                        @JvmField
+                        val COMPLETION_COST_DETAILS_VIDEO = of("completion_cost_details.video")
+
                         @JvmStatic fun of(value: String) = Field(JsonField.of(value))
                     }
 
@@ -3863,6 +3989,17 @@ private constructor(
                         COMPLETION_TOKEN_DETAILS_AUDIO,
                         COMPLETION_TOKEN_DETAILS_IMAGE,
                         COMPLETION_TOKEN_DETAILS_VIDEO,
+                        PROMPT_COST_DETAILS_CACHE_CREATION,
+                        PROMPT_COST_DETAILS_CACHE_READ,
+                        PROMPT_COST_DETAILS_EPHEMERAL_1H_INPUT_TOKENS,
+                        PROMPT_COST_DETAILS_EPHEMERAL_5M_INPUT_TOKENS,
+                        PROMPT_COST_DETAILS_AUDIO,
+                        PROMPT_COST_DETAILS_IMAGE,
+                        PROMPT_COST_DETAILS_VIDEO,
+                        COMPLETION_COST_DETAILS_REASONING,
+                        COMPLETION_COST_DETAILS_AUDIO,
+                        COMPLETION_COST_DETAILS_IMAGE,
+                        COMPLETION_COST_DETAILS_VIDEO,
                     }
 
                     /**
@@ -3895,6 +4032,17 @@ private constructor(
                         COMPLETION_TOKEN_DETAILS_AUDIO,
                         COMPLETION_TOKEN_DETAILS_IMAGE,
                         COMPLETION_TOKEN_DETAILS_VIDEO,
+                        PROMPT_COST_DETAILS_CACHE_CREATION,
+                        PROMPT_COST_DETAILS_CACHE_READ,
+                        PROMPT_COST_DETAILS_EPHEMERAL_1H_INPUT_TOKENS,
+                        PROMPT_COST_DETAILS_EPHEMERAL_5M_INPUT_TOKENS,
+                        PROMPT_COST_DETAILS_AUDIO,
+                        PROMPT_COST_DETAILS_IMAGE,
+                        PROMPT_COST_DETAILS_VIDEO,
+                        COMPLETION_COST_DETAILS_REASONING,
+                        COMPLETION_COST_DETAILS_AUDIO,
+                        COMPLETION_COST_DETAILS_IMAGE,
+                        COMPLETION_COST_DETAILS_VIDEO,
                         /**
                          * An enum member indicating that [Field] was instantiated with an unknown
                          * value.
@@ -3935,6 +4083,21 @@ private constructor(
                             COMPLETION_TOKEN_DETAILS_AUDIO -> Value.COMPLETION_TOKEN_DETAILS_AUDIO
                             COMPLETION_TOKEN_DETAILS_IMAGE -> Value.COMPLETION_TOKEN_DETAILS_IMAGE
                             COMPLETION_TOKEN_DETAILS_VIDEO -> Value.COMPLETION_TOKEN_DETAILS_VIDEO
+                            PROMPT_COST_DETAILS_CACHE_CREATION ->
+                                Value.PROMPT_COST_DETAILS_CACHE_CREATION
+                            PROMPT_COST_DETAILS_CACHE_READ -> Value.PROMPT_COST_DETAILS_CACHE_READ
+                            PROMPT_COST_DETAILS_EPHEMERAL_1H_INPUT_TOKENS ->
+                                Value.PROMPT_COST_DETAILS_EPHEMERAL_1H_INPUT_TOKENS
+                            PROMPT_COST_DETAILS_EPHEMERAL_5M_INPUT_TOKENS ->
+                                Value.PROMPT_COST_DETAILS_EPHEMERAL_5M_INPUT_TOKENS
+                            PROMPT_COST_DETAILS_AUDIO -> Value.PROMPT_COST_DETAILS_AUDIO
+                            PROMPT_COST_DETAILS_IMAGE -> Value.PROMPT_COST_DETAILS_IMAGE
+                            PROMPT_COST_DETAILS_VIDEO -> Value.PROMPT_COST_DETAILS_VIDEO
+                            COMPLETION_COST_DETAILS_REASONING ->
+                                Value.COMPLETION_COST_DETAILS_REASONING
+                            COMPLETION_COST_DETAILS_AUDIO -> Value.COMPLETION_COST_DETAILS_AUDIO
+                            COMPLETION_COST_DETAILS_IMAGE -> Value.COMPLETION_COST_DETAILS_IMAGE
+                            COMPLETION_COST_DETAILS_VIDEO -> Value.COMPLETION_COST_DETAILS_VIDEO
                             else -> Value._UNKNOWN
                         }
 
@@ -3973,6 +4136,21 @@ private constructor(
                             COMPLETION_TOKEN_DETAILS_AUDIO -> Known.COMPLETION_TOKEN_DETAILS_AUDIO
                             COMPLETION_TOKEN_DETAILS_IMAGE -> Known.COMPLETION_TOKEN_DETAILS_IMAGE
                             COMPLETION_TOKEN_DETAILS_VIDEO -> Known.COMPLETION_TOKEN_DETAILS_VIDEO
+                            PROMPT_COST_DETAILS_CACHE_CREATION ->
+                                Known.PROMPT_COST_DETAILS_CACHE_CREATION
+                            PROMPT_COST_DETAILS_CACHE_READ -> Known.PROMPT_COST_DETAILS_CACHE_READ
+                            PROMPT_COST_DETAILS_EPHEMERAL_1H_INPUT_TOKENS ->
+                                Known.PROMPT_COST_DETAILS_EPHEMERAL_1H_INPUT_TOKENS
+                            PROMPT_COST_DETAILS_EPHEMERAL_5M_INPUT_TOKENS ->
+                                Known.PROMPT_COST_DETAILS_EPHEMERAL_5M_INPUT_TOKENS
+                            PROMPT_COST_DETAILS_AUDIO -> Known.PROMPT_COST_DETAILS_AUDIO
+                            PROMPT_COST_DETAILS_IMAGE -> Known.PROMPT_COST_DETAILS_IMAGE
+                            PROMPT_COST_DETAILS_VIDEO -> Known.PROMPT_COST_DETAILS_VIDEO
+                            COMPLETION_COST_DETAILS_REASONING ->
+                                Known.COMPLETION_COST_DETAILS_REASONING
+                            COMPLETION_COST_DETAILS_AUDIO -> Known.COMPLETION_COST_DETAILS_AUDIO
+                            COMPLETION_COST_DETAILS_IMAGE -> Known.COMPLETION_COST_DETAILS_IMAGE
+                            COMPLETION_COST_DETAILS_VIDEO -> Known.COMPLETION_COST_DETAILS_VIDEO
                             else -> throw LangChainInvalidDataException("Unknown Field: $value")
                         }
 
@@ -4768,6 +4946,44 @@ private constructor(
                             val COMPLETION_TOKEN_DETAILS_VIDEO =
                                 of("completion_token_details.video")
 
+                            @JvmField
+                            val PROMPT_COST_DETAILS_CACHE_CREATION =
+                                of("prompt_cost_details.cache_creation")
+
+                            @JvmField
+                            val PROMPT_COST_DETAILS_CACHE_READ =
+                                of("prompt_cost_details.cache_read")
+
+                            @JvmField
+                            val PROMPT_COST_DETAILS_EPHEMERAL_1H_INPUT_TOKENS =
+                                of("prompt_cost_details.ephemeral_1h_input_tokens")
+
+                            @JvmField
+                            val PROMPT_COST_DETAILS_EPHEMERAL_5M_INPUT_TOKENS =
+                                of("prompt_cost_details.ephemeral_5m_input_tokens")
+
+                            @JvmField
+                            val PROMPT_COST_DETAILS_AUDIO = of("prompt_cost_details.audio")
+
+                            @JvmField
+                            val PROMPT_COST_DETAILS_IMAGE = of("prompt_cost_details.image")
+
+                            @JvmField
+                            val PROMPT_COST_DETAILS_VIDEO = of("prompt_cost_details.video")
+
+                            @JvmField
+                            val COMPLETION_COST_DETAILS_REASONING =
+                                of("completion_cost_details.reasoning")
+
+                            @JvmField
+                            val COMPLETION_COST_DETAILS_AUDIO = of("completion_cost_details.audio")
+
+                            @JvmField
+                            val COMPLETION_COST_DETAILS_IMAGE = of("completion_cost_details.image")
+
+                            @JvmField
+                            val COMPLETION_COST_DETAILS_VIDEO = of("completion_cost_details.video")
+
                             @JvmStatic fun of(value: String) = Field(JsonField.of(value))
                         }
 
@@ -4793,6 +5009,17 @@ private constructor(
                             COMPLETION_TOKEN_DETAILS_AUDIO,
                             COMPLETION_TOKEN_DETAILS_IMAGE,
                             COMPLETION_TOKEN_DETAILS_VIDEO,
+                            PROMPT_COST_DETAILS_CACHE_CREATION,
+                            PROMPT_COST_DETAILS_CACHE_READ,
+                            PROMPT_COST_DETAILS_EPHEMERAL_1H_INPUT_TOKENS,
+                            PROMPT_COST_DETAILS_EPHEMERAL_5M_INPUT_TOKENS,
+                            PROMPT_COST_DETAILS_AUDIO,
+                            PROMPT_COST_DETAILS_IMAGE,
+                            PROMPT_COST_DETAILS_VIDEO,
+                            COMPLETION_COST_DETAILS_REASONING,
+                            COMPLETION_COST_DETAILS_AUDIO,
+                            COMPLETION_COST_DETAILS_IMAGE,
+                            COMPLETION_COST_DETAILS_VIDEO,
                         }
 
                         /**
@@ -4826,6 +5053,17 @@ private constructor(
                             COMPLETION_TOKEN_DETAILS_AUDIO,
                             COMPLETION_TOKEN_DETAILS_IMAGE,
                             COMPLETION_TOKEN_DETAILS_VIDEO,
+                            PROMPT_COST_DETAILS_CACHE_CREATION,
+                            PROMPT_COST_DETAILS_CACHE_READ,
+                            PROMPT_COST_DETAILS_EPHEMERAL_1H_INPUT_TOKENS,
+                            PROMPT_COST_DETAILS_EPHEMERAL_5M_INPUT_TOKENS,
+                            PROMPT_COST_DETAILS_AUDIO,
+                            PROMPT_COST_DETAILS_IMAGE,
+                            PROMPT_COST_DETAILS_VIDEO,
+                            COMPLETION_COST_DETAILS_REASONING,
+                            COMPLETION_COST_DETAILS_AUDIO,
+                            COMPLETION_COST_DETAILS_IMAGE,
+                            COMPLETION_COST_DETAILS_VIDEO,
                             /**
                              * An enum member indicating that [Field] was instantiated with an
                              * unknown value.
@@ -4870,6 +5108,22 @@ private constructor(
                                     Value.COMPLETION_TOKEN_DETAILS_IMAGE
                                 COMPLETION_TOKEN_DETAILS_VIDEO ->
                                     Value.COMPLETION_TOKEN_DETAILS_VIDEO
+                                PROMPT_COST_DETAILS_CACHE_CREATION ->
+                                    Value.PROMPT_COST_DETAILS_CACHE_CREATION
+                                PROMPT_COST_DETAILS_CACHE_READ ->
+                                    Value.PROMPT_COST_DETAILS_CACHE_READ
+                                PROMPT_COST_DETAILS_EPHEMERAL_1H_INPUT_TOKENS ->
+                                    Value.PROMPT_COST_DETAILS_EPHEMERAL_1H_INPUT_TOKENS
+                                PROMPT_COST_DETAILS_EPHEMERAL_5M_INPUT_TOKENS ->
+                                    Value.PROMPT_COST_DETAILS_EPHEMERAL_5M_INPUT_TOKENS
+                                PROMPT_COST_DETAILS_AUDIO -> Value.PROMPT_COST_DETAILS_AUDIO
+                                PROMPT_COST_DETAILS_IMAGE -> Value.PROMPT_COST_DETAILS_IMAGE
+                                PROMPT_COST_DETAILS_VIDEO -> Value.PROMPT_COST_DETAILS_VIDEO
+                                COMPLETION_COST_DETAILS_REASONING ->
+                                    Value.COMPLETION_COST_DETAILS_REASONING
+                                COMPLETION_COST_DETAILS_AUDIO -> Value.COMPLETION_COST_DETAILS_AUDIO
+                                COMPLETION_COST_DETAILS_IMAGE -> Value.COMPLETION_COST_DETAILS_IMAGE
+                                COMPLETION_COST_DETAILS_VIDEO -> Value.COMPLETION_COST_DETAILS_VIDEO
                                 else -> Value._UNKNOWN
                             }
 
@@ -4912,6 +5166,22 @@ private constructor(
                                     Known.COMPLETION_TOKEN_DETAILS_IMAGE
                                 COMPLETION_TOKEN_DETAILS_VIDEO ->
                                     Known.COMPLETION_TOKEN_DETAILS_VIDEO
+                                PROMPT_COST_DETAILS_CACHE_CREATION ->
+                                    Known.PROMPT_COST_DETAILS_CACHE_CREATION
+                                PROMPT_COST_DETAILS_CACHE_READ ->
+                                    Known.PROMPT_COST_DETAILS_CACHE_READ
+                                PROMPT_COST_DETAILS_EPHEMERAL_1H_INPUT_TOKENS ->
+                                    Known.PROMPT_COST_DETAILS_EPHEMERAL_1H_INPUT_TOKENS
+                                PROMPT_COST_DETAILS_EPHEMERAL_5M_INPUT_TOKENS ->
+                                    Known.PROMPT_COST_DETAILS_EPHEMERAL_5M_INPUT_TOKENS
+                                PROMPT_COST_DETAILS_AUDIO -> Known.PROMPT_COST_DETAILS_AUDIO
+                                PROMPT_COST_DETAILS_IMAGE -> Known.PROMPT_COST_DETAILS_IMAGE
+                                PROMPT_COST_DETAILS_VIDEO -> Known.PROMPT_COST_DETAILS_VIDEO
+                                COMPLETION_COST_DETAILS_REASONING ->
+                                    Known.COMPLETION_COST_DETAILS_REASONING
+                                COMPLETION_COST_DETAILS_AUDIO -> Known.COMPLETION_COST_DETAILS_AUDIO
+                                COMPLETION_COST_DETAILS_IMAGE -> Known.COMPLETION_COST_DETAILS_IMAGE
+                                COMPLETION_COST_DETAILS_VIDEO -> Known.COMPLETION_COST_DETAILS_VIDEO
                                 else -> throw LangChainInvalidDataException("Unknown Field: $value")
                             }
 
