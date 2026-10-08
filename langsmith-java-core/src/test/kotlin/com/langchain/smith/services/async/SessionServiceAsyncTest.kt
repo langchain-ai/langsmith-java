@@ -8,6 +8,7 @@ import com.langchain.smith.models.sessions.CustomChartsSectionRequest
 import com.langchain.smith.models.sessions.RunStatsGroupBy
 import com.langchain.smith.models.sessions.SessionCreateParams
 import com.langchain.smith.models.sessions.SessionDashboardParams
+import com.langchain.smith.models.sessions.SessionResolveParams
 import com.langchain.smith.models.sessions.SessionRetrieveParams
 import com.langchain.smith.models.sessions.SessionUpdateParams
 import com.langchain.smith.models.sessions.TimedeltaInput
@@ -178,5 +179,28 @@ internal class SessionServiceAsyncTest {
 
         val customChartsSection = customChartsSectionFuture.get()
         customChartsSection.validate()
+    }
+
+    @Disabled("Mock server tests are disabled")
+    @Test
+    fun resolve() {
+        val client =
+            LangsmithOkHttpClientAsync.builder()
+                .apiKey("My API Key")
+                .tenantId("My Tenant ID")
+                .build()
+        val sessionServiceAsync = client.sessions()
+
+        val responseFuture =
+            sessionServiceAsync.resolve(
+                SessionResolveParams.builder()
+                    .kind(SessionResolveParams.Kind.AGENT)
+                    .id("id")
+                    .environment(SessionResolveParams.Environment.LOCAL)
+                    .build()
+            )
+
+        val response = responseFuture.get()
+        response.validate()
     }
 }

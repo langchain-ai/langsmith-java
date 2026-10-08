@@ -23,6 +23,8 @@ import com.langchain.smith.models.sessions.SessionDashboardParams
 import com.langchain.smith.models.sessions.SessionDeleteParams
 import com.langchain.smith.models.sessions.SessionListPage
 import com.langchain.smith.models.sessions.SessionListParams
+import com.langchain.smith.models.sessions.SessionResolveParams
+import com.langchain.smith.models.sessions.SessionResolveResponse
 import com.langchain.smith.models.sessions.SessionRetrieveParams
 import com.langchain.smith.models.sessions.SessionUpdateParams
 import com.langchain.smith.models.sessions.TracerSession
@@ -84,6 +86,13 @@ class SessionServiceImpl internal constructor(private val clientOptions: ClientO
     ): CustomChartsSection =
         // post /api/v1/sessions/{session_id}/dashboard
         withRawResponse().dashboard(params, requestOptions).parse()
+
+    override fun resolve(
+        params: SessionResolveParams,
+        requestOptions: RequestOptions,
+    ): SessionResolveResponse =
+        // get /api/v1/sessions/resolutions
+        withRawResponse().resolve(params, requestOptions).parse()
 
     class WithRawResponseImpl internal constructor(private val clientOptions: ClientOptions) :
         SessionService.WithRawResponse {
@@ -274,6 +283,33 @@ class SessionServiceImpl internal constructor(private val clientOptions: ClientO
             return errorHandler.handle(response).parseable {
                 response
                     .use { dashboardHandler.handle(it) }
+                    .also {
+                        if (requestOptions.responseValidation!!) {
+                            it.validate()
+                        }
+                    }
+            }
+        }
+
+        private val resolveHandler: Handler<SessionResolveResponse> =
+            jsonHandler<SessionResolveResponse>(clientOptions.jsonMapper)
+
+        override fun resolve(
+            params: SessionResolveParams,
+            requestOptions: RequestOptions,
+        ): HttpResponseFor<SessionResolveResponse> {
+            val request =
+                HttpRequest.builder()
+                    .method(HttpMethod.GET)
+                    .baseUrl(clientOptions.baseUrl())
+                    .addPathSegments("api", "v1", "sessions", "resolutions")
+                    .build()
+                    .prepare(clientOptions, params)
+            val requestOptions = requestOptions.applyDefaults(RequestOptions.from(clientOptions))
+            val response = clientOptions.httpClient.execute(request, requestOptions)
+            return errorHandler.handle(response).parseable {
+                response
+                    .use { resolveHandler.handle(it) }
                     .also {
                         if (requestOptions.responseValidation!!) {
                             it.validate()
