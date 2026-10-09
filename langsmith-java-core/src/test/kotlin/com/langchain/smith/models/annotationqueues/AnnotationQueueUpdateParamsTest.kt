@@ -169,7 +169,8 @@ internal class AnnotationQueueUpdateParamsTest {
 
         assertThat(body.defaultDataset()).contains("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
         assertThat(body.description()).contains("description")
-        assertThat(body.enableReservations()).contains(true)
+        assertThat(body.enableReservations())
+            .contains(AnnotationQueueUpdateParams.EnableReservations.ofBool(true))
         assertThat(body.metadata())
             .contains(
                 AnnotationQueueUpdateParams.Metadata.ofUnionMember0(
@@ -181,7 +182,8 @@ internal class AnnotationQueueUpdateParamsTest {
         assertThat(body.name()).contains("name")
         assertThat(body.numReviewersPerItem())
             .contains(AnnotationQueueUpdateParams.NumReviewersPerItem.ofInteger(0L))
-        assertThat(body.reservationMinutes()).contains(0L)
+        assertThat(body.reservationMinutes())
+            .contains(AnnotationQueueUpdateParams.ReservationMinutes.ofInteger(0L))
         assertThat(body.reviewerAccessMode())
             .contains(AnnotationQueueUpdateParams.ReviewerAccessMode.ANY)
         assertThat(body.rubricInstructions()).contains("rubric_instructions")
