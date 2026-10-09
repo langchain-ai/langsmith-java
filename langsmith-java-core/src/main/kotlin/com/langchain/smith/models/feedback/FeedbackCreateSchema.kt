@@ -552,6 +552,8 @@ private constructor(
          */
         fun address(address: String) = address(JsonField.of(address))
 
+        fun address(address: com.langchain.smith.address.AgentAddress) = address(address.toLrn())
+
         /**
          * Sets [Builder.address] to an arbitrary JSON value.
          *
