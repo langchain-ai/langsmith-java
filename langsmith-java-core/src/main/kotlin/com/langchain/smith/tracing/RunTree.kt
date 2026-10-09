@@ -1,5 +1,6 @@
 package com.langchain.smith.tracing
 
+import com.langchain.smith.address.AgentAddress
 import com.langchain.smith.client.LangsmithClient
 import com.langchain.smith.core.JsonValue
 import com.langchain.smith.core.getJavaVersion
@@ -85,7 +86,13 @@ class RunTree(
     val parentRunId: String? = null,
     /** ISO-8601 end time. Set when the run completes. */
     var endTime: String? = null,
+    /** (beta) The agent address to send this run to instead of a project. */
+    val address: AgentAddress? = null,
 ) {
+
+    init {
+        rejectConflicting(projectName, sessionId, address)
+    }
 
     /**
      * Creates a child [RunTree] under this run. The child inherits [client], [projectName],
@@ -119,9 +126,11 @@ class RunTree(
             name = config.name ?: "<lambda>",
             runType = config.runType,
             startTime = childStartTime,
-            projectName = config.projectName ?: projectName,
+            // A child joins its parent's destination: an addressed parent's address wins.
+            projectName = if (address != null) null else config.projectName ?: projectName,
+            address = address,
             referenceExampleId = config.referenceExampleId ?: referenceExampleId,
-            sessionId = config.sessionId ?: sessionId,
+            sessionId = if (address != null) null else config.sessionId ?: sessionId,
             metadata = mergedMetadata,
             tags = mergedTags,
             client = config.client ?: client,
@@ -175,6 +184,12 @@ class RunTree(
                 .runType(RunIngest.RunType.of(runType.value))
                 .startTime(startTime)
                 .apply { this@RunTree.projectName?.let { sessionName(it) } }
+                .apply {
+                    this@RunTree.address?.let {
+                        warnIsBeta()
+                        address(it.toLrn())
+                    }
+                }
                 .tags(tags)
                 .extra(
                     RunIngest.Extra.builder()
@@ -219,6 +234,7 @@ class RunTree(
                 add("runType=$runType")
                 add("startTime=$startTime")
                 projectName?.let { add("projectName=$it") }
+                address?.let { add("address=$it") }
                 referenceExampleId?.let { add("referenceExampleId=$it") }
                 sessionId?.let { add("sessionId=$it") }
                 parentRunId?.let { add("parentRunId=$it") }
@@ -278,6 +294,7 @@ class RunTree(
         private var dottedOrder: String? = null
         private var parentRunId: String? = null
         private var endTime: String? = null
+        private var address: AgentAddress? = null
 
         @JvmSynthetic
         internal fun from(run: RunTree) = apply {
@@ -301,6 +318,7 @@ class RunTree(
             dottedOrder = run.dottedOrder
             parentRunId = run.parentRunId
             endTime = run.endTime
+            address = run.address
         }
 
         fun name(name: String) = apply { this.name = name }
@@ -345,6 +363,9 @@ class RunTree(
 
         fun endTime(endTime: String) = apply { this.endTime = endTime }
 
+        /** (beta) The agent address to send this run to instead of a project. */
+        fun address(address: AgentAddress) = apply { this.address = address }
+
         fun build(): RunTree {
             val resolvedId = id ?: defaultId()
             val resolvedStartTime = startTime ?: defaultStartTime()
@@ -369,6 +390,7 @@ class RunTree(
                 dottedOrder = dottedOrder ?: dottedOrderSegment(resolvedStartTime, resolvedId),
                 parentRunId = parentRunId,
                 endTime = endTime,
+                address = address,
             )
         }
     }
@@ -396,13 +418,20 @@ private fun toJsonValueMap(data: Map<String, Any?>?): Map<String, JsonValue> =
     data?.mapValues { (_, v) -> JsonValue.from(v) } ?: emptyMap()
 
 private val runtimeMetadata: Map<String, JsonValue> by lazy {
-    mapOf(
-        "runtime" to JsonValue.from("java"),
-        "runtime_version" to JsonValue.from(getJavaVersion()),
-        "sdk" to JsonValue.from("langsmith-java"),
-        "sdk_version" to JsonValue.from(getPackageVersion()),
-    )
+    buildMap {
+        put("runtime", JsonValue.from("java"))
+        put("runtime_version", JsonValue.from(getJavaVersion()))
+        put("sdk", JsonValue.from("langsmith-java"))
+        put("sdk_version", JsonValue.from(getPackageVersion()))
+        resolveRevisionId()?.let { put("revision_id", JsonValue.from(it)) }
+    }
 }
+
+/** `LANGSMITH_REVISION_ID`, falling back to the legacy `LANGCHAIN_REVISION_ID`. */
+internal fun resolveRevisionId(getenv: (String) -> String? = System::getenv): String? =
+    listOf("LANGSMITH_REVISION_ID", "LANGCHAIN_REVISION_ID").firstNotNullOfOrNull { name ->
+        getenv(name)?.takeIf { it.isNotBlank() }
+    }
 
 private fun buildRuntimeMetadata(userMetadata: Map<String, Any>?): Map<String, JsonValue> =
     if (userMetadata.isNullOrEmpty()) {

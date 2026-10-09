@@ -18,6 +18,9 @@ internal class OnlineEvaluatorUpdateParamsTest {
                         UpdateOnlineCodeEvaluatorRequest.builder()
                             .advancedFeaturesEnabled(true)
                             .code("code")
+                            .codeEvaluatorInput(
+                                UpdateOnlineCodeEvaluatorRequest.CodeEvaluatorInput.THREAD
+                            )
                             .dependencies("dependencies")
                             .language("language")
                             .managedCodeEvaluatorSettings(
@@ -74,6 +77,9 @@ internal class OnlineEvaluatorUpdateParamsTest {
                             UpdateOnlineCodeEvaluatorRequest.builder()
                                 .advancedFeaturesEnabled(true)
                                 .code("code")
+                                .codeEvaluatorInput(
+                                    UpdateOnlineCodeEvaluatorRequest.CodeEvaluatorInput.THREAD
+                                )
                                 .dependencies("dependencies")
                                 .language("language")
                                 .managedCodeEvaluatorSettings(
@@ -117,6 +123,9 @@ internal class OnlineEvaluatorUpdateParamsTest {
                         UpdateOnlineCodeEvaluatorRequest.builder()
                             .advancedFeaturesEnabled(true)
                             .code("code")
+                            .codeEvaluatorInput(
+                                UpdateOnlineCodeEvaluatorRequest.CodeEvaluatorInput.THREAD
+                            )
                             .dependencies("dependencies")
                             .language("language")
                             .managedCodeEvaluatorSettings(

@@ -61,7 +61,7 @@ private constructor(
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
      */
-    fun enableReservations(): Optional<Boolean> = body.enableReservations()
+    fun enableReservations(): Optional<EnableReservations> = body.enableReservations()
 
     /**
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
@@ -85,7 +85,7 @@ private constructor(
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
      */
-    fun reservationMinutes(): Optional<Long> = body.reservationMinutes()
+    fun reservationMinutes(): Optional<ReservationMinutes> = body.reservationMinutes()
 
     /**
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
@@ -125,7 +125,7 @@ private constructor(
      * Unlike [enableReservations], this method doesn't throw if the JSON field has an unexpected
      * type.
      */
-    fun _enableReservations(): JsonField<Boolean> = body._enableReservations()
+    fun _enableReservations(): JsonField<EnableReservations> = body._enableReservations()
 
     /**
      * Returns the raw JSON value of [metadata].
@@ -155,7 +155,7 @@ private constructor(
      * Unlike [reservationMinutes], this method doesn't throw if the JSON field has an unexpected
      * type.
      */
-    fun _reservationMinutes(): JsonField<Long> = body._reservationMinutes()
+    fun _reservationMinutes(): JsonField<ReservationMinutes> = body._reservationMinutes()
 
     /**
      * Returns the raw JSON value of [reviewerAccessMode].
@@ -266,20 +266,26 @@ private constructor(
          */
         fun description(description: JsonField<String>) = apply { body.description(description) }
 
-        fun enableReservations(enableReservations: Boolean) = apply {
+        fun enableReservations(enableReservations: EnableReservations) = apply {
             body.enableReservations(enableReservations)
         }
 
         /**
          * Sets [Builder.enableReservations] to an arbitrary JSON value.
          *
-         * You should usually call [Builder.enableReservations] with a well-typed [Boolean] value
-         * instead. This method is primarily for setting the field to an undocumented or not yet
-         * supported value.
+         * You should usually call [Builder.enableReservations] with a well-typed
+         * [EnableReservations] value instead. This method is primarily for setting the field to an
+         * undocumented or not yet supported value.
          */
-        fun enableReservations(enableReservations: JsonField<Boolean>) = apply {
+        fun enableReservations(enableReservations: JsonField<EnableReservations>) = apply {
             body.enableReservations(enableReservations)
         }
+
+        /** Alias for calling [enableReservations] with `EnableReservations.ofBool(bool)`. */
+        fun enableReservations(bool: Boolean) = apply { body.enableReservations(bool) }
+
+        /** Alias for calling [enableReservations] with `EnableReservations.ofMissing(missing)`. */
+        fun enableReservations(missing: Missing) = apply { body.enableReservations(missing) }
 
         fun metadata(metadata: Metadata?) = apply { body.metadata(metadata) }
 
@@ -345,34 +351,32 @@ private constructor(
          */
         fun numReviewersPerItem(missing: Missing) = apply { body.numReviewersPerItem(missing) }
 
-        fun reservationMinutes(reservationMinutes: Long?) = apply {
+        fun reservationMinutes(reservationMinutes: ReservationMinutes?) = apply {
             body.reservationMinutes(reservationMinutes)
         }
 
         /**
-         * Alias for [Builder.reservationMinutes].
-         *
-         * This unboxed primitive overload exists for backwards compatibility.
-         */
-        fun reservationMinutes(reservationMinutes: Long) =
-            reservationMinutes(reservationMinutes as Long?)
-
-        /**
          * Alias for calling [Builder.reservationMinutes] with `reservationMinutes.orElse(null)`.
          */
-        fun reservationMinutes(reservationMinutes: Optional<Long>) =
+        fun reservationMinutes(reservationMinutes: Optional<ReservationMinutes>) =
             reservationMinutes(reservationMinutes.getOrNull())
 
         /**
          * Sets [Builder.reservationMinutes] to an arbitrary JSON value.
          *
-         * You should usually call [Builder.reservationMinutes] with a well-typed [Long] value
-         * instead. This method is primarily for setting the field to an undocumented or not yet
-         * supported value.
+         * You should usually call [Builder.reservationMinutes] with a well-typed
+         * [ReservationMinutes] value instead. This method is primarily for setting the field to an
+         * undocumented or not yet supported value.
          */
-        fun reservationMinutes(reservationMinutes: JsonField<Long>) = apply {
+        fun reservationMinutes(reservationMinutes: JsonField<ReservationMinutes>) = apply {
             body.reservationMinutes(reservationMinutes)
         }
+
+        /** Alias for calling [reservationMinutes] with `ReservationMinutes.ofInteger(integer)`. */
+        fun reservationMinutes(integer: Long) = apply { body.reservationMinutes(integer) }
+
+        /** Alias for calling [reservationMinutes] with `ReservationMinutes.ofMissing(missing)`. */
+        fun reservationMinutes(missing: Missing) = apply { body.reservationMinutes(missing) }
 
         fun reviewerAccessMode(reviewerAccessMode: ReviewerAccessMode?) = apply {
             body.reviewerAccessMode(reviewerAccessMode)
@@ -593,11 +597,11 @@ private constructor(
     private constructor(
         private val defaultDataset: JsonField<String>,
         private val description: JsonField<String>,
-        private val enableReservations: JsonField<Boolean>,
+        private val enableReservations: JsonField<EnableReservations>,
         private val metadata: JsonField<Metadata>,
         private val name: JsonField<String>,
         private val numReviewersPerItem: JsonField<NumReviewersPerItem>,
-        private val reservationMinutes: JsonField<Long>,
+        private val reservationMinutes: JsonField<ReservationMinutes>,
         private val reviewerAccessMode: JsonField<ReviewerAccessMode>,
         private val rubricInstructions: JsonField<String>,
         private val rubricItems: JsonField<List<AnnotationQueueRubricItemSchema>>,
@@ -614,7 +618,7 @@ private constructor(
             description: JsonField<String> = JsonMissing.of(),
             @JsonProperty("enable_reservations")
             @ExcludeMissing
-            enableReservations: JsonField<Boolean> = JsonMissing.of(),
+            enableReservations: JsonField<EnableReservations> = JsonMissing.of(),
             @JsonProperty("metadata")
             @ExcludeMissing
             metadata: JsonField<Metadata> = JsonMissing.of(),
@@ -624,7 +628,7 @@ private constructor(
             numReviewersPerItem: JsonField<NumReviewersPerItem> = JsonMissing.of(),
             @JsonProperty("reservation_minutes")
             @ExcludeMissing
-            reservationMinutes: JsonField<Long> = JsonMissing.of(),
+            reservationMinutes: JsonField<ReservationMinutes> = JsonMissing.of(),
             @JsonProperty("reviewer_access_mode")
             @ExcludeMissing
             reviewerAccessMode: JsonField<ReviewerAccessMode> = JsonMissing.of(),
@@ -664,7 +668,7 @@ private constructor(
          * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
          *   the server responded with an unexpected value).
          */
-        fun enableReservations(): Optional<Boolean> =
+        fun enableReservations(): Optional<EnableReservations> =
             enableReservations.getOptional("enable_reservations")
 
         /**
@@ -690,7 +694,7 @@ private constructor(
          * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
          *   the server responded with an unexpected value).
          */
-        fun reservationMinutes(): Optional<Long> =
+        fun reservationMinutes(): Optional<ReservationMinutes> =
             reservationMinutes.getOptional("reservation_minutes")
 
         /**
@@ -741,7 +745,7 @@ private constructor(
          */
         @JsonProperty("enable_reservations")
         @ExcludeMissing
-        fun _enableReservations(): JsonField<Boolean> = enableReservations
+        fun _enableReservations(): JsonField<EnableReservations> = enableReservations
 
         /**
          * Returns the raw JSON value of [metadata].
@@ -775,7 +779,7 @@ private constructor(
          */
         @JsonProperty("reservation_minutes")
         @ExcludeMissing
-        fun _reservationMinutes(): JsonField<Long> = reservationMinutes
+        fun _reservationMinutes(): JsonField<ReservationMinutes> = reservationMinutes
 
         /**
          * Returns the raw JSON value of [reviewerAccessMode].
@@ -829,11 +833,11 @@ private constructor(
 
             private var defaultDataset: JsonField<String> = JsonMissing.of()
             private var description: JsonField<String> = JsonMissing.of()
-            private var enableReservations: JsonField<Boolean> = JsonMissing.of()
+            private var enableReservations: JsonField<EnableReservations> = JsonMissing.of()
             private var metadata: JsonField<Metadata> = JsonMissing.of()
             private var name: JsonField<String> = JsonMissing.of()
             private var numReviewersPerItem: JsonField<NumReviewersPerItem> = JsonMissing.of()
-            private var reservationMinutes: JsonField<Long> = JsonMissing.of()
+            private var reservationMinutes: JsonField<ReservationMinutes> = JsonMissing.of()
             private var reviewerAccessMode: JsonField<ReviewerAccessMode> = JsonMissing.of()
             private var rubricInstructions: JsonField<String> = JsonMissing.of()
             private var rubricItems: JsonField<MutableList<AnnotationQueueRubricItemSchema>>? = null
@@ -888,19 +892,29 @@ private constructor(
                 this.description = description
             }
 
-            fun enableReservations(enableReservations: Boolean) =
+            fun enableReservations(enableReservations: EnableReservations) =
                 enableReservations(JsonField.of(enableReservations))
 
             /**
              * Sets [Builder.enableReservations] to an arbitrary JSON value.
              *
-             * You should usually call [Builder.enableReservations] with a well-typed [Boolean]
-             * value instead. This method is primarily for setting the field to an undocumented or
-             * not yet supported value.
+             * You should usually call [Builder.enableReservations] with a well-typed
+             * [EnableReservations] value instead. This method is primarily for setting the field to
+             * an undocumented or not yet supported value.
              */
-            fun enableReservations(enableReservations: JsonField<Boolean>) = apply {
+            fun enableReservations(enableReservations: JsonField<EnableReservations>) = apply {
                 this.enableReservations = enableReservations
             }
+
+            /** Alias for calling [enableReservations] with `EnableReservations.ofBool(bool)`. */
+            fun enableReservations(bool: Boolean) =
+                enableReservations(EnableReservations.ofBool(bool))
+
+            /**
+             * Alias for calling [enableReservations] with `EnableReservations.ofMissing(missing)`.
+             */
+            fun enableReservations(missing: Missing) =
+                enableReservations(EnableReservations.ofMissing(missing))
 
             fun metadata(metadata: Metadata?) = metadata(JsonField.ofNullable(metadata))
 
@@ -972,34 +986,38 @@ private constructor(
             fun numReviewersPerItem(missing: Missing) =
                 numReviewersPerItem(NumReviewersPerItem.ofMissing(missing))
 
-            fun reservationMinutes(reservationMinutes: Long?) =
+            fun reservationMinutes(reservationMinutes: ReservationMinutes?) =
                 reservationMinutes(JsonField.ofNullable(reservationMinutes))
-
-            /**
-             * Alias for [Builder.reservationMinutes].
-             *
-             * This unboxed primitive overload exists for backwards compatibility.
-             */
-            fun reservationMinutes(reservationMinutes: Long) =
-                reservationMinutes(reservationMinutes as Long?)
 
             /**
              * Alias for calling [Builder.reservationMinutes] with
              * `reservationMinutes.orElse(null)`.
              */
-            fun reservationMinutes(reservationMinutes: Optional<Long>) =
+            fun reservationMinutes(reservationMinutes: Optional<ReservationMinutes>) =
                 reservationMinutes(reservationMinutes.getOrNull())
 
             /**
              * Sets [Builder.reservationMinutes] to an arbitrary JSON value.
              *
-             * You should usually call [Builder.reservationMinutes] with a well-typed [Long] value
-             * instead. This method is primarily for setting the field to an undocumented or not yet
-             * supported value.
+             * You should usually call [Builder.reservationMinutes] with a well-typed
+             * [ReservationMinutes] value instead. This method is primarily for setting the field to
+             * an undocumented or not yet supported value.
              */
-            fun reservationMinutes(reservationMinutes: JsonField<Long>) = apply {
+            fun reservationMinutes(reservationMinutes: JsonField<ReservationMinutes>) = apply {
                 this.reservationMinutes = reservationMinutes
             }
+
+            /**
+             * Alias for calling [reservationMinutes] with `ReservationMinutes.ofInteger(integer)`.
+             */
+            fun reservationMinutes(integer: Long) =
+                reservationMinutes(ReservationMinutes.ofInteger(integer))
+
+            /**
+             * Alias for calling [reservationMinutes] with `ReservationMinutes.ofMissing(missing)`.
+             */
+            fun reservationMinutes(missing: Missing) =
+                reservationMinutes(ReservationMinutes.ofMissing(missing))
 
             fun reviewerAccessMode(reviewerAccessMode: ReviewerAccessMode?) =
                 reviewerAccessMode(JsonField.ofNullable(reviewerAccessMode))
@@ -1131,11 +1149,11 @@ private constructor(
 
             defaultDataset()
             description()
-            enableReservations()
+            enableReservations().ifPresent { it.validate() }
             metadata().ifPresent { it.validate() }
             name()
             numReviewersPerItem().ifPresent { it.validate() }
-            reservationMinutes()
+            reservationMinutes().ifPresent { it.validate() }
             reviewerAccessMode().ifPresent { it.validate() }
             rubricInstructions()
             rubricItems().ifPresent { it.forEach { it.validate() } }
@@ -1160,11 +1178,11 @@ private constructor(
         internal fun validity(): Int =
             (if (defaultDataset.asKnown().isPresent) 1 else 0) +
                 (if (description.asKnown().isPresent) 1 else 0) +
-                (if (enableReservations.asKnown().isPresent) 1 else 0) +
+                (enableReservations.asKnown().getOrNull()?.validity() ?: 0) +
                 (metadata.asKnown().getOrNull()?.validity() ?: 0) +
                 (if (name.asKnown().isPresent) 1 else 0) +
                 (numReviewersPerItem.asKnown().getOrNull()?.validity() ?: 0) +
-                (if (reservationMinutes.asKnown().isPresent) 1 else 0) +
+                (reservationMinutes.asKnown().getOrNull()?.validity() ?: 0) +
                 (reviewerAccessMode.asKnown().getOrNull()?.validity() ?: 0) +
                 (if (rubricInstructions.asKnown().isPresent) 1 else 0) +
                 (rubricItems.asKnown().getOrNull()?.sumOf { it.validity().toInt() } ?: 0)
@@ -1208,6 +1226,217 @@ private constructor(
 
         override fun toString() =
             "Body{defaultDataset=$defaultDataset, description=$description, enableReservations=$enableReservations, metadata=$metadata, name=$name, numReviewersPerItem=$numReviewersPerItem, reservationMinutes=$reservationMinutes, reviewerAccessMode=$reviewerAccessMode, rubricInstructions=$rubricInstructions, rubricItems=$rubricItems, additionalProperties=$additionalProperties}"
+    }
+
+    @JsonDeserialize(using = EnableReservations.Deserializer::class)
+    @JsonSerialize(using = EnableReservations.Serializer::class)
+    class EnableReservations
+    private constructor(
+        private val bool: Boolean? = null,
+        private val missing: Missing? = null,
+        private val _json: JsonValue? = null,
+    ) {
+
+        fun bool(): Optional<Boolean> = Optional.ofNullable(bool)
+
+        fun missing(): Optional<Missing> = Optional.ofNullable(missing)
+
+        fun isBool(): Boolean = bool != null
+
+        fun isMissing(): Boolean = missing != null
+
+        fun asBool(): Boolean = bool.getOrThrow("bool")
+
+        fun asMissing(): Missing = missing.getOrThrow("missing")
+
+        fun _json(): Optional<JsonValue> = Optional.ofNullable(_json)
+
+        /**
+         * Maps this instance's current variant to a value of type [T] using the given [visitor].
+         *
+         * Note that this method is _not_ forwards compatible with new variants from the API, unless
+         * [visitor] overrides [Visitor.unknown]. To handle variants not known to this version of
+         * the SDK gracefully, consider overriding [Visitor.unknown]:
+         * ```java
+         * import com.langchain.smith.core.JsonValue;
+         * import java.util.Optional;
+         *
+         * Optional<String> result = enableReservations.accept(new EnableReservations.Visitor<Optional<String>>() {
+         *     @Override
+         *     public Optional<String> visitBool(Boolean bool) {
+         *         return Optional.of(bool.toString());
+         *     }
+         *
+         *     // ...
+         *
+         *     @Override
+         *     public Optional<String> unknown(JsonValue json) {
+         *         // Or inspect the `json`.
+         *         return Optional.empty();
+         *     }
+         * });
+         * ```
+         *
+         * @throws LangChainInvalidDataException if [Visitor.unknown] is not overridden in [visitor]
+         *   and the current variant is unknown.
+         */
+        fun <T> accept(visitor: Visitor<T>): T =
+            when {
+                bool != null -> visitor.visitBool(bool)
+                missing != null -> visitor.visitMissing(missing)
+                else -> visitor.unknown(_json)
+            }
+
+        private var validated: Boolean = false
+
+        /**
+         * Validates that the types of all values in this object match their expected types
+         * recursively.
+         *
+         * This method is _not_ forwards compatible with new types from the API for existing fields.
+         *
+         * @throws LangChainInvalidDataException if any value type in this object doesn't match its
+         *   expected type.
+         */
+        fun validate(): EnableReservations = apply {
+            if (validated) {
+                return@apply
+            }
+
+            accept(
+                object : Visitor<Unit> {
+                    override fun visitBool(bool: Boolean) {}
+
+                    override fun visitMissing(missing: Missing) {
+                        missing.validate()
+                    }
+                }
+            )
+            validated = true
+        }
+
+        fun isValid(): Boolean =
+            try {
+                validate()
+                true
+            } catch (e: LangChainInvalidDataException) {
+                false
+            }
+
+        /**
+         * Returns a score indicating how many valid values are contained in this object
+         * recursively.
+         *
+         * Used for best match union deserialization.
+         */
+        @JvmSynthetic
+        internal fun validity(): Int =
+            accept(
+                object : Visitor<Int> {
+                    override fun visitBool(bool: Boolean) = 1
+
+                    override fun visitMissing(missing: Missing) = missing.validity()
+
+                    override fun unknown(json: JsonValue?) = 0
+                }
+            )
+
+        override fun equals(other: Any?): Boolean {
+            if (this === other) {
+                return true
+            }
+
+            return other is EnableReservations && bool == other.bool && missing == other.missing
+        }
+
+        override fun hashCode(): Int = Objects.hash(bool, missing)
+
+        override fun toString(): String =
+            when {
+                bool != null -> "EnableReservations{bool=$bool}"
+                missing != null -> "EnableReservations{missing=$missing}"
+                _json != null -> "EnableReservations{_unknown=$_json}"
+                else -> throw IllegalStateException("Invalid EnableReservations")
+            }
+
+        companion object {
+
+            @JvmStatic fun ofBool(bool: Boolean) = EnableReservations(bool = bool)
+
+            @JvmStatic fun ofMissing(missing: Missing) = EnableReservations(missing = missing)
+        }
+
+        /**
+         * An interface that defines how to map each variant of [EnableReservations] to a value of
+         * type [T].
+         */
+        interface Visitor<out T> {
+
+            fun visitBool(bool: Boolean): T
+
+            fun visitMissing(missing: Missing): T
+
+            /**
+             * Maps an unknown variant of [EnableReservations] to a value of type [T].
+             *
+             * An instance of [EnableReservations] can contain an unknown variant if it was
+             * deserialized from data that doesn't match any known variant. For example, if the SDK
+             * is on an older version than the API, then the API may respond with new variants that
+             * the SDK is unaware of.
+             *
+             * @throws LangChainInvalidDataException in the default implementation.
+             */
+            fun unknown(json: JsonValue?): T {
+                throw LangChainInvalidDataException("Unknown EnableReservations: $json")
+            }
+        }
+
+        internal class Deserializer :
+            BaseDeserializer<EnableReservations>(EnableReservations::class) {
+
+            override fun ObjectCodec.deserialize(node: JsonNode): EnableReservations {
+                val json = JsonValue.fromJsonNode(node)
+
+                val bestMatches =
+                    sequenceOf(
+                            tryDeserialize(node, jacksonTypeRef<Missing>())?.let {
+                                EnableReservations(missing = it, _json = json)
+                            },
+                            tryDeserialize(node, jacksonTypeRef<Boolean>())?.let {
+                                EnableReservations(bool = it, _json = json)
+                            },
+                        )
+                        .filterNotNull()
+                        .allMaxBy { it.validity() }
+                        .toList()
+                return when (bestMatches.size) {
+                    // This can happen if what we're deserializing is completely incompatible with
+                    // all the possible variants (e.g. deserializing from string).
+                    0 -> EnableReservations(_json = json)
+                    1 -> bestMatches.single()
+                    // If there's more than one match with the highest validity, then use the first
+                    // completely valid match, or simply the first match if none are completely
+                    // valid.
+                    else -> bestMatches.firstOrNull { it.isValid() } ?: bestMatches.first()
+                }
+            }
+        }
+
+        internal class Serializer : BaseSerializer<EnableReservations>(EnableReservations::class) {
+
+            override fun serialize(
+                value: EnableReservations,
+                generator: JsonGenerator,
+                provider: SerializerProvider,
+            ) {
+                when {
+                    value.bool != null -> generator.writeObject(value.bool)
+                    value.missing != null -> generator.writeObject(value.missing)
+                    value._json != null -> generator.writeObject(value._json)
+                    else -> throw IllegalStateException("Invalid EnableReservations")
+                }
+            }
+        }
     }
 
     @JsonDeserialize(using = Metadata.Deserializer::class)
@@ -1746,6 +1975,219 @@ private constructor(
                     value.missing != null -> generator.writeObject(value.missing)
                     value._json != null -> generator.writeObject(value._json)
                     else -> throw IllegalStateException("Invalid NumReviewersPerItem")
+                }
+            }
+        }
+    }
+
+    @JsonDeserialize(using = ReservationMinutes.Deserializer::class)
+    @JsonSerialize(using = ReservationMinutes.Serializer::class)
+    class ReservationMinutes
+    private constructor(
+        private val integer: Long? = null,
+        private val missing: Missing? = null,
+        private val _json: JsonValue? = null,
+    ) {
+
+        fun integer(): Optional<Long> = Optional.ofNullable(integer)
+
+        fun missing(): Optional<Missing> = Optional.ofNullable(missing)
+
+        fun isInteger(): Boolean = integer != null
+
+        fun isMissing(): Boolean = missing != null
+
+        fun asInteger(): Long = integer.getOrThrow("integer")
+
+        fun asMissing(): Missing = missing.getOrThrow("missing")
+
+        fun _json(): Optional<JsonValue> = Optional.ofNullable(_json)
+
+        /**
+         * Maps this instance's current variant to a value of type [T] using the given [visitor].
+         *
+         * Note that this method is _not_ forwards compatible with new variants from the API, unless
+         * [visitor] overrides [Visitor.unknown]. To handle variants not known to this version of
+         * the SDK gracefully, consider overriding [Visitor.unknown]:
+         * ```java
+         * import com.langchain.smith.core.JsonValue;
+         * import java.util.Optional;
+         *
+         * Optional<String> result = reservationMinutes.accept(new ReservationMinutes.Visitor<Optional<String>>() {
+         *     @Override
+         *     public Optional<String> visitInteger(Long integer) {
+         *         return Optional.of(integer.toString());
+         *     }
+         *
+         *     // ...
+         *
+         *     @Override
+         *     public Optional<String> unknown(JsonValue json) {
+         *         // Or inspect the `json`.
+         *         return Optional.empty();
+         *     }
+         * });
+         * ```
+         *
+         * @throws LangChainInvalidDataException if [Visitor.unknown] is not overridden in [visitor]
+         *   and the current variant is unknown.
+         */
+        fun <T> accept(visitor: Visitor<T>): T =
+            when {
+                integer != null -> visitor.visitInteger(integer)
+                missing != null -> visitor.visitMissing(missing)
+                else -> visitor.unknown(_json)
+            }
+
+        private var validated: Boolean = false
+
+        /**
+         * Validates that the types of all values in this object match their expected types
+         * recursively.
+         *
+         * This method is _not_ forwards compatible with new types from the API for existing fields.
+         *
+         * @throws LangChainInvalidDataException if any value type in this object doesn't match its
+         *   expected type.
+         */
+        fun validate(): ReservationMinutes = apply {
+            if (validated) {
+                return@apply
+            }
+
+            accept(
+                object : Visitor<Unit> {
+                    override fun visitInteger(integer: Long) {}
+
+                    override fun visitMissing(missing: Missing) {
+                        missing.validate()
+                    }
+                }
+            )
+            validated = true
+        }
+
+        fun isValid(): Boolean =
+            try {
+                validate()
+                true
+            } catch (e: LangChainInvalidDataException) {
+                false
+            }
+
+        /**
+         * Returns a score indicating how many valid values are contained in this object
+         * recursively.
+         *
+         * Used for best match union deserialization.
+         */
+        @JvmSynthetic
+        internal fun validity(): Int =
+            accept(
+                object : Visitor<Int> {
+                    override fun visitInteger(integer: Long) = 1
+
+                    override fun visitMissing(missing: Missing) = missing.validity()
+
+                    override fun unknown(json: JsonValue?) = 0
+                }
+            )
+
+        override fun equals(other: Any?): Boolean {
+            if (this === other) {
+                return true
+            }
+
+            return other is ReservationMinutes &&
+                integer == other.integer &&
+                missing == other.missing
+        }
+
+        override fun hashCode(): Int = Objects.hash(integer, missing)
+
+        override fun toString(): String =
+            when {
+                integer != null -> "ReservationMinutes{integer=$integer}"
+                missing != null -> "ReservationMinutes{missing=$missing}"
+                _json != null -> "ReservationMinutes{_unknown=$_json}"
+                else -> throw IllegalStateException("Invalid ReservationMinutes")
+            }
+
+        companion object {
+
+            @JvmStatic fun ofInteger(integer: Long) = ReservationMinutes(integer = integer)
+
+            @JvmStatic fun ofMissing(missing: Missing) = ReservationMinutes(missing = missing)
+        }
+
+        /**
+         * An interface that defines how to map each variant of [ReservationMinutes] to a value of
+         * type [T].
+         */
+        interface Visitor<out T> {
+
+            fun visitInteger(integer: Long): T
+
+            fun visitMissing(missing: Missing): T
+
+            /**
+             * Maps an unknown variant of [ReservationMinutes] to a value of type [T].
+             *
+             * An instance of [ReservationMinutes] can contain an unknown variant if it was
+             * deserialized from data that doesn't match any known variant. For example, if the SDK
+             * is on an older version than the API, then the API may respond with new variants that
+             * the SDK is unaware of.
+             *
+             * @throws LangChainInvalidDataException in the default implementation.
+             */
+            fun unknown(json: JsonValue?): T {
+                throw LangChainInvalidDataException("Unknown ReservationMinutes: $json")
+            }
+        }
+
+        internal class Deserializer :
+            BaseDeserializer<ReservationMinutes>(ReservationMinutes::class) {
+
+            override fun ObjectCodec.deserialize(node: JsonNode): ReservationMinutes {
+                val json = JsonValue.fromJsonNode(node)
+
+                val bestMatches =
+                    sequenceOf(
+                            tryDeserialize(node, jacksonTypeRef<Missing>())?.let {
+                                ReservationMinutes(missing = it, _json = json)
+                            },
+                            tryDeserialize(node, jacksonTypeRef<Long>())?.let {
+                                ReservationMinutes(integer = it, _json = json)
+                            },
+                        )
+                        .filterNotNull()
+                        .allMaxBy { it.validity() }
+                        .toList()
+                return when (bestMatches.size) {
+                    // This can happen if what we're deserializing is completely incompatible with
+                    // all the possible variants (e.g. deserializing from boolean).
+                    0 -> ReservationMinutes(_json = json)
+                    1 -> bestMatches.single()
+                    // If there's more than one match with the highest validity, then use the first
+                    // completely valid match, or simply the first match if none are completely
+                    // valid.
+                    else -> bestMatches.firstOrNull { it.isValid() } ?: bestMatches.first()
+                }
+            }
+        }
+
+        internal class Serializer : BaseSerializer<ReservationMinutes>(ReservationMinutes::class) {
+
+            override fun serialize(
+                value: ReservationMinutes,
+                generator: JsonGenerator,
+                provider: SerializerProvider,
+            ) {
+                when {
+                    value.integer != null -> generator.writeObject(value.integer)
+                    value.missing != null -> generator.writeObject(value.missing)
+                    value._json != null -> generator.writeObject(value._json)
+                    else -> throw IllegalStateException("Invalid ReservationMinutes")
                 }
             }
         }

@@ -23,6 +23,8 @@ import com.langchain.smith.models.sessions.SessionDashboardParams
 import com.langchain.smith.models.sessions.SessionDeleteParams
 import com.langchain.smith.models.sessions.SessionListPageAsync
 import com.langchain.smith.models.sessions.SessionListParams
+import com.langchain.smith.models.sessions.SessionResolveParams
+import com.langchain.smith.models.sessions.SessionResolveResponse
 import com.langchain.smith.models.sessions.SessionRetrieveParams
 import com.langchain.smith.models.sessions.SessionUpdateParams
 import com.langchain.smith.models.sessions.TracerSession
@@ -90,6 +92,13 @@ class SessionServiceAsyncImpl internal constructor(private val clientOptions: Cl
     ): CompletableFuture<CustomChartsSection> =
         // post /api/v1/sessions/{session_id}/dashboard
         withRawResponse().dashboard(params, requestOptions).thenApply { it.parse() }
+
+    override fun resolve(
+        params: SessionResolveParams,
+        requestOptions: RequestOptions,
+    ): CompletableFuture<SessionResolveResponse> =
+        // get /api/v1/sessions/resolutions
+        withRawResponse().resolve(params, requestOptions).thenApply { it.parse() }
 
     class WithRawResponseImpl internal constructor(private val clientOptions: ClientOptions) :
         SessionServiceAsync.WithRawResponse {
@@ -298,6 +307,36 @@ class SessionServiceAsyncImpl internal constructor(private val clientOptions: Cl
                     errorHandler.handle(response).parseable {
                         response
                             .use { dashboardHandler.handle(it) }
+                            .also {
+                                if (requestOptions.responseValidation!!) {
+                                    it.validate()
+                                }
+                            }
+                    }
+                }
+        }
+
+        private val resolveHandler: Handler<SessionResolveResponse> =
+            jsonHandler<SessionResolveResponse>(clientOptions.jsonMapper)
+
+        override fun resolve(
+            params: SessionResolveParams,
+            requestOptions: RequestOptions,
+        ): CompletableFuture<HttpResponseFor<SessionResolveResponse>> {
+            val request =
+                HttpRequest.builder()
+                    .method(HttpMethod.GET)
+                    .baseUrl(clientOptions.baseUrl())
+                    .addPathSegments("api", "v1", "sessions", "resolutions")
+                    .build()
+                    .prepareAsync(clientOptions, params)
+            val requestOptions = requestOptions.applyDefaults(RequestOptions.from(clientOptions))
+            return request
+                .thenComposeAsync { clientOptions.httpClient.executeAsync(it, requestOptions) }
+                .thenApply { response ->
+                    errorHandler.handle(response).parseable {
+                        response
+                            .use { resolveHandler.handle(it) }
                             .also {
                                 if (requestOptions.responseValidation!!) {
                                     it.validate()

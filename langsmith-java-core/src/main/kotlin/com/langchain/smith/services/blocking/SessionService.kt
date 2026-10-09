@@ -13,6 +13,8 @@ import com.langchain.smith.models.sessions.SessionDashboardParams
 import com.langchain.smith.models.sessions.SessionDeleteParams
 import com.langchain.smith.models.sessions.SessionListPage
 import com.langchain.smith.models.sessions.SessionListParams
+import com.langchain.smith.models.sessions.SessionResolveParams
+import com.langchain.smith.models.sessions.SessionResolveResponse
 import com.langchain.smith.models.sessions.SessionRetrieveParams
 import com.langchain.smith.models.sessions.SessionUpdateParams
 import com.langchain.smith.models.sessions.TracerSession
@@ -190,6 +192,25 @@ interface SessionService {
         params: SessionDashboardParams,
         requestOptions: RequestOptions = RequestOptions.none(),
     ): CustomChartsSection
+
+    /**
+     * **Beta:** This endpoint is in active development and may change without notice. Returns the
+     * tracing project (session) an address names. An address is an AGENT (`id` and `environment`),
+     * an EXPERIMENT (`id`), or an EVALUATOR (no `id`: evaluator traces share one project per
+     * workspace). Send `kind` and `environment` in upper case, as listed; they are matched
+     * case-insensitively, while the Agent `id` is case-sensitive. An address that does not exist,
+     * or whose project you cannot read, is a 404. Pass the returned `session_id` to any endpoint
+     * that takes a project (session) ID. This is not supported on a BYOC data plane yet, and is a
+     * 501 there.
+     */
+    fun resolve(params: SessionResolveParams): SessionResolveResponse =
+        resolve(params, RequestOptions.none())
+
+    /** @see resolve */
+    fun resolve(
+        params: SessionResolveParams,
+        requestOptions: RequestOptions = RequestOptions.none(),
+    ): SessionResolveResponse
 
     /** A view of [SessionService] that provides access to raw HTTP responses for each method. */
     interface WithRawResponse {
@@ -417,5 +438,20 @@ interface SessionService {
             params: SessionDashboardParams,
             requestOptions: RequestOptions = RequestOptions.none(),
         ): HttpResponseFor<CustomChartsSection>
+
+        /**
+         * Returns a raw HTTP response for `get /api/v1/sessions/resolutions`, but is otherwise the
+         * same as [SessionService.resolve].
+         */
+        @MustBeClosed
+        fun resolve(params: SessionResolveParams): HttpResponseFor<SessionResolveResponse> =
+            resolve(params, RequestOptions.none())
+
+        /** @see resolve */
+        @MustBeClosed
+        fun resolve(
+            params: SessionResolveParams,
+            requestOptions: RequestOptions = RequestOptions.none(),
+        ): HttpResponseFor<SessionResolveResponse>
     }
 }

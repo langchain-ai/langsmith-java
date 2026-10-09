@@ -23,6 +23,7 @@ class CreateOnlineCodeEvaluatorRequest
 private constructor(
     private val advancedFeaturesEnabled: JsonField<Boolean>,
     private val code: JsonField<String>,
+    private val codeEvaluatorInput: JsonField<CodeEvaluatorInput>,
     private val dependencies: JsonField<String>,
     private val language: JsonField<String>,
     private val managedCodeEvaluatorKey: JsonField<ManagedCodeEvaluatorKey>,
@@ -37,6 +38,9 @@ private constructor(
         @ExcludeMissing
         advancedFeaturesEnabled: JsonField<Boolean> = JsonMissing.of(),
         @JsonProperty("code") @ExcludeMissing code: JsonField<String> = JsonMissing.of(),
+        @JsonProperty("code_evaluator_input")
+        @ExcludeMissing
+        codeEvaluatorInput: JsonField<CodeEvaluatorInput> = JsonMissing.of(),
         @JsonProperty("dependencies")
         @ExcludeMissing
         dependencies: JsonField<String> = JsonMissing.of(),
@@ -53,6 +57,7 @@ private constructor(
     ) : this(
         advancedFeaturesEnabled,
         code,
+        codeEvaluatorInput,
         dependencies,
         language,
         managedCodeEvaluatorKey,
@@ -73,6 +78,16 @@ private constructor(
      *   server responded with an unexpected value).
      */
     fun code(): Optional<String> = code.getOptional("code")
+
+    /**
+     * CodeEvaluatorInput is which thread data the evaluator receives. Null or omitted for run
+     * evaluators.
+     *
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
+    fun codeEvaluatorInput(): Optional<CodeEvaluatorInput> =
+        codeEvaluatorInput.getOptional("code_evaluator_input")
 
     /**
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
@@ -128,6 +143,16 @@ private constructor(
      * Unlike [code], this method doesn't throw if the JSON field has an unexpected type.
      */
     @JsonProperty("code") @ExcludeMissing fun _code(): JsonField<String> = code
+
+    /**
+     * Returns the raw JSON value of [codeEvaluatorInput].
+     *
+     * Unlike [codeEvaluatorInput], this method doesn't throw if the JSON field has an unexpected
+     * type.
+     */
+    @JsonProperty("code_evaluator_input")
+    @ExcludeMissing
+    fun _codeEvaluatorInput(): JsonField<CodeEvaluatorInput> = codeEvaluatorInput
 
     /**
      * Returns the raw JSON value of [dependencies].
@@ -202,6 +227,7 @@ private constructor(
 
         private var advancedFeaturesEnabled: JsonField<Boolean> = JsonMissing.of()
         private var code: JsonField<String> = JsonMissing.of()
+        private var codeEvaluatorInput: JsonField<CodeEvaluatorInput> = JsonMissing.of()
         private var dependencies: JsonField<String> = JsonMissing.of()
         private var language: JsonField<String> = JsonMissing.of()
         private var managedCodeEvaluatorKey: JsonField<ManagedCodeEvaluatorKey> = JsonMissing.of()
@@ -215,6 +241,7 @@ private constructor(
             apply {
                 advancedFeaturesEnabled = createOnlineCodeEvaluatorRequest.advancedFeaturesEnabled
                 code = createOnlineCodeEvaluatorRequest.code
+                codeEvaluatorInput = createOnlineCodeEvaluatorRequest.codeEvaluatorInput
                 dependencies = createOnlineCodeEvaluatorRequest.dependencies
                 language = createOnlineCodeEvaluatorRequest.language
                 managedCodeEvaluatorKey = createOnlineCodeEvaluatorRequest.managedCodeEvaluatorKey
@@ -248,6 +275,30 @@ private constructor(
          * method is primarily for setting the field to an undocumented or not yet supported value.
          */
         fun code(code: JsonField<String>) = apply { this.code = code }
+
+        /**
+         * CodeEvaluatorInput is which thread data the evaluator receives. Null or omitted for run
+         * evaluators.
+         */
+        fun codeEvaluatorInput(codeEvaluatorInput: CodeEvaluatorInput?) =
+            codeEvaluatorInput(JsonField.ofNullable(codeEvaluatorInput))
+
+        /**
+         * Alias for calling [Builder.codeEvaluatorInput] with `codeEvaluatorInput.orElse(null)`.
+         */
+        fun codeEvaluatorInput(codeEvaluatorInput: Optional<CodeEvaluatorInput>) =
+            codeEvaluatorInput(codeEvaluatorInput.getOrNull())
+
+        /**
+         * Sets [Builder.codeEvaluatorInput] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.codeEvaluatorInput] with a well-typed
+         * [CodeEvaluatorInput] value instead. This method is primarily for setting the field to an
+         * undocumented or not yet supported value.
+         */
+        fun codeEvaluatorInput(codeEvaluatorInput: JsonField<CodeEvaluatorInput>) = apply {
+            this.codeEvaluatorInput = codeEvaluatorInput
+        }
 
         fun dependencies(dependencies: String?) = dependencies(JsonField.ofNullable(dependencies))
 
@@ -352,6 +403,7 @@ private constructor(
             CreateOnlineCodeEvaluatorRequest(
                 advancedFeaturesEnabled,
                 code,
+                codeEvaluatorInput,
                 dependencies,
                 language,
                 managedCodeEvaluatorKey,
@@ -378,6 +430,7 @@ private constructor(
 
         advancedFeaturesEnabled()
         code()
+        codeEvaluatorInput().ifPresent { it.validate() }
         dependencies()
         language()
         managedCodeEvaluatorKey().ifPresent { it.validate() }
@@ -403,11 +456,169 @@ private constructor(
     internal fun validity(): Int =
         (if (advancedFeaturesEnabled.asKnown().isPresent) 1 else 0) +
             (if (code.asKnown().isPresent) 1 else 0) +
+            (codeEvaluatorInput.asKnown().getOrNull()?.validity() ?: 0) +
             (if (dependencies.asKnown().isPresent) 1 else 0) +
             (if (language.asKnown().isPresent) 1 else 0) +
             (managedCodeEvaluatorKey.asKnown().getOrNull()?.validity() ?: 0) +
             (managedCodeEvaluatorSettings.asKnown().getOrNull()?.validity() ?: 0) +
             (if (requireAttachments.asKnown().isPresent) 1 else 0)
+
+    /**
+     * CodeEvaluatorInput is which thread data the evaluator receives. Null or omitted for run
+     * evaluators.
+     */
+    class CodeEvaluatorInput
+    @JsonCreator
+    private constructor(private val value: JsonField<String>) : Enum {
+
+        /**
+         * Returns this class instance's raw value.
+         *
+         * This is usually only useful if this instance was deserialized from data that doesn't
+         * match any known member, and you want to know that value. For example, if the SDK is on an
+         * older version than the API, then the API may respond with new members that the SDK is
+         * unaware of.
+         */
+        @com.fasterxml.jackson.annotation.JsonValue fun _value(): JsonField<String> = value
+
+        companion object {
+
+            @JvmField val THREAD = of("thread")
+
+            @JvmField val ALL_MESSAGES = of("all_messages")
+
+            @JvmField val HUMAN_AI_PAIRS = of("human_ai_pairs")
+
+            @JvmField val FIRST_HUMAN_LAST_AI = of("first_human_last_ai")
+
+            @JvmStatic fun of(value: String) = CodeEvaluatorInput(JsonField.of(value))
+        }
+
+        /** An enum containing [CodeEvaluatorInput]'s known values. */
+        enum class Known {
+            THREAD,
+            ALL_MESSAGES,
+            HUMAN_AI_PAIRS,
+            FIRST_HUMAN_LAST_AI,
+        }
+
+        /**
+         * An enum containing [CodeEvaluatorInput]'s known values, as well as an [_UNKNOWN] member.
+         *
+         * An instance of [CodeEvaluatorInput] can contain an unknown value in a couple of cases:
+         * - It was deserialized from data that doesn't match any known member. For example, if the
+         *   SDK is on an older version than the API, then the API may respond with new members that
+         *   the SDK is unaware of.
+         * - It was constructed with an arbitrary value using the [of] method.
+         */
+        enum class Value {
+            THREAD,
+            ALL_MESSAGES,
+            HUMAN_AI_PAIRS,
+            FIRST_HUMAN_LAST_AI,
+            /**
+             * An enum member indicating that [CodeEvaluatorInput] was instantiated with an unknown
+             * value.
+             */
+            _UNKNOWN,
+        }
+
+        /**
+         * Returns an enum member corresponding to this class instance's value, or [Value._UNKNOWN]
+         * if the class was instantiated with an unknown value.
+         *
+         * Use the [known] method instead if you're certain the value is always known or if you want
+         * to throw for the unknown case.
+         */
+        fun value(): Value =
+            when (this) {
+                THREAD -> Value.THREAD
+                ALL_MESSAGES -> Value.ALL_MESSAGES
+                HUMAN_AI_PAIRS -> Value.HUMAN_AI_PAIRS
+                FIRST_HUMAN_LAST_AI -> Value.FIRST_HUMAN_LAST_AI
+                else -> Value._UNKNOWN
+            }
+
+        /**
+         * Returns an enum member corresponding to this class instance's value.
+         *
+         * Use the [value] method instead if you're uncertain the value is always known and don't
+         * want to throw for the unknown case.
+         *
+         * @throws LangChainInvalidDataException if this class instance's value is a not a known
+         *   member.
+         */
+        fun known(): Known =
+            when (this) {
+                THREAD -> Known.THREAD
+                ALL_MESSAGES -> Known.ALL_MESSAGES
+                HUMAN_AI_PAIRS -> Known.HUMAN_AI_PAIRS
+                FIRST_HUMAN_LAST_AI -> Known.FIRST_HUMAN_LAST_AI
+                else -> throw LangChainInvalidDataException("Unknown CodeEvaluatorInput: $value")
+            }
+
+        /**
+         * Returns this class instance's primitive wire representation.
+         *
+         * This differs from the [toString] method because that method is primarily for debugging
+         * and generally doesn't throw.
+         *
+         * @throws LangChainInvalidDataException if this class instance's value does not have the
+         *   expected primitive type.
+         */
+        fun asString(): String =
+            _value().asString().orElseThrow {
+                LangChainInvalidDataException("Value is not a String")
+            }
+
+        private var validated: Boolean = false
+
+        /**
+         * Validates that the types of all values in this object match their expected types
+         * recursively.
+         *
+         * This method is _not_ forwards compatible with new types from the API for existing fields.
+         *
+         * @throws LangChainInvalidDataException if any value type in this object doesn't match its
+         *   expected type.
+         */
+        fun validate(): CodeEvaluatorInput = apply {
+            if (validated) {
+                return@apply
+            }
+
+            known()
+            validated = true
+        }
+
+        fun isValid(): Boolean =
+            try {
+                validate()
+                true
+            } catch (e: LangChainInvalidDataException) {
+                false
+            }
+
+        /**
+         * Returns a score indicating how many valid values are contained in this object
+         * recursively.
+         *
+         * Used for best match union deserialization.
+         */
+        @JvmSynthetic internal fun validity(): Int = if (value() == Value._UNKNOWN) 0 else 1
+
+        override fun equals(other: Any?): Boolean {
+            if (this === other) {
+                return true
+            }
+
+            return other is CodeEvaluatorInput && value == other.value
+        }
+
+        override fun hashCode() = value.hashCode()
+
+        override fun toString() = value.toString()
+    }
 
     class ManagedCodeEvaluatorKey
     @JsonCreator
@@ -670,6 +881,7 @@ private constructor(
         return other is CreateOnlineCodeEvaluatorRequest &&
             advancedFeaturesEnabled == other.advancedFeaturesEnabled &&
             code == other.code &&
+            codeEvaluatorInput == other.codeEvaluatorInput &&
             dependencies == other.dependencies &&
             language == other.language &&
             managedCodeEvaluatorKey == other.managedCodeEvaluatorKey &&
@@ -682,6 +894,7 @@ private constructor(
         Objects.hash(
             advancedFeaturesEnabled,
             code,
+            codeEvaluatorInput,
             dependencies,
             language,
             managedCodeEvaluatorKey,
@@ -694,5 +907,5 @@ private constructor(
     override fun hashCode(): Int = hashCode
 
     override fun toString() =
-        "CreateOnlineCodeEvaluatorRequest{advancedFeaturesEnabled=$advancedFeaturesEnabled, code=$code, dependencies=$dependencies, language=$language, managedCodeEvaluatorKey=$managedCodeEvaluatorKey, managedCodeEvaluatorSettings=$managedCodeEvaluatorSettings, requireAttachments=$requireAttachments, additionalProperties=$additionalProperties}"
+        "CreateOnlineCodeEvaluatorRequest{advancedFeaturesEnabled=$advancedFeaturesEnabled, code=$code, codeEvaluatorInput=$codeEvaluatorInput, dependencies=$dependencies, language=$language, managedCodeEvaluatorKey=$managedCodeEvaluatorKey, managedCodeEvaluatorSettings=$managedCodeEvaluatorSettings, requireAttachments=$requireAttachments, additionalProperties=$additionalProperties}"
 }

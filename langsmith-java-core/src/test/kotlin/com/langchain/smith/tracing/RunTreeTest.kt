@@ -58,4 +58,17 @@ internal class RunTreeTest {
             )
             .isEqualTo("hello")
     }
+
+    @Test
+    fun `resolveRevisionId prefers LANGSMITH_REVISION_ID over the legacy name`() {
+        fun resolve(vararg env: Pair<String, String>) = resolveRevisionId(mapOf(*env)::get)
+
+        assertThat(resolve()).isNull()
+        assertThat(resolve("LANGSMITH_REVISION_ID" to "new")).isEqualTo("new")
+        assertThat(resolve("LANGCHAIN_REVISION_ID" to "legacy")).isEqualTo("legacy")
+        assertThat(resolve("LANGSMITH_REVISION_ID" to "new", "LANGCHAIN_REVISION_ID" to "legacy"))
+            .isEqualTo("new")
+        assertThat(resolve("LANGSMITH_REVISION_ID" to " ", "LANGCHAIN_REVISION_ID" to "legacy"))
+            .isEqualTo("legacy")
+    }
 }

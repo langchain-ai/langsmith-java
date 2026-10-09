@@ -2,6 +2,8 @@
 
 package com.langchain.smith.tracing
 
+import com.langchain.smith.address.AgentAddress
+import com.langchain.smith.address.EnvAddressException
 import com.langchain.smith.client.LangsmithClient
 import java.time.Instant
 import java.util.ServiceLoader
@@ -325,7 +327,13 @@ class TraceConfig(
      * @see withParent
      */
     val parent: ParentConfig = ParentConfig.AUTO,
+    /** (beta) The agent address to send the trace to instead of a project. */
+    val address: AgentAddress? = null,
 ) {
+    init {
+        rejectConflicting(projectName, sessionId, address)
+    }
+
     companion object {
         /** Creates a new [Builder] for constructing a [TraceConfig]. */
         @JvmStatic fun builder() = Builder()
@@ -358,6 +366,7 @@ class TraceConfig(
         private var tracingEnabled: Boolean? = null
         private var processTracedIO: TraceProcessIO<*, *>? = null
         private var parent: ParentConfig = ParentConfig.AUTO
+        private var address: AgentAddress? = null
 
         @JvmSynthetic
         internal fun from(config: TraceConfig) = apply {
@@ -373,6 +382,7 @@ class TraceConfig(
             tracingEnabled = config.tracingEnabled
             processTracedIO = config.processTracedIO
             parent = config.parent
+            address = config.address
         }
 
         /** The name of the run, displayed in LangSmith. */
@@ -430,6 +440,9 @@ class TraceConfig(
             this.parent = if (parent != null) ParentConfig.of(parent) else ParentConfig.NONE
         }
 
+        /** (beta) The agent address to send the trace to instead of a project. */
+        fun address(address: AgentAddress) = apply { this.address = address }
+
         /** Builds the [TraceConfig]. */
         fun build() =
             TraceConfig(
@@ -445,6 +458,7 @@ class TraceConfig(
                 tracingEnabled = tracingEnabled,
                 processTracedIO = processTracedIO,
                 parent = parent,
+                address = address,
             )
     }
 }
@@ -750,6 +764,13 @@ private fun <T> executeTraced(config: TraceConfig, inputs: Map<String, Any?>?, b
             parentRun.createChild(config).also { it.inputs = inputs }
         } else {
             // Root run — resolve client and create the tree.
+            val destination =
+                try {
+                    resolveRootDestination(config.projectName, config.sessionId, config.address)
+                } catch (e: EnvAddressException) {
+                    logUntraced(e)
+                    return block()
+                }
             val client =
                 config.client
                     ?: resolveDefaultClient()
@@ -773,7 +794,8 @@ private fun <T> executeTraced(config: TraceConfig, inputs: Map<String, Any?>?, b
                 name = config.name ?: DEFAULT_RUN_NAME,
                 runType = config.runType,
                 startTime = startTime,
-                projectName = config.projectName ?: DEFAULT_PROJECT_NAME,
+                projectName = destination.projectName,
+                address = destination.address,
                 referenceExampleId = config.referenceExampleId,
                 sessionId = config.sessionId,
                 inputs = inputs,
