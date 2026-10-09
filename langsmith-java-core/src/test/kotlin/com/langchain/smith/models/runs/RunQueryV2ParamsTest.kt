@@ -14,6 +14,7 @@ internal class RunQueryV2ParamsTest {
     fun create() {
         RunQueryV2Params.builder()
             .accept("Accept")
+            .aiSearch("The customer was charged twice")
             .cursor(
                 "eyJ2IjoxLCJhIjoicnVucy5xdWVyeSIsImsiOiJwYXNzIiwiYiI6InNkYiIsInQiOiJsdChjdXJzb3IsICcyMDI1LTEyLTEyIDE5OjAzOjI4LjQ4MTI1NTAxOWIxM2YyJykifQ"
             )
@@ -52,6 +53,7 @@ internal class RunQueryV2ParamsTest {
         val params =
             RunQueryV2Params.builder()
                 .accept("Accept")
+                .aiSearch("The customer was charged twice")
                 .cursor(
                     "eyJ2IjoxLCJhIjoicnVucy5xdWVyeSIsImsiOiJwYXNzIiwiYiI6InNkYiIsInQiOiJsdChjdXJzb3IsICcyMDI1LTEyLTEyIDE5OjAzOjI4LjQ4MTI1NTAxOWIxM2YyJykifQ"
                 )
@@ -103,6 +105,7 @@ internal class RunQueryV2ParamsTest {
         val params =
             RunQueryV2Params.builder()
                 .accept("Accept")
+                .aiSearch("The customer was charged twice")
                 .cursor(
                     "eyJ2IjoxLCJhIjoicnVucy5xdWVyeSIsImsiOiJwYXNzIiwiYiI6InNkYiIsInQiOiJsdChjdXJzb3IsICcyMDI1LTEyLTEyIDE5OjAzOjI4LjQ4MTI1NTAxOWIxM2YyJykifQ"
                 )
@@ -137,6 +140,7 @@ internal class RunQueryV2ParamsTest {
 
         val body = params._body()
 
+        assertThat(body.aiSearch()).contains("The customer was charged twice")
         assertThat(body.cursor())
             .contains(
                 "eyJ2IjoxLCJhIjoicnVucy5xdWVyeSIsImsiOiJwYXNzIiwiYiI6InNkYiIsInQiOiJsdChjdXJzb3IsICcyMDI1LTEyLTEyIDE5OjAzOjI4LjQ4MTI1NTAxOWIxM2YyJykifQ"

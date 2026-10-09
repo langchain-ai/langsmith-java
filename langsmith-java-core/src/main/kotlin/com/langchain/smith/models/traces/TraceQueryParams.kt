@@ -35,14 +35,31 @@ import kotlin.jvm.optionals.getOrNull
  * Supports filters (`trace_filter`, `tree_filter`), cursor pagination (`cursor`), and field
  * projection (`selects`).
  *
+ * When `ai_search` is set, `Accept: text/event-stream` is required; requests without it return 406.
+ * AI search is unavailable on deployments that route queries to the v1 backend and returns 501
+ * there.
+ *
  * Self-hosted deployments require LangSmith `v0.16` or later.
  */
 class TraceQueryParams
 private constructor(
+    private val accept: String?,
     private val body: Body,
     private val additionalHeaders: Headers,
     private val additionalQueryParams: QueryParams,
 ) : Params {
+
+    fun accept(): Optional<String> = Optional.ofNullable(accept)
+
+    /**
+     * `ai_search` is a plain-language criterion evaluated against the messages from the agent
+     * trajectory scoped to the trace. AND-ed with the ordinary filters. Requires semantic filtering
+     * enabled for the deployment. Must contain nonempty text of at most 2000 UTF-8 bytes.
+     *
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
+    fun aiSearch(): Optional<String> = body.aiSearch()
 
     /**
      * `cursor` is the opaque string returned in a previous response's `next_cursor`.
@@ -125,6 +142,13 @@ private constructor(
      *   server responded with an unexpected value).
      */
     fun treeFilter(): Optional<String> = body.treeFilter()
+
+    /**
+     * Returns the raw JSON value of [aiSearch].
+     *
+     * Unlike [aiSearch], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    fun _aiSearch(): JsonField<String> = body._aiSearch()
 
     /**
      * Returns the raw JSON value of [cursor].
@@ -210,30 +234,53 @@ private constructor(
     /** A builder for [TraceQueryParams]. */
     class Builder internal constructor() {
 
+        private var accept: String? = null
         private var body: Body.Builder = Body.builder()
         private var additionalHeaders: Headers.Builder = Headers.builder()
         private var additionalQueryParams: QueryParams.Builder = QueryParams.builder()
 
         @JvmSynthetic
         internal fun from(traceQueryParams: TraceQueryParams) = apply {
+            accept = traceQueryParams.accept
             body = traceQueryParams.body.toBuilder()
             additionalHeaders = traceQueryParams.additionalHeaders.toBuilder()
             additionalQueryParams = traceQueryParams.additionalQueryParams.toBuilder()
         }
+
+        fun accept(accept: String?) = apply { this.accept = accept }
+
+        /** Alias for calling [Builder.accept] with `accept.orElse(null)`. */
+        fun accept(accept: Optional<String>) = accept(accept.getOrNull())
 
         /**
          * Sets the entire request body.
          *
          * This is generally only useful if you are already constructing the body separately.
          * Otherwise, it's more convenient to use the top-level setters instead:
+         * - [aiSearch]
          * - [cursor]
          * - [maxStartTime]
          * - [minStartTime]
          * - [pageSize]
-         * - [projectId]
          * - etc.
          */
         fun body(body: Body) = apply { this.body = body.toBuilder() }
+
+        /**
+         * `ai_search` is a plain-language criterion evaluated against the messages from the agent
+         * trajectory scoped to the trace. AND-ed with the ordinary filters. Requires semantic
+         * filtering enabled for the deployment. Must contain nonempty text of at most 2000 UTF-8
+         * bytes.
+         */
+        fun aiSearch(aiSearch: String) = apply { body.aiSearch(aiSearch) }
+
+        /**
+         * Sets [Builder.aiSearch] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.aiSearch] with a well-typed [String] value instead. This
+         * method is primarily for setting the field to an undocumented or not yet supported value.
+         */
+        fun aiSearch(aiSearch: JsonField<String>) = apply { body.aiSearch(aiSearch) }
 
         /** `cursor` is the opaque string returned in a previous response's `next_cursor`. */
         fun cursor(cursor: String) = apply { body.cursor(cursor) }
@@ -507,18 +554,30 @@ private constructor(
          * Further updates to this [Builder] will not mutate the returned instance.
          */
         fun build(): TraceQueryParams =
-            TraceQueryParams(body.build(), additionalHeaders.build(), additionalQueryParams.build())
+            TraceQueryParams(
+                accept,
+                body.build(),
+                additionalHeaders.build(),
+                additionalQueryParams.build(),
+            )
     }
 
     fun _body(): Body = body
 
-    override fun _headers(): Headers = additionalHeaders
+    override fun _headers(): Headers =
+        Headers.builder()
+            .apply {
+                accept?.let { put("Accept", it) }
+                putAll(additionalHeaders)
+            }
+            .build()
 
     override fun _queryParams(): QueryParams = additionalQueryParams
 
     class Body
     @JsonCreator(mode = JsonCreator.Mode.DISABLED)
     private constructor(
+        private val aiSearch: JsonField<String>,
         private val cursor: JsonField<String>,
         private val maxStartTime: JsonField<OffsetDateTime>,
         private val minStartTime: JsonField<OffsetDateTime>,
@@ -533,6 +592,9 @@ private constructor(
 
         @JsonCreator
         private constructor(
+            @JsonProperty("ai_search")
+            @ExcludeMissing
+            aiSearch: JsonField<String> = JsonMissing.of(),
             @JsonProperty("cursor") @ExcludeMissing cursor: JsonField<String> = JsonMissing.of(),
             @JsonProperty("max_start_time")
             @ExcludeMissing
@@ -557,6 +619,7 @@ private constructor(
             @ExcludeMissing
             treeFilter: JsonField<String> = JsonMissing.of(),
         ) : this(
+            aiSearch,
             cursor,
             maxStartTime,
             minStartTime,
@@ -568,6 +631,17 @@ private constructor(
             treeFilter,
             mutableMapOf(),
         )
+
+        /**
+         * `ai_search` is a plain-language criterion evaluated against the messages from the agent
+         * trajectory scoped to the trace. AND-ed with the ordinary filters. Requires semantic
+         * filtering enabled for the deployment. Must contain nonempty text of at most 2000 UTF-8
+         * bytes.
+         *
+         * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
+         *   the server responded with an unexpected value).
+         */
+        fun aiSearch(): Optional<String> = aiSearch.getOptional("ai_search")
 
         /**
          * `cursor` is the opaque string returned in a previous response's `next_cursor`.
@@ -651,6 +725,13 @@ private constructor(
          *   the server responded with an unexpected value).
          */
         fun treeFilter(): Optional<String> = treeFilter.getOptional("tree_filter")
+
+        /**
+         * Returns the raw JSON value of [aiSearch].
+         *
+         * Unlike [aiSearch], this method doesn't throw if the JSON field has an unexpected type.
+         */
+        @JsonProperty("ai_search") @ExcludeMissing fun _aiSearch(): JsonField<String> = aiSearch
 
         /**
          * Returns the raw JSON value of [cursor].
@@ -750,6 +831,7 @@ private constructor(
         /** A builder for [Body]. */
         class Builder internal constructor() {
 
+            private var aiSearch: JsonField<String> = JsonMissing.of()
             private var cursor: JsonField<String> = JsonMissing.of()
             private var maxStartTime: JsonField<OffsetDateTime> = JsonMissing.of()
             private var minStartTime: JsonField<OffsetDateTime> = JsonMissing.of()
@@ -763,6 +845,7 @@ private constructor(
 
             @JvmSynthetic
             internal fun from(body: Body) = apply {
+                aiSearch = body.aiSearch
                 cursor = body.cursor
                 maxStartTime = body.maxStartTime
                 minStartTime = body.minStartTime
@@ -774,6 +857,23 @@ private constructor(
                 treeFilter = body.treeFilter
                 additionalProperties = body.additionalProperties.toMutableMap()
             }
+
+            /**
+             * `ai_search` is a plain-language criterion evaluated against the messages from the
+             * agent trajectory scoped to the trace. AND-ed with the ordinary filters. Requires
+             * semantic filtering enabled for the deployment. Must contain nonempty text of at most
+             * 2000 UTF-8 bytes.
+             */
+            fun aiSearch(aiSearch: String) = aiSearch(JsonField.of(aiSearch))
+
+            /**
+             * Sets [Builder.aiSearch] to an arbitrary JSON value.
+             *
+             * You should usually call [Builder.aiSearch] with a well-typed [String] value instead.
+             * This method is primarily for setting the field to an undocumented or not yet
+             * supported value.
+             */
+            fun aiSearch(aiSearch: JsonField<String>) = apply { this.aiSearch = aiSearch }
 
             /** `cursor` is the opaque string returned in a previous response's `next_cursor`. */
             fun cursor(cursor: String) = cursor(JsonField.of(cursor))
@@ -971,6 +1071,7 @@ private constructor(
              */
             fun build(): Body =
                 Body(
+                    aiSearch,
                     cursor,
                     maxStartTime,
                     minStartTime,
@@ -1000,6 +1101,7 @@ private constructor(
                 return@apply
             }
 
+            aiSearch()
             cursor()
             maxStartTime()
             minStartTime()
@@ -1028,7 +1130,8 @@ private constructor(
          */
         @JvmSynthetic
         internal fun validity(): Int =
-            (if (cursor.asKnown().isPresent) 1 else 0) +
+            (if (aiSearch.asKnown().isPresent) 1 else 0) +
+                (if (cursor.asKnown().isPresent) 1 else 0) +
                 (if (maxStartTime.asKnown().isPresent) 1 else 0) +
                 (if (minStartTime.asKnown().isPresent) 1 else 0) +
                 (if (pageSize.asKnown().isPresent) 1 else 0) +
@@ -1044,6 +1147,7 @@ private constructor(
             }
 
             return other is Body &&
+                aiSearch == other.aiSearch &&
                 cursor == other.cursor &&
                 maxStartTime == other.maxStartTime &&
                 minStartTime == other.minStartTime &&
@@ -1058,6 +1162,7 @@ private constructor(
 
         private val hashCode: Int by lazy {
             Objects.hash(
+                aiSearch,
                 cursor,
                 maxStartTime,
                 minStartTime,
@@ -1074,7 +1179,7 @@ private constructor(
         override fun hashCode(): Int = hashCode
 
         override fun toString() =
-            "Body{cursor=$cursor, maxStartTime=$maxStartTime, minStartTime=$minStartTime, pageSize=$pageSize, projectId=$projectId, selects=$selects, traceFilter=$traceFilter, traceIds=$traceIds, treeFilter=$treeFilter, additionalProperties=$additionalProperties}"
+            "Body{aiSearch=$aiSearch, cursor=$cursor, maxStartTime=$maxStartTime, minStartTime=$minStartTime, pageSize=$pageSize, projectId=$projectId, selects=$selects, traceFilter=$traceFilter, traceIds=$traceIds, treeFilter=$treeFilter, additionalProperties=$additionalProperties}"
     }
 
     override fun equals(other: Any?): Boolean {
@@ -1083,13 +1188,15 @@ private constructor(
         }
 
         return other is TraceQueryParams &&
+            accept == other.accept &&
             body == other.body &&
             additionalHeaders == other.additionalHeaders &&
             additionalQueryParams == other.additionalQueryParams
     }
 
-    override fun hashCode(): Int = Objects.hash(body, additionalHeaders, additionalQueryParams)
+    override fun hashCode(): Int =
+        Objects.hash(accept, body, additionalHeaders, additionalQueryParams)
 
     override fun toString() =
-        "TraceQueryParams{body=$body, additionalHeaders=$additionalHeaders, additionalQueryParams=$additionalQueryParams}"
+        "TraceQueryParams{accept=$accept, body=$body, additionalHeaders=$additionalHeaders, additionalQueryParams=$additionalQueryParams}"
 }
