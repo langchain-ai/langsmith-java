@@ -35,6 +35,7 @@ class AnnotationQueueRubricItemSchema
 private constructor(
     private val feedbackKey: JsonField<String>,
     private val description: JsonField<String>,
+    private val feedbackConfigId: JsonField<String>,
     private val isAssertion: JsonField<Boolean>,
     private val isRequired: JsonField<Boolean>,
     private val regexValidator: JsonField<RegexValidator>,
@@ -51,6 +52,9 @@ private constructor(
         @JsonProperty("description")
         @ExcludeMissing
         description: JsonField<String> = JsonMissing.of(),
+        @JsonProperty("feedback_config_id")
+        @ExcludeMissing
+        feedbackConfigId: JsonField<String> = JsonMissing.of(),
         @JsonProperty("is_assertion")
         @ExcludeMissing
         isAssertion: JsonField<Boolean> = JsonMissing.of(),
@@ -69,6 +73,7 @@ private constructor(
     ) : this(
         feedbackKey,
         description,
+        feedbackConfigId,
         isAssertion,
         isRequired,
         regexValidator,
@@ -88,6 +93,12 @@ private constructor(
      *   server responded with an unexpected value).
      */
     fun description(): Optional<String> = description.getOptional("description")
+
+    /**
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
+    fun feedbackConfigId(): Optional<String> = feedbackConfigId.getOptional("feedback_config_id")
 
     /**
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
@@ -136,6 +147,16 @@ private constructor(
      * Unlike [description], this method doesn't throw if the JSON field has an unexpected type.
      */
     @JsonProperty("description") @ExcludeMissing fun _description(): JsonField<String> = description
+
+    /**
+     * Returns the raw JSON value of [feedbackConfigId].
+     *
+     * Unlike [feedbackConfigId], this method doesn't throw if the JSON field has an unexpected
+     * type.
+     */
+    @JsonProperty("feedback_config_id")
+    @ExcludeMissing
+    fun _feedbackConfigId(): JsonField<String> = feedbackConfigId
 
     /**
      * Returns the raw JSON value of [isAssertion].
@@ -213,6 +234,7 @@ private constructor(
 
         private var feedbackKey: JsonField<String>? = null
         private var description: JsonField<String> = JsonMissing.of()
+        private var feedbackConfigId: JsonField<String> = JsonMissing.of()
         private var isAssertion: JsonField<Boolean> = JsonMissing.of()
         private var isRequired: JsonField<Boolean> = JsonMissing.of()
         private var regexValidator: JsonField<RegexValidator> = JsonMissing.of()
@@ -225,6 +247,7 @@ private constructor(
             apply {
                 feedbackKey = annotationQueueRubricItemSchema.feedbackKey
                 description = annotationQueueRubricItemSchema.description
+                feedbackConfigId = annotationQueueRubricItemSchema.feedbackConfigId
                 isAssertion = annotationQueueRubricItemSchema.isAssertion
                 isRequired = annotationQueueRubricItemSchema.isRequired
                 regexValidator = annotationQueueRubricItemSchema.regexValidator
@@ -258,6 +281,24 @@ private constructor(
          * value.
          */
         fun description(description: JsonField<String>) = apply { this.description = description }
+
+        fun feedbackConfigId(feedbackConfigId: String?) =
+            feedbackConfigId(JsonField.ofNullable(feedbackConfigId))
+
+        /** Alias for calling [Builder.feedbackConfigId] with `feedbackConfigId.orElse(null)`. */
+        fun feedbackConfigId(feedbackConfigId: Optional<String>) =
+            feedbackConfigId(feedbackConfigId.getOrNull())
+
+        /**
+         * Sets [Builder.feedbackConfigId] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.feedbackConfigId] with a well-typed [String] value
+         * instead. This method is primarily for setting the field to an undocumented or not yet
+         * supported value.
+         */
+        fun feedbackConfigId(feedbackConfigId: JsonField<String>) = apply {
+            this.feedbackConfigId = feedbackConfigId
+        }
 
         fun isAssertion(isAssertion: Boolean?) = isAssertion(JsonField.ofNullable(isAssertion))
 
@@ -396,6 +437,7 @@ private constructor(
             AnnotationQueueRubricItemSchema(
                 checkRequired("feedbackKey", feedbackKey),
                 description,
+                feedbackConfigId,
                 isAssertion,
                 isRequired,
                 regexValidator,
@@ -422,6 +464,7 @@ private constructor(
 
         feedbackKey()
         description()
+        feedbackConfigId()
         isAssertion()
         isRequired()
         regexValidator().ifPresent { it.validate() }
@@ -447,6 +490,7 @@ private constructor(
     internal fun validity(): Int =
         (if (feedbackKey.asKnown().isPresent) 1 else 0) +
             (if (description.asKnown().isPresent) 1 else 0) +
+            (if (feedbackConfigId.asKnown().isPresent) 1 else 0) +
             (if (isAssertion.asKnown().isPresent) 1 else 0) +
             (if (isRequired.asKnown().isPresent) 1 else 0) +
             (regexValidator.asKnown().getOrNull()?.validity() ?: 0) +
@@ -887,6 +931,7 @@ private constructor(
         return other is AnnotationQueueRubricItemSchema &&
             feedbackKey == other.feedbackKey &&
             description == other.description &&
+            feedbackConfigId == other.feedbackConfigId &&
             isAssertion == other.isAssertion &&
             isRequired == other.isRequired &&
             regexValidator == other.regexValidator &&
@@ -899,6 +944,7 @@ private constructor(
         Objects.hash(
             feedbackKey,
             description,
+            feedbackConfigId,
             isAssertion,
             isRequired,
             regexValidator,
@@ -911,5 +957,5 @@ private constructor(
     override fun hashCode(): Int = hashCode
 
     override fun toString() =
-        "AnnotationQueueRubricItemSchema{feedbackKey=$feedbackKey, description=$description, isAssertion=$isAssertion, isRequired=$isRequired, regexValidator=$regexValidator, scoreDescriptions=$scoreDescriptions, valueDescriptions=$valueDescriptions, additionalProperties=$additionalProperties}"
+        "AnnotationQueueRubricItemSchema{feedbackKey=$feedbackKey, description=$description, feedbackConfigId=$feedbackConfigId, isAssertion=$isAssertion, isRequired=$isRequired, regexValidator=$regexValidator, scoreDescriptions=$scoreDescriptions, valueDescriptions=$valueDescriptions, additionalProperties=$additionalProperties}"
 }
