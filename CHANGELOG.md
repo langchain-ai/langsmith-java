@@ -1,5 +1,18 @@
 # Changelog
 
+## [0.1.0-beta.26](https://github.com/langchain-ai/langsmith-java/compare/v0.1.0-beta.25...v0.1.0-beta.26) (2026-10-09)
+
+
+### Features
+
+* add agent, experiment and evaluator addresses ([#73](https://github.com/langchain-ai/langsmith-java/issues/73)) ([797ad52](https://github.com/langchain-ai/langsmith-java/commit/797ad52e6b6f80beadbbea41e96d7cf683242957))
+* **evaluators:** add code_evaluator_input to code evaluator schemas ([13caabb](https://github.com/langchain-ai/langsmith-java/commit/13caabbd8142d0c1f059c6844b4bfc04995ca2ba))
+* **feedback:** add feedback_config_id field and expose id on feedback config ([7762ef6](https://github.com/langchain-ai/langsmith-java/commit/7762ef65345c71c4846e767e1e6b7d43f85051ab))
+* **runs:** add prompt and completion cost detail metric fields ([7dbee67](https://github.com/langchain-ai/langsmith-java/commit/7dbee67936d7858a2c1f1509d86441a99544739e))
+* **runs:** add prompt and completion token detail metric fields ([40bf898](https://github.com/langchain-ai/langsmith-java/commit/40bf898cf296bec055ab7a218213aed23a899861))
+* **sessions:** add resolve endpoint to look up a tracing project by address ([c19454d](https://github.com/langchain-ai/langsmith-java/commit/c19454d2cde39889034e0c3f5f7175457ff9dbb8))
+* **tracing:** attach revision_id from LANGSMITH_REVISION_ID ([#72](https://github.com/langchain-ai/langsmith-java/issues/72)) ([4e9b563](https://github.com/langchain-ai/langsmith-java/commit/4e9b563c55b597055084329ed09848e4effd5707))
+
 ## [0.1.0-beta.25](https://github.com/langchain-ai/langsmith-java/compare/v0.1.0-beta.24...v0.1.0-beta.25) (2026-10-07)
 
 
