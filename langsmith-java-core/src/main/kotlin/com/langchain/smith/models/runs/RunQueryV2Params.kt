@@ -26,6 +26,10 @@ import kotlin.jvm.optionals.getOrNull
  * Returns a paginated list of runs for the given projects within min/max start_time. Supports
  * filters, cursor pagination, and `selects` to select fields to return.
  *
+ * When `ai_search` is set, `Accept: text/event-stream` is required; requests without it return 406.
+ * AI search is unavailable on deployments that route queries to the v1 backend and returns 501
+ * there.
+ *
  * Self-hosted deployments require LangSmith `v0.16` or later.
  */
 class RunQueryV2Params
@@ -37,6 +41,17 @@ private constructor(
 ) : Params {
 
     fun accept(): Optional<String> = Optional.ofNullable(accept)
+
+    /**
+     * `ai_search` is a plain-language criterion evaluated against the messages from the agent
+     * trajectory scoped to the run. AND-ed with the ordinary filters. Requires semantic filtering
+     * enabled for the deployment. Must contain nonempty text of at most 2000 UTF-8 bytes. Not
+     * supported on public dataset queries.
+     *
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
+    fun aiSearch(): Optional<String> = body.aiSearch()
 
     /**
      * `cursor` is the opaque string from a previous response's `next_cursor`. Treat it as opaque
@@ -182,6 +197,13 @@ private constructor(
      *   server responded with an unexpected value).
      */
     fun treeFilter(): Optional<String> = body.treeFilter()
+
+    /**
+     * Returns the raw JSON value of [aiSearch].
+     *
+     * Unlike [aiSearch], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    fun _aiSearch(): JsonField<String> = body._aiSearch()
 
     /**
      * Returns the raw JSON value of [cursor].
@@ -341,14 +363,30 @@ private constructor(
          *
          * This is generally only useful if you are already constructing the body separately.
          * Otherwise, it's more convenient to use the top-level setters instead:
+         * - [aiSearch]
          * - [cursor]
          * - [filter]
          * - [hasError]
          * - [ids]
-         * - [isRoot]
          * - etc.
          */
         fun body(body: Body) = apply { this.body = body.toBuilder() }
+
+        /**
+         * `ai_search` is a plain-language criterion evaluated against the messages from the agent
+         * trajectory scoped to the run. AND-ed with the ordinary filters. Requires semantic
+         * filtering enabled for the deployment. Must contain nonempty text of at most 2000 UTF-8
+         * bytes. Not supported on public dataset queries.
+         */
+        fun aiSearch(aiSearch: String) = apply { body.aiSearch(aiSearch) }
+
+        /**
+         * Sets [Builder.aiSearch] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.aiSearch] with a well-typed [String] value instead. This
+         * method is primarily for setting the field to an undocumented or not yet supported value.
+         */
+        fun aiSearch(aiSearch: JsonField<String>) = apply { body.aiSearch(aiSearch) }
 
         /**
          * `cursor` is the opaque string from a previous response's `next_cursor`. Treat it as
@@ -761,6 +799,7 @@ private constructor(
     class Body
     @JsonCreator(mode = JsonCreator.Mode.DISABLED)
     private constructor(
+        private val aiSearch: JsonField<String>,
         private val cursor: JsonField<String>,
         private val filter: JsonField<String>,
         private val hasError: JsonField<Boolean>,
@@ -782,6 +821,9 @@ private constructor(
 
         @JsonCreator
         private constructor(
+            @JsonProperty("ai_search")
+            @ExcludeMissing
+            aiSearch: JsonField<String> = JsonMissing.of(),
             @JsonProperty("cursor") @ExcludeMissing cursor: JsonField<String> = JsonMissing.of(),
             @JsonProperty("filter") @ExcludeMissing filter: JsonField<String> = JsonMissing.of(),
             @JsonProperty("has_error")
@@ -819,6 +861,7 @@ private constructor(
             @ExcludeMissing
             treeFilter: JsonField<String> = JsonMissing.of(),
         ) : this(
+            aiSearch,
             cursor,
             filter,
             hasError,
@@ -837,6 +880,17 @@ private constructor(
             treeFilter,
             mutableMapOf(),
         )
+
+        /**
+         * `ai_search` is a plain-language criterion evaluated against the messages from the agent
+         * trajectory scoped to the run. AND-ed with the ordinary filters. Requires semantic
+         * filtering enabled for the deployment. Must contain nonempty text of at most 2000 UTF-8
+         * bytes. Not supported on public dataset queries.
+         *
+         * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
+         *   the server responded with an unexpected value).
+         */
+        fun aiSearch(): Optional<String> = aiSearch.getOptional("ai_search")
 
         /**
          * `cursor` is the opaque string from a previous response's `next_cursor`. Treat it as
@@ -986,6 +1040,13 @@ private constructor(
          *   the server responded with an unexpected value).
          */
         fun treeFilter(): Optional<String> = treeFilter.getOptional("tree_filter")
+
+        /**
+         * Returns the raw JSON value of [aiSearch].
+         *
+         * Unlike [aiSearch], this method doesn't throw if the JSON field has an unexpected type.
+         */
+        @JsonProperty("ai_search") @ExcludeMissing fun _aiSearch(): JsonField<String> = aiSearch
 
         /**
          * Returns the raw JSON value of [cursor].
@@ -1140,6 +1201,7 @@ private constructor(
         /** A builder for [Body]. */
         class Builder internal constructor() {
 
+            private var aiSearch: JsonField<String> = JsonMissing.of()
             private var cursor: JsonField<String> = JsonMissing.of()
             private var filter: JsonField<String> = JsonMissing.of()
             private var hasError: JsonField<Boolean> = JsonMissing.of()
@@ -1160,6 +1222,7 @@ private constructor(
 
             @JvmSynthetic
             internal fun from(body: Body) = apply {
+                aiSearch = body.aiSearch
                 cursor = body.cursor
                 filter = body.filter
                 hasError = body.hasError
@@ -1178,6 +1241,23 @@ private constructor(
                 treeFilter = body.treeFilter
                 additionalProperties = body.additionalProperties.toMutableMap()
             }
+
+            /**
+             * `ai_search` is a plain-language criterion evaluated against the messages from the
+             * agent trajectory scoped to the run. AND-ed with the ordinary filters. Requires
+             * semantic filtering enabled for the deployment. Must contain nonempty text of at most
+             * 2000 UTF-8 bytes. Not supported on public dataset queries.
+             */
+            fun aiSearch(aiSearch: String) = aiSearch(JsonField.of(aiSearch))
+
+            /**
+             * Sets [Builder.aiSearch] to an arbitrary JSON value.
+             *
+             * You should usually call [Builder.aiSearch] with a well-typed [String] value instead.
+             * This method is primarily for setting the field to an undocumented or not yet
+             * supported value.
+             */
+            fun aiSearch(aiSearch: JsonField<String>) = apply { this.aiSearch = aiSearch }
 
             /**
              * `cursor` is the opaque string from a previous response's `next_cursor`. Treat it as
@@ -1510,6 +1590,7 @@ private constructor(
              */
             fun build(): Body =
                 Body(
+                    aiSearch,
                     cursor,
                     filter,
                     hasError,
@@ -1546,6 +1627,7 @@ private constructor(
                 return@apply
             }
 
+            aiSearch()
             cursor()
             filter()
             hasError()
@@ -1581,7 +1663,8 @@ private constructor(
          */
         @JvmSynthetic
         internal fun validity(): Int =
-            (if (cursor.asKnown().isPresent) 1 else 0) +
+            (if (aiSearch.asKnown().isPresent) 1 else 0) +
+                (if (cursor.asKnown().isPresent) 1 else 0) +
                 (if (filter.asKnown().isPresent) 1 else 0) +
                 (if (hasError.asKnown().isPresent) 1 else 0) +
                 (ids.asKnown().getOrNull()?.size ?: 0) +
@@ -1604,6 +1687,7 @@ private constructor(
             }
 
             return other is Body &&
+                aiSearch == other.aiSearch &&
                 cursor == other.cursor &&
                 filter == other.filter &&
                 hasError == other.hasError &&
@@ -1625,6 +1709,7 @@ private constructor(
 
         private val hashCode: Int by lazy {
             Objects.hash(
+                aiSearch,
                 cursor,
                 filter,
                 hasError,
@@ -1648,7 +1733,7 @@ private constructor(
         override fun hashCode(): Int = hashCode
 
         override fun toString() =
-            "Body{cursor=$cursor, filter=$filter, hasError=$hasError, ids=$ids, isRoot=$isRoot, maxStartTime=$maxStartTime, minStartTime=$minStartTime, pageSize=$pageSize, projectIds=$projectIds, referenceDatasetId=$referenceDatasetId, referenceExamples=$referenceExamples, runType=$runType, selects=$selects, traceFilter=$traceFilter, traceId=$traceId, treeFilter=$treeFilter, additionalProperties=$additionalProperties}"
+            "Body{aiSearch=$aiSearch, cursor=$cursor, filter=$filter, hasError=$hasError, ids=$ids, isRoot=$isRoot, maxStartTime=$maxStartTime, minStartTime=$minStartTime, pageSize=$pageSize, projectIds=$projectIds, referenceDatasetId=$referenceDatasetId, referenceExamples=$referenceExamples, runType=$runType, selects=$selects, traceFilter=$traceFilter, traceId=$traceId, treeFilter=$treeFilter, additionalProperties=$additionalProperties}"
     }
 
     override fun equals(other: Any?): Boolean {
