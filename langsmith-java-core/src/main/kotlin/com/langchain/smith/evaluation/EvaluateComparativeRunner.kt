@@ -98,7 +98,8 @@ internal class EvaluateComparativeRunner(
         }
 
         val rows = compareExamples(runsByExample, examplesById, comparativeExperiment.id())
-        val url = buildComparativeUrl(projects, comparativeExperiment.id(), datasetId)
+        val tenantId = extractTenantId(client)
+        val url = buildComparativeUrl(projects, comparativeExperiment.id(), datasetId, tenantId)
 
         return ComparativeExperimentResults(
             rows = rows,
