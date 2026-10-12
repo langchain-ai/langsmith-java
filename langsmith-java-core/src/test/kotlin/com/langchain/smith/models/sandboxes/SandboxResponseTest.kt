@@ -99,6 +99,13 @@ internal class SandboxResponseTest {
                                         .initialPullOnly(true)
                                         .build()
                                 )
+                                .encryption(
+                                    SandboxResponse.MountConfig.Mount.SandboxapiS3BucketMountSpec
+                                        .Encryption
+                                        .builder()
+                                        .kmsKey("kms_key")
+                                        .build()
+                                )
                                 .gcs(
                                     SandboxResponse.MountConfig.Mount.SandboxapiS3BucketMountSpec
                                         .Gcs
@@ -325,6 +332,13 @@ internal class SandboxResponseTest {
                                     .builder()
                                     .repo("repo")
                                     .initialPullOnly(true)
+                                    .build()
+                            )
+                            .encryption(
+                                SandboxResponse.MountConfig.Mount.SandboxapiS3BucketMountSpec
+                                    .Encryption
+                                    .builder()
+                                    .kmsKey("kms_key")
                                     .build()
                             )
                             .gcs(
@@ -555,6 +569,13 @@ internal class SandboxResponseTest {
                                         .builder()
                                         .repo("repo")
                                         .initialPullOnly(true)
+                                        .build()
+                                )
+                                .encryption(
+                                    SandboxResponse.MountConfig.Mount.SandboxapiS3BucketMountSpec
+                                        .Encryption
+                                        .builder()
+                                        .kmsKey("kms_key")
                                         .build()
                                 )
                                 .gcs(

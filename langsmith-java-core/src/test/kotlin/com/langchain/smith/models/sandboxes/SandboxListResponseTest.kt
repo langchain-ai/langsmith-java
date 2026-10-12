@@ -109,6 +109,14 @@ internal class SandboxListResponseTest {
                                                 .initialPullOnly(true)
                                                 .build()
                                         )
+                                        .encryption(
+                                            SandboxResponse.MountConfig.Mount
+                                                .SandboxapiS3BucketMountSpec
+                                                .Encryption
+                                                .builder()
+                                                .kmsKey("kms_key")
+                                                .build()
+                                        )
                                         .gcs(
                                             SandboxResponse.MountConfig.Mount
                                                 .SandboxapiS3BucketMountSpec
@@ -356,6 +364,14 @@ internal class SandboxListResponseTest {
                                                 .builder()
                                                 .repo("repo")
                                                 .initialPullOnly(true)
+                                                .build()
+                                        )
+                                        .encryption(
+                                            SandboxResponse.MountConfig.Mount
+                                                .SandboxapiS3BucketMountSpec
+                                                .Encryption
+                                                .builder()
+                                                .kmsKey("kms_key")
                                                 .build()
                                         )
                                         .gcs(
@@ -608,6 +624,14 @@ internal class SandboxListResponseTest {
                                             .initialPullOnly(true)
                                             .build()
                                     )
+                                    .encryption(
+                                        SandboxResponse.MountConfig.Mount
+                                            .SandboxapiS3BucketMountSpec
+                                            .Encryption
+                                            .builder()
+                                            .kmsKey("kms_key")
+                                            .build()
+                                    )
                                     .gcs(
                                         SandboxResponse.MountConfig.Mount
                                             .SandboxapiS3BucketMountSpec
@@ -851,6 +875,14 @@ internal class SandboxListResponseTest {
                                             .builder()
                                             .repo("repo")
                                             .initialPullOnly(true)
+                                            .build()
+                                    )
+                                    .encryption(
+                                        SandboxResponse.MountConfig.Mount
+                                            .SandboxapiS3BucketMountSpec
+                                            .Encryption
+                                            .builder()
+                                            .kmsKey("kms_key")
                                             .build()
                                     )
                                     .gcs(
@@ -1102,6 +1134,14 @@ internal class SandboxListResponseTest {
                                                 .initialPullOnly(true)
                                                 .build()
                                         )
+                                        .encryption(
+                                            SandboxResponse.MountConfig.Mount
+                                                .SandboxapiS3BucketMountSpec
+                                                .Encryption
+                                                .builder()
+                                                .kmsKey("kms_key")
+                                                .build()
+                                        )
                                         .gcs(
                                             SandboxResponse.MountConfig.Mount
                                                 .SandboxapiS3BucketMountSpec
@@ -1349,6 +1389,14 @@ internal class SandboxListResponseTest {
                                                 .builder()
                                                 .repo("repo")
                                                 .initialPullOnly(true)
+                                                .build()
+                                        )
+                                        .encryption(
+                                            SandboxResponse.MountConfig.Mount
+                                                .SandboxapiS3BucketMountSpec
+                                                .Encryption
+                                                .builder()
+                                                .kmsKey("kms_key")
                                                 .build()
                                         )
                                         .gcs(

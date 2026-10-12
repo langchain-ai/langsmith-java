@@ -121,6 +121,14 @@ internal class BoxServiceAsyncTest {
                                             .initialPullOnly(true)
                                             .build()
                                     )
+                                    .encryption(
+                                        BoxCreateParams.MountConfig.Mount
+                                            .SandboxapiS3BucketMountSpec
+                                            .Encryption
+                                            .builder()
+                                            .kmsKey("kms_key")
+                                            .build()
+                                    )
                                     .gcs(
                                         BoxCreateParams.MountConfig.Mount
                                             .SandboxapiS3BucketMountSpec

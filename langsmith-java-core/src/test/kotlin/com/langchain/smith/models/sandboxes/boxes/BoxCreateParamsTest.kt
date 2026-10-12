@@ -96,6 +96,13 @@ internal class BoxCreateParamsTest {
                                     .initialPullOnly(true)
                                     .build()
                             )
+                            .encryption(
+                                BoxCreateParams.MountConfig.Mount.SandboxapiS3BucketMountSpec
+                                    .Encryption
+                                    .builder()
+                                    .kmsKey("kms_key")
+                                    .build()
+                            )
                             .gcs(
                                 BoxCreateParams.MountConfig.Mount.SandboxapiS3BucketMountSpec.Gcs
                                     .builder()
@@ -321,6 +328,13 @@ internal class BoxCreateParamsTest {
                                         .builder()
                                         .repo("repo")
                                         .initialPullOnly(true)
+                                        .build()
+                                )
+                                .encryption(
+                                    BoxCreateParams.MountConfig.Mount.SandboxapiS3BucketMountSpec
+                                        .Encryption
+                                        .builder()
+                                        .kmsKey("kms_key")
                                         .build()
                                 )
                                 .gcs(
@@ -551,6 +565,13 @@ internal class BoxCreateParamsTest {
                                     .builder()
                                     .repo("repo")
                                     .initialPullOnly(true)
+                                    .build()
+                            )
+                            .encryption(
+                                BoxCreateParams.MountConfig.Mount.SandboxapiS3BucketMountSpec
+                                    .Encryption
+                                    .builder()
+                                    .kmsKey("kms_key")
                                     .build()
                             )
                             .gcs(

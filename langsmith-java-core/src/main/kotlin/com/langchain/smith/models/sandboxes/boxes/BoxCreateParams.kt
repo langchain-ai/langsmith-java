@@ -5432,6 +5432,7 @@ private constructor(
                 private val type: JsonField<Type>,
                 private val cache: JsonField<Cache>,
                 private val contexthub: JsonField<Contexthub>,
+                private val encryption: JsonField<Encryption>,
                 private val gcs: JsonField<Gcs>,
                 private val git: JsonField<Git>,
                 private val readOnly: JsonField<Boolean>,
@@ -5452,6 +5453,9 @@ private constructor(
                     @JsonProperty("contexthub")
                     @ExcludeMissing
                     contexthub: JsonField<Contexthub> = JsonMissing.of(),
+                    @JsonProperty("encryption")
+                    @ExcludeMissing
+                    encryption: JsonField<Encryption> = JsonMissing.of(),
                     @JsonProperty("gcs") @ExcludeMissing gcs: JsonField<Gcs> = JsonMissing.of(),
                     @JsonProperty("git") @ExcludeMissing git: JsonField<Git> = JsonMissing.of(),
                     @JsonProperty("read_only")
@@ -5464,6 +5468,7 @@ private constructor(
                     type,
                     cache,
                     contexthub,
+                    encryption,
                     gcs,
                     git,
                     readOnly,
@@ -5509,6 +5514,12 @@ private constructor(
                  *   (e.g. if the server responded with an unexpected value).
                  */
                 fun contexthub(): Optional<Contexthub> = contexthub.getOptional("contexthub")
+
+                /**
+                 * @throws LangChainInvalidDataException if the JSON field has an unexpected type
+                 *   (e.g. if the server responded with an unexpected value).
+                 */
+                fun encryption(): Optional<Encryption> = encryption.getOptional("encryption")
 
                 /**
                  * @throws LangChainInvalidDataException if the JSON field has an unexpected type
@@ -5579,6 +5590,16 @@ private constructor(
                 fun _contexthub(): JsonField<Contexthub> = contexthub
 
                 /**
+                 * Returns the raw JSON value of [encryption].
+                 *
+                 * Unlike [encryption], this method doesn't throw if the JSON field has an
+                 * unexpected type.
+                 */
+                @JsonProperty("encryption")
+                @ExcludeMissing
+                fun _encryption(): JsonField<Encryption> = encryption
+
+                /**
                  * Returns the raw JSON value of [gcs].
                  *
                  * Unlike [gcs], this method doesn't throw if the JSON field has an unexpected type.
@@ -5640,6 +5661,7 @@ private constructor(
                     private var type: JsonField<Type>? = null
                     private var cache: JsonField<Cache> = JsonMissing.of()
                     private var contexthub: JsonField<Contexthub> = JsonMissing.of()
+                    private var encryption: JsonField<Encryption> = JsonMissing.of()
                     private var gcs: JsonField<Gcs> = JsonMissing.of()
                     private var git: JsonField<Git> = JsonMissing.of()
                     private var readOnly: JsonField<Boolean> = JsonMissing.of()
@@ -5654,6 +5676,7 @@ private constructor(
                             type = sandboxapiS3BucketMountSpec.type
                             cache = sandboxapiS3BucketMountSpec.cache
                             contexthub = sandboxapiS3BucketMountSpec.contexthub
+                            encryption = sandboxapiS3BucketMountSpec.encryption
                             gcs = sandboxapiS3BucketMountSpec.gcs
                             git = sandboxapiS3BucketMountSpec.git
                             readOnly = sandboxapiS3BucketMountSpec.readOnly
@@ -5729,6 +5752,19 @@ private constructor(
                      */
                     fun contexthub(contexthub: JsonField<Contexthub>) = apply {
                         this.contexthub = contexthub
+                    }
+
+                    fun encryption(encryption: Encryption) = encryption(JsonField.of(encryption))
+
+                    /**
+                     * Sets [Builder.encryption] to an arbitrary JSON value.
+                     *
+                     * You should usually call [Builder.encryption] with a well-typed [Encryption]
+                     * value instead. This method is primarily for setting the field to an
+                     * undocumented or not yet supported value.
+                     */
+                    fun encryption(encryption: JsonField<Encryption>) = apply {
+                        this.encryption = encryption
                     }
 
                     fun gcs(gcs: Gcs) = gcs(JsonField.of(gcs))
@@ -5809,6 +5845,7 @@ private constructor(
                             checkRequired("type", type),
                             cache,
                             contexthub,
+                            encryption,
                             gcs,
                             git,
                             readOnly,
@@ -5839,6 +5876,7 @@ private constructor(
                     type().validate()
                     cache().ifPresent { it.validate() }
                     contexthub().ifPresent { it.validate() }
+                    encryption().ifPresent { it.validate() }
                     gcs().ifPresent { it.validate() }
                     git().ifPresent { it.validate() }
                     readOnly()
@@ -5867,6 +5905,7 @@ private constructor(
                         (type.asKnown().getOrNull()?.validity() ?: 0) +
                         (cache.asKnown().getOrNull()?.validity() ?: 0) +
                         (contexthub.asKnown().getOrNull()?.validity() ?: 0) +
+                        (encryption.asKnown().getOrNull()?.validity() ?: 0) +
                         (gcs.asKnown().getOrNull()?.validity() ?: 0) +
                         (git.asKnown().getOrNull()?.validity() ?: 0) +
                         (if (readOnly.asKnown().isPresent) 1 else 0)
@@ -6813,6 +6852,190 @@ private constructor(
                         "Contexthub{repo=$repo, initialPullOnly=$initialPullOnly, additionalProperties=$additionalProperties}"
                 }
 
+                class Encryption
+                @JsonCreator(mode = JsonCreator.Mode.DISABLED)
+                private constructor(
+                    private val kmsKey: JsonField<String>,
+                    private val additionalProperties: MutableMap<String, JsonValue>,
+                ) {
+
+                    @JsonCreator
+                    private constructor(
+                        @JsonProperty("kms_key")
+                        @ExcludeMissing
+                        kmsKey: JsonField<String> = JsonMissing.of()
+                    ) : this(kmsKey, mutableMapOf())
+
+                    /**
+                     * KMSKey is the key to encrypt uploads with. S3 mounts take a KMS key ARN in
+                     * the mount's region.
+                     *
+                     * @throws LangChainInvalidDataException if the JSON field has an unexpected
+                     *   type or is unexpectedly missing or null (e.g. if the server responded with
+                     *   an unexpected value).
+                     */
+                    fun kmsKey(): String = kmsKey.getRequired("kms_key")
+
+                    /**
+                     * Returns the raw JSON value of [kmsKey].
+                     *
+                     * Unlike [kmsKey], this method doesn't throw if the JSON field has an
+                     * unexpected type.
+                     */
+                    @JsonProperty("kms_key")
+                    @ExcludeMissing
+                    fun _kmsKey(): JsonField<String> = kmsKey
+
+                    @JsonAnySetter
+                    private fun putAdditionalProperty(key: String, value: JsonValue) {
+                        additionalProperties.put(key, value)
+                    }
+
+                    @JsonAnyGetter
+                    @ExcludeMissing
+                    fun _additionalProperties(): Map<String, JsonValue> =
+                        Collections.unmodifiableMap(additionalProperties)
+
+                    fun toBuilder() = Builder().from(this)
+
+                    companion object {
+
+                        /**
+                         * Returns a mutable builder for constructing an instance of [Encryption].
+                         *
+                         * The following fields are required:
+                         * ```java
+                         * .kmsKey()
+                         * ```
+                         */
+                        @JvmStatic fun builder() = Builder()
+                    }
+
+                    /** A builder for [Encryption]. */
+                    class Builder internal constructor() {
+
+                        private var kmsKey: JsonField<String>? = null
+                        private var additionalProperties: MutableMap<String, JsonValue> =
+                            mutableMapOf()
+
+                        @JvmSynthetic
+                        internal fun from(encryption: Encryption) = apply {
+                            kmsKey = encryption.kmsKey
+                            additionalProperties = encryption.additionalProperties.toMutableMap()
+                        }
+
+                        /**
+                         * KMSKey is the key to encrypt uploads with. S3 mounts take a KMS key ARN
+                         * in the mount's region.
+                         */
+                        fun kmsKey(kmsKey: String) = kmsKey(JsonField.of(kmsKey))
+
+                        /**
+                         * Sets [Builder.kmsKey] to an arbitrary JSON value.
+                         *
+                         * You should usually call [Builder.kmsKey] with a well-typed [String] value
+                         * instead. This method is primarily for setting the field to an
+                         * undocumented or not yet supported value.
+                         */
+                        fun kmsKey(kmsKey: JsonField<String>) = apply { this.kmsKey = kmsKey }
+
+                        fun additionalProperties(additionalProperties: Map<String, JsonValue>) =
+                            apply {
+                                this.additionalProperties.clear()
+                                putAllAdditionalProperties(additionalProperties)
+                            }
+
+                        fun putAdditionalProperty(key: String, value: JsonValue) = apply {
+                            additionalProperties.put(key, value)
+                        }
+
+                        fun putAllAdditionalProperties(
+                            additionalProperties: Map<String, JsonValue>
+                        ) = apply { this.additionalProperties.putAll(additionalProperties) }
+
+                        fun removeAdditionalProperty(key: String) = apply {
+                            additionalProperties.remove(key)
+                        }
+
+                        fun removeAllAdditionalProperties(keys: Set<String>) = apply {
+                            keys.forEach(::removeAdditionalProperty)
+                        }
+
+                        /**
+                         * Returns an immutable instance of [Encryption].
+                         *
+                         * Further updates to this [Builder] will not mutate the returned instance.
+                         *
+                         * The following fields are required:
+                         * ```java
+                         * .kmsKey()
+                         * ```
+                         *
+                         * @throws IllegalStateException if any required field is unset.
+                         */
+                        fun build(): Encryption =
+                            Encryption(
+                                checkRequired("kmsKey", kmsKey),
+                                additionalProperties.toMutableMap(),
+                            )
+                    }
+
+                    private var validated: Boolean = false
+
+                    /**
+                     * Validates that the types of all values in this object match their expected
+                     * types recursively.
+                     *
+                     * This method is _not_ forwards compatible with new types from the API for
+                     * existing fields.
+                     *
+                     * @throws LangChainInvalidDataException if any value type in this object
+                     *   doesn't match its expected type.
+                     */
+                    fun validate(): Encryption = apply {
+                        if (validated) {
+                            return@apply
+                        }
+
+                        kmsKey()
+                        validated = true
+                    }
+
+                    fun isValid(): Boolean =
+                        try {
+                            validate()
+                            true
+                        } catch (e: LangChainInvalidDataException) {
+                            false
+                        }
+
+                    /**
+                     * Returns a score indicating how many valid values are contained in this object
+                     * recursively.
+                     *
+                     * Used for best match union deserialization.
+                     */
+                    @JvmSynthetic
+                    internal fun validity(): Int = (if (kmsKey.asKnown().isPresent) 1 else 0)
+
+                    override fun equals(other: Any?): Boolean {
+                        if (this === other) {
+                            return true
+                        }
+
+                        return other is Encryption &&
+                            kmsKey == other.kmsKey &&
+                            additionalProperties == other.additionalProperties
+                    }
+
+                    private val hashCode: Int by lazy { Objects.hash(kmsKey, additionalProperties) }
+
+                    override fun hashCode(): Int = hashCode
+
+                    override fun toString() =
+                        "Encryption{kmsKey=$kmsKey, additionalProperties=$additionalProperties}"
+                }
+
                 class Gcs
                 @JsonCreator(mode = JsonCreator.Mode.DISABLED)
                 private constructor(
@@ -7664,6 +7887,7 @@ private constructor(
                         type == other.type &&
                         cache == other.cache &&
                         contexthub == other.contexthub &&
+                        encryption == other.encryption &&
                         gcs == other.gcs &&
                         git == other.git &&
                         readOnly == other.readOnly &&
@@ -7678,6 +7902,7 @@ private constructor(
                         type,
                         cache,
                         contexthub,
+                        encryption,
                         gcs,
                         git,
                         readOnly,
@@ -7688,7 +7913,7 @@ private constructor(
                 override fun hashCode(): Int = hashCode
 
                 override fun toString() =
-                    "SandboxapiS3BucketMountSpec{id=$id, mountPath=$mountPath, s3=$s3, type=$type, cache=$cache, contexthub=$contexthub, gcs=$gcs, git=$git, readOnly=$readOnly, additionalProperties=$additionalProperties}"
+                    "SandboxapiS3BucketMountSpec{id=$id, mountPath=$mountPath, s3=$s3, type=$type, cache=$cache, contexthub=$contexthub, encryption=$encryption, gcs=$gcs, git=$git, readOnly=$readOnly, additionalProperties=$additionalProperties}"
             }
 
             class SandboxapiGcsBucketMountSpec
@@ -7700,6 +7925,7 @@ private constructor(
                 private val type: JsonField<Type>,
                 private val cache: JsonField<Cache>,
                 private val contexthub: JsonField<Contexthub>,
+                private val encryption: JsonField<Encryption>,
                 private val git: JsonField<Git>,
                 private val readOnly: JsonField<Boolean>,
                 private val s3: JsonField<S3>,
@@ -7720,6 +7946,9 @@ private constructor(
                     @JsonProperty("contexthub")
                     @ExcludeMissing
                     contexthub: JsonField<Contexthub> = JsonMissing.of(),
+                    @JsonProperty("encryption")
+                    @ExcludeMissing
+                    encryption: JsonField<Encryption> = JsonMissing.of(),
                     @JsonProperty("git") @ExcludeMissing git: JsonField<Git> = JsonMissing.of(),
                     @JsonProperty("read_only")
                     @ExcludeMissing
@@ -7732,6 +7961,7 @@ private constructor(
                     type,
                     cache,
                     contexthub,
+                    encryption,
                     git,
                     readOnly,
                     s3,
@@ -7777,6 +8007,12 @@ private constructor(
                  *   (e.g. if the server responded with an unexpected value).
                  */
                 fun contexthub(): Optional<Contexthub> = contexthub.getOptional("contexthub")
+
+                /**
+                 * @throws LangChainInvalidDataException if the JSON field has an unexpected type
+                 *   (e.g. if the server responded with an unexpected value).
+                 */
+                fun encryption(): Optional<Encryption> = encryption.getOptional("encryption")
 
                 /**
                  * @throws LangChainInvalidDataException if the JSON field has an unexpected type
@@ -7847,6 +8083,16 @@ private constructor(
                 fun _contexthub(): JsonField<Contexthub> = contexthub
 
                 /**
+                 * Returns the raw JSON value of [encryption].
+                 *
+                 * Unlike [encryption], this method doesn't throw if the JSON field has an
+                 * unexpected type.
+                 */
+                @JsonProperty("encryption")
+                @ExcludeMissing
+                fun _encryption(): JsonField<Encryption> = encryption
+
+                /**
                  * Returns the raw JSON value of [git].
                  *
                  * Unlike [git], this method doesn't throw if the JSON field has an unexpected type.
@@ -7908,6 +8154,7 @@ private constructor(
                     private var type: JsonField<Type>? = null
                     private var cache: JsonField<Cache> = JsonMissing.of()
                     private var contexthub: JsonField<Contexthub> = JsonMissing.of()
+                    private var encryption: JsonField<Encryption> = JsonMissing.of()
                     private var git: JsonField<Git> = JsonMissing.of()
                     private var readOnly: JsonField<Boolean> = JsonMissing.of()
                     private var s3: JsonField<S3> = JsonMissing.of()
@@ -7922,6 +8169,7 @@ private constructor(
                             type = sandboxapiGcsBucketMountSpec.type
                             cache = sandboxapiGcsBucketMountSpec.cache
                             contexthub = sandboxapiGcsBucketMountSpec.contexthub
+                            encryption = sandboxapiGcsBucketMountSpec.encryption
                             git = sandboxapiGcsBucketMountSpec.git
                             readOnly = sandboxapiGcsBucketMountSpec.readOnly
                             s3 = sandboxapiGcsBucketMountSpec.s3
@@ -7997,6 +8245,19 @@ private constructor(
                      */
                     fun contexthub(contexthub: JsonField<Contexthub>) = apply {
                         this.contexthub = contexthub
+                    }
+
+                    fun encryption(encryption: Encryption) = encryption(JsonField.of(encryption))
+
+                    /**
+                     * Sets [Builder.encryption] to an arbitrary JSON value.
+                     *
+                     * You should usually call [Builder.encryption] with a well-typed [Encryption]
+                     * value instead. This method is primarily for setting the field to an
+                     * undocumented or not yet supported value.
+                     */
+                    fun encryption(encryption: JsonField<Encryption>) = apply {
+                        this.encryption = encryption
                     }
 
                     fun git(git: Git) = git(JsonField.of(git))
@@ -8077,6 +8338,7 @@ private constructor(
                             checkRequired("type", type),
                             cache,
                             contexthub,
+                            encryption,
                             git,
                             readOnly,
                             s3,
@@ -8107,6 +8369,7 @@ private constructor(
                     type().validate()
                     cache().ifPresent { it.validate() }
                     contexthub().ifPresent { it.validate() }
+                    encryption().ifPresent { it.validate() }
                     git().ifPresent { it.validate() }
                     readOnly()
                     s3().ifPresent { it.validate() }
@@ -8135,6 +8398,7 @@ private constructor(
                         (type.asKnown().getOrNull()?.validity() ?: 0) +
                         (cache.asKnown().getOrNull()?.validity() ?: 0) +
                         (contexthub.asKnown().getOrNull()?.validity() ?: 0) +
+                        (encryption.asKnown().getOrNull()?.validity() ?: 0) +
                         (git.asKnown().getOrNull()?.validity() ?: 0) +
                         (if (readOnly.asKnown().isPresent) 1 else 0) +
                         (s3.asKnown().getOrNull()?.validity() ?: 0)
@@ -8953,6 +9217,190 @@ private constructor(
 
                     override fun toString() =
                         "Contexthub{repo=$repo, initialPullOnly=$initialPullOnly, additionalProperties=$additionalProperties}"
+                }
+
+                class Encryption
+                @JsonCreator(mode = JsonCreator.Mode.DISABLED)
+                private constructor(
+                    private val kmsKey: JsonField<String>,
+                    private val additionalProperties: MutableMap<String, JsonValue>,
+                ) {
+
+                    @JsonCreator
+                    private constructor(
+                        @JsonProperty("kms_key")
+                        @ExcludeMissing
+                        kmsKey: JsonField<String> = JsonMissing.of()
+                    ) : this(kmsKey, mutableMapOf())
+
+                    /**
+                     * KMSKey is the key to encrypt uploads with. S3 mounts take a KMS key ARN in
+                     * the mount's region.
+                     *
+                     * @throws LangChainInvalidDataException if the JSON field has an unexpected
+                     *   type or is unexpectedly missing or null (e.g. if the server responded with
+                     *   an unexpected value).
+                     */
+                    fun kmsKey(): String = kmsKey.getRequired("kms_key")
+
+                    /**
+                     * Returns the raw JSON value of [kmsKey].
+                     *
+                     * Unlike [kmsKey], this method doesn't throw if the JSON field has an
+                     * unexpected type.
+                     */
+                    @JsonProperty("kms_key")
+                    @ExcludeMissing
+                    fun _kmsKey(): JsonField<String> = kmsKey
+
+                    @JsonAnySetter
+                    private fun putAdditionalProperty(key: String, value: JsonValue) {
+                        additionalProperties.put(key, value)
+                    }
+
+                    @JsonAnyGetter
+                    @ExcludeMissing
+                    fun _additionalProperties(): Map<String, JsonValue> =
+                        Collections.unmodifiableMap(additionalProperties)
+
+                    fun toBuilder() = Builder().from(this)
+
+                    companion object {
+
+                        /**
+                         * Returns a mutable builder for constructing an instance of [Encryption].
+                         *
+                         * The following fields are required:
+                         * ```java
+                         * .kmsKey()
+                         * ```
+                         */
+                        @JvmStatic fun builder() = Builder()
+                    }
+
+                    /** A builder for [Encryption]. */
+                    class Builder internal constructor() {
+
+                        private var kmsKey: JsonField<String>? = null
+                        private var additionalProperties: MutableMap<String, JsonValue> =
+                            mutableMapOf()
+
+                        @JvmSynthetic
+                        internal fun from(encryption: Encryption) = apply {
+                            kmsKey = encryption.kmsKey
+                            additionalProperties = encryption.additionalProperties.toMutableMap()
+                        }
+
+                        /**
+                         * KMSKey is the key to encrypt uploads with. S3 mounts take a KMS key ARN
+                         * in the mount's region.
+                         */
+                        fun kmsKey(kmsKey: String) = kmsKey(JsonField.of(kmsKey))
+
+                        /**
+                         * Sets [Builder.kmsKey] to an arbitrary JSON value.
+                         *
+                         * You should usually call [Builder.kmsKey] with a well-typed [String] value
+                         * instead. This method is primarily for setting the field to an
+                         * undocumented or not yet supported value.
+                         */
+                        fun kmsKey(kmsKey: JsonField<String>) = apply { this.kmsKey = kmsKey }
+
+                        fun additionalProperties(additionalProperties: Map<String, JsonValue>) =
+                            apply {
+                                this.additionalProperties.clear()
+                                putAllAdditionalProperties(additionalProperties)
+                            }
+
+                        fun putAdditionalProperty(key: String, value: JsonValue) = apply {
+                            additionalProperties.put(key, value)
+                        }
+
+                        fun putAllAdditionalProperties(
+                            additionalProperties: Map<String, JsonValue>
+                        ) = apply { this.additionalProperties.putAll(additionalProperties) }
+
+                        fun removeAdditionalProperty(key: String) = apply {
+                            additionalProperties.remove(key)
+                        }
+
+                        fun removeAllAdditionalProperties(keys: Set<String>) = apply {
+                            keys.forEach(::removeAdditionalProperty)
+                        }
+
+                        /**
+                         * Returns an immutable instance of [Encryption].
+                         *
+                         * Further updates to this [Builder] will not mutate the returned instance.
+                         *
+                         * The following fields are required:
+                         * ```java
+                         * .kmsKey()
+                         * ```
+                         *
+                         * @throws IllegalStateException if any required field is unset.
+                         */
+                        fun build(): Encryption =
+                            Encryption(
+                                checkRequired("kmsKey", kmsKey),
+                                additionalProperties.toMutableMap(),
+                            )
+                    }
+
+                    private var validated: Boolean = false
+
+                    /**
+                     * Validates that the types of all values in this object match their expected
+                     * types recursively.
+                     *
+                     * This method is _not_ forwards compatible with new types from the API for
+                     * existing fields.
+                     *
+                     * @throws LangChainInvalidDataException if any value type in this object
+                     *   doesn't match its expected type.
+                     */
+                    fun validate(): Encryption = apply {
+                        if (validated) {
+                            return@apply
+                        }
+
+                        kmsKey()
+                        validated = true
+                    }
+
+                    fun isValid(): Boolean =
+                        try {
+                            validate()
+                            true
+                        } catch (e: LangChainInvalidDataException) {
+                            false
+                        }
+
+                    /**
+                     * Returns a score indicating how many valid values are contained in this object
+                     * recursively.
+                     *
+                     * Used for best match union deserialization.
+                     */
+                    @JvmSynthetic
+                    internal fun validity(): Int = (if (kmsKey.asKnown().isPresent) 1 else 0)
+
+                    override fun equals(other: Any?): Boolean {
+                        if (this === other) {
+                            return true
+                        }
+
+                        return other is Encryption &&
+                            kmsKey == other.kmsKey &&
+                            additionalProperties == other.additionalProperties
+                    }
+
+                    private val hashCode: Int by lazy { Objects.hash(kmsKey, additionalProperties) }
+
+                    override fun hashCode(): Int = hashCode
+
+                    override fun toString() =
+                        "Encryption{kmsKey=$kmsKey, additionalProperties=$additionalProperties}"
                 }
 
                 class Git
@@ -9932,6 +10380,7 @@ private constructor(
                         type == other.type &&
                         cache == other.cache &&
                         contexthub == other.contexthub &&
+                        encryption == other.encryption &&
                         git == other.git &&
                         readOnly == other.readOnly &&
                         s3 == other.s3 &&
@@ -9946,6 +10395,7 @@ private constructor(
                         type,
                         cache,
                         contexthub,
+                        encryption,
                         git,
                         readOnly,
                         s3,
@@ -9956,7 +10406,7 @@ private constructor(
                 override fun hashCode(): Int = hashCode
 
                 override fun toString() =
-                    "SandboxapiGcsBucketMountSpec{id=$id, gcs=$gcs, mountPath=$mountPath, type=$type, cache=$cache, contexthub=$contexthub, git=$git, readOnly=$readOnly, s3=$s3, additionalProperties=$additionalProperties}"
+                    "SandboxapiGcsBucketMountSpec{id=$id, gcs=$gcs, mountPath=$mountPath, type=$type, cache=$cache, contexthub=$contexthub, encryption=$encryption, git=$git, readOnly=$readOnly, s3=$s3, additionalProperties=$additionalProperties}"
             }
 
             class SandboxapiGitRepoMountSpec
@@ -9968,6 +10418,7 @@ private constructor(
                 private val type: JsonField<Type>,
                 private val cache: JsonField<Cache>,
                 private val contexthub: JsonField<Contexthub>,
+                private val encryption: JsonField<Encryption>,
                 private val gcs: JsonField<Gcs>,
                 private val readOnly: JsonField<Boolean>,
                 private val s3: JsonField<S3>,
@@ -9988,6 +10439,9 @@ private constructor(
                     @JsonProperty("contexthub")
                     @ExcludeMissing
                     contexthub: JsonField<Contexthub> = JsonMissing.of(),
+                    @JsonProperty("encryption")
+                    @ExcludeMissing
+                    encryption: JsonField<Encryption> = JsonMissing.of(),
                     @JsonProperty("gcs") @ExcludeMissing gcs: JsonField<Gcs> = JsonMissing.of(),
                     @JsonProperty("read_only")
                     @ExcludeMissing
@@ -10000,6 +10454,7 @@ private constructor(
                     type,
                     cache,
                     contexthub,
+                    encryption,
                     gcs,
                     readOnly,
                     s3,
@@ -10045,6 +10500,12 @@ private constructor(
                  *   (e.g. if the server responded with an unexpected value).
                  */
                 fun contexthub(): Optional<Contexthub> = contexthub.getOptional("contexthub")
+
+                /**
+                 * @throws LangChainInvalidDataException if the JSON field has an unexpected type
+                 *   (e.g. if the server responded with an unexpected value).
+                 */
+                fun encryption(): Optional<Encryption> = encryption.getOptional("encryption")
 
                 /**
                  * @throws LangChainInvalidDataException if the JSON field has an unexpected type
@@ -10115,6 +10576,16 @@ private constructor(
                 fun _contexthub(): JsonField<Contexthub> = contexthub
 
                 /**
+                 * Returns the raw JSON value of [encryption].
+                 *
+                 * Unlike [encryption], this method doesn't throw if the JSON field has an
+                 * unexpected type.
+                 */
+                @JsonProperty("encryption")
+                @ExcludeMissing
+                fun _encryption(): JsonField<Encryption> = encryption
+
+                /**
                  * Returns the raw JSON value of [gcs].
                  *
                  * Unlike [gcs], this method doesn't throw if the JSON field has an unexpected type.
@@ -10176,6 +10647,7 @@ private constructor(
                     private var type: JsonField<Type>? = null
                     private var cache: JsonField<Cache> = JsonMissing.of()
                     private var contexthub: JsonField<Contexthub> = JsonMissing.of()
+                    private var encryption: JsonField<Encryption> = JsonMissing.of()
                     private var gcs: JsonField<Gcs> = JsonMissing.of()
                     private var readOnly: JsonField<Boolean> = JsonMissing.of()
                     private var s3: JsonField<S3> = JsonMissing.of()
@@ -10190,6 +10662,7 @@ private constructor(
                             type = sandboxapiGitRepoMountSpec.type
                             cache = sandboxapiGitRepoMountSpec.cache
                             contexthub = sandboxapiGitRepoMountSpec.contexthub
+                            encryption = sandboxapiGitRepoMountSpec.encryption
                             gcs = sandboxapiGitRepoMountSpec.gcs
                             readOnly = sandboxapiGitRepoMountSpec.readOnly
                             s3 = sandboxapiGitRepoMountSpec.s3
@@ -10265,6 +10738,19 @@ private constructor(
                      */
                     fun contexthub(contexthub: JsonField<Contexthub>) = apply {
                         this.contexthub = contexthub
+                    }
+
+                    fun encryption(encryption: Encryption) = encryption(JsonField.of(encryption))
+
+                    /**
+                     * Sets [Builder.encryption] to an arbitrary JSON value.
+                     *
+                     * You should usually call [Builder.encryption] with a well-typed [Encryption]
+                     * value instead. This method is primarily for setting the field to an
+                     * undocumented or not yet supported value.
+                     */
+                    fun encryption(encryption: JsonField<Encryption>) = apply {
+                        this.encryption = encryption
                     }
 
                     fun gcs(gcs: Gcs) = gcs(JsonField.of(gcs))
@@ -10345,6 +10831,7 @@ private constructor(
                             checkRequired("type", type),
                             cache,
                             contexthub,
+                            encryption,
                             gcs,
                             readOnly,
                             s3,
@@ -10375,6 +10862,7 @@ private constructor(
                     type().validate()
                     cache().ifPresent { it.validate() }
                     contexthub().ifPresent { it.validate() }
+                    encryption().ifPresent { it.validate() }
                     gcs().ifPresent { it.validate() }
                     readOnly()
                     s3().ifPresent { it.validate() }
@@ -10403,6 +10891,7 @@ private constructor(
                         (type.asKnown().getOrNull()?.validity() ?: 0) +
                         (cache.asKnown().getOrNull()?.validity() ?: 0) +
                         (contexthub.asKnown().getOrNull()?.validity() ?: 0) +
+                        (encryption.asKnown().getOrNull()?.validity() ?: 0) +
                         (gcs.asKnown().getOrNull()?.validity() ?: 0) +
                         (if (readOnly.asKnown().isPresent) 1 else 0) +
                         (s3.asKnown().getOrNull()?.validity() ?: 0)
@@ -11628,6 +12117,190 @@ private constructor(
                         "Contexthub{repo=$repo, initialPullOnly=$initialPullOnly, additionalProperties=$additionalProperties}"
                 }
 
+                class Encryption
+                @JsonCreator(mode = JsonCreator.Mode.DISABLED)
+                private constructor(
+                    private val kmsKey: JsonField<String>,
+                    private val additionalProperties: MutableMap<String, JsonValue>,
+                ) {
+
+                    @JsonCreator
+                    private constructor(
+                        @JsonProperty("kms_key")
+                        @ExcludeMissing
+                        kmsKey: JsonField<String> = JsonMissing.of()
+                    ) : this(kmsKey, mutableMapOf())
+
+                    /**
+                     * KMSKey is the key to encrypt uploads with. S3 mounts take a KMS key ARN in
+                     * the mount's region.
+                     *
+                     * @throws LangChainInvalidDataException if the JSON field has an unexpected
+                     *   type or is unexpectedly missing or null (e.g. if the server responded with
+                     *   an unexpected value).
+                     */
+                    fun kmsKey(): String = kmsKey.getRequired("kms_key")
+
+                    /**
+                     * Returns the raw JSON value of [kmsKey].
+                     *
+                     * Unlike [kmsKey], this method doesn't throw if the JSON field has an
+                     * unexpected type.
+                     */
+                    @JsonProperty("kms_key")
+                    @ExcludeMissing
+                    fun _kmsKey(): JsonField<String> = kmsKey
+
+                    @JsonAnySetter
+                    private fun putAdditionalProperty(key: String, value: JsonValue) {
+                        additionalProperties.put(key, value)
+                    }
+
+                    @JsonAnyGetter
+                    @ExcludeMissing
+                    fun _additionalProperties(): Map<String, JsonValue> =
+                        Collections.unmodifiableMap(additionalProperties)
+
+                    fun toBuilder() = Builder().from(this)
+
+                    companion object {
+
+                        /**
+                         * Returns a mutable builder for constructing an instance of [Encryption].
+                         *
+                         * The following fields are required:
+                         * ```java
+                         * .kmsKey()
+                         * ```
+                         */
+                        @JvmStatic fun builder() = Builder()
+                    }
+
+                    /** A builder for [Encryption]. */
+                    class Builder internal constructor() {
+
+                        private var kmsKey: JsonField<String>? = null
+                        private var additionalProperties: MutableMap<String, JsonValue> =
+                            mutableMapOf()
+
+                        @JvmSynthetic
+                        internal fun from(encryption: Encryption) = apply {
+                            kmsKey = encryption.kmsKey
+                            additionalProperties = encryption.additionalProperties.toMutableMap()
+                        }
+
+                        /**
+                         * KMSKey is the key to encrypt uploads with. S3 mounts take a KMS key ARN
+                         * in the mount's region.
+                         */
+                        fun kmsKey(kmsKey: String) = kmsKey(JsonField.of(kmsKey))
+
+                        /**
+                         * Sets [Builder.kmsKey] to an arbitrary JSON value.
+                         *
+                         * You should usually call [Builder.kmsKey] with a well-typed [String] value
+                         * instead. This method is primarily for setting the field to an
+                         * undocumented or not yet supported value.
+                         */
+                        fun kmsKey(kmsKey: JsonField<String>) = apply { this.kmsKey = kmsKey }
+
+                        fun additionalProperties(additionalProperties: Map<String, JsonValue>) =
+                            apply {
+                                this.additionalProperties.clear()
+                                putAllAdditionalProperties(additionalProperties)
+                            }
+
+                        fun putAdditionalProperty(key: String, value: JsonValue) = apply {
+                            additionalProperties.put(key, value)
+                        }
+
+                        fun putAllAdditionalProperties(
+                            additionalProperties: Map<String, JsonValue>
+                        ) = apply { this.additionalProperties.putAll(additionalProperties) }
+
+                        fun removeAdditionalProperty(key: String) = apply {
+                            additionalProperties.remove(key)
+                        }
+
+                        fun removeAllAdditionalProperties(keys: Set<String>) = apply {
+                            keys.forEach(::removeAdditionalProperty)
+                        }
+
+                        /**
+                         * Returns an immutable instance of [Encryption].
+                         *
+                         * Further updates to this [Builder] will not mutate the returned instance.
+                         *
+                         * The following fields are required:
+                         * ```java
+                         * .kmsKey()
+                         * ```
+                         *
+                         * @throws IllegalStateException if any required field is unset.
+                         */
+                        fun build(): Encryption =
+                            Encryption(
+                                checkRequired("kmsKey", kmsKey),
+                                additionalProperties.toMutableMap(),
+                            )
+                    }
+
+                    private var validated: Boolean = false
+
+                    /**
+                     * Validates that the types of all values in this object match their expected
+                     * types recursively.
+                     *
+                     * This method is _not_ forwards compatible with new types from the API for
+                     * existing fields.
+                     *
+                     * @throws LangChainInvalidDataException if any value type in this object
+                     *   doesn't match its expected type.
+                     */
+                    fun validate(): Encryption = apply {
+                        if (validated) {
+                            return@apply
+                        }
+
+                        kmsKey()
+                        validated = true
+                    }
+
+                    fun isValid(): Boolean =
+                        try {
+                            validate()
+                            true
+                        } catch (e: LangChainInvalidDataException) {
+                            false
+                        }
+
+                    /**
+                     * Returns a score indicating how many valid values are contained in this object
+                     * recursively.
+                     *
+                     * Used for best match union deserialization.
+                     */
+                    @JvmSynthetic
+                    internal fun validity(): Int = (if (kmsKey.asKnown().isPresent) 1 else 0)
+
+                    override fun equals(other: Any?): Boolean {
+                        if (this === other) {
+                            return true
+                        }
+
+                        return other is Encryption &&
+                            kmsKey == other.kmsKey &&
+                            additionalProperties == other.additionalProperties
+                    }
+
+                    private val hashCode: Int by lazy { Objects.hash(kmsKey, additionalProperties) }
+
+                    override fun hashCode(): Int = hashCode
+
+                    override fun toString() =
+                        "Encryption{kmsKey=$kmsKey, additionalProperties=$additionalProperties}"
+                }
+
                 class Gcs
                 @JsonCreator(mode = JsonCreator.Mode.DISABLED)
                 private constructor(
@@ -12200,6 +12873,7 @@ private constructor(
                         type == other.type &&
                         cache == other.cache &&
                         contexthub == other.contexthub &&
+                        encryption == other.encryption &&
                         gcs == other.gcs &&
                         readOnly == other.readOnly &&
                         s3 == other.s3 &&
@@ -12214,6 +12888,7 @@ private constructor(
                         type,
                         cache,
                         contexthub,
+                        encryption,
                         gcs,
                         readOnly,
                         s3,
@@ -12224,7 +12899,7 @@ private constructor(
                 override fun hashCode(): Int = hashCode
 
                 override fun toString() =
-                    "SandboxapiGitRepoMountSpec{id=$id, git=$git, mountPath=$mountPath, type=$type, cache=$cache, contexthub=$contexthub, gcs=$gcs, readOnly=$readOnly, s3=$s3, additionalProperties=$additionalProperties}"
+                    "SandboxapiGitRepoMountSpec{id=$id, git=$git, mountPath=$mountPath, type=$type, cache=$cache, contexthub=$contexthub, encryption=$encryption, gcs=$gcs, readOnly=$readOnly, s3=$s3, additionalProperties=$additionalProperties}"
             }
 
             class SandboxapiContextHubRepoMountSpec
@@ -12235,6 +12910,7 @@ private constructor(
                 private val mountPath: JsonField<String>,
                 private val type: JsonField<Type>,
                 private val cache: JsonField<Cache>,
+                private val encryption: JsonField<Encryption>,
                 private val gcs: JsonField<Gcs>,
                 private val git: JsonField<Git>,
                 private val readOnly: JsonField<Boolean>,
@@ -12255,6 +12931,9 @@ private constructor(
                     @JsonProperty("cache")
                     @ExcludeMissing
                     cache: JsonField<Cache> = JsonMissing.of(),
+                    @JsonProperty("encryption")
+                    @ExcludeMissing
+                    encryption: JsonField<Encryption> = JsonMissing.of(),
                     @JsonProperty("gcs") @ExcludeMissing gcs: JsonField<Gcs> = JsonMissing.of(),
                     @JsonProperty("git") @ExcludeMissing git: JsonField<Git> = JsonMissing.of(),
                     @JsonProperty("read_only")
@@ -12267,6 +12946,7 @@ private constructor(
                     mountPath,
                     type,
                     cache,
+                    encryption,
                     gcs,
                     git,
                     readOnly,
@@ -12307,6 +12987,12 @@ private constructor(
                  *   (e.g. if the server responded with an unexpected value).
                  */
                 fun cache(): Optional<Cache> = cache.getOptional("cache")
+
+                /**
+                 * @throws LangChainInvalidDataException if the JSON field has an unexpected type
+                 *   (e.g. if the server responded with an unexpected value).
+                 */
+                fun encryption(): Optional<Encryption> = encryption.getOptional("encryption")
 
                 /**
                  * @throws LangChainInvalidDataException if the JSON field has an unexpected type
@@ -12376,6 +13062,16 @@ private constructor(
                 @JsonProperty("cache") @ExcludeMissing fun _cache(): JsonField<Cache> = cache
 
                 /**
+                 * Returns the raw JSON value of [encryption].
+                 *
+                 * Unlike [encryption], this method doesn't throw if the JSON field has an
+                 * unexpected type.
+                 */
+                @JsonProperty("encryption")
+                @ExcludeMissing
+                fun _encryption(): JsonField<Encryption> = encryption
+
+                /**
                  * Returns the raw JSON value of [gcs].
                  *
                  * Unlike [gcs], this method doesn't throw if the JSON field has an unexpected type.
@@ -12443,6 +13139,7 @@ private constructor(
                     private var mountPath: JsonField<String>? = null
                     private var type: JsonField<Type>? = null
                     private var cache: JsonField<Cache> = JsonMissing.of()
+                    private var encryption: JsonField<Encryption> = JsonMissing.of()
                     private var gcs: JsonField<Gcs> = JsonMissing.of()
                     private var git: JsonField<Git> = JsonMissing.of()
                     private var readOnly: JsonField<Boolean> = JsonMissing.of()
@@ -12458,6 +13155,7 @@ private constructor(
                         mountPath = sandboxapiContextHubRepoMountSpec.mountPath
                         type = sandboxapiContextHubRepoMountSpec.type
                         cache = sandboxapiContextHubRepoMountSpec.cache
+                        encryption = sandboxapiContextHubRepoMountSpec.encryption
                         gcs = sandboxapiContextHubRepoMountSpec.gcs
                         git = sandboxapiContextHubRepoMountSpec.git
                         readOnly = sandboxapiContextHubRepoMountSpec.readOnly
@@ -12524,6 +13222,19 @@ private constructor(
                      * not yet supported value.
                      */
                     fun cache(cache: JsonField<Cache>) = apply { this.cache = cache }
+
+                    fun encryption(encryption: Encryption) = encryption(JsonField.of(encryption))
+
+                    /**
+                     * Sets [Builder.encryption] to an arbitrary JSON value.
+                     *
+                     * You should usually call [Builder.encryption] with a well-typed [Encryption]
+                     * value instead. This method is primarily for setting the field to an
+                     * undocumented or not yet supported value.
+                     */
+                    fun encryption(encryption: JsonField<Encryption>) = apply {
+                        this.encryption = encryption
+                    }
 
                     fun gcs(gcs: Gcs) = gcs(JsonField.of(gcs))
 
@@ -12613,6 +13324,7 @@ private constructor(
                             checkRequired("mountPath", mountPath),
                             checkRequired("type", type),
                             cache,
+                            encryption,
                             gcs,
                             git,
                             readOnly,
@@ -12643,6 +13355,7 @@ private constructor(
                     mountPath()
                     type().validate()
                     cache().ifPresent { it.validate() }
+                    encryption().ifPresent { it.validate() }
                     gcs().ifPresent { it.validate() }
                     git().ifPresent { it.validate() }
                     readOnly()
@@ -12671,6 +13384,7 @@ private constructor(
                         (if (mountPath.asKnown().isPresent) 1 else 0) +
                         (type.asKnown().getOrNull()?.validity() ?: 0) +
                         (cache.asKnown().getOrNull()?.validity() ?: 0) +
+                        (encryption.asKnown().getOrNull()?.validity() ?: 0) +
                         (gcs.asKnown().getOrNull()?.validity() ?: 0) +
                         (git.asKnown().getOrNull()?.validity() ?: 0) +
                         (if (readOnly.asKnown().isPresent) 1 else 0) +
@@ -13273,6 +13987,190 @@ private constructor(
 
                     override fun toString() =
                         "Cache{maxSizeBytes=$maxSizeBytes, writebackSeconds=$writebackSeconds, additionalProperties=$additionalProperties}"
+                }
+
+                class Encryption
+                @JsonCreator(mode = JsonCreator.Mode.DISABLED)
+                private constructor(
+                    private val kmsKey: JsonField<String>,
+                    private val additionalProperties: MutableMap<String, JsonValue>,
+                ) {
+
+                    @JsonCreator
+                    private constructor(
+                        @JsonProperty("kms_key")
+                        @ExcludeMissing
+                        kmsKey: JsonField<String> = JsonMissing.of()
+                    ) : this(kmsKey, mutableMapOf())
+
+                    /**
+                     * KMSKey is the key to encrypt uploads with. S3 mounts take a KMS key ARN in
+                     * the mount's region.
+                     *
+                     * @throws LangChainInvalidDataException if the JSON field has an unexpected
+                     *   type or is unexpectedly missing or null (e.g. if the server responded with
+                     *   an unexpected value).
+                     */
+                    fun kmsKey(): String = kmsKey.getRequired("kms_key")
+
+                    /**
+                     * Returns the raw JSON value of [kmsKey].
+                     *
+                     * Unlike [kmsKey], this method doesn't throw if the JSON field has an
+                     * unexpected type.
+                     */
+                    @JsonProperty("kms_key")
+                    @ExcludeMissing
+                    fun _kmsKey(): JsonField<String> = kmsKey
+
+                    @JsonAnySetter
+                    private fun putAdditionalProperty(key: String, value: JsonValue) {
+                        additionalProperties.put(key, value)
+                    }
+
+                    @JsonAnyGetter
+                    @ExcludeMissing
+                    fun _additionalProperties(): Map<String, JsonValue> =
+                        Collections.unmodifiableMap(additionalProperties)
+
+                    fun toBuilder() = Builder().from(this)
+
+                    companion object {
+
+                        /**
+                         * Returns a mutable builder for constructing an instance of [Encryption].
+                         *
+                         * The following fields are required:
+                         * ```java
+                         * .kmsKey()
+                         * ```
+                         */
+                        @JvmStatic fun builder() = Builder()
+                    }
+
+                    /** A builder for [Encryption]. */
+                    class Builder internal constructor() {
+
+                        private var kmsKey: JsonField<String>? = null
+                        private var additionalProperties: MutableMap<String, JsonValue> =
+                            mutableMapOf()
+
+                        @JvmSynthetic
+                        internal fun from(encryption: Encryption) = apply {
+                            kmsKey = encryption.kmsKey
+                            additionalProperties = encryption.additionalProperties.toMutableMap()
+                        }
+
+                        /**
+                         * KMSKey is the key to encrypt uploads with. S3 mounts take a KMS key ARN
+                         * in the mount's region.
+                         */
+                        fun kmsKey(kmsKey: String) = kmsKey(JsonField.of(kmsKey))
+
+                        /**
+                         * Sets [Builder.kmsKey] to an arbitrary JSON value.
+                         *
+                         * You should usually call [Builder.kmsKey] with a well-typed [String] value
+                         * instead. This method is primarily for setting the field to an
+                         * undocumented or not yet supported value.
+                         */
+                        fun kmsKey(kmsKey: JsonField<String>) = apply { this.kmsKey = kmsKey }
+
+                        fun additionalProperties(additionalProperties: Map<String, JsonValue>) =
+                            apply {
+                                this.additionalProperties.clear()
+                                putAllAdditionalProperties(additionalProperties)
+                            }
+
+                        fun putAdditionalProperty(key: String, value: JsonValue) = apply {
+                            additionalProperties.put(key, value)
+                        }
+
+                        fun putAllAdditionalProperties(
+                            additionalProperties: Map<String, JsonValue>
+                        ) = apply { this.additionalProperties.putAll(additionalProperties) }
+
+                        fun removeAdditionalProperty(key: String) = apply {
+                            additionalProperties.remove(key)
+                        }
+
+                        fun removeAllAdditionalProperties(keys: Set<String>) = apply {
+                            keys.forEach(::removeAdditionalProperty)
+                        }
+
+                        /**
+                         * Returns an immutable instance of [Encryption].
+                         *
+                         * Further updates to this [Builder] will not mutate the returned instance.
+                         *
+                         * The following fields are required:
+                         * ```java
+                         * .kmsKey()
+                         * ```
+                         *
+                         * @throws IllegalStateException if any required field is unset.
+                         */
+                        fun build(): Encryption =
+                            Encryption(
+                                checkRequired("kmsKey", kmsKey),
+                                additionalProperties.toMutableMap(),
+                            )
+                    }
+
+                    private var validated: Boolean = false
+
+                    /**
+                     * Validates that the types of all values in this object match their expected
+                     * types recursively.
+                     *
+                     * This method is _not_ forwards compatible with new types from the API for
+                     * existing fields.
+                     *
+                     * @throws LangChainInvalidDataException if any value type in this object
+                     *   doesn't match its expected type.
+                     */
+                    fun validate(): Encryption = apply {
+                        if (validated) {
+                            return@apply
+                        }
+
+                        kmsKey()
+                        validated = true
+                    }
+
+                    fun isValid(): Boolean =
+                        try {
+                            validate()
+                            true
+                        } catch (e: LangChainInvalidDataException) {
+                            false
+                        }
+
+                    /**
+                     * Returns a score indicating how many valid values are contained in this object
+                     * recursively.
+                     *
+                     * Used for best match union deserialization.
+                     */
+                    @JvmSynthetic
+                    internal fun validity(): Int = (if (kmsKey.asKnown().isPresent) 1 else 0)
+
+                    override fun equals(other: Any?): Boolean {
+                        if (this === other) {
+                            return true
+                        }
+
+                        return other is Encryption &&
+                            kmsKey == other.kmsKey &&
+                            additionalProperties == other.additionalProperties
+                    }
+
+                    private val hashCode: Int by lazy { Objects.hash(kmsKey, additionalProperties) }
+
+                    override fun hashCode(): Int = hashCode
+
+                    override fun toString() =
+                        "Encryption{kmsKey=$kmsKey, additionalProperties=$additionalProperties}"
                 }
 
                 class Gcs
@@ -14468,6 +15366,7 @@ private constructor(
                         mountPath == other.mountPath &&
                         type == other.type &&
                         cache == other.cache &&
+                        encryption == other.encryption &&
                         gcs == other.gcs &&
                         git == other.git &&
                         readOnly == other.readOnly &&
@@ -14482,6 +15381,7 @@ private constructor(
                         mountPath,
                         type,
                         cache,
+                        encryption,
                         gcs,
                         git,
                         readOnly,
@@ -14493,7 +15393,7 @@ private constructor(
                 override fun hashCode(): Int = hashCode
 
                 override fun toString() =
-                    "SandboxapiContextHubRepoMountSpec{id=$id, contexthub=$contexthub, mountPath=$mountPath, type=$type, cache=$cache, gcs=$gcs, git=$git, readOnly=$readOnly, s3=$s3, additionalProperties=$additionalProperties}"
+                    "SandboxapiContextHubRepoMountSpec{id=$id, contexthub=$contexthub, mountPath=$mountPath, type=$type, cache=$cache, encryption=$encryption, gcs=$gcs, git=$git, readOnly=$readOnly, s3=$s3, additionalProperties=$additionalProperties}"
             }
         }
 
