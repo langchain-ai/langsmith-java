@@ -98,12 +98,34 @@ private constructor(
     fun isRoot(): Optional<Boolean> = body.isRoot()
 
     /**
+     * `max_feedback_modified_at` is the exclusive upper bound (RFC3339) on feedback `modified_at`,
+     * applied to the feedback conditions in `filter`, `trace_filter`, or `tree_filter` (for example
+     * eq(feedback_key, "correctness")). Requires at least one feedback condition. Runs must still
+     * fall within the `start_time` window.
+     *
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
+    fun maxFeedbackModifiedAt(): Optional<OffsetDateTime> = body.maxFeedbackModifiedAt()
+
+    /**
      * `max_start_time` is the upper bound for run `start_time` (RFC3339). Defaults to now.
      *
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
      */
     fun maxStartTime(): Optional<OffsetDateTime> = body.maxStartTime()
+
+    /**
+     * `min_feedback_modified_at` is the inclusive lower bound (RFC3339) on feedback `modified_at`,
+     * applied to the feedback conditions in `filter`, `trace_filter`, or `tree_filter` (for example
+     * eq(feedback_key, "correctness")). Requires at least one feedback condition. Runs must still
+     * fall within the `start_time` window.
+     *
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
+    fun minFeedbackModifiedAt(): Optional<OffsetDateTime> = body.minFeedbackModifiedAt()
 
     /**
      * `min_start_time` is the lower bound for run `start_time` (RFC3339). Defaults to 1 day ago.
@@ -241,11 +263,27 @@ private constructor(
     fun _isRoot(): JsonField<Boolean> = body._isRoot()
 
     /**
+     * Returns the raw JSON value of [maxFeedbackModifiedAt].
+     *
+     * Unlike [maxFeedbackModifiedAt], this method doesn't throw if the JSON field has an unexpected
+     * type.
+     */
+    fun _maxFeedbackModifiedAt(): JsonField<OffsetDateTime> = body._maxFeedbackModifiedAt()
+
+    /**
      * Returns the raw JSON value of [maxStartTime].
      *
      * Unlike [maxStartTime], this method doesn't throw if the JSON field has an unexpected type.
      */
     fun _maxStartTime(): JsonField<OffsetDateTime> = body._maxStartTime()
+
+    /**
+     * Returns the raw JSON value of [minFeedbackModifiedAt].
+     *
+     * Unlike [minFeedbackModifiedAt], this method doesn't throw if the JSON field has an unexpected
+     * type.
+     */
+    fun _minFeedbackModifiedAt(): JsonField<OffsetDateTime> = body._minFeedbackModifiedAt()
 
     /**
      * Returns the raw JSON value of [minStartTime].
@@ -460,6 +498,27 @@ private constructor(
          */
         fun isRoot(isRoot: JsonField<Boolean>) = apply { body.isRoot(isRoot) }
 
+        /**
+         * `max_feedback_modified_at` is the exclusive upper bound (RFC3339) on feedback
+         * `modified_at`, applied to the feedback conditions in `filter`, `trace_filter`, or
+         * `tree_filter` (for example eq(feedback_key, "correctness")). Requires at least one
+         * feedback condition. Runs must still fall within the `start_time` window.
+         */
+        fun maxFeedbackModifiedAt(maxFeedbackModifiedAt: OffsetDateTime) = apply {
+            body.maxFeedbackModifiedAt(maxFeedbackModifiedAt)
+        }
+
+        /**
+         * Sets [Builder.maxFeedbackModifiedAt] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.maxFeedbackModifiedAt] with a well-typed
+         * [OffsetDateTime] value instead. This method is primarily for setting the field to an
+         * undocumented or not yet supported value.
+         */
+        fun maxFeedbackModifiedAt(maxFeedbackModifiedAt: JsonField<OffsetDateTime>) = apply {
+            body.maxFeedbackModifiedAt(maxFeedbackModifiedAt)
+        }
+
         /** `max_start_time` is the upper bound for run `start_time` (RFC3339). Defaults to now. */
         fun maxStartTime(maxStartTime: OffsetDateTime) = apply { body.maxStartTime(maxStartTime) }
 
@@ -472,6 +531,27 @@ private constructor(
          */
         fun maxStartTime(maxStartTime: JsonField<OffsetDateTime>) = apply {
             body.maxStartTime(maxStartTime)
+        }
+
+        /**
+         * `min_feedback_modified_at` is the inclusive lower bound (RFC3339) on feedback
+         * `modified_at`, applied to the feedback conditions in `filter`, `trace_filter`, or
+         * `tree_filter` (for example eq(feedback_key, "correctness")). Requires at least one
+         * feedback condition. Runs must still fall within the `start_time` window.
+         */
+        fun minFeedbackModifiedAt(minFeedbackModifiedAt: OffsetDateTime) = apply {
+            body.minFeedbackModifiedAt(minFeedbackModifiedAt)
+        }
+
+        /**
+         * Sets [Builder.minFeedbackModifiedAt] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.minFeedbackModifiedAt] with a well-typed
+         * [OffsetDateTime] value instead. This method is primarily for setting the field to an
+         * undocumented or not yet supported value.
+         */
+        fun minFeedbackModifiedAt(minFeedbackModifiedAt: JsonField<OffsetDateTime>) = apply {
+            body.minFeedbackModifiedAt(minFeedbackModifiedAt)
         }
 
         /**
@@ -805,7 +885,9 @@ private constructor(
         private val hasError: JsonField<Boolean>,
         private val ids: JsonField<List<String>>,
         private val isRoot: JsonField<Boolean>,
+        private val maxFeedbackModifiedAt: JsonField<OffsetDateTime>,
         private val maxStartTime: JsonField<OffsetDateTime>,
+        private val minFeedbackModifiedAt: JsonField<OffsetDateTime>,
         private val minStartTime: JsonField<OffsetDateTime>,
         private val pageSize: JsonField<Long>,
         private val projectIds: JsonField<List<String>>,
@@ -831,9 +913,15 @@ private constructor(
             hasError: JsonField<Boolean> = JsonMissing.of(),
             @JsonProperty("ids") @ExcludeMissing ids: JsonField<List<String>> = JsonMissing.of(),
             @JsonProperty("is_root") @ExcludeMissing isRoot: JsonField<Boolean> = JsonMissing.of(),
+            @JsonProperty("max_feedback_modified_at")
+            @ExcludeMissing
+            maxFeedbackModifiedAt: JsonField<OffsetDateTime> = JsonMissing.of(),
             @JsonProperty("max_start_time")
             @ExcludeMissing
             maxStartTime: JsonField<OffsetDateTime> = JsonMissing.of(),
+            @JsonProperty("min_feedback_modified_at")
+            @ExcludeMissing
+            minFeedbackModifiedAt: JsonField<OffsetDateTime> = JsonMissing.of(),
             @JsonProperty("min_start_time")
             @ExcludeMissing
             minStartTime: JsonField<OffsetDateTime> = JsonMissing.of(),
@@ -867,7 +955,9 @@ private constructor(
             hasError,
             ids,
             isRoot,
+            maxFeedbackModifiedAt,
             maxStartTime,
+            minFeedbackModifiedAt,
             minStartTime,
             pageSize,
             projectIds,
@@ -937,12 +1027,36 @@ private constructor(
         fun isRoot(): Optional<Boolean> = isRoot.getOptional("is_root")
 
         /**
+         * `max_feedback_modified_at` is the exclusive upper bound (RFC3339) on feedback
+         * `modified_at`, applied to the feedback conditions in `filter`, `trace_filter`, or
+         * `tree_filter` (for example eq(feedback_key, "correctness")). Requires at least one
+         * feedback condition. Runs must still fall within the `start_time` window.
+         *
+         * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
+         *   the server responded with an unexpected value).
+         */
+        fun maxFeedbackModifiedAt(): Optional<OffsetDateTime> =
+            maxFeedbackModifiedAt.getOptional("max_feedback_modified_at")
+
+        /**
          * `max_start_time` is the upper bound for run `start_time` (RFC3339). Defaults to now.
          *
          * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
          *   the server responded with an unexpected value).
          */
         fun maxStartTime(): Optional<OffsetDateTime> = maxStartTime.getOptional("max_start_time")
+
+        /**
+         * `min_feedback_modified_at` is the inclusive lower bound (RFC3339) on feedback
+         * `modified_at`, applied to the feedback conditions in `filter`, `trace_filter`, or
+         * `tree_filter` (for example eq(feedback_key, "correctness")). Requires at least one
+         * feedback condition. Runs must still fall within the `start_time` window.
+         *
+         * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
+         *   the server responded with an unexpected value).
+         */
+        fun minFeedbackModifiedAt(): Optional<OffsetDateTime> =
+            minFeedbackModifiedAt.getOptional("min_feedback_modified_at")
 
         /**
          * `min_start_time` is the lower bound for run `start_time` (RFC3339). Defaults to 1 day
@@ -1084,6 +1198,16 @@ private constructor(
         @JsonProperty("is_root") @ExcludeMissing fun _isRoot(): JsonField<Boolean> = isRoot
 
         /**
+         * Returns the raw JSON value of [maxFeedbackModifiedAt].
+         *
+         * Unlike [maxFeedbackModifiedAt], this method doesn't throw if the JSON field has an
+         * unexpected type.
+         */
+        @JsonProperty("max_feedback_modified_at")
+        @ExcludeMissing
+        fun _maxFeedbackModifiedAt(): JsonField<OffsetDateTime> = maxFeedbackModifiedAt
+
+        /**
          * Returns the raw JSON value of [maxStartTime].
          *
          * Unlike [maxStartTime], this method doesn't throw if the JSON field has an unexpected
@@ -1092,6 +1216,16 @@ private constructor(
         @JsonProperty("max_start_time")
         @ExcludeMissing
         fun _maxStartTime(): JsonField<OffsetDateTime> = maxStartTime
+
+        /**
+         * Returns the raw JSON value of [minFeedbackModifiedAt].
+         *
+         * Unlike [minFeedbackModifiedAt], this method doesn't throw if the JSON field has an
+         * unexpected type.
+         */
+        @JsonProperty("min_feedback_modified_at")
+        @ExcludeMissing
+        fun _minFeedbackModifiedAt(): JsonField<OffsetDateTime> = minFeedbackModifiedAt
 
         /**
          * Returns the raw JSON value of [minStartTime].
@@ -1207,7 +1341,9 @@ private constructor(
             private var hasError: JsonField<Boolean> = JsonMissing.of()
             private var ids: JsonField<MutableList<String>>? = null
             private var isRoot: JsonField<Boolean> = JsonMissing.of()
+            private var maxFeedbackModifiedAt: JsonField<OffsetDateTime> = JsonMissing.of()
             private var maxStartTime: JsonField<OffsetDateTime> = JsonMissing.of()
+            private var minFeedbackModifiedAt: JsonField<OffsetDateTime> = JsonMissing.of()
             private var minStartTime: JsonField<OffsetDateTime> = JsonMissing.of()
             private var pageSize: JsonField<Long> = JsonMissing.of()
             private var projectIds: JsonField<MutableList<String>>? = null
@@ -1228,7 +1364,9 @@ private constructor(
                 hasError = body.hasError
                 ids = body.ids.map { it.toMutableList() }
                 isRoot = body.isRoot
+                maxFeedbackModifiedAt = body.maxFeedbackModifiedAt
                 maxStartTime = body.maxStartTime
+                minFeedbackModifiedAt = body.minFeedbackModifiedAt
                 minStartTime = body.minStartTime
                 pageSize = body.pageSize
                 projectIds = body.projectIds.map { it.toMutableList() }
@@ -1342,6 +1480,26 @@ private constructor(
             fun isRoot(isRoot: JsonField<Boolean>) = apply { this.isRoot = isRoot }
 
             /**
+             * `max_feedback_modified_at` is the exclusive upper bound (RFC3339) on feedback
+             * `modified_at`, applied to the feedback conditions in `filter`, `trace_filter`, or
+             * `tree_filter` (for example eq(feedback_key, "correctness")). Requires at least one
+             * feedback condition. Runs must still fall within the `start_time` window.
+             */
+            fun maxFeedbackModifiedAt(maxFeedbackModifiedAt: OffsetDateTime) =
+                maxFeedbackModifiedAt(JsonField.of(maxFeedbackModifiedAt))
+
+            /**
+             * Sets [Builder.maxFeedbackModifiedAt] to an arbitrary JSON value.
+             *
+             * You should usually call [Builder.maxFeedbackModifiedAt] with a well-typed
+             * [OffsetDateTime] value instead. This method is primarily for setting the field to an
+             * undocumented or not yet supported value.
+             */
+            fun maxFeedbackModifiedAt(maxFeedbackModifiedAt: JsonField<OffsetDateTime>) = apply {
+                this.maxFeedbackModifiedAt = maxFeedbackModifiedAt
+            }
+
+            /**
              * `max_start_time` is the upper bound for run `start_time` (RFC3339). Defaults to now.
              */
             fun maxStartTime(maxStartTime: OffsetDateTime) =
@@ -1356,6 +1514,26 @@ private constructor(
              */
             fun maxStartTime(maxStartTime: JsonField<OffsetDateTime>) = apply {
                 this.maxStartTime = maxStartTime
+            }
+
+            /**
+             * `min_feedback_modified_at` is the inclusive lower bound (RFC3339) on feedback
+             * `modified_at`, applied to the feedback conditions in `filter`, `trace_filter`, or
+             * `tree_filter` (for example eq(feedback_key, "correctness")). Requires at least one
+             * feedback condition. Runs must still fall within the `start_time` window.
+             */
+            fun minFeedbackModifiedAt(minFeedbackModifiedAt: OffsetDateTime) =
+                minFeedbackModifiedAt(JsonField.of(minFeedbackModifiedAt))
+
+            /**
+             * Sets [Builder.minFeedbackModifiedAt] to an arbitrary JSON value.
+             *
+             * You should usually call [Builder.minFeedbackModifiedAt] with a well-typed
+             * [OffsetDateTime] value instead. This method is primarily for setting the field to an
+             * undocumented or not yet supported value.
+             */
+            fun minFeedbackModifiedAt(minFeedbackModifiedAt: JsonField<OffsetDateTime>) = apply {
+                this.minFeedbackModifiedAt = minFeedbackModifiedAt
             }
 
             /**
@@ -1596,7 +1774,9 @@ private constructor(
                     hasError,
                     (ids ?: JsonMissing.of()).map { it.toImmutable() },
                     isRoot,
+                    maxFeedbackModifiedAt,
                     maxStartTime,
+                    minFeedbackModifiedAt,
                     minStartTime,
                     pageSize,
                     (projectIds ?: JsonMissing.of()).map { it.toImmutable() },
@@ -1633,7 +1813,9 @@ private constructor(
             hasError()
             ids()
             isRoot()
+            maxFeedbackModifiedAt()
             maxStartTime()
+            minFeedbackModifiedAt()
             minStartTime()
             pageSize()
             projectIds()
@@ -1669,7 +1851,9 @@ private constructor(
                 (if (hasError.asKnown().isPresent) 1 else 0) +
                 (ids.asKnown().getOrNull()?.size ?: 0) +
                 (if (isRoot.asKnown().isPresent) 1 else 0) +
+                (if (maxFeedbackModifiedAt.asKnown().isPresent) 1 else 0) +
                 (if (maxStartTime.asKnown().isPresent) 1 else 0) +
+                (if (minFeedbackModifiedAt.asKnown().isPresent) 1 else 0) +
                 (if (minStartTime.asKnown().isPresent) 1 else 0) +
                 (if (pageSize.asKnown().isPresent) 1 else 0) +
                 (projectIds.asKnown().getOrNull()?.size ?: 0) +
@@ -1693,7 +1877,9 @@ private constructor(
                 hasError == other.hasError &&
                 ids == other.ids &&
                 isRoot == other.isRoot &&
+                maxFeedbackModifiedAt == other.maxFeedbackModifiedAt &&
                 maxStartTime == other.maxStartTime &&
+                minFeedbackModifiedAt == other.minFeedbackModifiedAt &&
                 minStartTime == other.minStartTime &&
                 pageSize == other.pageSize &&
                 projectIds == other.projectIds &&
@@ -1715,7 +1901,9 @@ private constructor(
                 hasError,
                 ids,
                 isRoot,
+                maxFeedbackModifiedAt,
                 maxStartTime,
+                minFeedbackModifiedAt,
                 minStartTime,
                 pageSize,
                 projectIds,
@@ -1733,7 +1921,7 @@ private constructor(
         override fun hashCode(): Int = hashCode
 
         override fun toString() =
-            "Body{aiSearch=$aiSearch, cursor=$cursor, filter=$filter, hasError=$hasError, ids=$ids, isRoot=$isRoot, maxStartTime=$maxStartTime, minStartTime=$minStartTime, pageSize=$pageSize, projectIds=$projectIds, referenceDatasetId=$referenceDatasetId, referenceExamples=$referenceExamples, runType=$runType, selects=$selects, traceFilter=$traceFilter, traceId=$traceId, treeFilter=$treeFilter, additionalProperties=$additionalProperties}"
+            "Body{aiSearch=$aiSearch, cursor=$cursor, filter=$filter, hasError=$hasError, ids=$ids, isRoot=$isRoot, maxFeedbackModifiedAt=$maxFeedbackModifiedAt, maxStartTime=$maxStartTime, minFeedbackModifiedAt=$minFeedbackModifiedAt, minStartTime=$minStartTime, pageSize=$pageSize, projectIds=$projectIds, referenceDatasetId=$referenceDatasetId, referenceExamples=$referenceExamples, runType=$runType, selects=$selects, traceFilter=$traceFilter, traceId=$traceId, treeFilter=$treeFilter, additionalProperties=$additionalProperties}"
     }
 
     override fun equals(other: Any?): Boolean {
