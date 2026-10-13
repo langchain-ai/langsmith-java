@@ -55,6 +55,7 @@ internal class BoxUpdateParamsTest {
                                 BoxUpdateParams.ProxyConfig.Rule.Aws.SandboxesProxyAwsRoleConfig
                                     .builder()
                                     .roleArn("x")
+                                    .subjectScope("tag:2fdcD1Dc-bbDb-2BBD-0Afa-1A3C33cFaADc")
                                     .build()
                             )
                             .description("description")
@@ -67,6 +68,7 @@ internal class BoxUpdateParamsTest {
                             .gcp(
                                 BoxUpdateParams.ProxyConfig.Rule.Gcp.builder()
                                     .addScope("string")
+                                    .serviceAccountEmail("service_account_email")
                                     .serviceAccountJson(
                                         BoxUpdateParams.ProxyConfig.Rule.Gcp.ServiceAccountJson
                                             .builder()
@@ -80,6 +82,8 @@ internal class BoxUpdateParamsTest {
                                             .value("value")
                                             .build()
                                     )
+                                    .subjectScope("tag:2fdcD1Dc-bbDb-2BBD-0Afa-1A3C33cFaADc")
+                                    .workloadIdentityProvider("workload_identity_provider")
                                     .build()
                             )
                             .addHeader(
@@ -170,6 +174,7 @@ internal class BoxUpdateParamsTest {
                                     BoxUpdateParams.ProxyConfig.Rule.Aws.SandboxesProxyAwsRoleConfig
                                         .builder()
                                         .roleArn("x")
+                                        .subjectScope("tag:2fdcD1Dc-bbDb-2BBD-0Afa-1A3C33cFaADc")
                                         .build()
                                 )
                                 .description("description")
@@ -182,6 +187,7 @@ internal class BoxUpdateParamsTest {
                                 .gcp(
                                     BoxUpdateParams.ProxyConfig.Rule.Gcp.builder()
                                         .addScope("string")
+                                        .serviceAccountEmail("service_account_email")
                                         .serviceAccountJson(
                                             BoxUpdateParams.ProxyConfig.Rule.Gcp.ServiceAccountJson
                                                 .builder()
@@ -195,6 +201,8 @@ internal class BoxUpdateParamsTest {
                                                 .value("value")
                                                 .build()
                                         )
+                                        .subjectScope("tag:2fdcD1Dc-bbDb-2BBD-0Afa-1A3C33cFaADc")
+                                        .workloadIdentityProvider("workload_identity_provider")
                                         .build()
                                 )
                                 .addHeader(
@@ -275,6 +283,7 @@ internal class BoxUpdateParamsTest {
                                 BoxUpdateParams.ProxyConfig.Rule.Aws.SandboxesProxyAwsRoleConfig
                                     .builder()
                                     .roleArn("x")
+                                    .subjectScope("tag:2fdcD1Dc-bbDb-2BBD-0Afa-1A3C33cFaADc")
                                     .build()
                             )
                             .description("description")
@@ -287,6 +296,7 @@ internal class BoxUpdateParamsTest {
                             .gcp(
                                 BoxUpdateParams.ProxyConfig.Rule.Gcp.builder()
                                     .addScope("string")
+                                    .serviceAccountEmail("service_account_email")
                                     .serviceAccountJson(
                                         BoxUpdateParams.ProxyConfig.Rule.Gcp.ServiceAccountJson
                                             .builder()
@@ -300,6 +310,8 @@ internal class BoxUpdateParamsTest {
                                             .value("value")
                                             .build()
                                     )
+                                    .subjectScope("tag:2fdcD1Dc-bbDb-2BBD-0Afa-1A3C33cFaADc")
+                                    .workloadIdentityProvider("workload_identity_provider")
                                     .build()
                             )
                             .addHeader(

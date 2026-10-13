@@ -2163,6 +2163,7 @@ private constructor(
                 @JsonCreator(mode = JsonCreator.Mode.DISABLED)
                 private constructor(
                     private val roleArn: JsonField<String>,
+                    private val subjectScope: JsonField<String>,
                     private val additionalProperties: MutableMap<String, JsonValue>,
                 ) {
 
@@ -2170,18 +2171,34 @@ private constructor(
                     private constructor(
                         @JsonProperty("role_arn")
                         @ExcludeMissing
-                        roleArn: JsonField<String> = JsonMissing.of()
-                    ) : this(roleArn, mutableMapOf())
+                        roleArn: JsonField<String> = JsonMissing.of(),
+                        @JsonProperty("subject_scope")
+                        @ExcludeMissing
+                        subjectScope: JsonField<String> = JsonMissing.of(),
+                    ) : this(roleArn, subjectScope, mutableMapOf())
 
                     /**
-                     * IAM role to assume with permissions scoped to the configured S3 mounts.
-                     * Mutually exclusive with static credentials. Configure only at creation.
+                     * IAM role to assume with AssumeRoleWithWebIdentity, using a short-lived OIDC
+                     * token LangSmith signs for this workspace; the role's trust policy must trust
+                     * LangSmith's issuer for the token subject. LangSmith scopes the credentials to
+                     * the configured S3 mounts. Mutually exclusive with static credentials, and
+                     * cannot be changed after creation.
                      *
                      * @throws LangChainInvalidDataException if the JSON field has an unexpected
                      *   type or is unexpectedly missing or null (e.g. if the server responded with
                      *   an unexpected value).
                      */
                     fun roleArn(): String = roleArn.getRequired("role_arn")
+
+                    /**
+                     * SubjectScope picks the token subject the role trusts: "workspace" (the
+                     * default) or "tag:<tag value id>", which must be one of the sandbox's
+                     * tag_value_ids. Only valid with role_arn.
+                     *
+                     * @throws LangChainInvalidDataException if the JSON field has an unexpected
+                     *   type (e.g. if the server responded with an unexpected value).
+                     */
+                    fun subjectScope(): Optional<String> = subjectScope.getOptional("subject_scope")
 
                     /**
                      * Returns the raw JSON value of [roleArn].
@@ -2192,6 +2209,16 @@ private constructor(
                     @JsonProperty("role_arn")
                     @ExcludeMissing
                     fun _roleArn(): JsonField<String> = roleArn
+
+                    /**
+                     * Returns the raw JSON value of [subjectScope].
+                     *
+                     * Unlike [subjectScope], this method doesn't throw if the JSON field has an
+                     * unexpected type.
+                     */
+                    @JsonProperty("subject_scope")
+                    @ExcludeMissing
+                    fun _subjectScope(): JsonField<String> = subjectScope
 
                     @JsonAnySetter
                     private fun putAdditionalProperty(key: String, value: JsonValue) {
@@ -2223,6 +2250,7 @@ private constructor(
                     class Builder internal constructor() {
 
                         private var roleArn: JsonField<String>? = null
+                        private var subjectScope: JsonField<String> = JsonMissing.of()
                         private var additionalProperties: MutableMap<String, JsonValue> =
                             mutableMapOf()
 
@@ -2232,14 +2260,18 @@ private constructor(
                                 SandboxesSandboxAwsMountRoleAuthConfig
                         ) = apply {
                             roleArn = sandboxesSandboxAwsMountRoleAuthConfig.roleArn
+                            subjectScope = sandboxesSandboxAwsMountRoleAuthConfig.subjectScope
                             additionalProperties =
                                 sandboxesSandboxAwsMountRoleAuthConfig.additionalProperties
                                     .toMutableMap()
                         }
 
                         /**
-                         * IAM role to assume with permissions scoped to the configured S3 mounts.
-                         * Mutually exclusive with static credentials. Configure only at creation.
+                         * IAM role to assume with AssumeRoleWithWebIdentity, using a short-lived
+                         * OIDC token LangSmith signs for this workspace; the role's trust policy
+                         * must trust LangSmith's issuer for the token subject. LangSmith scopes the
+                         * credentials to the configured S3 mounts. Mutually exclusive with static
+                         * credentials, and cannot be changed after creation.
                          */
                         fun roleArn(roleArn: String) = roleArn(JsonField.of(roleArn))
 
@@ -2251,6 +2283,25 @@ private constructor(
                          * undocumented or not yet supported value.
                          */
                         fun roleArn(roleArn: JsonField<String>) = apply { this.roleArn = roleArn }
+
+                        /**
+                         * SubjectScope picks the token subject the role trusts: "workspace" (the
+                         * default) or "tag:<tag value id>", which must be one of the sandbox's
+                         * tag_value_ids. Only valid with role_arn.
+                         */
+                        fun subjectScope(subjectScope: String) =
+                            subjectScope(JsonField.of(subjectScope))
+
+                        /**
+                         * Sets [Builder.subjectScope] to an arbitrary JSON value.
+                         *
+                         * You should usually call [Builder.subjectScope] with a well-typed [String]
+                         * value instead. This method is primarily for setting the field to an
+                         * undocumented or not yet supported value.
+                         */
+                        fun subjectScope(subjectScope: JsonField<String>) = apply {
+                            this.subjectScope = subjectScope
+                        }
 
                         fun additionalProperties(additionalProperties: Map<String, JsonValue>) =
                             apply {
@@ -2290,6 +2341,7 @@ private constructor(
                         fun build(): SandboxesSandboxAwsMountRoleAuthConfig =
                             SandboxesSandboxAwsMountRoleAuthConfig(
                                 checkRequired("roleArn", roleArn),
+                                subjectScope,
                                 additionalProperties.toMutableMap(),
                             )
                     }
@@ -2312,6 +2364,7 @@ private constructor(
                         }
 
                         roleArn()
+                        subjectScope()
                         validated = true
                     }
 
@@ -2330,7 +2383,9 @@ private constructor(
                      * Used for best match union deserialization.
                      */
                     @JvmSynthetic
-                    internal fun validity(): Int = (if (roleArn.asKnown().isPresent) 1 else 0)
+                    internal fun validity(): Int =
+                        (if (roleArn.asKnown().isPresent) 1 else 0) +
+                            (if (subjectScope.asKnown().isPresent) 1 else 0)
 
                     override fun equals(other: Any?): Boolean {
                         if (this === other) {
@@ -2339,17 +2394,18 @@ private constructor(
 
                         return other is SandboxesSandboxAwsMountRoleAuthConfig &&
                             roleArn == other.roleArn &&
+                            subjectScope == other.subjectScope &&
                             additionalProperties == other.additionalProperties
                     }
 
                     private val hashCode: Int by lazy {
-                        Objects.hash(roleArn, additionalProperties)
+                        Objects.hash(roleArn, subjectScope, additionalProperties)
                     }
 
                     override fun hashCode(): Int = hashCode
 
                     override fun toString() =
-                        "SandboxesSandboxAwsMountRoleAuthConfig{roleArn=$roleArn, additionalProperties=$additionalProperties}"
+                        "SandboxesSandboxAwsMountRoleAuthConfig{roleArn=$roleArn, subjectScope=$subjectScope, additionalProperties=$additionalProperties}"
                 }
 
                 class SandboxesSandboxAwsMountStaticAuthConfig
@@ -2390,8 +2446,11 @@ private constructor(
                         secretAccessKey.getRequired("secret_access_key")
 
                     /**
-                     * IAM role to assume with permissions scoped to the configured S3 mounts.
-                     * Mutually exclusive with static credentials. Configure only at creation.
+                     * IAM role to assume with AssumeRoleWithWebIdentity, using a short-lived OIDC
+                     * token LangSmith signs for this workspace; the role's trust policy must trust
+                     * LangSmith's issuer for the token subject. LangSmith scopes the credentials to
+                     * the configured S3 mounts. Mutually exclusive with static credentials, and
+                     * cannot be changed after creation.
                      *
                      * @throws LangChainInvalidDataException if the JSON field has an unexpected
                      *   type (e.g. if the server responded with an unexpected value).
@@ -2507,8 +2566,11 @@ private constructor(
                         }
 
                         /**
-                         * IAM role to assume with permissions scoped to the configured S3 mounts.
-                         * Mutually exclusive with static credentials. Configure only at creation.
+                         * IAM role to assume with AssumeRoleWithWebIdentity, using a short-lived
+                         * OIDC token LangSmith signs for this workspace; the role's trust policy
+                         * must trust LangSmith's issuer for the token subject. LangSmith scopes the
+                         * credentials to the configured S3 mounts. Mutually exclusive with static
+                         * credentials, and cannot be changed after creation.
                          */
                         fun roleArn(roleArn: RoleArn) = roleArn(JsonField.of(roleArn))
 
@@ -3428,8 +3490,11 @@ private constructor(
                     }
 
                     /**
-                     * IAM role to assume with permissions scoped to the configured S3 mounts.
-                     * Mutually exclusive with static credentials. Configure only at creation.
+                     * IAM role to assume with AssumeRoleWithWebIdentity, using a short-lived OIDC
+                     * token LangSmith signs for this workspace; the role's trust policy must trust
+                     * LangSmith's issuer for the token subject. LangSmith scopes the credentials to
+                     * the configured S3 mounts. Mutually exclusive with static credentials, and
+                     * cannot be changed after creation.
                      */
                     class RoleArn
                     @JsonCreator
@@ -3598,24 +3663,84 @@ private constructor(
             class Gcp
             @JsonCreator(mode = JsonCreator.Mode.DISABLED)
             private constructor(
+                private val serviceAccountEmail: JsonField<String>,
                 private val serviceAccountJson: JsonField<ServiceAccountJson>,
+                private val subjectScope: JsonField<String>,
+                private val workloadIdentityProvider: JsonField<String>,
                 private val additionalProperties: MutableMap<String, JsonValue>,
             ) {
 
                 @JsonCreator
                 private constructor(
+                    @JsonProperty("service_account_email")
+                    @ExcludeMissing
+                    serviceAccountEmail: JsonField<String> = JsonMissing.of(),
                     @JsonProperty("service_account_json")
                     @ExcludeMissing
-                    serviceAccountJson: JsonField<ServiceAccountJson> = JsonMissing.of()
-                ) : this(serviceAccountJson, mutableMapOf())
+                    serviceAccountJson: JsonField<ServiceAccountJson> = JsonMissing.of(),
+                    @JsonProperty("subject_scope")
+                    @ExcludeMissing
+                    subjectScope: JsonField<String> = JsonMissing.of(),
+                    @JsonProperty("workload_identity_provider")
+                    @ExcludeMissing
+                    workloadIdentityProvider: JsonField<String> = JsonMissing.of(),
+                ) : this(
+                    serviceAccountEmail,
+                    serviceAccountJson,
+                    subjectScope,
+                    workloadIdentityProvider,
+                    mutableMapOf(),
+                )
 
                 /**
-                 * @throws LangChainInvalidDataException if the JSON field has an unexpected type or
-                 *   is unexpectedly missing or null (e.g. if the server responded with an
-                 *   unexpected value).
+                 * ServiceAccountEmail is the service account to impersonate with the federated
+                 * token. Omit it to use the federated principal directly. Only valid with
+                 * workload_identity_provider.
+                 *
+                 * @throws LangChainInvalidDataException if the JSON field has an unexpected type
+                 *   (e.g. if the server responded with an unexpected value).
                  */
-                fun serviceAccountJson(): ServiceAccountJson =
-                    serviceAccountJson.getRequired("service_account_json")
+                fun serviceAccountEmail(): Optional<String> =
+                    serviceAccountEmail.getOptional("service_account_email")
+
+                /**
+                 * @throws LangChainInvalidDataException if the JSON field has an unexpected type
+                 *   (e.g. if the server responded with an unexpected value).
+                 */
+                fun serviceAccountJson(): Optional<ServiceAccountJson> =
+                    serviceAccountJson.getOptional("service_account_json")
+
+                /**
+                 * SubjectScope picks the token subject the provider trusts: "workspace" (the
+                 * default) or "tag:<tag value id>", which must be one of the sandbox's
+                 * tag_value_ids. Only valid with workload_identity_provider.
+                 *
+                 * @throws LangChainInvalidDataException if the JSON field has an unexpected type
+                 *   (e.g. if the server responded with an unexpected value).
+                 */
+                fun subjectScope(): Optional<String> = subjectScope.getOptional("subject_scope")
+
+                /**
+                 * WorkloadIdentityProvider federates an OIDC token LangSmith signs for this
+                 * workspace through Workload Identity Federation instead of a service account key:
+                 * //iam.googleapis.com/projects/<number>/locations/global/workloadIdentityPools/<pool>/providers/<provider>.
+                 * Mutually exclusive with service_account_json. Cannot be changed after creation.
+                 *
+                 * @throws LangChainInvalidDataException if the JSON field has an unexpected type
+                 *   (e.g. if the server responded with an unexpected value).
+                 */
+                fun workloadIdentityProvider(): Optional<String> =
+                    workloadIdentityProvider.getOptional("workload_identity_provider")
+
+                /**
+                 * Returns the raw JSON value of [serviceAccountEmail].
+                 *
+                 * Unlike [serviceAccountEmail], this method doesn't throw if the JSON field has an
+                 * unexpected type.
+                 */
+                @JsonProperty("service_account_email")
+                @ExcludeMissing
+                fun _serviceAccountEmail(): JsonField<String> = serviceAccountEmail
 
                 /**
                  * Returns the raw JSON value of [serviceAccountJson].
@@ -3626,6 +3751,26 @@ private constructor(
                 @JsonProperty("service_account_json")
                 @ExcludeMissing
                 fun _serviceAccountJson(): JsonField<ServiceAccountJson> = serviceAccountJson
+
+                /**
+                 * Returns the raw JSON value of [subjectScope].
+                 *
+                 * Unlike [subjectScope], this method doesn't throw if the JSON field has an
+                 * unexpected type.
+                 */
+                @JsonProperty("subject_scope")
+                @ExcludeMissing
+                fun _subjectScope(): JsonField<String> = subjectScope
+
+                /**
+                 * Returns the raw JSON value of [workloadIdentityProvider].
+                 *
+                 * Unlike [workloadIdentityProvider], this method doesn't throw if the JSON field
+                 * has an unexpected type.
+                 */
+                @JsonProperty("workload_identity_provider")
+                @ExcludeMissing
+                fun _workloadIdentityProvider(): JsonField<String> = workloadIdentityProvider
 
                 @JsonAnySetter
                 private fun putAdditionalProperty(key: String, value: JsonValue) {
@@ -3641,27 +3786,45 @@ private constructor(
 
                 companion object {
 
-                    /**
-                     * Returns a mutable builder for constructing an instance of [Gcp].
-                     *
-                     * The following fields are required:
-                     * ```java
-                     * .serviceAccountJson()
-                     * ```
-                     */
+                    /** Returns a mutable builder for constructing an instance of [Gcp]. */
                     @JvmStatic fun builder() = Builder()
                 }
 
                 /** A builder for [Gcp]. */
                 class Builder internal constructor() {
 
-                    private var serviceAccountJson: JsonField<ServiceAccountJson>? = null
+                    private var serviceAccountEmail: JsonField<String> = JsonMissing.of()
+                    private var serviceAccountJson: JsonField<ServiceAccountJson> = JsonMissing.of()
+                    private var subjectScope: JsonField<String> = JsonMissing.of()
+                    private var workloadIdentityProvider: JsonField<String> = JsonMissing.of()
                     private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
 
                     @JvmSynthetic
                     internal fun from(gcp: Gcp) = apply {
+                        serviceAccountEmail = gcp.serviceAccountEmail
                         serviceAccountJson = gcp.serviceAccountJson
+                        subjectScope = gcp.subjectScope
+                        workloadIdentityProvider = gcp.workloadIdentityProvider
                         additionalProperties = gcp.additionalProperties.toMutableMap()
+                    }
+
+                    /**
+                     * ServiceAccountEmail is the service account to impersonate with the federated
+                     * token. Omit it to use the federated principal directly. Only valid with
+                     * workload_identity_provider.
+                     */
+                    fun serviceAccountEmail(serviceAccountEmail: String) =
+                        serviceAccountEmail(JsonField.of(serviceAccountEmail))
+
+                    /**
+                     * Sets [Builder.serviceAccountEmail] to an arbitrary JSON value.
+                     *
+                     * You should usually call [Builder.serviceAccountEmail] with a well-typed
+                     * [String] value instead. This method is primarily for setting the field to an
+                     * undocumented or not yet supported value.
+                     */
+                    fun serviceAccountEmail(serviceAccountEmail: JsonField<String>) = apply {
+                        this.serviceAccountEmail = serviceAccountEmail
                     }
 
                     fun serviceAccountJson(serviceAccountJson: ServiceAccountJson) =
@@ -3677,6 +3840,48 @@ private constructor(
                     fun serviceAccountJson(serviceAccountJson: JsonField<ServiceAccountJson>) =
                         apply {
                             this.serviceAccountJson = serviceAccountJson
+                        }
+
+                    /**
+                     * SubjectScope picks the token subject the provider trusts: "workspace" (the
+                     * default) or "tag:<tag value id>", which must be one of the sandbox's
+                     * tag_value_ids. Only valid with workload_identity_provider.
+                     */
+                    fun subjectScope(subjectScope: String) =
+                        subjectScope(JsonField.of(subjectScope))
+
+                    /**
+                     * Sets [Builder.subjectScope] to an arbitrary JSON value.
+                     *
+                     * You should usually call [Builder.subjectScope] with a well-typed [String]
+                     * value instead. This method is primarily for setting the field to an
+                     * undocumented or not yet supported value.
+                     */
+                    fun subjectScope(subjectScope: JsonField<String>) = apply {
+                        this.subjectScope = subjectScope
+                    }
+
+                    /**
+                     * WorkloadIdentityProvider federates an OIDC token LangSmith signs for this
+                     * workspace through Workload Identity Federation instead of a service account
+                     * key:
+                     * //iam.googleapis.com/projects/<number>/locations/global/workloadIdentityPools/<pool>/providers/<provider>.
+                     * Mutually exclusive with service_account_json. Cannot be changed after
+                     * creation.
+                     */
+                    fun workloadIdentityProvider(workloadIdentityProvider: String) =
+                        workloadIdentityProvider(JsonField.of(workloadIdentityProvider))
+
+                    /**
+                     * Sets [Builder.workloadIdentityProvider] to an arbitrary JSON value.
+                     *
+                     * You should usually call [Builder.workloadIdentityProvider] with a well-typed
+                     * [String] value instead. This method is primarily for setting the field to an
+                     * undocumented or not yet supported value.
+                     */
+                    fun workloadIdentityProvider(workloadIdentityProvider: JsonField<String>) =
+                        apply {
+                            this.workloadIdentityProvider = workloadIdentityProvider
                         }
 
                     fun additionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
@@ -3705,17 +3910,13 @@ private constructor(
                      * Returns an immutable instance of [Gcp].
                      *
                      * Further updates to this [Builder] will not mutate the returned instance.
-                     *
-                     * The following fields are required:
-                     * ```java
-                     * .serviceAccountJson()
-                     * ```
-                     *
-                     * @throws IllegalStateException if any required field is unset.
                      */
                     fun build(): Gcp =
                         Gcp(
-                            checkRequired("serviceAccountJson", serviceAccountJson),
+                            serviceAccountEmail,
+                            serviceAccountJson,
+                            subjectScope,
+                            workloadIdentityProvider,
                             additionalProperties.toMutableMap(),
                         )
                 }
@@ -3737,7 +3938,10 @@ private constructor(
                         return@apply
                     }
 
-                    serviceAccountJson().validate()
+                    serviceAccountEmail()
+                    serviceAccountJson().ifPresent { it.validate() }
+                    subjectScope()
+                    workloadIdentityProvider()
                     validated = true
                 }
 
@@ -3757,7 +3961,10 @@ private constructor(
                  */
                 @JvmSynthetic
                 internal fun validity(): Int =
-                    (serviceAccountJson.asKnown().getOrNull()?.validity() ?: 0)
+                    (if (serviceAccountEmail.asKnown().isPresent) 1 else 0) +
+                        (serviceAccountJson.asKnown().getOrNull()?.validity() ?: 0) +
+                        (if (subjectScope.asKnown().isPresent) 1 else 0) +
+                        (if (workloadIdentityProvider.asKnown().isPresent) 1 else 0)
 
                 class ServiceAccountJson
                 @JsonCreator(mode = JsonCreator.Mode.DISABLED)
@@ -4166,18 +4373,27 @@ private constructor(
                     }
 
                     return other is Gcp &&
+                        serviceAccountEmail == other.serviceAccountEmail &&
                         serviceAccountJson == other.serviceAccountJson &&
+                        subjectScope == other.subjectScope &&
+                        workloadIdentityProvider == other.workloadIdentityProvider &&
                         additionalProperties == other.additionalProperties
                 }
 
                 private val hashCode: Int by lazy {
-                    Objects.hash(serviceAccountJson, additionalProperties)
+                    Objects.hash(
+                        serviceAccountEmail,
+                        serviceAccountJson,
+                        subjectScope,
+                        workloadIdentityProvider,
+                        additionalProperties,
+                    )
                 }
 
                 override fun hashCode(): Int = hashCode
 
                 override fun toString() =
-                    "Gcp{serviceAccountJson=$serviceAccountJson, additionalProperties=$additionalProperties}"
+                    "Gcp{serviceAccountEmail=$serviceAccountEmail, serviceAccountJson=$serviceAccountJson, subjectScope=$subjectScope, workloadIdentityProvider=$workloadIdentityProvider, additionalProperties=$additionalProperties}"
             }
 
             override fun equals(other: Any?): Boolean {
@@ -16761,6 +16977,7 @@ private constructor(
                 @JsonCreator(mode = JsonCreator.Mode.DISABLED)
                 private constructor(
                     private val roleArn: JsonField<String>,
+                    private val subjectScope: JsonField<String>,
                     private val additionalProperties: MutableMap<String, JsonValue>,
                 ) {
 
@@ -16768,19 +16985,34 @@ private constructor(
                     private constructor(
                         @JsonProperty("role_arn")
                         @ExcludeMissing
-                        roleArn: JsonField<String> = JsonMissing.of()
-                    ) : this(roleArn, mutableMapOf())
+                        roleArn: JsonField<String> = JsonMissing.of(),
+                        @JsonProperty("subject_scope")
+                        @ExcludeMissing
+                        subjectScope: JsonField<String> = JsonMissing.of(),
+                    ) : this(roleArn, subjectScope, mutableMapOf())
 
                     /**
-                     * RoleARN selects automatically renewed IAM-role credentials instead of static
-                     * keys. Access follows the role's effective AWS permissions, not the sandbox's
-                     * mount scope. Configure at creation; the role cannot be changed afterward.
+                     * IAM role to assume with AssumeRoleWithWebIdentity, using a short-lived OIDC
+                     * token LangSmith signs for this workspace. The role's trust policy must trust
+                     * LangSmith's issuer for the token subject. Credentials renew automatically,
+                     * and access follows the role's effective AWS permissions. Mutually exclusive
+                     * with static keys, and cannot be changed after creation.
                      *
                      * @throws LangChainInvalidDataException if the JSON field has an unexpected
                      *   type or is unexpectedly missing or null (e.g. if the server responded with
                      *   an unexpected value).
                      */
                     fun roleArn(): String = roleArn.getRequired("role_arn")
+
+                    /**
+                     * SubjectScope picks the token subject the role trusts: "workspace" (the
+                     * default) or "tag:<tag value id>", which must be one of the sandbox's
+                     * tag_value_ids. Only valid with role_arn.
+                     *
+                     * @throws LangChainInvalidDataException if the JSON field has an unexpected
+                     *   type (e.g. if the server responded with an unexpected value).
+                     */
+                    fun subjectScope(): Optional<String> = subjectScope.getOptional("subject_scope")
 
                     /**
                      * Returns the raw JSON value of [roleArn].
@@ -16791,6 +17023,16 @@ private constructor(
                     @JsonProperty("role_arn")
                     @ExcludeMissing
                     fun _roleArn(): JsonField<String> = roleArn
+
+                    /**
+                     * Returns the raw JSON value of [subjectScope].
+                     *
+                     * Unlike [subjectScope], this method doesn't throw if the JSON field has an
+                     * unexpected type.
+                     */
+                    @JsonProperty("subject_scope")
+                    @ExcludeMissing
+                    fun _subjectScope(): JsonField<String> = subjectScope
 
                     @JsonAnySetter
                     private fun putAdditionalProperty(key: String, value: JsonValue) {
@@ -16822,6 +17064,7 @@ private constructor(
                     class Builder internal constructor() {
 
                         private var roleArn: JsonField<String>? = null
+                        private var subjectScope: JsonField<String> = JsonMissing.of()
                         private var additionalProperties: MutableMap<String, JsonValue> =
                             mutableMapOf()
 
@@ -16830,15 +17073,18 @@ private constructor(
                             sandboxesProxyAwsRoleConfig: SandboxesProxyAwsRoleConfig
                         ) = apply {
                             roleArn = sandboxesProxyAwsRoleConfig.roleArn
+                            subjectScope = sandboxesProxyAwsRoleConfig.subjectScope
                             additionalProperties =
                                 sandboxesProxyAwsRoleConfig.additionalProperties.toMutableMap()
                         }
 
                         /**
-                         * RoleARN selects automatically renewed IAM-role credentials instead of
-                         * static keys. Access follows the role's effective AWS permissions, not the
-                         * sandbox's mount scope. Configure at creation; the role cannot be changed
-                         * afterward.
+                         * IAM role to assume with AssumeRoleWithWebIdentity, using a short-lived
+                         * OIDC token LangSmith signs for this workspace. The role's trust policy
+                         * must trust LangSmith's issuer for the token subject. Credentials renew
+                         * automatically, and access follows the role's effective AWS permissions.
+                         * Mutually exclusive with static keys, and cannot be changed after
+                         * creation.
                          */
                         fun roleArn(roleArn: String) = roleArn(JsonField.of(roleArn))
 
@@ -16850,6 +17096,25 @@ private constructor(
                          * undocumented or not yet supported value.
                          */
                         fun roleArn(roleArn: JsonField<String>) = apply { this.roleArn = roleArn }
+
+                        /**
+                         * SubjectScope picks the token subject the role trusts: "workspace" (the
+                         * default) or "tag:<tag value id>", which must be one of the sandbox's
+                         * tag_value_ids. Only valid with role_arn.
+                         */
+                        fun subjectScope(subjectScope: String) =
+                            subjectScope(JsonField.of(subjectScope))
+
+                        /**
+                         * Sets [Builder.subjectScope] to an arbitrary JSON value.
+                         *
+                         * You should usually call [Builder.subjectScope] with a well-typed [String]
+                         * value instead. This method is primarily for setting the field to an
+                         * undocumented or not yet supported value.
+                         */
+                        fun subjectScope(subjectScope: JsonField<String>) = apply {
+                            this.subjectScope = subjectScope
+                        }
 
                         fun additionalProperties(additionalProperties: Map<String, JsonValue>) =
                             apply {
@@ -16888,6 +17153,7 @@ private constructor(
                         fun build(): SandboxesProxyAwsRoleConfig =
                             SandboxesProxyAwsRoleConfig(
                                 checkRequired("roleArn", roleArn),
+                                subjectScope,
                                 additionalProperties.toMutableMap(),
                             )
                     }
@@ -16910,6 +17176,7 @@ private constructor(
                         }
 
                         roleArn()
+                        subjectScope()
                         validated = true
                     }
 
@@ -16928,7 +17195,9 @@ private constructor(
                      * Used for best match union deserialization.
                      */
                     @JvmSynthetic
-                    internal fun validity(): Int = (if (roleArn.asKnown().isPresent) 1 else 0)
+                    internal fun validity(): Int =
+                        (if (roleArn.asKnown().isPresent) 1 else 0) +
+                            (if (subjectScope.asKnown().isPresent) 1 else 0)
 
                     override fun equals(other: Any?): Boolean {
                         if (this === other) {
@@ -16937,17 +17206,18 @@ private constructor(
 
                         return other is SandboxesProxyAwsRoleConfig &&
                             roleArn == other.roleArn &&
+                            subjectScope == other.subjectScope &&
                             additionalProperties == other.additionalProperties
                     }
 
                     private val hashCode: Int by lazy {
-                        Objects.hash(roleArn, additionalProperties)
+                        Objects.hash(roleArn, subjectScope, additionalProperties)
                     }
 
                     override fun hashCode(): Int = hashCode
 
                     override fun toString() =
-                        "SandboxesProxyAwsRoleConfig{roleArn=$roleArn, additionalProperties=$additionalProperties}"
+                        "SandboxesProxyAwsRoleConfig{roleArn=$roleArn, subjectScope=$subjectScope, additionalProperties=$additionalProperties}"
                 }
 
                 class SandboxesProxyAwsStaticConfig
@@ -16988,9 +17258,11 @@ private constructor(
                         secretAccessKey.getRequired("secret_access_key")
 
                     /**
-                     * RoleARN selects automatically renewed IAM-role credentials instead of static
-                     * keys. Access follows the role's effective AWS permissions, not the sandbox's
-                     * mount scope. Configure at creation; the role cannot be changed afterward.
+                     * IAM role to assume with AssumeRoleWithWebIdentity, using a short-lived OIDC
+                     * token LangSmith signs for this workspace. The role's trust policy must trust
+                     * LangSmith's issuer for the token subject. Credentials renew automatically,
+                     * and access follows the role's effective AWS permissions. Mutually exclusive
+                     * with static keys, and cannot be changed after creation.
                      *
                      * @throws LangChainInvalidDataException if the JSON field has an unexpected
                      *   type (e.g. if the server responded with an unexpected value).
@@ -17103,10 +17375,12 @@ private constructor(
                         }
 
                         /**
-                         * RoleARN selects automatically renewed IAM-role credentials instead of
-                         * static keys. Access follows the role's effective AWS permissions, not the
-                         * sandbox's mount scope. Configure at creation; the role cannot be changed
-                         * afterward.
+                         * IAM role to assume with AssumeRoleWithWebIdentity, using a short-lived
+                         * OIDC token LangSmith signs for this workspace. The role's trust policy
+                         * must trust LangSmith's issuer for the token subject. Credentials renew
+                         * automatically, and access follows the role's effective AWS permissions.
+                         * Mutually exclusive with static keys, and cannot be changed after
+                         * creation.
                          */
                         fun roleArn(roleArn: RoleArn) = roleArn(JsonField.of(roleArn))
 
@@ -18025,9 +18299,11 @@ private constructor(
                     }
 
                     /**
-                     * RoleARN selects automatically renewed IAM-role credentials instead of static
-                     * keys. Access follows the role's effective AWS permissions, not the sandbox's
-                     * mount scope. Configure at creation; the role cannot be changed afterward.
+                     * IAM role to assume with AssumeRoleWithWebIdentity, using a short-lived OIDC
+                     * token LangSmith signs for this workspace. The role's trust policy must trust
+                     * LangSmith's issuer for the token subject. Credentials renew automatically,
+                     * and access follows the role's effective AWS permissions. Mutually exclusive
+                     * with static keys, and cannot be changed after creation.
                      */
                     class RoleArn
                     @JsonCreator
@@ -18318,7 +18594,10 @@ private constructor(
             @JsonCreator(mode = JsonCreator.Mode.DISABLED)
             private constructor(
                 private val scopes: JsonField<List<String>>,
+                private val serviceAccountEmail: JsonField<String>,
                 private val serviceAccountJson: JsonField<ServiceAccountJson>,
+                private val subjectScope: JsonField<String>,
+                private val workloadIdentityProvider: JsonField<String>,
                 private val additionalProperties: MutableMap<String, JsonValue>,
             ) {
 
@@ -18327,25 +18606,75 @@ private constructor(
                     @JsonProperty("scopes")
                     @ExcludeMissing
                     scopes: JsonField<List<String>> = JsonMissing.of(),
+                    @JsonProperty("service_account_email")
+                    @ExcludeMissing
+                    serviceAccountEmail: JsonField<String> = JsonMissing.of(),
                     @JsonProperty("service_account_json")
                     @ExcludeMissing
                     serviceAccountJson: JsonField<ServiceAccountJson> = JsonMissing.of(),
-                ) : this(scopes, serviceAccountJson, mutableMapOf())
+                    @JsonProperty("subject_scope")
+                    @ExcludeMissing
+                    subjectScope: JsonField<String> = JsonMissing.of(),
+                    @JsonProperty("workload_identity_provider")
+                    @ExcludeMissing
+                    workloadIdentityProvider: JsonField<String> = JsonMissing.of(),
+                ) : this(
+                    scopes,
+                    serviceAccountEmail,
+                    serviceAccountJson,
+                    subjectScope,
+                    workloadIdentityProvider,
+                    mutableMapOf(),
+                )
 
                 /**
-                 * @throws LangChainInvalidDataException if the JSON field has an unexpected type or
-                 *   is unexpectedly missing or null (e.g. if the server responded with an
-                 *   unexpected value).
+                 * Scopes are the OAuth scopes requested for the access token. Omit them to use
+                 * https://www.googleapis.com/auth/cloud-platform.
+                 *
+                 * @throws LangChainInvalidDataException if the JSON field has an unexpected type
+                 *   (e.g. if the server responded with an unexpected value).
                  */
-                fun scopes(): List<String> = scopes.getRequired("scopes")
+                fun scopes(): Optional<List<String>> = scopes.getOptional("scopes")
 
                 /**
-                 * @throws LangChainInvalidDataException if the JSON field has an unexpected type or
-                 *   is unexpectedly missing or null (e.g. if the server responded with an
-                 *   unexpected value).
+                 * ServiceAccountEmail is the service account to impersonate with the federated
+                 * token. Omit it to use the federated principal directly.
+                 *
+                 * @throws LangChainInvalidDataException if the JSON field has an unexpected type
+                 *   (e.g. if the server responded with an unexpected value).
                  */
-                fun serviceAccountJson(): ServiceAccountJson =
-                    serviceAccountJson.getRequired("service_account_json")
+                fun serviceAccountEmail(): Optional<String> =
+                    serviceAccountEmail.getOptional("service_account_email")
+
+                /**
+                 * @throws LangChainInvalidDataException if the JSON field has an unexpected type
+                 *   (e.g. if the server responded with an unexpected value).
+                 */
+                fun serviceAccountJson(): Optional<ServiceAccountJson> =
+                    serviceAccountJson.getOptional("service_account_json")
+
+                /**
+                 * SubjectScope picks the token subject the provider trusts: "workspace" (the
+                 * default) or "tag:<tag value id>", which must be one of the sandbox's
+                 * tag_value_ids. Only valid with workload_identity_provider.
+                 *
+                 * @throws LangChainInvalidDataException if the JSON field has an unexpected type
+                 *   (e.g. if the server responded with an unexpected value).
+                 */
+                fun subjectScope(): Optional<String> = subjectScope.getOptional("subject_scope")
+
+                /**
+                 * WorkloadIdentityProvider federates an OIDC token LangSmith signs for this
+                 * workspace through Workload Identity Federation instead of a service account key.
+                 * Use the full resource name:
+                 * //iam.googleapis.com/projects/<number>/locations/global/workloadIdentityPools/<pool>/providers/<provider>.
+                 * Cannot be changed after creation.
+                 *
+                 * @throws LangChainInvalidDataException if the JSON field has an unexpected type
+                 *   (e.g. if the server responded with an unexpected value).
+                 */
+                fun workloadIdentityProvider(): Optional<String> =
+                    workloadIdentityProvider.getOptional("workload_identity_provider")
 
                 /**
                  * Returns the raw JSON value of [scopes].
@@ -18358,6 +18687,16 @@ private constructor(
                 fun _scopes(): JsonField<List<String>> = scopes
 
                 /**
+                 * Returns the raw JSON value of [serviceAccountEmail].
+                 *
+                 * Unlike [serviceAccountEmail], this method doesn't throw if the JSON field has an
+                 * unexpected type.
+                 */
+                @JsonProperty("service_account_email")
+                @ExcludeMissing
+                fun _serviceAccountEmail(): JsonField<String> = serviceAccountEmail
+
+                /**
                  * Returns the raw JSON value of [serviceAccountJson].
                  *
                  * Unlike [serviceAccountJson], this method doesn't throw if the JSON field has an
@@ -18366,6 +18705,26 @@ private constructor(
                 @JsonProperty("service_account_json")
                 @ExcludeMissing
                 fun _serviceAccountJson(): JsonField<ServiceAccountJson> = serviceAccountJson
+
+                /**
+                 * Returns the raw JSON value of [subjectScope].
+                 *
+                 * Unlike [subjectScope], this method doesn't throw if the JSON field has an
+                 * unexpected type.
+                 */
+                @JsonProperty("subject_scope")
+                @ExcludeMissing
+                fun _subjectScope(): JsonField<String> = subjectScope
+
+                /**
+                 * Returns the raw JSON value of [workloadIdentityProvider].
+                 *
+                 * Unlike [workloadIdentityProvider], this method doesn't throw if the JSON field
+                 * has an unexpected type.
+                 */
+                @JsonProperty("workload_identity_provider")
+                @ExcludeMissing
+                fun _workloadIdentityProvider(): JsonField<String> = workloadIdentityProvider
 
                 @JsonAnySetter
                 private fun putAdditionalProperty(key: String, value: JsonValue) {
@@ -18381,15 +18740,7 @@ private constructor(
 
                 companion object {
 
-                    /**
-                     * Returns a mutable builder for constructing an instance of [Gcp].
-                     *
-                     * The following fields are required:
-                     * ```java
-                     * .scopes()
-                     * .serviceAccountJson()
-                     * ```
-                     */
+                    /** Returns a mutable builder for constructing an instance of [Gcp]. */
                     @JvmStatic fun builder() = Builder()
                 }
 
@@ -18397,16 +18748,26 @@ private constructor(
                 class Builder internal constructor() {
 
                     private var scopes: JsonField<MutableList<String>>? = null
-                    private var serviceAccountJson: JsonField<ServiceAccountJson>? = null
+                    private var serviceAccountEmail: JsonField<String> = JsonMissing.of()
+                    private var serviceAccountJson: JsonField<ServiceAccountJson> = JsonMissing.of()
+                    private var subjectScope: JsonField<String> = JsonMissing.of()
+                    private var workloadIdentityProvider: JsonField<String> = JsonMissing.of()
                     private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
 
                     @JvmSynthetic
                     internal fun from(gcp: Gcp) = apply {
                         scopes = gcp.scopes.map { it.toMutableList() }
+                        serviceAccountEmail = gcp.serviceAccountEmail
                         serviceAccountJson = gcp.serviceAccountJson
+                        subjectScope = gcp.subjectScope
+                        workloadIdentityProvider = gcp.workloadIdentityProvider
                         additionalProperties = gcp.additionalProperties.toMutableMap()
                     }
 
+                    /**
+                     * Scopes are the OAuth scopes requested for the access token. Omit them to use
+                     * https://www.googleapis.com/auth/cloud-platform.
+                     */
                     fun scopes(scopes: List<String>) = scopes(JsonField.of(scopes))
 
                     /**
@@ -18432,6 +18793,24 @@ private constructor(
                             }
                     }
 
+                    /**
+                     * ServiceAccountEmail is the service account to impersonate with the federated
+                     * token. Omit it to use the federated principal directly.
+                     */
+                    fun serviceAccountEmail(serviceAccountEmail: String) =
+                        serviceAccountEmail(JsonField.of(serviceAccountEmail))
+
+                    /**
+                     * Sets [Builder.serviceAccountEmail] to an arbitrary JSON value.
+                     *
+                     * You should usually call [Builder.serviceAccountEmail] with a well-typed
+                     * [String] value instead. This method is primarily for setting the field to an
+                     * undocumented or not yet supported value.
+                     */
+                    fun serviceAccountEmail(serviceAccountEmail: JsonField<String>) = apply {
+                        this.serviceAccountEmail = serviceAccountEmail
+                    }
+
                     fun serviceAccountJson(serviceAccountJson: ServiceAccountJson) =
                         serviceAccountJson(JsonField.of(serviceAccountJson))
 
@@ -18445,6 +18824,47 @@ private constructor(
                     fun serviceAccountJson(serviceAccountJson: JsonField<ServiceAccountJson>) =
                         apply {
                             this.serviceAccountJson = serviceAccountJson
+                        }
+
+                    /**
+                     * SubjectScope picks the token subject the provider trusts: "workspace" (the
+                     * default) or "tag:<tag value id>", which must be one of the sandbox's
+                     * tag_value_ids. Only valid with workload_identity_provider.
+                     */
+                    fun subjectScope(subjectScope: String) =
+                        subjectScope(JsonField.of(subjectScope))
+
+                    /**
+                     * Sets [Builder.subjectScope] to an arbitrary JSON value.
+                     *
+                     * You should usually call [Builder.subjectScope] with a well-typed [String]
+                     * value instead. This method is primarily for setting the field to an
+                     * undocumented or not yet supported value.
+                     */
+                    fun subjectScope(subjectScope: JsonField<String>) = apply {
+                        this.subjectScope = subjectScope
+                    }
+
+                    /**
+                     * WorkloadIdentityProvider federates an OIDC token LangSmith signs for this
+                     * workspace through Workload Identity Federation instead of a service account
+                     * key. Use the full resource name:
+                     * //iam.googleapis.com/projects/<number>/locations/global/workloadIdentityPools/<pool>/providers/<provider>.
+                     * Cannot be changed after creation.
+                     */
+                    fun workloadIdentityProvider(workloadIdentityProvider: String) =
+                        workloadIdentityProvider(JsonField.of(workloadIdentityProvider))
+
+                    /**
+                     * Sets [Builder.workloadIdentityProvider] to an arbitrary JSON value.
+                     *
+                     * You should usually call [Builder.workloadIdentityProvider] with a well-typed
+                     * [String] value instead. This method is primarily for setting the field to an
+                     * undocumented or not yet supported value.
+                     */
+                    fun workloadIdentityProvider(workloadIdentityProvider: JsonField<String>) =
+                        apply {
+                            this.workloadIdentityProvider = workloadIdentityProvider
                         }
 
                     fun additionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
@@ -18473,19 +18893,14 @@ private constructor(
                      * Returns an immutable instance of [Gcp].
                      *
                      * Further updates to this [Builder] will not mutate the returned instance.
-                     *
-                     * The following fields are required:
-                     * ```java
-                     * .scopes()
-                     * .serviceAccountJson()
-                     * ```
-                     *
-                     * @throws IllegalStateException if any required field is unset.
                      */
                     fun build(): Gcp =
                         Gcp(
-                            checkRequired("scopes", scopes).map { it.toImmutable() },
-                            checkRequired("serviceAccountJson", serviceAccountJson),
+                            (scopes ?: JsonMissing.of()).map { it.toImmutable() },
+                            serviceAccountEmail,
+                            serviceAccountJson,
+                            subjectScope,
+                            workloadIdentityProvider,
                             additionalProperties.toMutableMap(),
                         )
                 }
@@ -18508,7 +18923,10 @@ private constructor(
                     }
 
                     scopes()
-                    serviceAccountJson().validate()
+                    serviceAccountEmail()
+                    serviceAccountJson().ifPresent { it.validate() }
+                    subjectScope()
+                    workloadIdentityProvider()
                     validated = true
                 }
 
@@ -18529,7 +18947,10 @@ private constructor(
                 @JvmSynthetic
                 internal fun validity(): Int =
                     (scopes.asKnown().getOrNull()?.size ?: 0) +
-                        (serviceAccountJson.asKnown().getOrNull()?.validity() ?: 0)
+                        (if (serviceAccountEmail.asKnown().isPresent) 1 else 0) +
+                        (serviceAccountJson.asKnown().getOrNull()?.validity() ?: 0) +
+                        (if (subjectScope.asKnown().isPresent) 1 else 0) +
+                        (if (workloadIdentityProvider.asKnown().isPresent) 1 else 0)
 
                 class ServiceAccountJson
                 @JsonCreator(mode = JsonCreator.Mode.DISABLED)
@@ -18939,18 +19360,28 @@ private constructor(
 
                     return other is Gcp &&
                         scopes == other.scopes &&
+                        serviceAccountEmail == other.serviceAccountEmail &&
                         serviceAccountJson == other.serviceAccountJson &&
+                        subjectScope == other.subjectScope &&
+                        workloadIdentityProvider == other.workloadIdentityProvider &&
                         additionalProperties == other.additionalProperties
                 }
 
                 private val hashCode: Int by lazy {
-                    Objects.hash(scopes, serviceAccountJson, additionalProperties)
+                    Objects.hash(
+                        scopes,
+                        serviceAccountEmail,
+                        serviceAccountJson,
+                        subjectScope,
+                        workloadIdentityProvider,
+                        additionalProperties,
+                    )
                 }
 
                 override fun hashCode(): Int = hashCode
 
                 override fun toString() =
-                    "Gcp{scopes=$scopes, serviceAccountJson=$serviceAccountJson, additionalProperties=$additionalProperties}"
+                    "Gcp{scopes=$scopes, serviceAccountEmail=$serviceAccountEmail, serviceAccountJson=$serviceAccountJson, subjectScope=$subjectScope, workloadIdentityProvider=$workloadIdentityProvider, additionalProperties=$additionalProperties}"
             }
 
             class Header

@@ -42,10 +42,12 @@ internal class BoxCreateParamsTest {
                                     .SandboxesSandboxAwsMountRoleAuthConfig
                                     .builder()
                                     .roleArn("x")
+                                    .subjectScope("tag:2fdcD1Dc-bbDb-2BBD-0Afa-1A3C33cFaADc")
                                     .build()
                             )
                             .gcp(
                                 BoxCreateParams.MountConfig.Auth.Gcp.builder()
+                                    .serviceAccountEmail("service_account_email")
                                     .serviceAccountJson(
                                         BoxCreateParams.MountConfig.Auth.Gcp.ServiceAccountJson
                                             .builder()
@@ -59,6 +61,8 @@ internal class BoxCreateParamsTest {
                                             .value("value")
                                             .build()
                                     )
+                                    .subjectScope("tag:2fdcD1Dc-bbDb-2BBD-0Afa-1A3C33cFaADc")
+                                    .workloadIdentityProvider("workload_identity_provider")
                                     .build()
                             )
                             .build()
@@ -177,6 +181,7 @@ internal class BoxCreateParamsTest {
                                 BoxCreateParams.ProxyConfig.Rule.Aws.SandboxesProxyAwsRoleConfig
                                     .builder()
                                     .roleArn("x")
+                                    .subjectScope("tag:2fdcD1Dc-bbDb-2BBD-0Afa-1A3C33cFaADc")
                                     .build()
                             )
                             .description("description")
@@ -189,6 +194,7 @@ internal class BoxCreateParamsTest {
                             .gcp(
                                 BoxCreateParams.ProxyConfig.Rule.Gcp.builder()
                                     .addScope("string")
+                                    .serviceAccountEmail("service_account_email")
                                     .serviceAccountJson(
                                         BoxCreateParams.ProxyConfig.Rule.Gcp.ServiceAccountJson
                                             .builder()
@@ -202,6 +208,8 @@ internal class BoxCreateParamsTest {
                                             .value("value")
                                             .build()
                                     )
+                                    .subjectScope("tag:2fdcD1Dc-bbDb-2BBD-0Afa-1A3C33cFaADc")
+                                    .workloadIdentityProvider("workload_identity_provider")
                                     .build()
                             )
                             .addHeader(
@@ -274,10 +282,12 @@ internal class BoxCreateParamsTest {
                                         .SandboxesSandboxAwsMountRoleAuthConfig
                                         .builder()
                                         .roleArn("x")
+                                        .subjectScope("tag:2fdcD1Dc-bbDb-2BBD-0Afa-1A3C33cFaADc")
                                         .build()
                                 )
                                 .gcp(
                                     BoxCreateParams.MountConfig.Auth.Gcp.builder()
+                                        .serviceAccountEmail("service_account_email")
                                         .serviceAccountJson(
                                             BoxCreateParams.MountConfig.Auth.Gcp.ServiceAccountJson
                                                 .builder()
@@ -291,6 +301,8 @@ internal class BoxCreateParamsTest {
                                                 .value("value")
                                                 .build()
                                         )
+                                        .subjectScope("tag:2fdcD1Dc-bbDb-2BBD-0Afa-1A3C33cFaADc")
+                                        .workloadIdentityProvider("workload_identity_provider")
                                         .build()
                                 )
                                 .build()
@@ -413,6 +425,7 @@ internal class BoxCreateParamsTest {
                                     BoxCreateParams.ProxyConfig.Rule.Aws.SandboxesProxyAwsRoleConfig
                                         .builder()
                                         .roleArn("x")
+                                        .subjectScope("tag:2fdcD1Dc-bbDb-2BBD-0Afa-1A3C33cFaADc")
                                         .build()
                                 )
                                 .description("description")
@@ -425,6 +438,7 @@ internal class BoxCreateParamsTest {
                                 .gcp(
                                     BoxCreateParams.ProxyConfig.Rule.Gcp.builder()
                                         .addScope("string")
+                                        .serviceAccountEmail("service_account_email")
                                         .serviceAccountJson(
                                             BoxCreateParams.ProxyConfig.Rule.Gcp.ServiceAccountJson
                                                 .builder()
@@ -438,6 +452,8 @@ internal class BoxCreateParamsTest {
                                                 .value("value")
                                                 .build()
                                         )
+                                        .subjectScope("tag:2fdcD1Dc-bbDb-2BBD-0Afa-1A3C33cFaADc")
+                                        .workloadIdentityProvider("workload_identity_provider")
                                         .build()
                                 )
                                 .addHeader(
@@ -513,10 +529,12 @@ internal class BoxCreateParamsTest {
                                     .SandboxesSandboxAwsMountRoleAuthConfig
                                     .builder()
                                     .roleArn("x")
+                                    .subjectScope("tag:2fdcD1Dc-bbDb-2BBD-0Afa-1A3C33cFaADc")
                                     .build()
                             )
                             .gcp(
                                 BoxCreateParams.MountConfig.Auth.Gcp.builder()
+                                    .serviceAccountEmail("service_account_email")
                                     .serviceAccountJson(
                                         BoxCreateParams.MountConfig.Auth.Gcp.ServiceAccountJson
                                             .builder()
@@ -530,6 +548,8 @@ internal class BoxCreateParamsTest {
                                             .value("value")
                                             .build()
                                     )
+                                    .subjectScope("tag:2fdcD1Dc-bbDb-2BBD-0Afa-1A3C33cFaADc")
+                                    .workloadIdentityProvider("workload_identity_provider")
                                     .build()
                             )
                             .build()
@@ -649,6 +669,7 @@ internal class BoxCreateParamsTest {
                                 BoxCreateParams.ProxyConfig.Rule.Aws.SandboxesProxyAwsRoleConfig
                                     .builder()
                                     .roleArn("x")
+                                    .subjectScope("tag:2fdcD1Dc-bbDb-2BBD-0Afa-1A3C33cFaADc")
                                     .build()
                             )
                             .description("description")
@@ -661,6 +682,7 @@ internal class BoxCreateParamsTest {
                             .gcp(
                                 BoxCreateParams.ProxyConfig.Rule.Gcp.builder()
                                     .addScope("string")
+                                    .serviceAccountEmail("service_account_email")
                                     .serviceAccountJson(
                                         BoxCreateParams.ProxyConfig.Rule.Gcp.ServiceAccountJson
                                             .builder()
@@ -674,6 +696,8 @@ internal class BoxCreateParamsTest {
                                             .value("value")
                                             .build()
                                     )
+                                    .subjectScope("tag:2fdcD1Dc-bbDb-2BBD-0Afa-1A3C33cFaADc")
+                                    .workloadIdentityProvider("workload_identity_provider")
                                     .build()
                             )
                             .addHeader(

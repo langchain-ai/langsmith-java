@@ -46,10 +46,14 @@ internal class SandboxListResponseTest {
                                                 .SandboxesSandboxAwsMountRoleAuthConfig
                                                 .builder()
                                                 .roleArn("x")
+                                                .subjectScope(
+                                                    "tag:2fdcD1Dc-bbDb-2BBD-0Afa-1A3C33cFaADc"
+                                                )
                                                 .build()
                                         )
                                         .gcp(
                                             SandboxResponse.MountConfig.Auth.Gcp.builder()
+                                                .serviceAccountEmail("service_account_email")
                                                 .serviceAccountJson(
                                                     SandboxResponse.MountConfig.Auth.Gcp
                                                         .ServiceAccountJson
@@ -63,6 +67,12 @@ internal class SandboxListResponseTest {
                                                         .isSet(true)
                                                         .value("value")
                                                         .build()
+                                                )
+                                                .subjectScope(
+                                                    "tag:2fdcD1Dc-bbDb-2BBD-0Afa-1A3C33cFaADc"
+                                                )
+                                                .workloadIdentityProvider(
+                                                    "workload_identity_provider"
                                                 )
                                                 .build()
                                         )
@@ -199,6 +209,9 @@ internal class SandboxListResponseTest {
                                                 .SandboxesProxyAwsRoleConfig
                                                 .builder()
                                                 .roleArn("x")
+                                                .subjectScope(
+                                                    "tag:2fdcD1Dc-bbDb-2BBD-0Afa-1A3C33cFaADc"
+                                                )
                                                 .build()
                                         )
                                         .description("description")
@@ -214,6 +227,7 @@ internal class SandboxListResponseTest {
                                         .gcp(
                                             SandboxResponse.ProxyConfig.Rule.Gcp.builder()
                                                 .addScope("string")
+                                                .serviceAccountEmail("service_account_email")
                                                 .serviceAccountJson(
                                                     SandboxResponse.ProxyConfig.Rule.Gcp
                                                         .ServiceAccountJson
@@ -227,6 +241,12 @@ internal class SandboxListResponseTest {
                                                         .isSet(true)
                                                         .value("value")
                                                         .build()
+                                                )
+                                                .subjectScope(
+                                                    "tag:2fdcD1Dc-bbDb-2BBD-0Afa-1A3C33cFaADc"
+                                                )
+                                                .workloadIdentityProvider(
+                                                    "workload_identity_provider"
                                                 )
                                                 .build()
                                         )
@@ -303,10 +323,14 @@ internal class SandboxListResponseTest {
                                                 .SandboxesSandboxAwsMountRoleAuthConfig
                                                 .builder()
                                                 .roleArn("x")
+                                                .subjectScope(
+                                                    "tag:2fdcD1Dc-bbDb-2BBD-0Afa-1A3C33cFaADc"
+                                                )
                                                 .build()
                                         )
                                         .gcp(
                                             SandboxResponse.MountConfig.Auth.Gcp.builder()
+                                                .serviceAccountEmail("service_account_email")
                                                 .serviceAccountJson(
                                                     SandboxResponse.MountConfig.Auth.Gcp
                                                         .ServiceAccountJson
@@ -320,6 +344,12 @@ internal class SandboxListResponseTest {
                                                         .isSet(true)
                                                         .value("value")
                                                         .build()
+                                                )
+                                                .subjectScope(
+                                                    "tag:2fdcD1Dc-bbDb-2BBD-0Afa-1A3C33cFaADc"
+                                                )
+                                                .workloadIdentityProvider(
+                                                    "workload_identity_provider"
                                                 )
                                                 .build()
                                         )
@@ -456,6 +486,9 @@ internal class SandboxListResponseTest {
                                                 .SandboxesProxyAwsRoleConfig
                                                 .builder()
                                                 .roleArn("x")
+                                                .subjectScope(
+                                                    "tag:2fdcD1Dc-bbDb-2BBD-0Afa-1A3C33cFaADc"
+                                                )
                                                 .build()
                                         )
                                         .description("description")
@@ -471,6 +504,7 @@ internal class SandboxListResponseTest {
                                         .gcp(
                                             SandboxResponse.ProxyConfig.Rule.Gcp.builder()
                                                 .addScope("string")
+                                                .serviceAccountEmail("service_account_email")
                                                 .serviceAccountJson(
                                                     SandboxResponse.ProxyConfig.Rule.Gcp
                                                         .ServiceAccountJson
@@ -484,6 +518,12 @@ internal class SandboxListResponseTest {
                                                         .isSet(true)
                                                         .value("value")
                                                         .build()
+                                                )
+                                                .subjectScope(
+                                                    "tag:2fdcD1Dc-bbDb-2BBD-0Afa-1A3C33cFaADc"
+                                                )
+                                                .workloadIdentityProvider(
+                                                    "workload_identity_provider"
                                                 )
                                                 .build()
                                         )
@@ -561,10 +601,14 @@ internal class SandboxListResponseTest {
                                             .SandboxesSandboxAwsMountRoleAuthConfig
                                             .builder()
                                             .roleArn("x")
+                                            .subjectScope(
+                                                "tag:2fdcD1Dc-bbDb-2BBD-0Afa-1A3C33cFaADc"
+                                            )
                                             .build()
                                     )
                                     .gcp(
                                         SandboxResponse.MountConfig.Auth.Gcp.builder()
+                                            .serviceAccountEmail("service_account_email")
                                             .serviceAccountJson(
                                                 SandboxResponse.MountConfig.Auth.Gcp
                                                     .ServiceAccountJson
@@ -579,6 +623,10 @@ internal class SandboxListResponseTest {
                                                     .value("value")
                                                     .build()
                                             )
+                                            .subjectScope(
+                                                "tag:2fdcD1Dc-bbDb-2BBD-0Afa-1A3C33cFaADc"
+                                            )
+                                            .workloadIdentityProvider("workload_identity_provider")
                                             .build()
                                     )
                                     .build()
@@ -712,6 +760,9 @@ internal class SandboxListResponseTest {
                                             .SandboxesProxyAwsRoleConfig
                                             .builder()
                                             .roleArn("x")
+                                            .subjectScope(
+                                                "tag:2fdcD1Dc-bbDb-2BBD-0Afa-1A3C33cFaADc"
+                                            )
                                             .build()
                                     )
                                     .description("description")
@@ -724,6 +775,7 @@ internal class SandboxListResponseTest {
                                     .gcp(
                                         SandboxResponse.ProxyConfig.Rule.Gcp.builder()
                                             .addScope("string")
+                                            .serviceAccountEmail("service_account_email")
                                             .serviceAccountJson(
                                                 SandboxResponse.ProxyConfig.Rule.Gcp
                                                     .ServiceAccountJson
@@ -738,6 +790,10 @@ internal class SandboxListResponseTest {
                                                     .value("value")
                                                     .build()
                                             )
+                                            .subjectScope(
+                                                "tag:2fdcD1Dc-bbDb-2BBD-0Afa-1A3C33cFaADc"
+                                            )
+                                            .workloadIdentityProvider("workload_identity_provider")
                                             .build()
                                     )
                                     .addHeader(
@@ -814,10 +870,14 @@ internal class SandboxListResponseTest {
                                             .SandboxesSandboxAwsMountRoleAuthConfig
                                             .builder()
                                             .roleArn("x")
+                                            .subjectScope(
+                                                "tag:2fdcD1Dc-bbDb-2BBD-0Afa-1A3C33cFaADc"
+                                            )
                                             .build()
                                     )
                                     .gcp(
                                         SandboxResponse.MountConfig.Auth.Gcp.builder()
+                                            .serviceAccountEmail("service_account_email")
                                             .serviceAccountJson(
                                                 SandboxResponse.MountConfig.Auth.Gcp
                                                     .ServiceAccountJson
@@ -832,6 +892,10 @@ internal class SandboxListResponseTest {
                                                     .value("value")
                                                     .build()
                                             )
+                                            .subjectScope(
+                                                "tag:2fdcD1Dc-bbDb-2BBD-0Afa-1A3C33cFaADc"
+                                            )
+                                            .workloadIdentityProvider("workload_identity_provider")
                                             .build()
                                     )
                                     .build()
@@ -965,6 +1029,9 @@ internal class SandboxListResponseTest {
                                             .SandboxesProxyAwsRoleConfig
                                             .builder()
                                             .roleArn("x")
+                                            .subjectScope(
+                                                "tag:2fdcD1Dc-bbDb-2BBD-0Afa-1A3C33cFaADc"
+                                            )
                                             .build()
                                     )
                                     .description("description")
@@ -977,6 +1044,7 @@ internal class SandboxListResponseTest {
                                     .gcp(
                                         SandboxResponse.ProxyConfig.Rule.Gcp.builder()
                                             .addScope("string")
+                                            .serviceAccountEmail("service_account_email")
                                             .serviceAccountJson(
                                                 SandboxResponse.ProxyConfig.Rule.Gcp
                                                     .ServiceAccountJson
@@ -991,6 +1059,10 @@ internal class SandboxListResponseTest {
                                                     .value("value")
                                                     .build()
                                             )
+                                            .subjectScope(
+                                                "tag:2fdcD1Dc-bbDb-2BBD-0Afa-1A3C33cFaADc"
+                                            )
+                                            .workloadIdentityProvider("workload_identity_provider")
                                             .build()
                                     )
                                     .addHeader(
@@ -1071,10 +1143,14 @@ internal class SandboxListResponseTest {
                                                 .SandboxesSandboxAwsMountRoleAuthConfig
                                                 .builder()
                                                 .roleArn("x")
+                                                .subjectScope(
+                                                    "tag:2fdcD1Dc-bbDb-2BBD-0Afa-1A3C33cFaADc"
+                                                )
                                                 .build()
                                         )
                                         .gcp(
                                             SandboxResponse.MountConfig.Auth.Gcp.builder()
+                                                .serviceAccountEmail("service_account_email")
                                                 .serviceAccountJson(
                                                     SandboxResponse.MountConfig.Auth.Gcp
                                                         .ServiceAccountJson
@@ -1088,6 +1164,12 @@ internal class SandboxListResponseTest {
                                                         .isSet(true)
                                                         .value("value")
                                                         .build()
+                                                )
+                                                .subjectScope(
+                                                    "tag:2fdcD1Dc-bbDb-2BBD-0Afa-1A3C33cFaADc"
+                                                )
+                                                .workloadIdentityProvider(
+                                                    "workload_identity_provider"
                                                 )
                                                 .build()
                                         )
@@ -1224,6 +1306,9 @@ internal class SandboxListResponseTest {
                                                 .SandboxesProxyAwsRoleConfig
                                                 .builder()
                                                 .roleArn("x")
+                                                .subjectScope(
+                                                    "tag:2fdcD1Dc-bbDb-2BBD-0Afa-1A3C33cFaADc"
+                                                )
                                                 .build()
                                         )
                                         .description("description")
@@ -1239,6 +1324,7 @@ internal class SandboxListResponseTest {
                                         .gcp(
                                             SandboxResponse.ProxyConfig.Rule.Gcp.builder()
                                                 .addScope("string")
+                                                .serviceAccountEmail("service_account_email")
                                                 .serviceAccountJson(
                                                     SandboxResponse.ProxyConfig.Rule.Gcp
                                                         .ServiceAccountJson
@@ -1252,6 +1338,12 @@ internal class SandboxListResponseTest {
                                                         .isSet(true)
                                                         .value("value")
                                                         .build()
+                                                )
+                                                .subjectScope(
+                                                    "tag:2fdcD1Dc-bbDb-2BBD-0Afa-1A3C33cFaADc"
+                                                )
+                                                .workloadIdentityProvider(
+                                                    "workload_identity_provider"
                                                 )
                                                 .build()
                                         )
@@ -1328,10 +1420,14 @@ internal class SandboxListResponseTest {
                                                 .SandboxesSandboxAwsMountRoleAuthConfig
                                                 .builder()
                                                 .roleArn("x")
+                                                .subjectScope(
+                                                    "tag:2fdcD1Dc-bbDb-2BBD-0Afa-1A3C33cFaADc"
+                                                )
                                                 .build()
                                         )
                                         .gcp(
                                             SandboxResponse.MountConfig.Auth.Gcp.builder()
+                                                .serviceAccountEmail("service_account_email")
                                                 .serviceAccountJson(
                                                     SandboxResponse.MountConfig.Auth.Gcp
                                                         .ServiceAccountJson
@@ -1345,6 +1441,12 @@ internal class SandboxListResponseTest {
                                                         .isSet(true)
                                                         .value("value")
                                                         .build()
+                                                )
+                                                .subjectScope(
+                                                    "tag:2fdcD1Dc-bbDb-2BBD-0Afa-1A3C33cFaADc"
+                                                )
+                                                .workloadIdentityProvider(
+                                                    "workload_identity_provider"
                                                 )
                                                 .build()
                                         )
@@ -1481,6 +1583,9 @@ internal class SandboxListResponseTest {
                                                 .SandboxesProxyAwsRoleConfig
                                                 .builder()
                                                 .roleArn("x")
+                                                .subjectScope(
+                                                    "tag:2fdcD1Dc-bbDb-2BBD-0Afa-1A3C33cFaADc"
+                                                )
                                                 .build()
                                         )
                                         .description("description")
@@ -1496,6 +1601,7 @@ internal class SandboxListResponseTest {
                                         .gcp(
                                             SandboxResponse.ProxyConfig.Rule.Gcp.builder()
                                                 .addScope("string")
+                                                .serviceAccountEmail("service_account_email")
                                                 .serviceAccountJson(
                                                     SandboxResponse.ProxyConfig.Rule.Gcp
                                                         .ServiceAccountJson
@@ -1509,6 +1615,12 @@ internal class SandboxListResponseTest {
                                                         .isSet(true)
                                                         .value("value")
                                                         .build()
+                                                )
+                                                .subjectScope(
+                                                    "tag:2fdcD1Dc-bbDb-2BBD-0Afa-1A3C33cFaADc"
+                                                )
+                                                .workloadIdentityProvider(
+                                                    "workload_identity_provider"
                                                 )
                                                 .build()
                                         )
