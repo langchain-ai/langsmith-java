@@ -58,6 +58,21 @@ internal class BoxUpdateParamsTest {
                                     .subjectScope("tag:2fdcD1Dc-bbDb-2BBD-0Afa-1A3C33cFaADc")
                                     .build()
                             )
+                            .azure(
+                                BoxUpdateParams.ProxyConfig.Rule.Azure
+                                    .SandboxesProxyAzureWorkloadIdentityConfig
+                                    .builder()
+                                    .clientId("E1CB97d8-Ddf3-aAae-0Afa-1A3C33cFaADc")
+                                    .tenantId("E1CB97d8-Ddf3-aAae-0Afa-1A3C33cFaADc")
+                                    .addResource(
+                                        BoxUpdateParams.ProxyConfig.Rule.Azure
+                                            .SandboxesProxyAzureWorkloadIdentityConfig
+                                            .Resource
+                                            .HTTPS_STORAGE_AZURE_COM
+                                    )
+                                    .subjectScope("tag:2fdcD1Dc-bbDb-2BBD-0Afa-1A3C33cFaADc")
+                                    .build()
+                            )
                             .description("description")
                             .enabled(true)
                             .envVars(
@@ -177,6 +192,21 @@ internal class BoxUpdateParamsTest {
                                         .subjectScope("tag:2fdcD1Dc-bbDb-2BBD-0Afa-1A3C33cFaADc")
                                         .build()
                                 )
+                                .azure(
+                                    BoxUpdateParams.ProxyConfig.Rule.Azure
+                                        .SandboxesProxyAzureWorkloadIdentityConfig
+                                        .builder()
+                                        .clientId("E1CB97d8-Ddf3-aAae-0Afa-1A3C33cFaADc")
+                                        .tenantId("E1CB97d8-Ddf3-aAae-0Afa-1A3C33cFaADc")
+                                        .addResource(
+                                            BoxUpdateParams.ProxyConfig.Rule.Azure
+                                                .SandboxesProxyAzureWorkloadIdentityConfig
+                                                .Resource
+                                                .HTTPS_STORAGE_AZURE_COM
+                                        )
+                                        .subjectScope("tag:2fdcD1Dc-bbDb-2BBD-0Afa-1A3C33cFaADc")
+                                        .build()
+                                )
                                 .description("description")
                                 .enabled(true)
                                 .envVars(
@@ -283,6 +313,21 @@ internal class BoxUpdateParamsTest {
                                 BoxUpdateParams.ProxyConfig.Rule.Aws.SandboxesProxyAwsRoleConfig
                                     .builder()
                                     .roleArn("x")
+                                    .subjectScope("tag:2fdcD1Dc-bbDb-2BBD-0Afa-1A3C33cFaADc")
+                                    .build()
+                            )
+                            .azure(
+                                BoxUpdateParams.ProxyConfig.Rule.Azure
+                                    .SandboxesProxyAzureWorkloadIdentityConfig
+                                    .builder()
+                                    .clientId("E1CB97d8-Ddf3-aAae-0Afa-1A3C33cFaADc")
+                                    .tenantId("E1CB97d8-Ddf3-aAae-0Afa-1A3C33cFaADc")
+                                    .addResource(
+                                        BoxUpdateParams.ProxyConfig.Rule.Azure
+                                            .SandboxesProxyAzureWorkloadIdentityConfig
+                                            .Resource
+                                            .HTTPS_STORAGE_AZURE_COM
+                                    )
                                     .subjectScope("tag:2fdcD1Dc-bbDb-2BBD-0Afa-1A3C33cFaADc")
                                     .build()
                             )

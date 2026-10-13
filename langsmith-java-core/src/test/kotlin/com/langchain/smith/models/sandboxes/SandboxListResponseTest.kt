@@ -51,28 +51,25 @@ internal class SandboxListResponseTest {
                                                 )
                                                 .build()
                                         )
-                                        .gcp(
-                                            SandboxResponse.MountConfig.Auth.Gcp.builder()
-                                                .serviceAccountEmail("service_account_email")
-                                                .serviceAccountJson(
-                                                    SandboxResponse.MountConfig.Auth.Gcp
-                                                        .ServiceAccountJson
-                                                        .builder()
-                                                        .type(
-                                                            SandboxResponse.MountConfig.Auth.Gcp
-                                                                .ServiceAccountJson
-                                                                .Type
-                                                                .PLAINTEXT
-                                                        )
-                                                        .isSet(true)
-                                                        .value("value")
-                                                        .build()
-                                                )
+                                        .azure(
+                                            SandboxResponse.MountConfig.Auth.Azure
+                                                .SandboxesSandboxAzureMountWorkloadIdentityAuthConfig
+                                                .builder()
+                                                .clientId("E1CB97d8-Ddf3-aAae-0Afa-1A3C33cFaADc")
+                                                .tenantId("E1CB97d8-Ddf3-aAae-0Afa-1A3C33cFaADc")
                                                 .subjectScope(
                                                     "tag:2fdcD1Dc-bbDb-2BBD-0Afa-1A3C33cFaADc"
                                                 )
-                                                .workloadIdentityProvider(
-                                                    "workload_identity_provider"
+                                                .build()
+                                        )
+                                        .gcp(
+                                            SandboxResponse.MountConfig.Auth.Gcp
+                                                .SandboxesSandboxGcpMountWorkloadIdentityAuthConfig
+                                                .builder()
+                                                .workloadIdentityProvider("x")
+                                                .serviceAccountEmail("service_account_email")
+                                                .subjectScope(
+                                                    "tag:2fdcD1Dc-bbDb-2BBD-0Afa-1A3C33cFaADc"
                                                 )
                                                 .build()
                                         )
@@ -100,6 +97,16 @@ internal class SandboxListResponseTest {
                                                 .SandboxapiS3BucketMountSpec
                                                 .Type
                                                 .S3
+                                        )
+                                        .azureBlob(
+                                            SandboxResponse.MountConfig.Mount
+                                                .SandboxapiS3BucketMountSpec
+                                                .AzureBlob
+                                                .builder()
+                                                .container("container")
+                                                .storageAccount("26f1klzn5713")
+                                                .prefix("prefix")
+                                                .build()
                                         )
                                         .cache(
                                             SandboxResponse.MountConfig.Mount
@@ -209,6 +216,23 @@ internal class SandboxListResponseTest {
                                                 .SandboxesProxyAwsRoleConfig
                                                 .builder()
                                                 .roleArn("x")
+                                                .subjectScope(
+                                                    "tag:2fdcD1Dc-bbDb-2BBD-0Afa-1A3C33cFaADc"
+                                                )
+                                                .build()
+                                        )
+                                        .azure(
+                                            SandboxResponse.ProxyConfig.Rule.Azure
+                                                .SandboxesProxyAzureWorkloadIdentityConfig
+                                                .builder()
+                                                .clientId("E1CB97d8-Ddf3-aAae-0Afa-1A3C33cFaADc")
+                                                .tenantId("E1CB97d8-Ddf3-aAae-0Afa-1A3C33cFaADc")
+                                                .addResource(
+                                                    SandboxResponse.ProxyConfig.Rule.Azure
+                                                        .SandboxesProxyAzureWorkloadIdentityConfig
+                                                        .Resource
+                                                        .HTTPS_STORAGE_AZURE_COM
+                                                )
                                                 .subjectScope(
                                                     "tag:2fdcD1Dc-bbDb-2BBD-0Afa-1A3C33cFaADc"
                                                 )
@@ -328,28 +352,25 @@ internal class SandboxListResponseTest {
                                                 )
                                                 .build()
                                         )
-                                        .gcp(
-                                            SandboxResponse.MountConfig.Auth.Gcp.builder()
-                                                .serviceAccountEmail("service_account_email")
-                                                .serviceAccountJson(
-                                                    SandboxResponse.MountConfig.Auth.Gcp
-                                                        .ServiceAccountJson
-                                                        .builder()
-                                                        .type(
-                                                            SandboxResponse.MountConfig.Auth.Gcp
-                                                                .ServiceAccountJson
-                                                                .Type
-                                                                .PLAINTEXT
-                                                        )
-                                                        .isSet(true)
-                                                        .value("value")
-                                                        .build()
-                                                )
+                                        .azure(
+                                            SandboxResponse.MountConfig.Auth.Azure
+                                                .SandboxesSandboxAzureMountWorkloadIdentityAuthConfig
+                                                .builder()
+                                                .clientId("E1CB97d8-Ddf3-aAae-0Afa-1A3C33cFaADc")
+                                                .tenantId("E1CB97d8-Ddf3-aAae-0Afa-1A3C33cFaADc")
                                                 .subjectScope(
                                                     "tag:2fdcD1Dc-bbDb-2BBD-0Afa-1A3C33cFaADc"
                                                 )
-                                                .workloadIdentityProvider(
-                                                    "workload_identity_provider"
+                                                .build()
+                                        )
+                                        .gcp(
+                                            SandboxResponse.MountConfig.Auth.Gcp
+                                                .SandboxesSandboxGcpMountWorkloadIdentityAuthConfig
+                                                .builder()
+                                                .workloadIdentityProvider("x")
+                                                .serviceAccountEmail("service_account_email")
+                                                .subjectScope(
+                                                    "tag:2fdcD1Dc-bbDb-2BBD-0Afa-1A3C33cFaADc"
                                                 )
                                                 .build()
                                         )
@@ -377,6 +398,16 @@ internal class SandboxListResponseTest {
                                                 .SandboxapiS3BucketMountSpec
                                                 .Type
                                                 .S3
+                                        )
+                                        .azureBlob(
+                                            SandboxResponse.MountConfig.Mount
+                                                .SandboxapiS3BucketMountSpec
+                                                .AzureBlob
+                                                .builder()
+                                                .container("container")
+                                                .storageAccount("26f1klzn5713")
+                                                .prefix("prefix")
+                                                .build()
                                         )
                                         .cache(
                                             SandboxResponse.MountConfig.Mount
@@ -486,6 +517,23 @@ internal class SandboxListResponseTest {
                                                 .SandboxesProxyAwsRoleConfig
                                                 .builder()
                                                 .roleArn("x")
+                                                .subjectScope(
+                                                    "tag:2fdcD1Dc-bbDb-2BBD-0Afa-1A3C33cFaADc"
+                                                )
+                                                .build()
+                                        )
+                                        .azure(
+                                            SandboxResponse.ProxyConfig.Rule.Azure
+                                                .SandboxesProxyAzureWorkloadIdentityConfig
+                                                .builder()
+                                                .clientId("E1CB97d8-Ddf3-aAae-0Afa-1A3C33cFaADc")
+                                                .tenantId("E1CB97d8-Ddf3-aAae-0Afa-1A3C33cFaADc")
+                                                .addResource(
+                                                    SandboxResponse.ProxyConfig.Rule.Azure
+                                                        .SandboxesProxyAzureWorkloadIdentityConfig
+                                                        .Resource
+                                                        .HTTPS_STORAGE_AZURE_COM
+                                                )
                                                 .subjectScope(
                                                     "tag:2fdcD1Dc-bbDb-2BBD-0Afa-1A3C33cFaADc"
                                                 )
@@ -606,27 +654,26 @@ internal class SandboxListResponseTest {
                                             )
                                             .build()
                                     )
-                                    .gcp(
-                                        SandboxResponse.MountConfig.Auth.Gcp.builder()
-                                            .serviceAccountEmail("service_account_email")
-                                            .serviceAccountJson(
-                                                SandboxResponse.MountConfig.Auth.Gcp
-                                                    .ServiceAccountJson
-                                                    .builder()
-                                                    .type(
-                                                        SandboxResponse.MountConfig.Auth.Gcp
-                                                            .ServiceAccountJson
-                                                            .Type
-                                                            .PLAINTEXT
-                                                    )
-                                                    .isSet(true)
-                                                    .value("value")
-                                                    .build()
-                                            )
+                                    .azure(
+                                        SandboxResponse.MountConfig.Auth.Azure
+                                            .SandboxesSandboxAzureMountWorkloadIdentityAuthConfig
+                                            .builder()
+                                            .clientId("E1CB97d8-Ddf3-aAae-0Afa-1A3C33cFaADc")
+                                            .tenantId("E1CB97d8-Ddf3-aAae-0Afa-1A3C33cFaADc")
                                             .subjectScope(
                                                 "tag:2fdcD1Dc-bbDb-2BBD-0Afa-1A3C33cFaADc"
                                             )
-                                            .workloadIdentityProvider("workload_identity_provider")
+                                            .build()
+                                    )
+                                    .gcp(
+                                        SandboxResponse.MountConfig.Auth.Gcp
+                                            .SandboxesSandboxGcpMountWorkloadIdentityAuthConfig
+                                            .builder()
+                                            .workloadIdentityProvider("x")
+                                            .serviceAccountEmail("service_account_email")
+                                            .subjectScope(
+                                                "tag:2fdcD1Dc-bbDb-2BBD-0Afa-1A3C33cFaADc"
+                                            )
                                             .build()
                                     )
                                     .build()
@@ -653,6 +700,16 @@ internal class SandboxListResponseTest {
                                             .SandboxapiS3BucketMountSpec
                                             .Type
                                             .S3
+                                    )
+                                    .azureBlob(
+                                        SandboxResponse.MountConfig.Mount
+                                            .SandboxapiS3BucketMountSpec
+                                            .AzureBlob
+                                            .builder()
+                                            .container("container")
+                                            .storageAccount("26f1klzn5713")
+                                            .prefix("prefix")
+                                            .build()
                                     )
                                     .cache(
                                         SandboxResponse.MountConfig.Mount
@@ -760,6 +817,23 @@ internal class SandboxListResponseTest {
                                             .SandboxesProxyAwsRoleConfig
                                             .builder()
                                             .roleArn("x")
+                                            .subjectScope(
+                                                "tag:2fdcD1Dc-bbDb-2BBD-0Afa-1A3C33cFaADc"
+                                            )
+                                            .build()
+                                    )
+                                    .azure(
+                                        SandboxResponse.ProxyConfig.Rule.Azure
+                                            .SandboxesProxyAzureWorkloadIdentityConfig
+                                            .builder()
+                                            .clientId("E1CB97d8-Ddf3-aAae-0Afa-1A3C33cFaADc")
+                                            .tenantId("E1CB97d8-Ddf3-aAae-0Afa-1A3C33cFaADc")
+                                            .addResource(
+                                                SandboxResponse.ProxyConfig.Rule.Azure
+                                                    .SandboxesProxyAzureWorkloadIdentityConfig
+                                                    .Resource
+                                                    .HTTPS_STORAGE_AZURE_COM
+                                            )
                                             .subjectScope(
                                                 "tag:2fdcD1Dc-bbDb-2BBD-0Afa-1A3C33cFaADc"
                                             )
@@ -875,27 +949,26 @@ internal class SandboxListResponseTest {
                                             )
                                             .build()
                                     )
-                                    .gcp(
-                                        SandboxResponse.MountConfig.Auth.Gcp.builder()
-                                            .serviceAccountEmail("service_account_email")
-                                            .serviceAccountJson(
-                                                SandboxResponse.MountConfig.Auth.Gcp
-                                                    .ServiceAccountJson
-                                                    .builder()
-                                                    .type(
-                                                        SandboxResponse.MountConfig.Auth.Gcp
-                                                            .ServiceAccountJson
-                                                            .Type
-                                                            .PLAINTEXT
-                                                    )
-                                                    .isSet(true)
-                                                    .value("value")
-                                                    .build()
-                                            )
+                                    .azure(
+                                        SandboxResponse.MountConfig.Auth.Azure
+                                            .SandboxesSandboxAzureMountWorkloadIdentityAuthConfig
+                                            .builder()
+                                            .clientId("E1CB97d8-Ddf3-aAae-0Afa-1A3C33cFaADc")
+                                            .tenantId("E1CB97d8-Ddf3-aAae-0Afa-1A3C33cFaADc")
                                             .subjectScope(
                                                 "tag:2fdcD1Dc-bbDb-2BBD-0Afa-1A3C33cFaADc"
                                             )
-                                            .workloadIdentityProvider("workload_identity_provider")
+                                            .build()
+                                    )
+                                    .gcp(
+                                        SandboxResponse.MountConfig.Auth.Gcp
+                                            .SandboxesSandboxGcpMountWorkloadIdentityAuthConfig
+                                            .builder()
+                                            .workloadIdentityProvider("x")
+                                            .serviceAccountEmail("service_account_email")
+                                            .subjectScope(
+                                                "tag:2fdcD1Dc-bbDb-2BBD-0Afa-1A3C33cFaADc"
+                                            )
                                             .build()
                                     )
                                     .build()
@@ -922,6 +995,16 @@ internal class SandboxListResponseTest {
                                             .SandboxapiS3BucketMountSpec
                                             .Type
                                             .S3
+                                    )
+                                    .azureBlob(
+                                        SandboxResponse.MountConfig.Mount
+                                            .SandboxapiS3BucketMountSpec
+                                            .AzureBlob
+                                            .builder()
+                                            .container("container")
+                                            .storageAccount("26f1klzn5713")
+                                            .prefix("prefix")
+                                            .build()
                                     )
                                     .cache(
                                         SandboxResponse.MountConfig.Mount
@@ -1029,6 +1112,23 @@ internal class SandboxListResponseTest {
                                             .SandboxesProxyAwsRoleConfig
                                             .builder()
                                             .roleArn("x")
+                                            .subjectScope(
+                                                "tag:2fdcD1Dc-bbDb-2BBD-0Afa-1A3C33cFaADc"
+                                            )
+                                            .build()
+                                    )
+                                    .azure(
+                                        SandboxResponse.ProxyConfig.Rule.Azure
+                                            .SandboxesProxyAzureWorkloadIdentityConfig
+                                            .builder()
+                                            .clientId("E1CB97d8-Ddf3-aAae-0Afa-1A3C33cFaADc")
+                                            .tenantId("E1CB97d8-Ddf3-aAae-0Afa-1A3C33cFaADc")
+                                            .addResource(
+                                                SandboxResponse.ProxyConfig.Rule.Azure
+                                                    .SandboxesProxyAzureWorkloadIdentityConfig
+                                                    .Resource
+                                                    .HTTPS_STORAGE_AZURE_COM
+                                            )
                                             .subjectScope(
                                                 "tag:2fdcD1Dc-bbDb-2BBD-0Afa-1A3C33cFaADc"
                                             )
@@ -1148,28 +1248,25 @@ internal class SandboxListResponseTest {
                                                 )
                                                 .build()
                                         )
-                                        .gcp(
-                                            SandboxResponse.MountConfig.Auth.Gcp.builder()
-                                                .serviceAccountEmail("service_account_email")
-                                                .serviceAccountJson(
-                                                    SandboxResponse.MountConfig.Auth.Gcp
-                                                        .ServiceAccountJson
-                                                        .builder()
-                                                        .type(
-                                                            SandboxResponse.MountConfig.Auth.Gcp
-                                                                .ServiceAccountJson
-                                                                .Type
-                                                                .PLAINTEXT
-                                                        )
-                                                        .isSet(true)
-                                                        .value("value")
-                                                        .build()
-                                                )
+                                        .azure(
+                                            SandboxResponse.MountConfig.Auth.Azure
+                                                .SandboxesSandboxAzureMountWorkloadIdentityAuthConfig
+                                                .builder()
+                                                .clientId("E1CB97d8-Ddf3-aAae-0Afa-1A3C33cFaADc")
+                                                .tenantId("E1CB97d8-Ddf3-aAae-0Afa-1A3C33cFaADc")
                                                 .subjectScope(
                                                     "tag:2fdcD1Dc-bbDb-2BBD-0Afa-1A3C33cFaADc"
                                                 )
-                                                .workloadIdentityProvider(
-                                                    "workload_identity_provider"
+                                                .build()
+                                        )
+                                        .gcp(
+                                            SandboxResponse.MountConfig.Auth.Gcp
+                                                .SandboxesSandboxGcpMountWorkloadIdentityAuthConfig
+                                                .builder()
+                                                .workloadIdentityProvider("x")
+                                                .serviceAccountEmail("service_account_email")
+                                                .subjectScope(
+                                                    "tag:2fdcD1Dc-bbDb-2BBD-0Afa-1A3C33cFaADc"
                                                 )
                                                 .build()
                                         )
@@ -1197,6 +1294,16 @@ internal class SandboxListResponseTest {
                                                 .SandboxapiS3BucketMountSpec
                                                 .Type
                                                 .S3
+                                        )
+                                        .azureBlob(
+                                            SandboxResponse.MountConfig.Mount
+                                                .SandboxapiS3BucketMountSpec
+                                                .AzureBlob
+                                                .builder()
+                                                .container("container")
+                                                .storageAccount("26f1klzn5713")
+                                                .prefix("prefix")
+                                                .build()
                                         )
                                         .cache(
                                             SandboxResponse.MountConfig.Mount
@@ -1306,6 +1413,23 @@ internal class SandboxListResponseTest {
                                                 .SandboxesProxyAwsRoleConfig
                                                 .builder()
                                                 .roleArn("x")
+                                                .subjectScope(
+                                                    "tag:2fdcD1Dc-bbDb-2BBD-0Afa-1A3C33cFaADc"
+                                                )
+                                                .build()
+                                        )
+                                        .azure(
+                                            SandboxResponse.ProxyConfig.Rule.Azure
+                                                .SandboxesProxyAzureWorkloadIdentityConfig
+                                                .builder()
+                                                .clientId("E1CB97d8-Ddf3-aAae-0Afa-1A3C33cFaADc")
+                                                .tenantId("E1CB97d8-Ddf3-aAae-0Afa-1A3C33cFaADc")
+                                                .addResource(
+                                                    SandboxResponse.ProxyConfig.Rule.Azure
+                                                        .SandboxesProxyAzureWorkloadIdentityConfig
+                                                        .Resource
+                                                        .HTTPS_STORAGE_AZURE_COM
+                                                )
                                                 .subjectScope(
                                                     "tag:2fdcD1Dc-bbDb-2BBD-0Afa-1A3C33cFaADc"
                                                 )
@@ -1425,28 +1549,25 @@ internal class SandboxListResponseTest {
                                                 )
                                                 .build()
                                         )
-                                        .gcp(
-                                            SandboxResponse.MountConfig.Auth.Gcp.builder()
-                                                .serviceAccountEmail("service_account_email")
-                                                .serviceAccountJson(
-                                                    SandboxResponse.MountConfig.Auth.Gcp
-                                                        .ServiceAccountJson
-                                                        .builder()
-                                                        .type(
-                                                            SandboxResponse.MountConfig.Auth.Gcp
-                                                                .ServiceAccountJson
-                                                                .Type
-                                                                .PLAINTEXT
-                                                        )
-                                                        .isSet(true)
-                                                        .value("value")
-                                                        .build()
-                                                )
+                                        .azure(
+                                            SandboxResponse.MountConfig.Auth.Azure
+                                                .SandboxesSandboxAzureMountWorkloadIdentityAuthConfig
+                                                .builder()
+                                                .clientId("E1CB97d8-Ddf3-aAae-0Afa-1A3C33cFaADc")
+                                                .tenantId("E1CB97d8-Ddf3-aAae-0Afa-1A3C33cFaADc")
                                                 .subjectScope(
                                                     "tag:2fdcD1Dc-bbDb-2BBD-0Afa-1A3C33cFaADc"
                                                 )
-                                                .workloadIdentityProvider(
-                                                    "workload_identity_provider"
+                                                .build()
+                                        )
+                                        .gcp(
+                                            SandboxResponse.MountConfig.Auth.Gcp
+                                                .SandboxesSandboxGcpMountWorkloadIdentityAuthConfig
+                                                .builder()
+                                                .workloadIdentityProvider("x")
+                                                .serviceAccountEmail("service_account_email")
+                                                .subjectScope(
+                                                    "tag:2fdcD1Dc-bbDb-2BBD-0Afa-1A3C33cFaADc"
                                                 )
                                                 .build()
                                         )
@@ -1474,6 +1595,16 @@ internal class SandboxListResponseTest {
                                                 .SandboxapiS3BucketMountSpec
                                                 .Type
                                                 .S3
+                                        )
+                                        .azureBlob(
+                                            SandboxResponse.MountConfig.Mount
+                                                .SandboxapiS3BucketMountSpec
+                                                .AzureBlob
+                                                .builder()
+                                                .container("container")
+                                                .storageAccount("26f1klzn5713")
+                                                .prefix("prefix")
+                                                .build()
                                         )
                                         .cache(
                                             SandboxResponse.MountConfig.Mount
@@ -1583,6 +1714,23 @@ internal class SandboxListResponseTest {
                                                 .SandboxesProxyAwsRoleConfig
                                                 .builder()
                                                 .roleArn("x")
+                                                .subjectScope(
+                                                    "tag:2fdcD1Dc-bbDb-2BBD-0Afa-1A3C33cFaADc"
+                                                )
+                                                .build()
+                                        )
+                                        .azure(
+                                            SandboxResponse.ProxyConfig.Rule.Azure
+                                                .SandboxesProxyAzureWorkloadIdentityConfig
+                                                .builder()
+                                                .clientId("E1CB97d8-Ddf3-aAae-0Afa-1A3C33cFaADc")
+                                                .tenantId("E1CB97d8-Ddf3-aAae-0Afa-1A3C33cFaADc")
+                                                .addResource(
+                                                    SandboxResponse.ProxyConfig.Rule.Azure
+                                                        .SandboxesProxyAzureWorkloadIdentityConfig
+                                                        .Resource
+                                                        .HTTPS_STORAGE_AZURE_COM
+                                                )
                                                 .subjectScope(
                                                     "tag:2fdcD1Dc-bbDb-2BBD-0Afa-1A3C33cFaADc"
                                                 )
