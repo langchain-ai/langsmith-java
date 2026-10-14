@@ -4,28 +4,33 @@ package com.langchain.smith.models.feedback.configs
 
 import com.langchain.smith.core.JsonValue
 import com.langchain.smith.core.Params
-import com.langchain.smith.core.checkRequired
 import com.langchain.smith.core.http.Headers
 import com.langchain.smith.core.http.QueryParams
 import com.langchain.smith.core.toImmutable
 import java.util.Objects
 import java.util.Optional
+import kotlin.jvm.optionals.getOrNull
 
 /**
- * Soft delete a feedback config by marking it as deleted.
+ * Soft delete one feedback config by id, or every config of a feedback key.
  *
  * The config can be recreated later with the same key (simple reuse pattern). Existing feedback
- * records with this key will remain unchanged.
+ * records with this key will remain unchanged. Deleting an enforced config turns off its
+ * enforcement instead of removing it, and needs the feedback-configs:manage-enforced permission.
+ * Deleting an unenforced config that an annotation queue uses is refused.
  */
 class ConfigDeleteParams
 private constructor(
-    private val feedbackKey: String,
+    private val id: String?,
+    private val feedbackKey: String?,
     private val additionalHeaders: Headers,
     private val additionalQueryParams: QueryParams,
     private val additionalBodyProperties: Map<String, JsonValue>,
 ) : Params {
 
-    fun feedbackKey(): String = feedbackKey
+    fun id(): Optional<String> = Optional.ofNullable(id)
+
+    fun feedbackKey(): Optional<String> = Optional.ofNullable(feedbackKey)
 
     /** Additional body properties to send with the request. */
     fun _additionalBodyProperties(): Map<String, JsonValue> = additionalBodyProperties
@@ -40,20 +45,16 @@ private constructor(
 
     companion object {
 
-        /**
-         * Returns a mutable builder for constructing an instance of [ConfigDeleteParams].
-         *
-         * The following fields are required:
-         * ```java
-         * .feedbackKey()
-         * ```
-         */
+        @JvmStatic fun none(): ConfigDeleteParams = builder().build()
+
+        /** Returns a mutable builder for constructing an instance of [ConfigDeleteParams]. */
         @JvmStatic fun builder() = Builder()
     }
 
     /** A builder for [ConfigDeleteParams]. */
     class Builder internal constructor() {
 
+        private var id: String? = null
         private var feedbackKey: String? = null
         private var additionalHeaders: Headers.Builder = Headers.builder()
         private var additionalQueryParams: QueryParams.Builder = QueryParams.builder()
@@ -61,13 +62,22 @@ private constructor(
 
         @JvmSynthetic
         internal fun from(configDeleteParams: ConfigDeleteParams) = apply {
+            id = configDeleteParams.id
             feedbackKey = configDeleteParams.feedbackKey
             additionalHeaders = configDeleteParams.additionalHeaders.toBuilder()
             additionalQueryParams = configDeleteParams.additionalQueryParams.toBuilder()
             additionalBodyProperties = configDeleteParams.additionalBodyProperties.toMutableMap()
         }
 
-        fun feedbackKey(feedbackKey: String) = apply { this.feedbackKey = feedbackKey }
+        fun id(id: String?) = apply { this.id = id }
+
+        /** Alias for calling [Builder.id] with `id.orElse(null)`. */
+        fun id(id: Optional<String>) = id(id.getOrNull())
+
+        fun feedbackKey(feedbackKey: String?) = apply { this.feedbackKey = feedbackKey }
+
+        /** Alias for calling [Builder.feedbackKey] with `feedbackKey.orElse(null)`. */
+        fun feedbackKey(feedbackKey: Optional<String>) = feedbackKey(feedbackKey.getOrNull())
 
         fun additionalHeaders(additionalHeaders: Headers) = apply {
             this.additionalHeaders.clear()
@@ -193,17 +203,11 @@ private constructor(
          * Returns an immutable instance of [ConfigDeleteParams].
          *
          * Further updates to this [Builder] will not mutate the returned instance.
-         *
-         * The following fields are required:
-         * ```java
-         * .feedbackKey()
-         * ```
-         *
-         * @throws IllegalStateException if any required field is unset.
          */
         fun build(): ConfigDeleteParams =
             ConfigDeleteParams(
-                checkRequired("feedbackKey", feedbackKey),
+                id,
+                feedbackKey,
                 additionalHeaders.build(),
                 additionalQueryParams.build(),
                 additionalBodyProperties.toImmutable(),
@@ -218,7 +222,8 @@ private constructor(
     override fun _queryParams(): QueryParams =
         QueryParams.builder()
             .apply {
-                put("feedback_key", feedbackKey)
+                id?.let { put("id", it) }
+                feedbackKey?.let { put("feedback_key", it) }
                 putAll(additionalQueryParams)
             }
             .build()
@@ -229,6 +234,7 @@ private constructor(
         }
 
         return other is ConfigDeleteParams &&
+            id == other.id &&
             feedbackKey == other.feedbackKey &&
             additionalHeaders == other.additionalHeaders &&
             additionalQueryParams == other.additionalQueryParams &&
@@ -237,6 +243,7 @@ private constructor(
 
     override fun hashCode(): Int =
         Objects.hash(
+            id,
             feedbackKey,
             additionalHeaders,
             additionalQueryParams,
@@ -244,5 +251,5 @@ private constructor(
         )
 
     override fun toString() =
-        "ConfigDeleteParams{feedbackKey=$feedbackKey, additionalHeaders=$additionalHeaders, additionalQueryParams=$additionalQueryParams, additionalBodyProperties=$additionalBodyProperties}"
+        "ConfigDeleteParams{id=$id, feedbackKey=$feedbackKey, additionalHeaders=$additionalHeaders, additionalQueryParams=$additionalQueryParams, additionalBodyProperties=$additionalBodyProperties}"
 }

@@ -24,19 +24,28 @@ interface ConfigServiceAsync {
     fun withOptions(modifier: Consumer<ClientOptions.Builder>): ConfigServiceAsync
 
     /**
-     * Soft delete a feedback config by marking it as deleted.
+     * Soft delete one feedback config by id, or every config of a feedback key.
      *
      * The config can be recreated later with the same key (simple reuse pattern). Existing feedback
-     * records with this key will remain unchanged.
+     * records with this key will remain unchanged. Deleting an enforced config turns off its
+     * enforcement instead of removing it, and needs the feedback-configs:manage-enforced
+     * permission. Deleting an unenforced config that an annotation queue uses is refused.
      */
-    fun delete(params: ConfigDeleteParams): CompletableFuture<Void?> =
-        delete(params, RequestOptions.none())
+    fun delete(): CompletableFuture<Void?> = delete(ConfigDeleteParams.none())
 
     /** @see delete */
     fun delete(
-        params: ConfigDeleteParams,
+        params: ConfigDeleteParams = ConfigDeleteParams.none(),
         requestOptions: RequestOptions = RequestOptions.none(),
     ): CompletableFuture<Void?>
+
+    /** @see delete */
+    fun delete(params: ConfigDeleteParams = ConfigDeleteParams.none()): CompletableFuture<Void?> =
+        delete(params, RequestOptions.none())
+
+    /** @see delete */
+    fun delete(requestOptions: RequestOptions): CompletableFuture<Void?> =
+        delete(ConfigDeleteParams.none(), requestOptions)
 
     /**
      * A view of [ConfigServiceAsync] that provides access to raw HTTP responses for each method.
@@ -56,13 +65,21 @@ interface ConfigServiceAsync {
          * Returns a raw HTTP response for `delete /api/v1/feedback-configs`, but is otherwise the
          * same as [ConfigServiceAsync.delete].
          */
-        fun delete(params: ConfigDeleteParams): CompletableFuture<HttpResponse> =
-            delete(params, RequestOptions.none())
+        fun delete(): CompletableFuture<HttpResponse> = delete(ConfigDeleteParams.none())
 
         /** @see delete */
         fun delete(
-            params: ConfigDeleteParams,
+            params: ConfigDeleteParams = ConfigDeleteParams.none(),
             requestOptions: RequestOptions = RequestOptions.none(),
         ): CompletableFuture<HttpResponse>
+
+        /** @see delete */
+        fun delete(
+            params: ConfigDeleteParams = ConfigDeleteParams.none()
+        ): CompletableFuture<HttpResponse> = delete(params, RequestOptions.none())
+
+        /** @see delete */
+        fun delete(requestOptions: RequestOptions): CompletableFuture<HttpResponse> =
+            delete(ConfigDeleteParams.none(), requestOptions)
     }
 }
