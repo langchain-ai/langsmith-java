@@ -1,0 +1,19 @@
+.github/workflows/check-pr-source.yml
+  s_63dea4508c0b8c::t_49a8839193b611 3-8,11-12,23,36,41,44
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "fa5ed3de8b6a83834e138e80474ca012c549e1ba",
+  "prompts": {},
+  "sessions": {
+    "s_63dea4508c0b8c": {
+      "agent_id": {
+        "tool": "cursor",
+        "id": "fe96992b-fb26-4f21-9353-79f18a359e92",
+        "model": "grok-4.7"
+      },
+      "human_author": "Joaquin Borggio <joaquin@langchain.dev>"
+    }
+  }
+}
