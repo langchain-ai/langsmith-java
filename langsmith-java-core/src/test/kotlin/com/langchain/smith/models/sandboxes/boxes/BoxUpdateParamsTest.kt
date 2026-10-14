@@ -81,24 +81,13 @@ internal class BoxUpdateParamsTest {
                                     .build()
                             )
                             .gcp(
-                                BoxUpdateParams.ProxyConfig.Rule.Gcp.builder()
+                                BoxUpdateParams.ProxyConfig.Rule.Gcp
+                                    .SandboxesProxyGcpWorkloadIdentityConfig
+                                    .builder()
+                                    .workloadIdentityProvider("x")
                                     .addScope("string")
                                     .serviceAccountEmail("service_account_email")
-                                    .serviceAccountJson(
-                                        BoxUpdateParams.ProxyConfig.Rule.Gcp.ServiceAccountJson
-                                            .builder()
-                                            .type(
-                                                BoxUpdateParams.ProxyConfig.Rule.Gcp
-                                                    .ServiceAccountJson
-                                                    .Type
-                                                    .PLAINTEXT
-                                            )
-                                            .isSet(true)
-                                            .value("value")
-                                            .build()
-                                    )
                                     .subjectScope("tag:2fdcD1Dc-bbDb-2BBD-0Afa-1A3C33cFaADc")
-                                    .workloadIdentityProvider("workload_identity_provider")
                                     .build()
                             )
                             .addHeader(
@@ -215,24 +204,13 @@ internal class BoxUpdateParamsTest {
                                         .build()
                                 )
                                 .gcp(
-                                    BoxUpdateParams.ProxyConfig.Rule.Gcp.builder()
+                                    BoxUpdateParams.ProxyConfig.Rule.Gcp
+                                        .SandboxesProxyGcpWorkloadIdentityConfig
+                                        .builder()
+                                        .workloadIdentityProvider("x")
                                         .addScope("string")
                                         .serviceAccountEmail("service_account_email")
-                                        .serviceAccountJson(
-                                            BoxUpdateParams.ProxyConfig.Rule.Gcp.ServiceAccountJson
-                                                .builder()
-                                                .type(
-                                                    BoxUpdateParams.ProxyConfig.Rule.Gcp
-                                                        .ServiceAccountJson
-                                                        .Type
-                                                        .PLAINTEXT
-                                                )
-                                                .isSet(true)
-                                                .value("value")
-                                                .build()
-                                        )
                                         .subjectScope("tag:2fdcD1Dc-bbDb-2BBD-0Afa-1A3C33cFaADc")
-                                        .workloadIdentityProvider("workload_identity_provider")
                                         .build()
                                 )
                                 .addHeader(
@@ -339,24 +317,13 @@ internal class BoxUpdateParamsTest {
                                     .build()
                             )
                             .gcp(
-                                BoxUpdateParams.ProxyConfig.Rule.Gcp.builder()
+                                BoxUpdateParams.ProxyConfig.Rule.Gcp
+                                    .SandboxesProxyGcpWorkloadIdentityConfig
+                                    .builder()
+                                    .workloadIdentityProvider("x")
                                     .addScope("string")
                                     .serviceAccountEmail("service_account_email")
-                                    .serviceAccountJson(
-                                        BoxUpdateParams.ProxyConfig.Rule.Gcp.ServiceAccountJson
-                                            .builder()
-                                            .type(
-                                                BoxUpdateParams.ProxyConfig.Rule.Gcp
-                                                    .ServiceAccountJson
-                                                    .Type
-                                                    .PLAINTEXT
-                                            )
-                                            .isSet(true)
-                                            .value("value")
-                                            .build()
-                                    )
                                     .subjectScope("tag:2fdcD1Dc-bbDb-2BBD-0Afa-1A3C33cFaADc")
-                                    .workloadIdentityProvider("workload_identity_provider")
                                     .build()
                             )
                             .addHeader(

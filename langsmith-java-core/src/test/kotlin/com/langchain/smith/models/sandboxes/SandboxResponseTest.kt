@@ -219,24 +219,13 @@ internal class SandboxResponseTest {
                                         .build()
                                 )
                                 .gcp(
-                                    SandboxResponse.ProxyConfig.Rule.Gcp.builder()
+                                    SandboxResponse.ProxyConfig.Rule.Gcp
+                                        .SandboxesProxyGcpWorkloadIdentityConfig
+                                        .builder()
+                                        .workloadIdentityProvider("x")
                                         .addScope("string")
                                         .serviceAccountEmail("service_account_email")
-                                        .serviceAccountJson(
-                                            SandboxResponse.ProxyConfig.Rule.Gcp.ServiceAccountJson
-                                                .builder()
-                                                .type(
-                                                    SandboxResponse.ProxyConfig.Rule.Gcp
-                                                        .ServiceAccountJson
-                                                        .Type
-                                                        .PLAINTEXT
-                                                )
-                                                .isSet(true)
-                                                .value("value")
-                                                .build()
-                                        )
                                         .subjectScope("tag:2fdcD1Dc-bbDb-2BBD-0Afa-1A3C33cFaADc")
-                                        .workloadIdentityProvider("workload_identity_provider")
                                         .build()
                                 )
                                 .addHeader(
@@ -483,24 +472,13 @@ internal class SandboxResponseTest {
                                     .build()
                             )
                             .gcp(
-                                SandboxResponse.ProxyConfig.Rule.Gcp.builder()
+                                SandboxResponse.ProxyConfig.Rule.Gcp
+                                    .SandboxesProxyGcpWorkloadIdentityConfig
+                                    .builder()
+                                    .workloadIdentityProvider("x")
                                     .addScope("string")
                                     .serviceAccountEmail("service_account_email")
-                                    .serviceAccountJson(
-                                        SandboxResponse.ProxyConfig.Rule.Gcp.ServiceAccountJson
-                                            .builder()
-                                            .type(
-                                                SandboxResponse.ProxyConfig.Rule.Gcp
-                                                    .ServiceAccountJson
-                                                    .Type
-                                                    .PLAINTEXT
-                                            )
-                                            .isSet(true)
-                                            .value("value")
-                                            .build()
-                                    )
                                     .subjectScope("tag:2fdcD1Dc-bbDb-2BBD-0Afa-1A3C33cFaADc")
-                                    .workloadIdentityProvider("workload_identity_provider")
                                     .build()
                             )
                             .addHeader(
@@ -751,24 +729,13 @@ internal class SandboxResponseTest {
                                         .build()
                                 )
                                 .gcp(
-                                    SandboxResponse.ProxyConfig.Rule.Gcp.builder()
+                                    SandboxResponse.ProxyConfig.Rule.Gcp
+                                        .SandboxesProxyGcpWorkloadIdentityConfig
+                                        .builder()
+                                        .workloadIdentityProvider("x")
                                         .addScope("string")
                                         .serviceAccountEmail("service_account_email")
-                                        .serviceAccountJson(
-                                            SandboxResponse.ProxyConfig.Rule.Gcp.ServiceAccountJson
-                                                .builder()
-                                                .type(
-                                                    SandboxResponse.ProxyConfig.Rule.Gcp
-                                                        .ServiceAccountJson
-                                                        .Type
-                                                        .PLAINTEXT
-                                                )
-                                                .isSet(true)
-                                                .value("value")
-                                                .build()
-                                        )
                                         .subjectScope("tag:2fdcD1Dc-bbDb-2BBD-0Afa-1A3C33cFaADc")
-                                        .workloadIdentityProvider("workload_identity_provider")
                                         .build()
                                 )
                                 .addHeader(
