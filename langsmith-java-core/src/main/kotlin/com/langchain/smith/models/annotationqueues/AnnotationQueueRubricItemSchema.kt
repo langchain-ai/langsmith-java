@@ -551,6 +551,9 @@ private constructor(
         private val feedbackKey: JsonField<String>,
         private val modifiedAt: JsonField<OffsetDateTime>,
         private val tenantId: JsonField<String>,
+        private val isDeleted: JsonField<Boolean>,
+        private val isEnforced: JsonField<Boolean>,
+        private val isFirst: JsonField<Boolean>,
         private val isLowerScoreBetter: JsonField<Boolean>,
         private val additionalProperties: MutableMap<String, JsonValue>,
     ) {
@@ -570,6 +573,15 @@ private constructor(
             @JsonProperty("tenant_id")
             @ExcludeMissing
             tenantId: JsonField<String> = JsonMissing.of(),
+            @JsonProperty("is_deleted")
+            @ExcludeMissing
+            isDeleted: JsonField<Boolean> = JsonMissing.of(),
+            @JsonProperty("is_enforced")
+            @ExcludeMissing
+            isEnforced: JsonField<Boolean> = JsonMissing.of(),
+            @JsonProperty("is_first")
+            @ExcludeMissing
+            isFirst: JsonField<Boolean> = JsonMissing.of(),
             @JsonProperty("is_lower_score_better")
             @ExcludeMissing
             isLowerScoreBetter: JsonField<Boolean> = JsonMissing.of(),
@@ -579,6 +591,9 @@ private constructor(
             feedbackKey,
             modifiedAt,
             tenantId,
+            isDeleted,
+            isEnforced,
+            isFirst,
             isLowerScoreBetter,
             mutableMapOf(),
         )
@@ -612,6 +627,24 @@ private constructor(
          *   unexpectedly missing or null (e.g. if the server responded with an unexpected value).
          */
         fun tenantId(): String = tenantId.getRequired("tenant_id")
+
+        /**
+         * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
+         *   the server responded with an unexpected value).
+         */
+        fun isDeleted(): Optional<Boolean> = isDeleted.getOptional("is_deleted")
+
+        /**
+         * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
+         *   the server responded with an unexpected value).
+         */
+        fun isEnforced(): Optional<Boolean> = isEnforced.getOptional("is_enforced")
+
+        /**
+         * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
+         *   the server responded with an unexpected value).
+         */
+        fun isFirst(): Optional<Boolean> = isFirst.getOptional("is_first")
 
         /**
          * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
@@ -663,6 +696,29 @@ private constructor(
         @JsonProperty("tenant_id") @ExcludeMissing fun _tenantId(): JsonField<String> = tenantId
 
         /**
+         * Returns the raw JSON value of [isDeleted].
+         *
+         * Unlike [isDeleted], this method doesn't throw if the JSON field has an unexpected type.
+         */
+        @JsonProperty("is_deleted") @ExcludeMissing fun _isDeleted(): JsonField<Boolean> = isDeleted
+
+        /**
+         * Returns the raw JSON value of [isEnforced].
+         *
+         * Unlike [isEnforced], this method doesn't throw if the JSON field has an unexpected type.
+         */
+        @JsonProperty("is_enforced")
+        @ExcludeMissing
+        fun _isEnforced(): JsonField<Boolean> = isEnforced
+
+        /**
+         * Returns the raw JSON value of [isFirst].
+         *
+         * Unlike [isFirst], this method doesn't throw if the JSON field has an unexpected type.
+         */
+        @JsonProperty("is_first") @ExcludeMissing fun _isFirst(): JsonField<Boolean> = isFirst
+
+        /**
          * Returns the raw JSON value of [isLowerScoreBetter].
          *
          * Unlike [isLowerScoreBetter], this method doesn't throw if the JSON field has an
@@ -709,6 +765,9 @@ private constructor(
             private var feedbackKey: JsonField<String>? = null
             private var modifiedAt: JsonField<OffsetDateTime>? = null
             private var tenantId: JsonField<String>? = null
+            private var isDeleted: JsonField<Boolean> = JsonMissing.of()
+            private var isEnforced: JsonField<Boolean> = JsonMissing.of()
+            private var isFirst: JsonField<Boolean> = JsonMissing.of()
             private var isLowerScoreBetter: JsonField<Boolean> = JsonMissing.of()
             private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
 
@@ -719,6 +778,9 @@ private constructor(
                 feedbackKey = feedbackConfig.feedbackKey
                 modifiedAt = feedbackConfig.modifiedAt
                 tenantId = feedbackConfig.tenantId
+                isDeleted = feedbackConfig.isDeleted
+                isEnforced = feedbackConfig.isEnforced
+                isFirst = feedbackConfig.isFirst
                 isLowerScoreBetter = feedbackConfig.isLowerScoreBetter
                 additionalProperties = feedbackConfig.additionalProperties.toMutableMap()
             }
@@ -784,6 +846,39 @@ private constructor(
              * supported value.
              */
             fun tenantId(tenantId: JsonField<String>) = apply { this.tenantId = tenantId }
+
+            fun isDeleted(isDeleted: Boolean) = isDeleted(JsonField.of(isDeleted))
+
+            /**
+             * Sets [Builder.isDeleted] to an arbitrary JSON value.
+             *
+             * You should usually call [Builder.isDeleted] with a well-typed [Boolean] value
+             * instead. This method is primarily for setting the field to an undocumented or not yet
+             * supported value.
+             */
+            fun isDeleted(isDeleted: JsonField<Boolean>) = apply { this.isDeleted = isDeleted }
+
+            fun isEnforced(isEnforced: Boolean) = isEnforced(JsonField.of(isEnforced))
+
+            /**
+             * Sets [Builder.isEnforced] to an arbitrary JSON value.
+             *
+             * You should usually call [Builder.isEnforced] with a well-typed [Boolean] value
+             * instead. This method is primarily for setting the field to an undocumented or not yet
+             * supported value.
+             */
+            fun isEnforced(isEnforced: JsonField<Boolean>) = apply { this.isEnforced = isEnforced }
+
+            fun isFirst(isFirst: Boolean) = isFirst(JsonField.of(isFirst))
+
+            /**
+             * Sets [Builder.isFirst] to an arbitrary JSON value.
+             *
+             * You should usually call [Builder.isFirst] with a well-typed [Boolean] value instead.
+             * This method is primarily for setting the field to an undocumented or not yet
+             * supported value.
+             */
+            fun isFirst(isFirst: JsonField<Boolean>) = apply { this.isFirst = isFirst }
 
             fun isLowerScoreBetter(isLowerScoreBetter: Boolean?) =
                 isLowerScoreBetter(JsonField.ofNullable(isLowerScoreBetter))
@@ -856,6 +951,9 @@ private constructor(
                     checkRequired("feedbackKey", feedbackKey),
                     checkRequired("modifiedAt", modifiedAt),
                     checkRequired("tenantId", tenantId),
+                    isDeleted,
+                    isEnforced,
+                    isFirst,
                     isLowerScoreBetter,
                     additionalProperties.toMutableMap(),
                 )
@@ -882,6 +980,9 @@ private constructor(
             feedbackKey()
             modifiedAt()
             tenantId()
+            isDeleted()
+            isEnforced()
+            isFirst()
             isLowerScoreBetter()
             validated = true
         }
@@ -907,6 +1008,9 @@ private constructor(
                 (if (feedbackKey.asKnown().isPresent) 1 else 0) +
                 (if (modifiedAt.asKnown().isPresent) 1 else 0) +
                 (if (tenantId.asKnown().isPresent) 1 else 0) +
+                (if (isDeleted.asKnown().isPresent) 1 else 0) +
+                (if (isEnforced.asKnown().isPresent) 1 else 0) +
+                (if (isFirst.asKnown().isPresent) 1 else 0) +
                 (if (isLowerScoreBetter.asKnown().isPresent) 1 else 0)
 
         class InnerFeedbackConfig
@@ -1600,6 +1704,9 @@ private constructor(
                 feedbackKey == other.feedbackKey &&
                 modifiedAt == other.modifiedAt &&
                 tenantId == other.tenantId &&
+                isDeleted == other.isDeleted &&
+                isEnforced == other.isEnforced &&
+                isFirst == other.isFirst &&
                 isLowerScoreBetter == other.isLowerScoreBetter &&
                 additionalProperties == other.additionalProperties
         }
@@ -1611,6 +1718,9 @@ private constructor(
                 feedbackKey,
                 modifiedAt,
                 tenantId,
+                isDeleted,
+                isEnforced,
+                isFirst,
                 isLowerScoreBetter,
                 additionalProperties,
             )
@@ -1619,7 +1729,7 @@ private constructor(
         override fun hashCode(): Int = hashCode
 
         override fun toString() =
-            "FeedbackConfig{id=$id, feedbackConfig=$feedbackConfig, feedbackKey=$feedbackKey, modifiedAt=$modifiedAt, tenantId=$tenantId, isLowerScoreBetter=$isLowerScoreBetter, additionalProperties=$additionalProperties}"
+            "FeedbackConfig{id=$id, feedbackConfig=$feedbackConfig, feedbackKey=$feedbackKey, modifiedAt=$modifiedAt, tenantId=$tenantId, isDeleted=$isDeleted, isEnforced=$isEnforced, isFirst=$isFirst, isLowerScoreBetter=$isLowerScoreBetter, additionalProperties=$additionalProperties}"
     }
 
     @JsonDeserialize(using = RegexValidator.Deserializer::class)
