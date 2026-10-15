@@ -1,5 +1,7 @@
 package com.langchain.smith.otel
 
+import com.langchain.smith.address.AgentAddress
+import com.langchain.smith.errors.LangChainInvalidDataException
 import io.opentelemetry.api.OpenTelemetry
 import io.opentelemetry.api.trace.Tracer
 import io.opentelemetry.exporter.otlp.http.trace.OtlpHttpSpanExporter
@@ -104,6 +106,7 @@ private constructor(
         private var enabled: Boolean? = null
         private var timeout: Duration? = null
         private val headers: MutableMap<String, String> = mutableMapOf()
+        private var address: AgentAddress? = null
         private var serviceName: String? = null
 
         fun config(config: OtelConfig) = apply { this.config = config }
@@ -121,9 +124,25 @@ private constructor(
 
         fun putHeader(name: String, value: String) = apply { headers[name] = value }
 
+        /**
+         * (beta) Sends traces to an agent environment instead of a project. See
+         * [OtelConfig.Builder.address]. It cannot be combined with [config]: [build] throws.
+         */
+        fun address(address: AgentAddress) = apply { this.address = address }
+
         fun serviceName(serviceName: String?) = apply { this.serviceName = serviceName }
 
+        /**
+         * @throws LangChainInvalidDataException if both [config] and [address] are set, or the
+         *   resulting headers are not a valid destination. See [OtelConfig.Builder.build].
+         */
         fun build(): OtelTraceExporter {
+            if (config != null && address != null) {
+                throw LangChainInvalidDataException(
+                    "address() cannot be combined with config(): set the address on the OtelConfig " +
+                        "builder instead."
+                )
+            }
             val finalConfig =
                 config
                     ?: OtelConfig.builder()
@@ -131,6 +150,7 @@ private constructor(
                         .enabled(enabled ?: false)
                         .timeout(timeout ?: Duration.ofSeconds(10))
                         .headers(headers)
+                        .let { b -> address?.let { b.address(it) } ?: b }
                         .let { b -> if (serviceName != null) b.serviceName(serviceName) else b }
                         .build()
             return fromConfig(finalConfig)
