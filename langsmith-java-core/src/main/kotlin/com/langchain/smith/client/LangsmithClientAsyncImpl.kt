@@ -28,6 +28,8 @@ import com.langchain.smith.services.async.OnlineEvaluatorServiceAsync
 import com.langchain.smith.services.async.OnlineEvaluatorServiceAsyncImpl
 import com.langchain.smith.services.async.ProductFeedbackServiceAsync
 import com.langchain.smith.services.async.ProductFeedbackServiceAsyncImpl
+import com.langchain.smith.services.async.PromptWebhookServiceAsync
+import com.langchain.smith.services.async.PromptWebhookServiceAsyncImpl
 import com.langchain.smith.services.async.PublicServiceAsync
 import com.langchain.smith.services.async.PublicServiceAsyncImpl
 import com.langchain.smith.services.async.RepoServiceAsync
@@ -119,6 +121,10 @@ class LangsmithClientAsyncImpl(private val clientOptions: ClientOptions) : Langs
         AnnotationQueueServiceAsyncImpl(clientOptionsWithUserAgent)
     }
 
+    private val promptWebhooks: PromptWebhookServiceAsync by lazy {
+        PromptWebhookServiceAsyncImpl(clientOptionsWithUserAgent)
+    }
+
     private val info: InfoServiceAsync by lazy { InfoServiceAsyncImpl(clientOptionsWithUserAgent) }
 
     private val workspaces: WorkspaceServiceAsync by lazy {
@@ -177,6 +183,8 @@ class LangsmithClientAsyncImpl(private val clientOptions: ClientOptions) : Langs
     override fun public_(): PublicServiceAsync = public_
 
     override fun annotationQueues(): AnnotationQueueServiceAsync = annotationQueues
+
+    override fun promptWebhooks(): PromptWebhookServiceAsync = promptWebhooks
 
     override fun info(): InfoServiceAsync = info
 
@@ -262,6 +270,10 @@ class LangsmithClientAsyncImpl(private val clientOptions: ClientOptions) : Langs
             AnnotationQueueServiceAsyncImpl.WithRawResponseImpl(clientOptions)
         }
 
+        private val promptWebhooks: PromptWebhookServiceAsync.WithRawResponse by lazy {
+            PromptWebhookServiceAsyncImpl.WithRawResponseImpl(clientOptions)
+        }
+
         private val info: InfoServiceAsync.WithRawResponse by lazy {
             InfoServiceAsyncImpl.WithRawResponseImpl(clientOptions)
         }
@@ -327,6 +339,8 @@ class LangsmithClientAsyncImpl(private val clientOptions: ClientOptions) : Langs
 
         override fun annotationQueues(): AnnotationQueueServiceAsync.WithRawResponse =
             annotationQueues
+
+        override fun promptWebhooks(): PromptWebhookServiceAsync.WithRawResponse = promptWebhooks
 
         override fun info(): InfoServiceAsync.WithRawResponse = info
 

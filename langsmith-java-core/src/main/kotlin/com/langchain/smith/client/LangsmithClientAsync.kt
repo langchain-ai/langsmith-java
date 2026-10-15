@@ -15,6 +15,7 @@ import com.langchain.smith.services.async.InfoServiceAsync
 import com.langchain.smith.services.async.IssueServiceAsync
 import com.langchain.smith.services.async.OnlineEvaluatorServiceAsync
 import com.langchain.smith.services.async.ProductFeedbackServiceAsync
+import com.langchain.smith.services.async.PromptWebhookServiceAsync
 import com.langchain.smith.services.async.PublicServiceAsync
 import com.langchain.smith.services.async.RepoServiceAsync
 import com.langchain.smith.services.async.RunServiceAsync
@@ -90,6 +91,8 @@ interface LangsmithClientAsync {
 
     fun annotationQueues(): AnnotationQueueServiceAsync
 
+    fun promptWebhooks(): PromptWebhookServiceAsync
+
     fun info(): InfoServiceAsync
 
     fun workspaces(): WorkspaceServiceAsync
@@ -158,6 +161,8 @@ interface LangsmithClientAsync {
         fun public_(): PublicServiceAsync.WithRawResponse
 
         fun annotationQueues(): AnnotationQueueServiceAsync.WithRawResponse
+
+        fun promptWebhooks(): PromptWebhookServiceAsync.WithRawResponse
 
         fun info(): InfoServiceAsync.WithRawResponse
 
