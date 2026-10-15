@@ -1,6 +1,9 @@
 package com.langchain.smith.otel
 
+import com.langchain.smith.address.AgentAddress
+import com.langchain.smith.errors.LangChainInvalidDataException
 import java.time.Duration
+import java.util.Locale
 
 /**
  * Configuration for OpenTelemetry trace export.
@@ -32,6 +35,7 @@ private constructor(
         private var enabled: Boolean = false
         private var timeout: Duration = Duration.ofSeconds(10)
         private val headers: MutableMap<String, String> = mutableMapOf()
+        private var address: AgentAddress? = null
         private var serviceName: String? = null
 
         fun endpoint(endpoint: String) = apply { this.endpoint = endpoint }
@@ -47,19 +51,87 @@ private constructor(
 
         fun putHeader(name: String, value: String) = apply { headers[name] = value }
 
+        /**
+         * (beta) Sends traces to an agent environment instead of a project, by setting the
+         * `Langsmith-Agent-Id` and `Langsmith-Agent-Environment` headers. It cannot be combined
+         * with a `Langsmith-Project` header: [build] throws. Agent addressing is enabled per
+         * workspace.
+         */
+        fun address(address: AgentAddress) = apply { this.address = address }
+
         fun serviceName(serviceName: String?) = apply { this.serviceName = serviceName }
 
-        fun build(): OtelConfig =
-            OtelConfig(
+        /**
+         * @throws LangChainInvalidDataException if the headers name a project and an agent, or only
+         *   one of the two agent headers.
+         */
+        fun build(): OtelConfig {
+            val finalHeaders = headers.toMutableMap()
+            address?.let {
+                // The receiver reads one value per header, so no other spelling may remain.
+                replaceHeader(finalHeaders, AGENT_ID_HEADER, it.id)
+                replaceHeader(
+                    finalHeaders,
+                    AGENT_ENVIRONMENT_HEADER,
+                    it.environment.lowercase(Locale.ROOT),
+                )
+            }
+            validateDestination(finalHeaders)
+            return OtelConfig(
                 endpoint = endpoint,
                 enabled = enabled,
                 timeout = timeout,
-                headers = headers.toMap(),
+                headers = finalHeaders.toMap(),
                 serviceName = serviceName,
             )
+        }
     }
 
     companion object {
+        internal const val PROJECT_HEADER = "Langsmith-Project"
+        internal const val AGENT_ID_HEADER = "Langsmith-Agent-Id"
+        internal const val AGENT_ENVIRONMENT_HEADER = "Langsmith-Agent-Environment"
+
+        private fun replaceHeader(
+            headers: MutableMap<String, String>,
+            name: String,
+            value: String,
+        ) {
+            headers.keys.removeAll { it.equals(name, ignoreCase = true) }
+            headers[name] = value
+        }
+
+        /**
+         * A trace goes to a project or to an agent environment, never both, and never half of one.
+         * Each destination header is set once, whatever its spelling.
+         */
+        private fun validateDestination(headers: Map<String, String>) {
+            listOf(PROJECT_HEADER, AGENT_ID_HEADER, AGENT_ENVIRONMENT_HEADER).forEach { name ->
+                if (headers.keys.count { it.equals(name, ignoreCase = true) } > 1) {
+                    throw LangChainInvalidDataException(
+                        "$name is set more than once, in different spellings."
+                    )
+                }
+            }
+            // The receiver ignores a header with an empty value, so an empty one is not a
+            // destination.
+            fun has(name: String) =
+                headers.any { (key, value) ->
+                    key.equals(name, ignoreCase = true) && value.isNotEmpty()
+                }
+            val hasAgentId = has(AGENT_ID_HEADER)
+            if (hasAgentId != has(AGENT_ENVIRONMENT_HEADER)) {
+                throw LangChainInvalidDataException(
+                    "$AGENT_ID_HEADER and $AGENT_ENVIRONMENT_HEADER must be set together."
+                )
+            }
+            if (hasAgentId && has(PROJECT_HEADER)) {
+                throw LangChainInvalidDataException(
+                    "$PROJECT_HEADER cannot be combined with the agent headers."
+                )
+            }
+        }
+
         @JvmStatic fun builder(): Builder = Builder()
 
         @JvmStatic
