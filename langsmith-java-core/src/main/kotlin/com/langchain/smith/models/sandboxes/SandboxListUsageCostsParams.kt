@@ -31,6 +31,7 @@ private constructor(
     private val startTime: OffsetDateTime,
     private val cursor: String?,
     private val granularity: Granularity?,
+    private val includeTotals: Boolean?,
     private val pageSize: Long?,
     private val resourceIds: List<String>?,
     private val resourceType: ResourceType?,
@@ -52,6 +53,12 @@ private constructor(
      * period_start to start_time.
      */
     fun granularity(): Optional<Granularity> = Optional.ofNullable(granularity)
+
+    /**
+     * Include usage totals across the filtered interval (RESOURCE only). Omitted when unrestricted
+     * resource access cannot be verified or the service does not support totals.
+     */
+    fun includeTotals(): Optional<Boolean> = Optional.ofNullable(includeTotals)
 
     /** Maximum rows to return */
     fun pageSize(): Optional<Long> = Optional.ofNullable(pageSize)
@@ -91,6 +98,7 @@ private constructor(
         private var startTime: OffsetDateTime? = null
         private var cursor: String? = null
         private var granularity: Granularity? = null
+        private var includeTotals: Boolean? = null
         private var pageSize: Long? = null
         private var resourceIds: MutableList<String>? = null
         private var resourceType: ResourceType? = null
@@ -103,6 +111,7 @@ private constructor(
             startTime = sandboxListUsageCostsParams.startTime
             cursor = sandboxListUsageCostsParams.cursor
             granularity = sandboxListUsageCostsParams.granularity
+            includeTotals = sandboxListUsageCostsParams.includeTotals
             pageSize = sandboxListUsageCostsParams.pageSize
             resourceIds = sandboxListUsageCostsParams.resourceIds?.toMutableList()
             resourceType = sandboxListUsageCostsParams.resourceType
@@ -130,6 +139,23 @@ private constructor(
 
         /** Alias for calling [Builder.granularity] with `granularity.orElse(null)`. */
         fun granularity(granularity: Optional<Granularity>) = granularity(granularity.getOrNull())
+
+        /**
+         * Include usage totals across the filtered interval (RESOURCE only). Omitted when
+         * unrestricted resource access cannot be verified or the service does not support totals.
+         */
+        fun includeTotals(includeTotals: Boolean?) = apply { this.includeTotals = includeTotals }
+
+        /**
+         * Alias for [Builder.includeTotals].
+         *
+         * This unboxed primitive overload exists for backwards compatibility.
+         */
+        fun includeTotals(includeTotals: Boolean) = includeTotals(includeTotals as Boolean?)
+
+        /** Alias for calling [Builder.includeTotals] with `includeTotals.orElse(null)`. */
+        fun includeTotals(includeTotals: Optional<Boolean>) =
+            includeTotals(includeTotals.getOrNull())
 
         /** Maximum rows to return */
         fun pageSize(pageSize: Long?) = apply { this.pageSize = pageSize }
@@ -285,6 +311,7 @@ private constructor(
                 checkRequired("startTime", startTime),
                 cursor,
                 granularity,
+                includeTotals,
                 pageSize,
                 resourceIds?.toImmutable(),
                 resourceType,
@@ -302,6 +329,7 @@ private constructor(
                 put("start_time", DateTimeFormatter.ISO_OFFSET_DATE_TIME.format(startTime))
                 cursor?.let { put("cursor", it) }
                 granularity?.let { put("granularity", it.toString()) }
+                includeTotals?.let { put("include_totals", it.toString()) }
                 pageSize?.let { put("page_size", it.toString()) }
                 resourceIds?.forEach { put("resource_ids", it) }
                 resourceType?.let { put("resource_type", it.toString()) }
@@ -602,6 +630,7 @@ private constructor(
             startTime == other.startTime &&
             cursor == other.cursor &&
             granularity == other.granularity &&
+            includeTotals == other.includeTotals &&
             pageSize == other.pageSize &&
             resourceIds == other.resourceIds &&
             resourceType == other.resourceType &&
@@ -615,6 +644,7 @@ private constructor(
             startTime,
             cursor,
             granularity,
+            includeTotals,
             pageSize,
             resourceIds,
             resourceType,
@@ -623,5 +653,5 @@ private constructor(
         )
 
     override fun toString() =
-        "SandboxListUsageCostsParams{endTime=$endTime, startTime=$startTime, cursor=$cursor, granularity=$granularity, pageSize=$pageSize, resourceIds=$resourceIds, resourceType=$resourceType, additionalHeaders=$additionalHeaders, additionalQueryParams=$additionalQueryParams}"
+        "SandboxListUsageCostsParams{endTime=$endTime, startTime=$startTime, cursor=$cursor, granularity=$granularity, includeTotals=$includeTotals, pageSize=$pageSize, resourceIds=$resourceIds, resourceType=$resourceType, additionalHeaders=$additionalHeaders, additionalQueryParams=$additionalQueryParams}"
 }

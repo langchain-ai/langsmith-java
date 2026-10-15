@@ -58,6 +58,7 @@ internal class OnlineEvaluatorServiceAsyncTest {
                                     .build()
                             )
                             .requireAttachments(true)
+                            .addWorkspaceSecretsKey("string")
                             .build()
                     )
                     .llmEvaluator(
@@ -134,6 +135,7 @@ internal class OnlineEvaluatorServiceAsyncTest {
                                             .build()
                                     )
                                     .requireAttachments(true)
+                                    .addWorkspaceSecretsKey("string")
                                     .build()
                             )
                             .llmEvaluator(
@@ -229,6 +231,7 @@ internal class OnlineEvaluatorServiceAsyncTest {
             onlineEvaluatorServiceAsync.spend(
                 OnlineEvaluatorSpendParams.builder()
                     .periodStart("period_start")
+                    .agentId("agent_id")
                     .datasetId("dataset_id")
                     .evaluatorId("evaluator_id")
                     .feedbackKey("feedback_key")

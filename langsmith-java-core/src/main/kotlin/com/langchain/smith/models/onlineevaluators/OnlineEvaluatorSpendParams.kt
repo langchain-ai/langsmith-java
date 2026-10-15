@@ -14,12 +14,13 @@ import kotlin.jvm.optionals.getOrNull
 /**
  * Returns per-day LLM evaluator spend for the requested 7-day period, grouped by evaluator,
  * resource, or run rule. Exactly one of group_by, evaluator_id, session_id, or dataset_id is
- * required. resource_id, type, feedback_key, and tag_value_id may be supplied with group_by to
- * narrow listing aggregations.
+ * required. resource_id, type, feedback_key, tag_value_id, and agent_id may be supplied with
+ * group_by to narrow listing aggregations.
  */
 class OnlineEvaluatorSpendParams
 private constructor(
     private val periodStart: String,
+    private val agentId: String?,
     private val datasetId: String?,
     private val evaluatorId: String?,
     private val feedbackKey: String?,
@@ -34,6 +35,12 @@ private constructor(
 
     /** Start of the 7-day window (YYYY-MM-DD). */
     fun periodStart(): String = periodStart
+
+    /**
+     * Filter grouped results to spend from evaluator attachments on the agent's environments or
+     * tagged datasets. Only valid with group_by.
+     */
+    fun agentId(): Optional<String> = Optional.ofNullable(agentId)
 
     /** Filter to a specific dataset (UUID). Mutually exclusive with group_by. */
     fun datasetId(): Optional<String> = Optional.ofNullable(datasetId)
@@ -93,6 +100,7 @@ private constructor(
     class Builder internal constructor() {
 
         private var periodStart: String? = null
+        private var agentId: String? = null
         private var datasetId: String? = null
         private var evaluatorId: String? = null
         private var feedbackKey: String? = null
@@ -107,6 +115,7 @@ private constructor(
         @JvmSynthetic
         internal fun from(onlineEvaluatorSpendParams: OnlineEvaluatorSpendParams) = apply {
             periodStart = onlineEvaluatorSpendParams.periodStart
+            agentId = onlineEvaluatorSpendParams.agentId
             datasetId = onlineEvaluatorSpendParams.datasetId
             evaluatorId = onlineEvaluatorSpendParams.evaluatorId
             feedbackKey = onlineEvaluatorSpendParams.feedbackKey
@@ -121,6 +130,15 @@ private constructor(
 
         /** Start of the 7-day window (YYYY-MM-DD). */
         fun periodStart(periodStart: String) = apply { this.periodStart = periodStart }
+
+        /**
+         * Filter grouped results to spend from evaluator attachments on the agent's environments or
+         * tagged datasets. Only valid with group_by.
+         */
+        fun agentId(agentId: String?) = apply { this.agentId = agentId }
+
+        /** Alias for calling [Builder.agentId] with `agentId.orElse(null)`. */
+        fun agentId(agentId: Optional<String>) = agentId(agentId.getOrNull())
 
         /** Filter to a specific dataset (UUID). Mutually exclusive with group_by. */
         fun datasetId(datasetId: String?) = apply { this.datasetId = datasetId }
@@ -314,6 +332,7 @@ private constructor(
         fun build(): OnlineEvaluatorSpendParams =
             OnlineEvaluatorSpendParams(
                 checkRequired("periodStart", periodStart),
+                agentId,
                 datasetId,
                 evaluatorId,
                 feedbackKey,
@@ -333,6 +352,7 @@ private constructor(
         QueryParams.builder()
             .apply {
                 put("period_start", periodStart)
+                agentId?.let { put("agent_id", it) }
                 datasetId?.let { put("dataset_id", it) }
                 evaluatorId?.let { put("evaluator_id", it) }
                 feedbackKey?.let { put("feedback_key", it) }
@@ -352,6 +372,7 @@ private constructor(
 
         return other is OnlineEvaluatorSpendParams &&
             periodStart == other.periodStart &&
+            agentId == other.agentId &&
             datasetId == other.datasetId &&
             evaluatorId == other.evaluatorId &&
             feedbackKey == other.feedbackKey &&
@@ -367,6 +388,7 @@ private constructor(
     override fun hashCode(): Int =
         Objects.hash(
             periodStart,
+            agentId,
             datasetId,
             evaluatorId,
             feedbackKey,
@@ -380,5 +402,5 @@ private constructor(
         )
 
     override fun toString() =
-        "OnlineEvaluatorSpendParams{periodStart=$periodStart, datasetId=$datasetId, evaluatorId=$evaluatorId, feedbackKey=$feedbackKey, groupBy=$groupBy, resourceId=$resourceId, sessionId=$sessionId, tagValueId=$tagValueId, type=$type, additionalHeaders=$additionalHeaders, additionalQueryParams=$additionalQueryParams}"
+        "OnlineEvaluatorSpendParams{periodStart=$periodStart, agentId=$agentId, datasetId=$datasetId, evaluatorId=$evaluatorId, feedbackKey=$feedbackKey, groupBy=$groupBy, resourceId=$resourceId, sessionId=$sessionId, tagValueId=$tagValueId, type=$type, additionalHeaders=$additionalHeaders, additionalQueryParams=$additionalQueryParams}"
 }

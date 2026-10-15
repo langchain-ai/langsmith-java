@@ -5,6 +5,7 @@ package com.langchain.smith.models.onlineevaluators
 import com.fasterxml.jackson.module.kotlin.jacksonTypeRef
 import com.langchain.smith.core.JsonValue
 import com.langchain.smith.core.jsonMapper
+import kotlin.jvm.optionals.getOrNull
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
@@ -32,6 +33,7 @@ internal class OnlineCodeEvaluatorTest {
                         .build()
                 )
                 .requireAttachments(true)
+                .addWorkspaceSecretsKey("string")
                 .build()
 
         assertThat(onlineCodeEvaluator.advancedFeaturesEnabled()).contains(true)
@@ -56,6 +58,7 @@ internal class OnlineCodeEvaluatorTest {
                     .build()
             )
         assertThat(onlineCodeEvaluator.requireAttachments()).contains(true)
+        assertThat(onlineCodeEvaluator.workspaceSecretsKeys().getOrNull()).containsExactly("string")
     }
 
     @Test
@@ -81,6 +84,7 @@ internal class OnlineCodeEvaluatorTest {
                         .build()
                 )
                 .requireAttachments(true)
+                .addWorkspaceSecretsKey("string")
                 .build()
 
         val roundtrippedOnlineCodeEvaluator =

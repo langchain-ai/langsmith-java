@@ -12,6 +12,7 @@ internal class OnlineEvaluatorSpendParamsTest {
     fun create() {
         OnlineEvaluatorSpendParams.builder()
             .periodStart("period_start")
+            .agentId("agent_id")
             .datasetId("dataset_id")
             .evaluatorId("evaluator_id")
             .feedbackKey("feedback_key")
@@ -28,6 +29,7 @@ internal class OnlineEvaluatorSpendParamsTest {
         val params =
             OnlineEvaluatorSpendParams.builder()
                 .periodStart("period_start")
+                .agentId("agent_id")
                 .datasetId("dataset_id")
                 .evaluatorId("evaluator_id")
                 .feedbackKey("feedback_key")
@@ -44,6 +46,7 @@ internal class OnlineEvaluatorSpendParamsTest {
             .isEqualTo(
                 QueryParams.builder()
                     .put("period_start", "period_start")
+                    .put("agent_id", "agent_id")
                     .put("dataset_id", "dataset_id")
                     .put("evaluator_id", "evaluator_id")
                     .put("feedback_key", "feedback_key")

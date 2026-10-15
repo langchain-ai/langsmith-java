@@ -11,6 +11,7 @@ import com.langchain.smith.core.ExcludeMissing
 import com.langchain.smith.core.JsonField
 import com.langchain.smith.core.JsonMissing
 import com.langchain.smith.core.JsonValue
+import com.langchain.smith.core.checkKnown
 import com.langchain.smith.core.toImmutable
 import com.langchain.smith.errors.LangChainInvalidDataException
 import java.util.Collections
@@ -29,6 +30,7 @@ private constructor(
     private val managedCodeEvaluatorKey: JsonField<ManagedCodeEvaluatorKey>,
     private val managedCodeEvaluatorSettings: JsonField<ManagedCodeEvaluatorSettings>,
     private val requireAttachments: JsonField<Boolean>,
+    private val workspaceSecretsKeys: JsonField<List<String>>,
     private val additionalProperties: MutableMap<String, JsonValue>,
 ) {
 
@@ -54,6 +56,9 @@ private constructor(
         @JsonProperty("require_attachments")
         @ExcludeMissing
         requireAttachments: JsonField<Boolean> = JsonMissing.of(),
+        @JsonProperty("workspace_secrets_keys")
+        @ExcludeMissing
+        workspaceSecretsKeys: JsonField<List<String>> = JsonMissing.of(),
     ) : this(
         advancedFeaturesEnabled,
         code,
@@ -63,6 +68,7 @@ private constructor(
         managedCodeEvaluatorKey,
         managedCodeEvaluatorSettings,
         requireAttachments,
+        workspaceSecretsKeys,
         mutableMapOf(),
     )
 
@@ -126,6 +132,17 @@ private constructor(
      */
     fun requireAttachments(): Optional<Boolean> =
         requireAttachments.getOptional("require_attachments")
+
+    /**
+     * WorkspaceSecretsKeys names the workspace secrets this evaluator may use. Each is sent as a
+     * header on requests to the hosts allowed for that secret; evaluator code never sees the value.
+     * Requires advanced_features_enabled, and each secret needs an allowed host with a header.
+     *
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
+    fun workspaceSecretsKeys(): Optional<List<String>> =
+        workspaceSecretsKeys.getOptional("workspace_secrets_keys")
 
     /**
      * Returns the raw JSON value of [advancedFeaturesEnabled].
@@ -201,6 +218,16 @@ private constructor(
     @ExcludeMissing
     fun _requireAttachments(): JsonField<Boolean> = requireAttachments
 
+    /**
+     * Returns the raw JSON value of [workspaceSecretsKeys].
+     *
+     * Unlike [workspaceSecretsKeys], this method doesn't throw if the JSON field has an unexpected
+     * type.
+     */
+    @JsonProperty("workspace_secrets_keys")
+    @ExcludeMissing
+    fun _workspaceSecretsKeys(): JsonField<List<String>> = workspaceSecretsKeys
+
     @JsonAnySetter
     private fun putAdditionalProperty(key: String, value: JsonValue) {
         additionalProperties.put(key, value)
@@ -234,6 +261,7 @@ private constructor(
         private var managedCodeEvaluatorSettings: JsonField<ManagedCodeEvaluatorSettings> =
             JsonMissing.of()
         private var requireAttachments: JsonField<Boolean> = JsonMissing.of()
+        private var workspaceSecretsKeys: JsonField<MutableList<String>>? = null
         private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
 
         @JvmSynthetic
@@ -248,6 +276,8 @@ private constructor(
                 managedCodeEvaluatorSettings =
                     createOnlineCodeEvaluatorRequest.managedCodeEvaluatorSettings
                 requireAttachments = createOnlineCodeEvaluatorRequest.requireAttachments
+                workspaceSecretsKeys =
+                    createOnlineCodeEvaluatorRequest.workspaceSecretsKeys.map { it.toMutableList() }
                 additionalProperties =
                     createOnlineCodeEvaluatorRequest.additionalProperties.toMutableMap()
             }
@@ -375,6 +405,38 @@ private constructor(
             this.requireAttachments = requireAttachments
         }
 
+        /**
+         * WorkspaceSecretsKeys names the workspace secrets this evaluator may use. Each is sent as
+         * a header on requests to the hosts allowed for that secret; evaluator code never sees the
+         * value. Requires advanced_features_enabled, and each secret needs an allowed host with a
+         * header.
+         */
+        fun workspaceSecretsKeys(workspaceSecretsKeys: List<String>) =
+            workspaceSecretsKeys(JsonField.of(workspaceSecretsKeys))
+
+        /**
+         * Sets [Builder.workspaceSecretsKeys] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.workspaceSecretsKeys] with a well-typed `List<String>`
+         * value instead. This method is primarily for setting the field to an undocumented or not
+         * yet supported value.
+         */
+        fun workspaceSecretsKeys(workspaceSecretsKeys: JsonField<List<String>>) = apply {
+            this.workspaceSecretsKeys = workspaceSecretsKeys.map { it.toMutableList() }
+        }
+
+        /**
+         * Adds a single [String] to [workspaceSecretsKeys].
+         *
+         * @throws IllegalStateException if the field was previously set to a non-list.
+         */
+        fun addWorkspaceSecretsKey(workspaceSecretsKey: String) = apply {
+            workspaceSecretsKeys =
+                (workspaceSecretsKeys ?: JsonField.of(mutableListOf())).also {
+                    checkKnown("workspaceSecretsKeys", it).add(workspaceSecretsKey)
+                }
+        }
+
         fun additionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
             this.additionalProperties.clear()
             putAllAdditionalProperties(additionalProperties)
@@ -409,6 +471,7 @@ private constructor(
                 managedCodeEvaluatorKey,
                 managedCodeEvaluatorSettings,
                 requireAttachments,
+                (workspaceSecretsKeys ?: JsonMissing.of()).map { it.toImmutable() },
                 additionalProperties.toMutableMap(),
             )
     }
@@ -436,6 +499,7 @@ private constructor(
         managedCodeEvaluatorKey().ifPresent { it.validate() }
         managedCodeEvaluatorSettings().ifPresent { it.validate() }
         requireAttachments()
+        workspaceSecretsKeys()
         validated = true
     }
 
@@ -461,7 +525,8 @@ private constructor(
             (if (language.asKnown().isPresent) 1 else 0) +
             (managedCodeEvaluatorKey.asKnown().getOrNull()?.validity() ?: 0) +
             (managedCodeEvaluatorSettings.asKnown().getOrNull()?.validity() ?: 0) +
-            (if (requireAttachments.asKnown().isPresent) 1 else 0)
+            (if (requireAttachments.asKnown().isPresent) 1 else 0) +
+            (workspaceSecretsKeys.asKnown().getOrNull()?.size ?: 0)
 
     /**
      * CodeEvaluatorInput is which thread data the evaluator receives. Null or omitted for run
@@ -887,6 +952,7 @@ private constructor(
             managedCodeEvaluatorKey == other.managedCodeEvaluatorKey &&
             managedCodeEvaluatorSettings == other.managedCodeEvaluatorSettings &&
             requireAttachments == other.requireAttachments &&
+            workspaceSecretsKeys == other.workspaceSecretsKeys &&
             additionalProperties == other.additionalProperties
     }
 
@@ -900,6 +966,7 @@ private constructor(
             managedCodeEvaluatorKey,
             managedCodeEvaluatorSettings,
             requireAttachments,
+            workspaceSecretsKeys,
             additionalProperties,
         )
     }
@@ -907,5 +974,5 @@ private constructor(
     override fun hashCode(): Int = hashCode
 
     override fun toString() =
-        "CreateOnlineCodeEvaluatorRequest{advancedFeaturesEnabled=$advancedFeaturesEnabled, code=$code, codeEvaluatorInput=$codeEvaluatorInput, dependencies=$dependencies, language=$language, managedCodeEvaluatorKey=$managedCodeEvaluatorKey, managedCodeEvaluatorSettings=$managedCodeEvaluatorSettings, requireAttachments=$requireAttachments, additionalProperties=$additionalProperties}"
+        "CreateOnlineCodeEvaluatorRequest{advancedFeaturesEnabled=$advancedFeaturesEnabled, code=$code, codeEvaluatorInput=$codeEvaluatorInput, dependencies=$dependencies, language=$language, managedCodeEvaluatorKey=$managedCodeEvaluatorKey, managedCodeEvaluatorSettings=$managedCodeEvaluatorSettings, requireAttachments=$requireAttachments, workspaceSecretsKeys=$workspaceSecretsKeys, additionalProperties=$additionalProperties}"
 }

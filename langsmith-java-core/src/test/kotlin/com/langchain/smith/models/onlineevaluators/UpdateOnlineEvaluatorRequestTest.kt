@@ -34,6 +34,7 @@ internal class UpdateOnlineEvaluatorRequestTest {
                                 .build()
                         )
                         .requireAttachments(true)
+                        .addWorkspaceSecretsKey("string")
                         .build()
                 )
                 .llmEvaluator(
@@ -68,6 +69,7 @@ internal class UpdateOnlineEvaluatorRequestTest {
                             .build()
                     )
                     .requireAttachments(true)
+                    .addWorkspaceSecretsKey("string")
                     .build()
             )
         assertThat(updateOnlineEvaluatorRequest.llmEvaluator())
@@ -109,6 +111,7 @@ internal class UpdateOnlineEvaluatorRequestTest {
                                 .build()
                         )
                         .requireAttachments(true)
+                        .addWorkspaceSecretsKey("string")
                         .build()
                 )
                 .llmEvaluator(

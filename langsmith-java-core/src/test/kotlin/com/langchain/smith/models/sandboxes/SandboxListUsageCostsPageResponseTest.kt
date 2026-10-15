@@ -24,6 +24,9 @@ internal class SandboxListUsageCostsPageResponseTest {
                         .build()
                 )
                 .nextCursor("next_cursor")
+                .totals(
+                    SandboxListUsageCostsPageResponse.Totals.builder().lcu("lcu").lsu("lsu").build()
+                )
                 .build()
 
         assertThat(sandboxListUsageCostsPageResponse.items())
@@ -37,6 +40,10 @@ internal class SandboxListUsageCostsPageResponseTest {
                     .build()
             )
         assertThat(sandboxListUsageCostsPageResponse.nextCursor()).contains("next_cursor")
+        assertThat(sandboxListUsageCostsPageResponse.totals())
+            .contains(
+                SandboxListUsageCostsPageResponse.Totals.builder().lcu("lcu").lsu("lsu").build()
+            )
     }
 
     @Test
@@ -54,6 +61,9 @@ internal class SandboxListUsageCostsPageResponseTest {
                         .build()
                 )
                 .nextCursor("next_cursor")
+                .totals(
+                    SandboxListUsageCostsPageResponse.Totals.builder().lcu("lcu").lsu("lsu").build()
+                )
                 .build()
 
         val roundtrippedSandboxListUsageCostsPageResponse =
