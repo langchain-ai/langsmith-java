@@ -58,6 +58,7 @@ internal class OnlineEvaluatorServiceAsyncTest {
                                     .build()
                             )
                             .requireAttachments(true)
+                            .addWorkspaceSecretsKey("string")
                             .build()
                     )
                     .llmEvaluator(
@@ -134,6 +135,7 @@ internal class OnlineEvaluatorServiceAsyncTest {
                                             .build()
                                     )
                                     .requireAttachments(true)
+                                    .addWorkspaceSecretsKey("string")
                                     .build()
                             )
                             .llmEvaluator(
