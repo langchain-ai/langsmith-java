@@ -55,6 +55,22 @@ internal class BoxUpdateParamsTest {
                                 BoxUpdateParams.ProxyConfig.Rule.Aws.SandboxesProxyAwsRoleConfig
                                     .builder()
                                     .roleArn("x")
+                                    .subjectScope("tag:2fdcD1Dc-bbDb-2BBD-0Afa-1A3C33cFaADc")
+                                    .build()
+                            )
+                            .azure(
+                                BoxUpdateParams.ProxyConfig.Rule.Azure
+                                    .SandboxesProxyAzureWorkloadIdentityConfig
+                                    .builder()
+                                    .clientId("E1CB97d8-Ddf3-aAae-0Afa-1A3C33cFaADc")
+                                    .tenantId("E1CB97d8-Ddf3-aAae-0Afa-1A3C33cFaADc")
+                                    .addResource(
+                                        BoxUpdateParams.ProxyConfig.Rule.Azure
+                                            .SandboxesProxyAzureWorkloadIdentityConfig
+                                            .Resource
+                                            .HTTPS_STORAGE_AZURE_COM
+                                    )
+                                    .subjectScope("tag:2fdcD1Dc-bbDb-2BBD-0Afa-1A3C33cFaADc")
                                     .build()
                             )
                             .description("description")
@@ -65,21 +81,13 @@ internal class BoxUpdateParamsTest {
                                     .build()
                             )
                             .gcp(
-                                BoxUpdateParams.ProxyConfig.Rule.Gcp.builder()
+                                BoxUpdateParams.ProxyConfig.Rule.Gcp
+                                    .SandboxesProxyGcpWorkloadIdentityConfig
+                                    .builder()
+                                    .workloadIdentityProvider("x")
                                     .addScope("string")
-                                    .serviceAccountJson(
-                                        BoxUpdateParams.ProxyConfig.Rule.Gcp.ServiceAccountJson
-                                            .builder()
-                                            .type(
-                                                BoxUpdateParams.ProxyConfig.Rule.Gcp
-                                                    .ServiceAccountJson
-                                                    .Type
-                                                    .PLAINTEXT
-                                            )
-                                            .isSet(true)
-                                            .value("value")
-                                            .build()
-                                    )
+                                    .serviceAccountEmail("service_account_email")
+                                    .subjectScope("tag:2fdcD1Dc-bbDb-2BBD-0Afa-1A3C33cFaADc")
                                     .build()
                             )
                             .addHeader(
@@ -170,6 +178,22 @@ internal class BoxUpdateParamsTest {
                                     BoxUpdateParams.ProxyConfig.Rule.Aws.SandboxesProxyAwsRoleConfig
                                         .builder()
                                         .roleArn("x")
+                                        .subjectScope("tag:2fdcD1Dc-bbDb-2BBD-0Afa-1A3C33cFaADc")
+                                        .build()
+                                )
+                                .azure(
+                                    BoxUpdateParams.ProxyConfig.Rule.Azure
+                                        .SandboxesProxyAzureWorkloadIdentityConfig
+                                        .builder()
+                                        .clientId("E1CB97d8-Ddf3-aAae-0Afa-1A3C33cFaADc")
+                                        .tenantId("E1CB97d8-Ddf3-aAae-0Afa-1A3C33cFaADc")
+                                        .addResource(
+                                            BoxUpdateParams.ProxyConfig.Rule.Azure
+                                                .SandboxesProxyAzureWorkloadIdentityConfig
+                                                .Resource
+                                                .HTTPS_STORAGE_AZURE_COM
+                                        )
+                                        .subjectScope("tag:2fdcD1Dc-bbDb-2BBD-0Afa-1A3C33cFaADc")
                                         .build()
                                 )
                                 .description("description")
@@ -180,21 +204,13 @@ internal class BoxUpdateParamsTest {
                                         .build()
                                 )
                                 .gcp(
-                                    BoxUpdateParams.ProxyConfig.Rule.Gcp.builder()
+                                    BoxUpdateParams.ProxyConfig.Rule.Gcp
+                                        .SandboxesProxyGcpWorkloadIdentityConfig
+                                        .builder()
+                                        .workloadIdentityProvider("x")
                                         .addScope("string")
-                                        .serviceAccountJson(
-                                            BoxUpdateParams.ProxyConfig.Rule.Gcp.ServiceAccountJson
-                                                .builder()
-                                                .type(
-                                                    BoxUpdateParams.ProxyConfig.Rule.Gcp
-                                                        .ServiceAccountJson
-                                                        .Type
-                                                        .PLAINTEXT
-                                                )
-                                                .isSet(true)
-                                                .value("value")
-                                                .build()
-                                        )
+                                        .serviceAccountEmail("service_account_email")
+                                        .subjectScope("tag:2fdcD1Dc-bbDb-2BBD-0Afa-1A3C33cFaADc")
                                         .build()
                                 )
                                 .addHeader(
@@ -275,6 +291,22 @@ internal class BoxUpdateParamsTest {
                                 BoxUpdateParams.ProxyConfig.Rule.Aws.SandboxesProxyAwsRoleConfig
                                     .builder()
                                     .roleArn("x")
+                                    .subjectScope("tag:2fdcD1Dc-bbDb-2BBD-0Afa-1A3C33cFaADc")
+                                    .build()
+                            )
+                            .azure(
+                                BoxUpdateParams.ProxyConfig.Rule.Azure
+                                    .SandboxesProxyAzureWorkloadIdentityConfig
+                                    .builder()
+                                    .clientId("E1CB97d8-Ddf3-aAae-0Afa-1A3C33cFaADc")
+                                    .tenantId("E1CB97d8-Ddf3-aAae-0Afa-1A3C33cFaADc")
+                                    .addResource(
+                                        BoxUpdateParams.ProxyConfig.Rule.Azure
+                                            .SandboxesProxyAzureWorkloadIdentityConfig
+                                            .Resource
+                                            .HTTPS_STORAGE_AZURE_COM
+                                    )
+                                    .subjectScope("tag:2fdcD1Dc-bbDb-2BBD-0Afa-1A3C33cFaADc")
                                     .build()
                             )
                             .description("description")
@@ -285,21 +317,13 @@ internal class BoxUpdateParamsTest {
                                     .build()
                             )
                             .gcp(
-                                BoxUpdateParams.ProxyConfig.Rule.Gcp.builder()
+                                BoxUpdateParams.ProxyConfig.Rule.Gcp
+                                    .SandboxesProxyGcpWorkloadIdentityConfig
+                                    .builder()
+                                    .workloadIdentityProvider("x")
                                     .addScope("string")
-                                    .serviceAccountJson(
-                                        BoxUpdateParams.ProxyConfig.Rule.Gcp.ServiceAccountJson
-                                            .builder()
-                                            .type(
-                                                BoxUpdateParams.ProxyConfig.Rule.Gcp
-                                                    .ServiceAccountJson
-                                                    .Type
-                                                    .PLAINTEXT
-                                            )
-                                            .isSet(true)
-                                            .value("value")
-                                            .build()
-                                    )
+                                    .serviceAccountEmail("service_account_email")
+                                    .subjectScope("tag:2fdcD1Dc-bbDb-2BBD-0Afa-1A3C33cFaADc")
                                     .build()
                             )
                             .addHeader(

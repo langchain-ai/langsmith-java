@@ -58,23 +58,30 @@ internal class BoxServiceAsyncTest {
                                             .SandboxesSandboxAwsMountRoleAuthConfig
                                             .builder()
                                             .roleArn("x")
+                                            .subjectScope(
+                                                "tag:2fdcD1Dc-bbDb-2BBD-0Afa-1A3C33cFaADc"
+                                            )
+                                            .build()
+                                    )
+                                    .azure(
+                                        BoxCreateParams.MountConfig.Auth.Azure
+                                            .SandboxesSandboxAzureMountWorkloadIdentityAuthConfig
+                                            .builder()
+                                            .clientId("E1CB97d8-Ddf3-aAae-0Afa-1A3C33cFaADc")
+                                            .tenantId("E1CB97d8-Ddf3-aAae-0Afa-1A3C33cFaADc")
+                                            .subjectScope(
+                                                "tag:2fdcD1Dc-bbDb-2BBD-0Afa-1A3C33cFaADc"
+                                            )
                                             .build()
                                     )
                                     .gcp(
-                                        BoxCreateParams.MountConfig.Auth.Gcp.builder()
-                                            .serviceAccountJson(
-                                                BoxCreateParams.MountConfig.Auth.Gcp
-                                                    .ServiceAccountJson
-                                                    .builder()
-                                                    .type(
-                                                        BoxCreateParams.MountConfig.Auth.Gcp
-                                                            .ServiceAccountJson
-                                                            .Type
-                                                            .PLAINTEXT
-                                                    )
-                                                    .isSet(true)
-                                                    .value("value")
-                                                    .build()
+                                        BoxCreateParams.MountConfig.Auth.Gcp
+                                            .SandboxesSandboxGcpMountWorkloadIdentityAuthConfig
+                                            .builder()
+                                            .workloadIdentityProvider("x")
+                                            .serviceAccountEmail("service_account_email")
+                                            .subjectScope(
+                                                "tag:2fdcD1Dc-bbDb-2BBD-0Afa-1A3C33cFaADc"
                                             )
                                             .build()
                                     )
@@ -103,6 +110,16 @@ internal class BoxServiceAsyncTest {
                                             .Type
                                             .S3
                                     )
+                                    .azureBlob(
+                                        BoxCreateParams.MountConfig.Mount
+                                            .SandboxapiS3BucketMountSpec
+                                            .AzureBlob
+                                            .builder()
+                                            .container("container")
+                                            .storageAccount("26f1klzn5713")
+                                            .prefix("prefix")
+                                            .build()
+                                    )
                                     .cache(
                                         BoxCreateParams.MountConfig.Mount
                                             .SandboxapiS3BucketMountSpec
@@ -119,6 +136,14 @@ internal class BoxServiceAsyncTest {
                                             .builder()
                                             .repo("repo")
                                             .initialPullOnly(true)
+                                            .build()
+                                    )
+                                    .encryption(
+                                        BoxCreateParams.MountConfig.Mount
+                                            .SandboxapiS3BucketMountSpec
+                                            .Encryption
+                                            .builder()
+                                            .kmsKey("kms_key")
                                             .build()
                                     )
                                     .gcs(
@@ -201,6 +226,26 @@ internal class BoxServiceAsyncTest {
                                             .SandboxesProxyAwsRoleConfig
                                             .builder()
                                             .roleArn("x")
+                                            .subjectScope(
+                                                "tag:2fdcD1Dc-bbDb-2BBD-0Afa-1A3C33cFaADc"
+                                            )
+                                            .build()
+                                    )
+                                    .azure(
+                                        BoxCreateParams.ProxyConfig.Rule.Azure
+                                            .SandboxesProxyAzureWorkloadIdentityConfig
+                                            .builder()
+                                            .clientId("E1CB97d8-Ddf3-aAae-0Afa-1A3C33cFaADc")
+                                            .tenantId("E1CB97d8-Ddf3-aAae-0Afa-1A3C33cFaADc")
+                                            .addResource(
+                                                BoxCreateParams.ProxyConfig.Rule.Azure
+                                                    .SandboxesProxyAzureWorkloadIdentityConfig
+                                                    .Resource
+                                                    .HTTPS_STORAGE_AZURE_COM
+                                            )
+                                            .subjectScope(
+                                                "tag:2fdcD1Dc-bbDb-2BBD-0Afa-1A3C33cFaADc"
+                                            )
                                             .build()
                                     )
                                     .description("description")
@@ -211,21 +256,14 @@ internal class BoxServiceAsyncTest {
                                             .build()
                                     )
                                     .gcp(
-                                        BoxCreateParams.ProxyConfig.Rule.Gcp.builder()
+                                        BoxCreateParams.ProxyConfig.Rule.Gcp
+                                            .SandboxesProxyGcpWorkloadIdentityConfig
+                                            .builder()
+                                            .workloadIdentityProvider("x")
                                             .addScope("string")
-                                            .serviceAccountJson(
-                                                BoxCreateParams.ProxyConfig.Rule.Gcp
-                                                    .ServiceAccountJson
-                                                    .builder()
-                                                    .type(
-                                                        BoxCreateParams.ProxyConfig.Rule.Gcp
-                                                            .ServiceAccountJson
-                                                            .Type
-                                                            .PLAINTEXT
-                                                    )
-                                                    .isSet(true)
-                                                    .value("value")
-                                                    .build()
+                                            .serviceAccountEmail("service_account_email")
+                                            .subjectScope(
+                                                "tag:2fdcD1Dc-bbDb-2BBD-0Afa-1A3C33cFaADc"
                                             )
                                             .build()
                                     )
@@ -346,6 +384,26 @@ internal class BoxServiceAsyncTest {
                                             .SandboxesProxyAwsRoleConfig
                                             .builder()
                                             .roleArn("x")
+                                            .subjectScope(
+                                                "tag:2fdcD1Dc-bbDb-2BBD-0Afa-1A3C33cFaADc"
+                                            )
+                                            .build()
+                                    )
+                                    .azure(
+                                        BoxUpdateParams.ProxyConfig.Rule.Azure
+                                            .SandboxesProxyAzureWorkloadIdentityConfig
+                                            .builder()
+                                            .clientId("E1CB97d8-Ddf3-aAae-0Afa-1A3C33cFaADc")
+                                            .tenantId("E1CB97d8-Ddf3-aAae-0Afa-1A3C33cFaADc")
+                                            .addResource(
+                                                BoxUpdateParams.ProxyConfig.Rule.Azure
+                                                    .SandboxesProxyAzureWorkloadIdentityConfig
+                                                    .Resource
+                                                    .HTTPS_STORAGE_AZURE_COM
+                                            )
+                                            .subjectScope(
+                                                "tag:2fdcD1Dc-bbDb-2BBD-0Afa-1A3C33cFaADc"
+                                            )
                                             .build()
                                     )
                                     .description("description")
@@ -356,21 +414,14 @@ internal class BoxServiceAsyncTest {
                                             .build()
                                     )
                                     .gcp(
-                                        BoxUpdateParams.ProxyConfig.Rule.Gcp.builder()
+                                        BoxUpdateParams.ProxyConfig.Rule.Gcp
+                                            .SandboxesProxyGcpWorkloadIdentityConfig
+                                            .builder()
+                                            .workloadIdentityProvider("x")
                                             .addScope("string")
-                                            .serviceAccountJson(
-                                                BoxUpdateParams.ProxyConfig.Rule.Gcp
-                                                    .ServiceAccountJson
-                                                    .builder()
-                                                    .type(
-                                                        BoxUpdateParams.ProxyConfig.Rule.Gcp
-                                                            .ServiceAccountJson
-                                                            .Type
-                                                            .PLAINTEXT
-                                                    )
-                                                    .isSet(true)
-                                                    .value("value")
-                                                    .build()
+                                            .serviceAccountEmail("service_account_email")
+                                            .subjectScope(
+                                                "tag:2fdcD1Dc-bbDb-2BBD-0Afa-1A3C33cFaADc"
                                             )
                                             .build()
                                     )

@@ -14,6 +14,7 @@ internal class RunQueryV2ParamsTest {
     fun create() {
         RunQueryV2Params.builder()
             .accept("Accept")
+            .aiSearch("The customer was charged twice")
             .cursor(
                 "eyJ2IjoxLCJhIjoicnVucy5xdWVyeSIsImsiOiJwYXNzIiwiYiI6InNkYiIsInQiOiJsdChjdXJzb3IsICcyMDI1LTEyLTEyIDE5OjAzOjI4LjQ4MTI1NTAxOWIxM2YyJykifQ"
             )
@@ -22,7 +23,9 @@ internal class RunQueryV2ParamsTest {
             .addId("018e4c7e-a9fb-7ef0-a5b6-6ea3a82e9327")
             .addId("f47ac10b-58cc-4372-a567-0e02b2c3d479")
             .isRoot(true)
+            .maxFeedbackModifiedAt(OffsetDateTime.parse("2024-12-31T23:59:59Z"))
             .maxStartTime(OffsetDateTime.parse("2024-12-31T23:59:59Z"))
+            .minFeedbackModifiedAt(OffsetDateTime.parse("2024-01-01T00:00:00Z"))
             .minStartTime(OffsetDateTime.parse("2024-01-01T00:00:00Z"))
             .pageSize(100L)
             .addProjectId("018e4c7e-a9fb-7ef0-a5b6-6ea3a82e9327")
@@ -52,6 +55,7 @@ internal class RunQueryV2ParamsTest {
         val params =
             RunQueryV2Params.builder()
                 .accept("Accept")
+                .aiSearch("The customer was charged twice")
                 .cursor(
                     "eyJ2IjoxLCJhIjoicnVucy5xdWVyeSIsImsiOiJwYXNzIiwiYiI6InNkYiIsInQiOiJsdChjdXJzb3IsICcyMDI1LTEyLTEyIDE5OjAzOjI4LjQ4MTI1NTAxOWIxM2YyJykifQ"
                 )
@@ -60,7 +64,9 @@ internal class RunQueryV2ParamsTest {
                 .addId("018e4c7e-a9fb-7ef0-a5b6-6ea3a82e9327")
                 .addId("f47ac10b-58cc-4372-a567-0e02b2c3d479")
                 .isRoot(true)
+                .maxFeedbackModifiedAt(OffsetDateTime.parse("2024-12-31T23:59:59Z"))
                 .maxStartTime(OffsetDateTime.parse("2024-12-31T23:59:59Z"))
+                .minFeedbackModifiedAt(OffsetDateTime.parse("2024-01-01T00:00:00Z"))
                 .minStartTime(OffsetDateTime.parse("2024-01-01T00:00:00Z"))
                 .pageSize(100L)
                 .addProjectId("018e4c7e-a9fb-7ef0-a5b6-6ea3a82e9327")
@@ -103,6 +109,7 @@ internal class RunQueryV2ParamsTest {
         val params =
             RunQueryV2Params.builder()
                 .accept("Accept")
+                .aiSearch("The customer was charged twice")
                 .cursor(
                     "eyJ2IjoxLCJhIjoicnVucy5xdWVyeSIsImsiOiJwYXNzIiwiYiI6InNkYiIsInQiOiJsdChjdXJzb3IsICcyMDI1LTEyLTEyIDE5OjAzOjI4LjQ4MTI1NTAxOWIxM2YyJykifQ"
                 )
@@ -111,7 +118,9 @@ internal class RunQueryV2ParamsTest {
                 .addId("018e4c7e-a9fb-7ef0-a5b6-6ea3a82e9327")
                 .addId("f47ac10b-58cc-4372-a567-0e02b2c3d479")
                 .isRoot(true)
+                .maxFeedbackModifiedAt(OffsetDateTime.parse("2024-12-31T23:59:59Z"))
                 .maxStartTime(OffsetDateTime.parse("2024-12-31T23:59:59Z"))
+                .minFeedbackModifiedAt(OffsetDateTime.parse("2024-01-01T00:00:00Z"))
                 .minStartTime(OffsetDateTime.parse("2024-01-01T00:00:00Z"))
                 .pageSize(100L)
                 .addProjectId("018e4c7e-a9fb-7ef0-a5b6-6ea3a82e9327")
@@ -137,6 +146,7 @@ internal class RunQueryV2ParamsTest {
 
         val body = params._body()
 
+        assertThat(body.aiSearch()).contains("The customer was charged twice")
         assertThat(body.cursor())
             .contains(
                 "eyJ2IjoxLCJhIjoicnVucy5xdWVyeSIsImsiOiJwYXNzIiwiYiI6InNkYiIsInQiOiJsdChjdXJzb3IsICcyMDI1LTEyLTEyIDE5OjAzOjI4LjQ4MTI1NTAxOWIxM2YyJykifQ"
@@ -149,7 +159,11 @@ internal class RunQueryV2ParamsTest {
                 "f47ac10b-58cc-4372-a567-0e02b2c3d479",
             )
         assertThat(body.isRoot()).contains(true)
+        assertThat(body.maxFeedbackModifiedAt())
+            .contains(OffsetDateTime.parse("2024-12-31T23:59:59Z"))
         assertThat(body.maxStartTime()).contains(OffsetDateTime.parse("2024-12-31T23:59:59Z"))
+        assertThat(body.minFeedbackModifiedAt())
+            .contains(OffsetDateTime.parse("2024-01-01T00:00:00Z"))
         assertThat(body.minStartTime()).contains(OffsetDateTime.parse("2024-01-01T00:00:00Z"))
         assertThat(body.pageSize()).contains(100L)
         assertThat(body.projectIds().getOrNull())

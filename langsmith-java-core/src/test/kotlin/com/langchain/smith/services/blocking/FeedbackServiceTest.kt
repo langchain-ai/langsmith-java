@@ -55,6 +55,7 @@ internal class FeedbackServiceTest {
                             .min(0.0)
                             .build()
                     )
+                    .feedbackConfigId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                     .feedbackGroupId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                     .feedbackSource(
                         AppFeedbackSource.builder()

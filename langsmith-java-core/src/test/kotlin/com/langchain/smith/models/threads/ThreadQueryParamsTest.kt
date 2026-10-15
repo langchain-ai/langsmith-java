@@ -13,6 +13,7 @@ internal class ThreadQueryParamsTest {
     fun create() {
         ThreadQueryParams.builder()
             .accept("Accept")
+            .aiSearch("A conversation about a refund request")
             .cursor("cursor")
             .filter("filter")
             .maxStartTime(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
@@ -30,6 +31,7 @@ internal class ThreadQueryParamsTest {
         val params =
             ThreadQueryParams.builder()
                 .accept("Accept")
+                .aiSearch("A conversation about a refund request")
                 .cursor("cursor")
                 .filter("filter")
                 .maxStartTime(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
@@ -60,6 +62,7 @@ internal class ThreadQueryParamsTest {
         val params =
             ThreadQueryParams.builder()
                 .accept("Accept")
+                .aiSearch("A conversation about a refund request")
                 .cursor("cursor")
                 .filter("filter")
                 .maxStartTime(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
@@ -73,6 +76,7 @@ internal class ThreadQueryParamsTest {
 
         val body = params._body()
 
+        assertThat(body.aiSearch()).contains("A conversation about a refund request")
         assertThat(body.cursor()).contains("cursor")
         assertThat(body.filter()).contains("filter")
         assertThat(body.maxStartTime()).contains(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
