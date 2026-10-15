@@ -15,6 +15,7 @@ import com.langchain.smith.services.blocking.InfoService
 import com.langchain.smith.services.blocking.IssueService
 import com.langchain.smith.services.blocking.OnlineEvaluatorService
 import com.langchain.smith.services.blocking.ProductFeedbackService
+import com.langchain.smith.services.blocking.PromptWebhookService
 import com.langchain.smith.services.blocking.PublicService
 import com.langchain.smith.services.blocking.RepoService
 import com.langchain.smith.services.blocking.RunService
@@ -90,6 +91,8 @@ interface LangsmithClient {
 
     fun annotationQueues(): AnnotationQueueService
 
+    fun promptWebhooks(): PromptWebhookService
+
     fun info(): InfoService
 
     fun workspaces(): WorkspaceService
@@ -154,6 +157,8 @@ interface LangsmithClient {
         fun public_(): PublicService.WithRawResponse
 
         fun annotationQueues(): AnnotationQueueService.WithRawResponse
+
+        fun promptWebhooks(): PromptWebhookService.WithRawResponse
 
         fun info(): InfoService.WithRawResponse
 

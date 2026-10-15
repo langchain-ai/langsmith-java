@@ -28,6 +28,8 @@ import com.langchain.smith.services.blocking.OnlineEvaluatorService
 import com.langchain.smith.services.blocking.OnlineEvaluatorServiceImpl
 import com.langchain.smith.services.blocking.ProductFeedbackService
 import com.langchain.smith.services.blocking.ProductFeedbackServiceImpl
+import com.langchain.smith.services.blocking.PromptWebhookService
+import com.langchain.smith.services.blocking.PromptWebhookServiceImpl
 import com.langchain.smith.services.blocking.PublicService
 import com.langchain.smith.services.blocking.PublicServiceImpl
 import com.langchain.smith.services.blocking.RepoService
@@ -103,6 +105,10 @@ class LangsmithClientImpl(private val clientOptions: ClientOptions) : LangsmithC
         AnnotationQueueServiceImpl(clientOptionsWithUserAgent)
     }
 
+    private val promptWebhooks: PromptWebhookService by lazy {
+        PromptWebhookServiceImpl(clientOptionsWithUserAgent)
+    }
+
     private val info: InfoService by lazy { InfoServiceImpl(clientOptionsWithUserAgent) }
 
     private val workspaces: WorkspaceService by lazy {
@@ -153,6 +159,8 @@ class LangsmithClientImpl(private val clientOptions: ClientOptions) : LangsmithC
     override fun public_(): PublicService = public_
 
     override fun annotationQueues(): AnnotationQueueService = annotationQueues
+
+    override fun promptWebhooks(): PromptWebhookService = promptWebhooks
 
     override fun info(): InfoService = info
 
@@ -234,6 +242,10 @@ class LangsmithClientImpl(private val clientOptions: ClientOptions) : LangsmithC
             AnnotationQueueServiceImpl.WithRawResponseImpl(clientOptions)
         }
 
+        private val promptWebhooks: PromptWebhookService.WithRawResponse by lazy {
+            PromptWebhookServiceImpl.WithRawResponseImpl(clientOptions)
+        }
+
         private val info: InfoService.WithRawResponse by lazy {
             InfoServiceImpl.WithRawResponseImpl(clientOptions)
         }
@@ -296,6 +308,8 @@ class LangsmithClientImpl(private val clientOptions: ClientOptions) : LangsmithC
         override fun public_(): PublicService.WithRawResponse = public_
 
         override fun annotationQueues(): AnnotationQueueService.WithRawResponse = annotationQueues
+
+        override fun promptWebhooks(): PromptWebhookService.WithRawResponse = promptWebhooks
 
         override fun info(): InfoService.WithRawResponse = info
 
