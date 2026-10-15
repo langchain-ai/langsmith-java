@@ -1,5 +1,21 @@
 # Changelog
 
+## [0.1.0-beta.27](https://github.com/langchain-ai/langsmith-java/compare/v0.1.0-beta.26...v0.1.0-beta.27) (2026-10-15)
+
+
+### Features
+
+* **code-evals:** require advanced_features for code_evaluator_input ([a0f586c](https://github.com/langchain-ai/langsmith-java/commit/a0f586c0adbce6ac3a6e5fbb4db51efc84234b4a))
+* **evaluators:** scope evaluator spend and run rules to an agent ([bc9fe0f](https://github.com/langchain-ai/langsmith-java/commit/bc9fe0fb6e1bb3c6bae440ebaf8c3281b7a65d18))
+* **evaluators:** workspace_secrets_keys on code evaluator CRUD ([c578219](https://github.com/langchain-ai/langsmith-java/commit/c57821939a03c50ba4dec3cb6cc7bf829edfd8ce))
+* **sdk:** expose prompt webhooks in the SDKs and the langsmith CLI ([ee7f66f](https://github.com/langchain-ai/langsmith-java/commit/ee7f66f154f4cd36be93d38b29194b0ebfd8d8c2))
+* **sdks:** send OTLP traces to an Agent environment from the Java exporter ([d8f28f5](https://github.com/langchain-ai/langsmith-java/commit/d8f28f5dc3e5cf8a5cf4de24ba1d515a942c2794))
+
+
+### Performance Improvements
+
+* load sandbox cost pages and totals independently ([7b51f91](https://github.com/langchain-ai/langsmith-java/commit/7b51f914a22a17340901e29e9ec76d0bf399f452))
+
 ## [0.1.0-beta.26](https://github.com/langchain-ai/langsmith-java/compare/v0.1.0-beta.25...v0.1.0-beta.26) (2026-10-09)
 
 
