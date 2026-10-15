@@ -14,12 +14,14 @@ internal class CodeEvaluatorTopLevelTest {
         val codeEvaluatorTopLevel =
             CodeEvaluatorTopLevel.builder()
                 .code("code")
+                .advancedFeaturesEnabled(true)
                 .codeEvaluatorInput(CodeEvaluatorTopLevel.CodeEvaluatorInput.THREAD)
                 .language(CodeEvaluatorTopLevel.Language.PYTHON)
                 .requireAttachments(true)
                 .build()
 
         assertThat(codeEvaluatorTopLevel.code()).isEqualTo("code")
+        assertThat(codeEvaluatorTopLevel.advancedFeaturesEnabled()).contains(true)
         assertThat(codeEvaluatorTopLevel.codeEvaluatorInput())
             .contains(CodeEvaluatorTopLevel.CodeEvaluatorInput.THREAD)
         assertThat(codeEvaluatorTopLevel.language()).contains(CodeEvaluatorTopLevel.Language.PYTHON)
@@ -32,6 +34,7 @@ internal class CodeEvaluatorTopLevelTest {
         val codeEvaluatorTopLevel =
             CodeEvaluatorTopLevel.builder()
                 .code("code")
+                .advancedFeaturesEnabled(true)
                 .codeEvaluatorInput(CodeEvaluatorTopLevel.CodeEvaluatorInput.THREAD)
                 .language(CodeEvaluatorTopLevel.Language.PYTHON)
                 .requireAttachments(true)
