@@ -2419,6 +2419,7 @@ private constructor(
         private constructor(
             private val bodyName: JsonField<String>,
             private val aws: JsonField<Aws>,
+            private val azure: JsonField<Azure>,
             private val description: JsonField<String>,
             private val enabled: JsonField<Boolean>,
             private val envVars: JsonField<EnvVars>,
@@ -2437,6 +2438,7 @@ private constructor(
                 @ExcludeMissing
                 bodyName: JsonField<String> = JsonMissing.of(),
                 @JsonProperty("aws") @ExcludeMissing aws: JsonField<Aws> = JsonMissing.of(),
+                @JsonProperty("azure") @ExcludeMissing azure: JsonField<Azure> = JsonMissing.of(),
                 @JsonProperty("description")
                 @ExcludeMissing
                 description: JsonField<String> = JsonMissing.of(),
@@ -2463,6 +2465,7 @@ private constructor(
             ) : this(
                 bodyName,
                 aws,
+                azure,
                 description,
                 enabled,
                 envVars,
@@ -2487,6 +2490,12 @@ private constructor(
              *   if the server responded with an unexpected value).
              */
             fun aws(): Optional<Aws> = aws.getOptional("aws")
+
+            /**
+             * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g.
+             *   if the server responded with an unexpected value).
+             */
+            fun azure(): Optional<Azure> = azure.getOptional("azure")
 
             /**
              * Description says what this rule lets the sandbox reach, so an agent driving the
@@ -2574,6 +2583,13 @@ private constructor(
              * Unlike [aws], this method doesn't throw if the JSON field has an unexpected type.
              */
             @JsonProperty("aws") @ExcludeMissing fun _aws(): JsonField<Aws> = aws
+
+            /**
+             * Returns the raw JSON value of [azure].
+             *
+             * Unlike [azure], this method doesn't throw if the JSON field has an unexpected type.
+             */
+            @JsonProperty("azure") @ExcludeMissing fun _azure(): JsonField<Azure> = azure
 
             /**
              * Returns the raw JSON value of [description].
@@ -2682,6 +2698,7 @@ private constructor(
 
                 private var bodyName: JsonField<String>? = null
                 private var aws: JsonField<Aws> = JsonMissing.of()
+                private var azure: JsonField<Azure> = JsonMissing.of()
                 private var description: JsonField<String> = JsonMissing.of()
                 private var enabled: JsonField<Boolean> = JsonMissing.of()
                 private var envVars: JsonField<EnvVars> = JsonMissing.of()
@@ -2697,6 +2714,7 @@ private constructor(
                 internal fun from(rule: Rule) = apply {
                     bodyName = rule.bodyName
                     aws = rule.aws
+                    azure = rule.azure
                     description = rule.description
                     enabled = rule.enabled
                     envVars = rule.envVars
@@ -2744,6 +2762,51 @@ private constructor(
                  */
                 fun aws(sandboxesProxyAwsStaticConfig: Aws.SandboxesProxyAwsStaticConfig) =
                     aws(Aws.ofSandboxesProxyAwsStaticConfig(sandboxesProxyAwsStaticConfig))
+
+                fun azure(azure: Azure) = azure(JsonField.of(azure))
+
+                /**
+                 * Sets [Builder.azure] to an arbitrary JSON value.
+                 *
+                 * You should usually call [Builder.azure] with a well-typed [Azure] value instead.
+                 * This method is primarily for setting the field to an undocumented or not yet
+                 * supported value.
+                 */
+                fun azure(azure: JsonField<Azure>) = apply { this.azure = azure }
+
+                /**
+                 * Alias for calling [azure] with
+                 * `Azure.ofSandboxesProxyAzureWorkloadIdentityConfig(sandboxesProxyAzureWorkloadIdentityConfig)`.
+                 */
+                fun azure(
+                    sandboxesProxyAzureWorkloadIdentityConfig:
+                        Azure.SandboxesProxyAzureWorkloadIdentityConfig
+                ) =
+                    azure(
+                        Azure.ofSandboxesProxyAzureWorkloadIdentityConfig(
+                            sandboxesProxyAzureWorkloadIdentityConfig
+                        )
+                    )
+
+                /**
+                 * Alias for calling [azure] with
+                 * `Azure.ofSandboxesProxyAzureAccountKeyConfig(sandboxesProxyAzureAccountKeyConfig)`.
+                 */
+                fun azure(
+                    sandboxesProxyAzureAccountKeyConfig: Azure.SandboxesProxyAzureAccountKeyConfig
+                ) =
+                    azure(
+                        Azure.ofSandboxesProxyAzureAccountKeyConfig(
+                            sandboxesProxyAzureAccountKeyConfig
+                        )
+                    )
+
+                /**
+                 * Alias for calling [azure] with
+                 * `Azure.ofSandboxesProxyAzureSasConfig(sandboxesProxyAzureSasConfig)`.
+                 */
+                fun azure(sandboxesProxyAzureSasConfig: Azure.SandboxesProxyAzureSasConfig) =
+                    azure(Azure.ofSandboxesProxyAzureSasConfig(sandboxesProxyAzureSasConfig))
 
                 /**
                  * Description says what this rule lets the sandbox reach, so an agent driving the
@@ -2802,6 +2865,33 @@ private constructor(
                  * value.
                  */
                 fun gcp(gcp: JsonField<Gcp>) = apply { this.gcp = gcp }
+
+                /**
+                 * Alias for calling [gcp] with
+                 * `Gcp.ofSandboxesProxyGcpWorkloadIdentityConfig(sandboxesProxyGcpWorkloadIdentityConfig)`.
+                 */
+                fun gcp(
+                    sandboxesProxyGcpWorkloadIdentityConfig:
+                        Gcp.SandboxesProxyGcpWorkloadIdentityConfig
+                ) =
+                    gcp(
+                        Gcp.ofSandboxesProxyGcpWorkloadIdentityConfig(
+                            sandboxesProxyGcpWorkloadIdentityConfig
+                        )
+                    )
+
+                /**
+                 * Alias for calling [gcp] with
+                 * `Gcp.ofSandboxesProxyGcpServiceAccountConfig(sandboxesProxyGcpServiceAccountConfig)`.
+                 */
+                fun gcp(
+                    sandboxesProxyGcpServiceAccountConfig: Gcp.SandboxesProxyGcpServiceAccountConfig
+                ) =
+                    gcp(
+                        Gcp.ofSandboxesProxyGcpServiceAccountConfig(
+                            sandboxesProxyGcpServiceAccountConfig
+                        )
+                    )
 
                 fun headers(headers: List<Header>) = headers(JsonField.of(headers))
 
@@ -2964,6 +3054,7 @@ private constructor(
                     Rule(
                         checkRequired("bodyName", bodyName),
                         aws,
+                        azure,
                         description,
                         enabled,
                         envVars,
@@ -2996,6 +3087,7 @@ private constructor(
 
                 bodyName()
                 aws().ifPresent { it.validate() }
+                azure().ifPresent { it.validate() }
                 description()
                 enabled()
                 envVars().ifPresent { it.validate() }
@@ -3026,6 +3118,7 @@ private constructor(
             internal fun validity(): Int =
                 (if (bodyName.asKnown().isPresent) 1 else 0) +
                     (aws.asKnown().getOrNull()?.validity() ?: 0) +
+                    (azure.asKnown().getOrNull()?.validity() ?: 0) +
                     (if (description.asKnown().isPresent) 1 else 0) +
                     (if (enabled.asKnown().isPresent) 1 else 0) +
                     (envVars.asKnown().getOrNull()?.validity() ?: 0) +
@@ -3296,6 +3389,7 @@ private constructor(
                 @JsonCreator(mode = JsonCreator.Mode.DISABLED)
                 private constructor(
                     private val roleArn: JsonField<String>,
+                    private val subjectScope: JsonField<String>,
                     private val additionalProperties: MutableMap<String, JsonValue>,
                 ) {
 
@@ -3303,19 +3397,34 @@ private constructor(
                     private constructor(
                         @JsonProperty("role_arn")
                         @ExcludeMissing
-                        roleArn: JsonField<String> = JsonMissing.of()
-                    ) : this(roleArn, mutableMapOf())
+                        roleArn: JsonField<String> = JsonMissing.of(),
+                        @JsonProperty("subject_scope")
+                        @ExcludeMissing
+                        subjectScope: JsonField<String> = JsonMissing.of(),
+                    ) : this(roleArn, subjectScope, mutableMapOf())
 
                     /**
-                     * RoleARN selects automatically renewed IAM-role credentials instead of static
-                     * keys. Access follows the role's effective AWS permissions, not the sandbox's
-                     * mount scope. Configure at creation; the role cannot be changed afterward.
+                     * IAM role to assume with AssumeRoleWithWebIdentity, using a short-lived OIDC
+                     * token LangSmith signs for this workspace. The role's trust policy must trust
+                     * LangSmith's issuer for the token subject. Credentials renew automatically,
+                     * and access follows the role's effective AWS permissions. Mutually exclusive
+                     * with static keys, and cannot be changed after creation.
                      *
                      * @throws LangChainInvalidDataException if the JSON field has an unexpected
                      *   type or is unexpectedly missing or null (e.g. if the server responded with
                      *   an unexpected value).
                      */
                     fun roleArn(): String = roleArn.getRequired("role_arn")
+
+                    /**
+                     * SubjectScope picks the token subject the role trusts: "workspace" (the
+                     * default) or "tag:<tag value id>", which must be one of the sandbox's
+                     * tag_value_ids. Only valid with role_arn.
+                     *
+                     * @throws LangChainInvalidDataException if the JSON field has an unexpected
+                     *   type (e.g. if the server responded with an unexpected value).
+                     */
+                    fun subjectScope(): Optional<String> = subjectScope.getOptional("subject_scope")
 
                     /**
                      * Returns the raw JSON value of [roleArn].
@@ -3326,6 +3435,16 @@ private constructor(
                     @JsonProperty("role_arn")
                     @ExcludeMissing
                     fun _roleArn(): JsonField<String> = roleArn
+
+                    /**
+                     * Returns the raw JSON value of [subjectScope].
+                     *
+                     * Unlike [subjectScope], this method doesn't throw if the JSON field has an
+                     * unexpected type.
+                     */
+                    @JsonProperty("subject_scope")
+                    @ExcludeMissing
+                    fun _subjectScope(): JsonField<String> = subjectScope
 
                     @JsonAnySetter
                     private fun putAdditionalProperty(key: String, value: JsonValue) {
@@ -3357,6 +3476,7 @@ private constructor(
                     class Builder internal constructor() {
 
                         private var roleArn: JsonField<String>? = null
+                        private var subjectScope: JsonField<String> = JsonMissing.of()
                         private var additionalProperties: MutableMap<String, JsonValue> =
                             mutableMapOf()
 
@@ -3365,15 +3485,18 @@ private constructor(
                             sandboxesProxyAwsRoleConfig: SandboxesProxyAwsRoleConfig
                         ) = apply {
                             roleArn = sandboxesProxyAwsRoleConfig.roleArn
+                            subjectScope = sandboxesProxyAwsRoleConfig.subjectScope
                             additionalProperties =
                                 sandboxesProxyAwsRoleConfig.additionalProperties.toMutableMap()
                         }
 
                         /**
-                         * RoleARN selects automatically renewed IAM-role credentials instead of
-                         * static keys. Access follows the role's effective AWS permissions, not the
-                         * sandbox's mount scope. Configure at creation; the role cannot be changed
-                         * afterward.
+                         * IAM role to assume with AssumeRoleWithWebIdentity, using a short-lived
+                         * OIDC token LangSmith signs for this workspace. The role's trust policy
+                         * must trust LangSmith's issuer for the token subject. Credentials renew
+                         * automatically, and access follows the role's effective AWS permissions.
+                         * Mutually exclusive with static keys, and cannot be changed after
+                         * creation.
                          */
                         fun roleArn(roleArn: String) = roleArn(JsonField.of(roleArn))
 
@@ -3385,6 +3508,25 @@ private constructor(
                          * undocumented or not yet supported value.
                          */
                         fun roleArn(roleArn: JsonField<String>) = apply { this.roleArn = roleArn }
+
+                        /**
+                         * SubjectScope picks the token subject the role trusts: "workspace" (the
+                         * default) or "tag:<tag value id>", which must be one of the sandbox's
+                         * tag_value_ids. Only valid with role_arn.
+                         */
+                        fun subjectScope(subjectScope: String) =
+                            subjectScope(JsonField.of(subjectScope))
+
+                        /**
+                         * Sets [Builder.subjectScope] to an arbitrary JSON value.
+                         *
+                         * You should usually call [Builder.subjectScope] with a well-typed [String]
+                         * value instead. This method is primarily for setting the field to an
+                         * undocumented or not yet supported value.
+                         */
+                        fun subjectScope(subjectScope: JsonField<String>) = apply {
+                            this.subjectScope = subjectScope
+                        }
 
                         fun additionalProperties(additionalProperties: Map<String, JsonValue>) =
                             apply {
@@ -3423,6 +3565,7 @@ private constructor(
                         fun build(): SandboxesProxyAwsRoleConfig =
                             SandboxesProxyAwsRoleConfig(
                                 checkRequired("roleArn", roleArn),
+                                subjectScope,
                                 additionalProperties.toMutableMap(),
                             )
                     }
@@ -3445,6 +3588,7 @@ private constructor(
                         }
 
                         roleArn()
+                        subjectScope()
                         validated = true
                     }
 
@@ -3463,7 +3607,9 @@ private constructor(
                      * Used for best match union deserialization.
                      */
                     @JvmSynthetic
-                    internal fun validity(): Int = (if (roleArn.asKnown().isPresent) 1 else 0)
+                    internal fun validity(): Int =
+                        (if (roleArn.asKnown().isPresent) 1 else 0) +
+                            (if (subjectScope.asKnown().isPresent) 1 else 0)
 
                     override fun equals(other: Any?): Boolean {
                         if (this === other) {
@@ -3472,17 +3618,18 @@ private constructor(
 
                         return other is SandboxesProxyAwsRoleConfig &&
                             roleArn == other.roleArn &&
+                            subjectScope == other.subjectScope &&
                             additionalProperties == other.additionalProperties
                     }
 
                     private val hashCode: Int by lazy {
-                        Objects.hash(roleArn, additionalProperties)
+                        Objects.hash(roleArn, subjectScope, additionalProperties)
                     }
 
                     override fun hashCode(): Int = hashCode
 
                     override fun toString() =
-                        "SandboxesProxyAwsRoleConfig{roleArn=$roleArn, additionalProperties=$additionalProperties}"
+                        "SandboxesProxyAwsRoleConfig{roleArn=$roleArn, subjectScope=$subjectScope, additionalProperties=$additionalProperties}"
                 }
 
                 class SandboxesProxyAwsStaticConfig
@@ -3523,9 +3670,11 @@ private constructor(
                         secretAccessKey.getRequired("secret_access_key")
 
                     /**
-                     * RoleARN selects automatically renewed IAM-role credentials instead of static
-                     * keys. Access follows the role's effective AWS permissions, not the sandbox's
-                     * mount scope. Configure at creation; the role cannot be changed afterward.
+                     * IAM role to assume with AssumeRoleWithWebIdentity, using a short-lived OIDC
+                     * token LangSmith signs for this workspace. The role's trust policy must trust
+                     * LangSmith's issuer for the token subject. Credentials renew automatically,
+                     * and access follows the role's effective AWS permissions. Mutually exclusive
+                     * with static keys, and cannot be changed after creation.
                      *
                      * @throws LangChainInvalidDataException if the JSON field has an unexpected
                      *   type (e.g. if the server responded with an unexpected value).
@@ -3638,10 +3787,12 @@ private constructor(
                         }
 
                         /**
-                         * RoleARN selects automatically renewed IAM-role credentials instead of
-                         * static keys. Access follows the role's effective AWS permissions, not the
-                         * sandbox's mount scope. Configure at creation; the role cannot be changed
-                         * afterward.
+                         * IAM role to assume with AssumeRoleWithWebIdentity, using a short-lived
+                         * OIDC token LangSmith signs for this workspace. The role's trust policy
+                         * must trust LangSmith's issuer for the token subject. Credentials renew
+                         * automatically, and access follows the role's effective AWS permissions.
+                         * Mutually exclusive with static keys, and cannot be changed after
+                         * creation.
                          */
                         fun roleArn(roleArn: RoleArn) = roleArn(JsonField.of(roleArn))
 
@@ -4560,9 +4711,11 @@ private constructor(
                     }
 
                     /**
-                     * RoleARN selects automatically renewed IAM-role credentials instead of static
-                     * keys. Access follows the role's effective AWS permissions, not the sandbox's
-                     * mount scope. Configure at creation; the role cannot be changed afterward.
+                     * IAM role to assume with AssumeRoleWithWebIdentity, using a short-lived OIDC
+                     * token LangSmith signs for this workspace. The role's trust policy must trust
+                     * LangSmith's issuer for the token subject. Credentials renew automatically,
+                     * and access follows the role's effective AWS permissions. Mutually exclusive
+                     * with static keys, and cannot be changed after creation.
                      */
                     class RoleArn
                     @JsonCreator
@@ -4728,6 +4881,2185 @@ private constructor(
                 }
             }
 
+            @JsonDeserialize(using = Azure.Deserializer::class)
+            @JsonSerialize(using = Azure.Serializer::class)
+            class Azure
+            private constructor(
+                private val sandboxesProxyAzureWorkloadIdentityConfig:
+                    SandboxesProxyAzureWorkloadIdentityConfig? =
+                    null,
+                private val sandboxesProxyAzureAccountKeyConfig:
+                    SandboxesProxyAzureAccountKeyConfig? =
+                    null,
+                private val sandboxesProxyAzureSasConfig: SandboxesProxyAzureSasConfig? = null,
+                private val _json: JsonValue? = null,
+            ) {
+
+                fun sandboxesProxyAzureWorkloadIdentityConfig():
+                    Optional<SandboxesProxyAzureWorkloadIdentityConfig> =
+                    Optional.ofNullable(sandboxesProxyAzureWorkloadIdentityConfig)
+
+                fun sandboxesProxyAzureAccountKeyConfig():
+                    Optional<SandboxesProxyAzureAccountKeyConfig> =
+                    Optional.ofNullable(sandboxesProxyAzureAccountKeyConfig)
+
+                fun sandboxesProxyAzureSasConfig(): Optional<SandboxesProxyAzureSasConfig> =
+                    Optional.ofNullable(sandboxesProxyAzureSasConfig)
+
+                fun isSandboxesProxyAzureWorkloadIdentityConfig(): Boolean =
+                    sandboxesProxyAzureWorkloadIdentityConfig != null
+
+                fun isSandboxesProxyAzureAccountKeyConfig(): Boolean =
+                    sandboxesProxyAzureAccountKeyConfig != null
+
+                fun isSandboxesProxyAzureSasConfig(): Boolean = sandboxesProxyAzureSasConfig != null
+
+                fun asSandboxesProxyAzureWorkloadIdentityConfig():
+                    SandboxesProxyAzureWorkloadIdentityConfig =
+                    sandboxesProxyAzureWorkloadIdentityConfig.getOrThrow(
+                        "sandboxesProxyAzureWorkloadIdentityConfig"
+                    )
+
+                fun asSandboxesProxyAzureAccountKeyConfig(): SandboxesProxyAzureAccountKeyConfig =
+                    sandboxesProxyAzureAccountKeyConfig.getOrThrow(
+                        "sandboxesProxyAzureAccountKeyConfig"
+                    )
+
+                fun asSandboxesProxyAzureSasConfig(): SandboxesProxyAzureSasConfig =
+                    sandboxesProxyAzureSasConfig.getOrThrow("sandboxesProxyAzureSasConfig")
+
+                fun _json(): Optional<JsonValue> = Optional.ofNullable(_json)
+
+                /**
+                 * Maps this instance's current variant to a value of type [T] using the given
+                 * [visitor].
+                 *
+                 * Note that this method is _not_ forwards compatible with new variants from the
+                 * API, unless [visitor] overrides [Visitor.unknown]. To handle variants not known
+                 * to this version of the SDK gracefully, consider overriding [Visitor.unknown]:
+                 * ```java
+                 * import com.langchain.smith.core.JsonValue;
+                 * import java.util.Optional;
+                 *
+                 * Optional<String> result = azure.accept(new Azure.Visitor<Optional<String>>() {
+                 *     @Override
+                 *     public Optional<String> visitSandboxesProxyAzureWorkloadIdentityConfig(SandboxesProxyAzureWorkloadIdentityConfig sandboxesProxyAzureWorkloadIdentityConfig) {
+                 *         return Optional.of(sandboxesProxyAzureWorkloadIdentityConfig.toString());
+                 *     }
+                 *
+                 *     // ...
+                 *
+                 *     @Override
+                 *     public Optional<String> unknown(JsonValue json) {
+                 *         // Or inspect the `json`.
+                 *         return Optional.empty();
+                 *     }
+                 * });
+                 * ```
+                 *
+                 * @throws LangChainInvalidDataException if [Visitor.unknown] is not overridden in
+                 *   [visitor] and the current variant is unknown.
+                 */
+                fun <T> accept(visitor: Visitor<T>): T =
+                    when {
+                        sandboxesProxyAzureWorkloadIdentityConfig != null ->
+                            visitor.visitSandboxesProxyAzureWorkloadIdentityConfig(
+                                sandboxesProxyAzureWorkloadIdentityConfig
+                            )
+                        sandboxesProxyAzureAccountKeyConfig != null ->
+                            visitor.visitSandboxesProxyAzureAccountKeyConfig(
+                                sandboxesProxyAzureAccountKeyConfig
+                            )
+                        sandboxesProxyAzureSasConfig != null ->
+                            visitor.visitSandboxesProxyAzureSasConfig(sandboxesProxyAzureSasConfig)
+                        else -> visitor.unknown(_json)
+                    }
+
+                private var validated: Boolean = false
+
+                /**
+                 * Validates that the types of all values in this object match their expected types
+                 * recursively.
+                 *
+                 * This method is _not_ forwards compatible with new types from the API for existing
+                 * fields.
+                 *
+                 * @throws LangChainInvalidDataException if any value type in this object doesn't
+                 *   match its expected type.
+                 */
+                fun validate(): Azure = apply {
+                    if (validated) {
+                        return@apply
+                    }
+
+                    accept(
+                        object : Visitor<Unit> {
+                            override fun visitSandboxesProxyAzureWorkloadIdentityConfig(
+                                sandboxesProxyAzureWorkloadIdentityConfig:
+                                    SandboxesProxyAzureWorkloadIdentityConfig
+                            ) {
+                                sandboxesProxyAzureWorkloadIdentityConfig.validate()
+                            }
+
+                            override fun visitSandboxesProxyAzureAccountKeyConfig(
+                                sandboxesProxyAzureAccountKeyConfig:
+                                    SandboxesProxyAzureAccountKeyConfig
+                            ) {
+                                sandboxesProxyAzureAccountKeyConfig.validate()
+                            }
+
+                            override fun visitSandboxesProxyAzureSasConfig(
+                                sandboxesProxyAzureSasConfig: SandboxesProxyAzureSasConfig
+                            ) {
+                                sandboxesProxyAzureSasConfig.validate()
+                            }
+                        }
+                    )
+                    validated = true
+                }
+
+                fun isValid(): Boolean =
+                    try {
+                        validate()
+                        true
+                    } catch (e: LangChainInvalidDataException) {
+                        false
+                    }
+
+                /**
+                 * Returns a score indicating how many valid values are contained in this object
+                 * recursively.
+                 *
+                 * Used for best match union deserialization.
+                 */
+                @JvmSynthetic
+                internal fun validity(): Int =
+                    accept(
+                        object : Visitor<Int> {
+                            override fun visitSandboxesProxyAzureWorkloadIdentityConfig(
+                                sandboxesProxyAzureWorkloadIdentityConfig:
+                                    SandboxesProxyAzureWorkloadIdentityConfig
+                            ) = sandboxesProxyAzureWorkloadIdentityConfig.validity()
+
+                            override fun visitSandboxesProxyAzureAccountKeyConfig(
+                                sandboxesProxyAzureAccountKeyConfig:
+                                    SandboxesProxyAzureAccountKeyConfig
+                            ) = sandboxesProxyAzureAccountKeyConfig.validity()
+
+                            override fun visitSandboxesProxyAzureSasConfig(
+                                sandboxesProxyAzureSasConfig: SandboxesProxyAzureSasConfig
+                            ) = sandboxesProxyAzureSasConfig.validity()
+
+                            override fun unknown(json: JsonValue?) = 0
+                        }
+                    )
+
+                override fun equals(other: Any?): Boolean {
+                    if (this === other) {
+                        return true
+                    }
+
+                    return other is Azure &&
+                        sandboxesProxyAzureWorkloadIdentityConfig ==
+                            other.sandboxesProxyAzureWorkloadIdentityConfig &&
+                        sandboxesProxyAzureAccountKeyConfig ==
+                            other.sandboxesProxyAzureAccountKeyConfig &&
+                        sandboxesProxyAzureSasConfig == other.sandboxesProxyAzureSasConfig
+                }
+
+                override fun hashCode(): Int =
+                    Objects.hash(
+                        sandboxesProxyAzureWorkloadIdentityConfig,
+                        sandboxesProxyAzureAccountKeyConfig,
+                        sandboxesProxyAzureSasConfig,
+                    )
+
+                override fun toString(): String =
+                    when {
+                        sandboxesProxyAzureWorkloadIdentityConfig != null ->
+                            "Azure{sandboxesProxyAzureWorkloadIdentityConfig=$sandboxesProxyAzureWorkloadIdentityConfig}"
+                        sandboxesProxyAzureAccountKeyConfig != null ->
+                            "Azure{sandboxesProxyAzureAccountKeyConfig=$sandboxesProxyAzureAccountKeyConfig}"
+                        sandboxesProxyAzureSasConfig != null ->
+                            "Azure{sandboxesProxyAzureSasConfig=$sandboxesProxyAzureSasConfig}"
+                        _json != null -> "Azure{_unknown=$_json}"
+                        else -> throw IllegalStateException("Invalid Azure")
+                    }
+
+                companion object {
+
+                    @JvmStatic
+                    fun ofSandboxesProxyAzureWorkloadIdentityConfig(
+                        sandboxesProxyAzureWorkloadIdentityConfig:
+                            SandboxesProxyAzureWorkloadIdentityConfig
+                    ) =
+                        Azure(
+                            sandboxesProxyAzureWorkloadIdentityConfig =
+                                sandboxesProxyAzureWorkloadIdentityConfig
+                        )
+
+                    @JvmStatic
+                    fun ofSandboxesProxyAzureAccountKeyConfig(
+                        sandboxesProxyAzureAccountKeyConfig: SandboxesProxyAzureAccountKeyConfig
+                    ) =
+                        Azure(
+                            sandboxesProxyAzureAccountKeyConfig =
+                                sandboxesProxyAzureAccountKeyConfig
+                        )
+
+                    @JvmStatic
+                    fun ofSandboxesProxyAzureSasConfig(
+                        sandboxesProxyAzureSasConfig: SandboxesProxyAzureSasConfig
+                    ) = Azure(sandboxesProxyAzureSasConfig = sandboxesProxyAzureSasConfig)
+                }
+
+                /**
+                 * An interface that defines how to map each variant of [Azure] to a value of type
+                 * [T].
+                 */
+                interface Visitor<out T> {
+
+                    fun visitSandboxesProxyAzureWorkloadIdentityConfig(
+                        sandboxesProxyAzureWorkloadIdentityConfig:
+                            SandboxesProxyAzureWorkloadIdentityConfig
+                    ): T
+
+                    fun visitSandboxesProxyAzureAccountKeyConfig(
+                        sandboxesProxyAzureAccountKeyConfig: SandboxesProxyAzureAccountKeyConfig
+                    ): T
+
+                    fun visitSandboxesProxyAzureSasConfig(
+                        sandboxesProxyAzureSasConfig: SandboxesProxyAzureSasConfig
+                    ): T
+
+                    /**
+                     * Maps an unknown variant of [Azure] to a value of type [T].
+                     *
+                     * An instance of [Azure] can contain an unknown variant if it was deserialized
+                     * from data that doesn't match any known variant. For example, if the SDK is on
+                     * an older version than the API, then the API may respond with new variants
+                     * that the SDK is unaware of.
+                     *
+                     * @throws LangChainInvalidDataException in the default implementation.
+                     */
+                    fun unknown(json: JsonValue?): T {
+                        throw LangChainInvalidDataException("Unknown Azure: $json")
+                    }
+                }
+
+                internal class Deserializer : BaseDeserializer<Azure>(Azure::class) {
+
+                    override fun ObjectCodec.deserialize(node: JsonNode): Azure {
+                        val json = JsonValue.fromJsonNode(node)
+
+                        val bestMatches =
+                            sequenceOf(
+                                    tryDeserialize(
+                                            node,
+                                            jacksonTypeRef<
+                                                SandboxesProxyAzureWorkloadIdentityConfig
+                                            >(),
+                                        )
+                                        ?.let {
+                                            Azure(
+                                                sandboxesProxyAzureWorkloadIdentityConfig = it,
+                                                _json = json,
+                                            )
+                                        },
+                                    tryDeserialize(
+                                            node,
+                                            jacksonTypeRef<SandboxesProxyAzureAccountKeyConfig>(),
+                                        )
+                                        ?.let {
+                                            Azure(
+                                                sandboxesProxyAzureAccountKeyConfig = it,
+                                                _json = json,
+                                            )
+                                        },
+                                    tryDeserialize(
+                                            node,
+                                            jacksonTypeRef<SandboxesProxyAzureSasConfig>(),
+                                        )
+                                        ?.let {
+                                            Azure(sandboxesProxyAzureSasConfig = it, _json = json)
+                                        },
+                                )
+                                .filterNotNull()
+                                .allMaxBy { it.validity() }
+                                .toList()
+                        return when (bestMatches.size) {
+                            // This can happen if what we're deserializing is completely
+                            // incompatible with all the possible variants (e.g. deserializing from
+                            // boolean).
+                            0 -> Azure(_json = json)
+                            1 -> bestMatches.single()
+                            // If there's more than one match with the highest validity, then use
+                            // the first completely valid match, or simply the first match if none
+                            // are completely valid.
+                            else -> bestMatches.firstOrNull { it.isValid() } ?: bestMatches.first()
+                        }
+                    }
+                }
+
+                internal class Serializer : BaseSerializer<Azure>(Azure::class) {
+
+                    override fun serialize(
+                        value: Azure,
+                        generator: JsonGenerator,
+                        provider: SerializerProvider,
+                    ) {
+                        when {
+                            value.sandboxesProxyAzureWorkloadIdentityConfig != null ->
+                                generator.writeObject(
+                                    value.sandboxesProxyAzureWorkloadIdentityConfig
+                                )
+                            value.sandboxesProxyAzureAccountKeyConfig != null ->
+                                generator.writeObject(value.sandboxesProxyAzureAccountKeyConfig)
+                            value.sandboxesProxyAzureSasConfig != null ->
+                                generator.writeObject(value.sandboxesProxyAzureSasConfig)
+                            value._json != null -> generator.writeObject(value._json)
+                            else -> throw IllegalStateException("Invalid Azure")
+                        }
+                    }
+                }
+
+                class SandboxesProxyAzureWorkloadIdentityConfig
+                @JsonCreator(mode = JsonCreator.Mode.DISABLED)
+                private constructor(
+                    private val clientId: JsonField<String>,
+                    private val tenantId: JsonField<String>,
+                    private val resources: JsonField<List<Resource>>,
+                    private val subjectScope: JsonField<String>,
+                    private val additionalProperties: MutableMap<String, JsonValue>,
+                ) {
+
+                    @JsonCreator
+                    private constructor(
+                        @JsonProperty("client_id")
+                        @ExcludeMissing
+                        clientId: JsonField<String> = JsonMissing.of(),
+                        @JsonProperty("tenant_id")
+                        @ExcludeMissing
+                        tenantId: JsonField<String> = JsonMissing.of(),
+                        @JsonProperty("resources")
+                        @ExcludeMissing
+                        resources: JsonField<List<Resource>> = JsonMissing.of(),
+                        @JsonProperty("subject_scope")
+                        @ExcludeMissing
+                        subjectScope: JsonField<String> = JsonMissing.of(),
+                    ) : this(clientId, tenantId, resources, subjectScope, mutableMapOf())
+
+                    /**
+                     * ClientID is the application (client) ID, a GUID, of the app registration or
+                     * user-assigned managed identity whose federated identity credential trusts
+                     * LangSmith's issuer. Required with tenant_id.
+                     *
+                     * @throws LangChainInvalidDataException if the JSON field has an unexpected
+                     *   type or is unexpectedly missing or null (e.g. if the server responded with
+                     *   an unexpected value).
+                     */
+                    fun clientId(): String = clientId.getRequired("client_id")
+
+                    /**
+                     * TenantID is the Entra tenant (directory) ID, a GUID. Setting it selects
+                     * workload identity: LangSmith signs an OIDC token for this workspace and
+                     * exchanges it at Entra ID for access tokens of client_id, so no secret is
+                     * stored. Cannot be changed after creation.
+                     *
+                     * @throws LangChainInvalidDataException if the JSON field has an unexpected
+                     *   type or is unexpectedly missing or null (e.g. if the server responded with
+                     *   an unexpected value).
+                     */
+                    fun tenantId(): String = tenantId.getRequired("tenant_id")
+
+                    /**
+                     * Resources narrows the Entra resources access tokens are obtained for, from
+                     * https://storage.azure.com, https://vault.azure.net,
+                     * https://management.azure.com and https://cognitiveservices.azure.com.
+                     * Defaults to all of them. Only valid with tenant_id.
+                     *
+                     * @throws LangChainInvalidDataException if the JSON field has an unexpected
+                     *   type (e.g. if the server responded with an unexpected value).
+                     */
+                    fun resources(): Optional<List<Resource>> = resources.getOptional("resources")
+
+                    /**
+                     * SubjectScope picks the token subject the federated credential trusts:
+                     * "workspace" (the default) or "tag:<tag value id>", which must be one of the
+                     * sandbox's tag_value_ids. Only valid with tenant_id.
+                     *
+                     * @throws LangChainInvalidDataException if the JSON field has an unexpected
+                     *   type (e.g. if the server responded with an unexpected value).
+                     */
+                    fun subjectScope(): Optional<String> = subjectScope.getOptional("subject_scope")
+
+                    /**
+                     * Returns the raw JSON value of [clientId].
+                     *
+                     * Unlike [clientId], this method doesn't throw if the JSON field has an
+                     * unexpected type.
+                     */
+                    @JsonProperty("client_id")
+                    @ExcludeMissing
+                    fun _clientId(): JsonField<String> = clientId
+
+                    /**
+                     * Returns the raw JSON value of [tenantId].
+                     *
+                     * Unlike [tenantId], this method doesn't throw if the JSON field has an
+                     * unexpected type.
+                     */
+                    @JsonProperty("tenant_id")
+                    @ExcludeMissing
+                    fun _tenantId(): JsonField<String> = tenantId
+
+                    /**
+                     * Returns the raw JSON value of [resources].
+                     *
+                     * Unlike [resources], this method doesn't throw if the JSON field has an
+                     * unexpected type.
+                     */
+                    @JsonProperty("resources")
+                    @ExcludeMissing
+                    fun _resources(): JsonField<List<Resource>> = resources
+
+                    /**
+                     * Returns the raw JSON value of [subjectScope].
+                     *
+                     * Unlike [subjectScope], this method doesn't throw if the JSON field has an
+                     * unexpected type.
+                     */
+                    @JsonProperty("subject_scope")
+                    @ExcludeMissing
+                    fun _subjectScope(): JsonField<String> = subjectScope
+
+                    @JsonAnySetter
+                    private fun putAdditionalProperty(key: String, value: JsonValue) {
+                        additionalProperties.put(key, value)
+                    }
+
+                    @JsonAnyGetter
+                    @ExcludeMissing
+                    fun _additionalProperties(): Map<String, JsonValue> =
+                        Collections.unmodifiableMap(additionalProperties)
+
+                    fun toBuilder() = Builder().from(this)
+
+                    companion object {
+
+                        /**
+                         * Returns a mutable builder for constructing an instance of
+                         * [SandboxesProxyAzureWorkloadIdentityConfig].
+                         *
+                         * The following fields are required:
+                         * ```java
+                         * .clientId()
+                         * .tenantId()
+                         * ```
+                         */
+                        @JvmStatic fun builder() = Builder()
+                    }
+
+                    /** A builder for [SandboxesProxyAzureWorkloadIdentityConfig]. */
+                    class Builder internal constructor() {
+
+                        private var clientId: JsonField<String>? = null
+                        private var tenantId: JsonField<String>? = null
+                        private var resources: JsonField<MutableList<Resource>>? = null
+                        private var subjectScope: JsonField<String> = JsonMissing.of()
+                        private var additionalProperties: MutableMap<String, JsonValue> =
+                            mutableMapOf()
+
+                        @JvmSynthetic
+                        internal fun from(
+                            sandboxesProxyAzureWorkloadIdentityConfig:
+                                SandboxesProxyAzureWorkloadIdentityConfig
+                        ) = apply {
+                            clientId = sandboxesProxyAzureWorkloadIdentityConfig.clientId
+                            tenantId = sandboxesProxyAzureWorkloadIdentityConfig.tenantId
+                            resources =
+                                sandboxesProxyAzureWorkloadIdentityConfig.resources.map {
+                                    it.toMutableList()
+                                }
+                            subjectScope = sandboxesProxyAzureWorkloadIdentityConfig.subjectScope
+                            additionalProperties =
+                                sandboxesProxyAzureWorkloadIdentityConfig.additionalProperties
+                                    .toMutableMap()
+                        }
+
+                        /**
+                         * ClientID is the application (client) ID, a GUID, of the app registration
+                         * or user-assigned managed identity whose federated identity credential
+                         * trusts LangSmith's issuer. Required with tenant_id.
+                         */
+                        fun clientId(clientId: String) = clientId(JsonField.of(clientId))
+
+                        /**
+                         * Sets [Builder.clientId] to an arbitrary JSON value.
+                         *
+                         * You should usually call [Builder.clientId] with a well-typed [String]
+                         * value instead. This method is primarily for setting the field to an
+                         * undocumented or not yet supported value.
+                         */
+                        fun clientId(clientId: JsonField<String>) = apply {
+                            this.clientId = clientId
+                        }
+
+                        /**
+                         * TenantID is the Entra tenant (directory) ID, a GUID. Setting it selects
+                         * workload identity: LangSmith signs an OIDC token for this workspace and
+                         * exchanges it at Entra ID for access tokens of client_id, so no secret is
+                         * stored. Cannot be changed after creation.
+                         */
+                        fun tenantId(tenantId: String) = tenantId(JsonField.of(tenantId))
+
+                        /**
+                         * Sets [Builder.tenantId] to an arbitrary JSON value.
+                         *
+                         * You should usually call [Builder.tenantId] with a well-typed [String]
+                         * value instead. This method is primarily for setting the field to an
+                         * undocumented or not yet supported value.
+                         */
+                        fun tenantId(tenantId: JsonField<String>) = apply {
+                            this.tenantId = tenantId
+                        }
+
+                        /**
+                         * Resources narrows the Entra resources access tokens are obtained for,
+                         * from https://storage.azure.com, https://vault.azure.net,
+                         * https://management.azure.com and https://cognitiveservices.azure.com.
+                         * Defaults to all of them. Only valid with tenant_id.
+                         */
+                        fun resources(resources: List<Resource>) =
+                            resources(JsonField.of(resources))
+
+                        /**
+                         * Sets [Builder.resources] to an arbitrary JSON value.
+                         *
+                         * You should usually call [Builder.resources] with a well-typed
+                         * `List<Resource>` value instead. This method is primarily for setting the
+                         * field to an undocumented or not yet supported value.
+                         */
+                        fun resources(resources: JsonField<List<Resource>>) = apply {
+                            this.resources = resources.map { it.toMutableList() }
+                        }
+
+                        /**
+                         * Adds a single [Resource] to [resources].
+                         *
+                         * @throws IllegalStateException if the field was previously set to a
+                         *   non-list.
+                         */
+                        fun addResource(resource: Resource) = apply {
+                            resources =
+                                (resources ?: JsonField.of(mutableListOf())).also {
+                                    checkKnown("resources", it).add(resource)
+                                }
+                        }
+
+                        /**
+                         * SubjectScope picks the token subject the federated credential trusts:
+                         * "workspace" (the default) or "tag:<tag value id>", which must be one of
+                         * the sandbox's tag_value_ids. Only valid with tenant_id.
+                         */
+                        fun subjectScope(subjectScope: String) =
+                            subjectScope(JsonField.of(subjectScope))
+
+                        /**
+                         * Sets [Builder.subjectScope] to an arbitrary JSON value.
+                         *
+                         * You should usually call [Builder.subjectScope] with a well-typed [String]
+                         * value instead. This method is primarily for setting the field to an
+                         * undocumented or not yet supported value.
+                         */
+                        fun subjectScope(subjectScope: JsonField<String>) = apply {
+                            this.subjectScope = subjectScope
+                        }
+
+                        fun additionalProperties(additionalProperties: Map<String, JsonValue>) =
+                            apply {
+                                this.additionalProperties.clear()
+                                putAllAdditionalProperties(additionalProperties)
+                            }
+
+                        fun putAdditionalProperty(key: String, value: JsonValue) = apply {
+                            additionalProperties.put(key, value)
+                        }
+
+                        fun putAllAdditionalProperties(
+                            additionalProperties: Map<String, JsonValue>
+                        ) = apply { this.additionalProperties.putAll(additionalProperties) }
+
+                        fun removeAdditionalProperty(key: String) = apply {
+                            additionalProperties.remove(key)
+                        }
+
+                        fun removeAllAdditionalProperties(keys: Set<String>) = apply {
+                            keys.forEach(::removeAdditionalProperty)
+                        }
+
+                        /**
+                         * Returns an immutable instance of
+                         * [SandboxesProxyAzureWorkloadIdentityConfig].
+                         *
+                         * Further updates to this [Builder] will not mutate the returned instance.
+                         *
+                         * The following fields are required:
+                         * ```java
+                         * .clientId()
+                         * .tenantId()
+                         * ```
+                         *
+                         * @throws IllegalStateException if any required field is unset.
+                         */
+                        fun build(): SandboxesProxyAzureWorkloadIdentityConfig =
+                            SandboxesProxyAzureWorkloadIdentityConfig(
+                                checkRequired("clientId", clientId),
+                                checkRequired("tenantId", tenantId),
+                                (resources ?: JsonMissing.of()).map { it.toImmutable() },
+                                subjectScope,
+                                additionalProperties.toMutableMap(),
+                            )
+                    }
+
+                    private var validated: Boolean = false
+
+                    /**
+                     * Validates that the types of all values in this object match their expected
+                     * types recursively.
+                     *
+                     * This method is _not_ forwards compatible with new types from the API for
+                     * existing fields.
+                     *
+                     * @throws LangChainInvalidDataException if any value type in this object
+                     *   doesn't match its expected type.
+                     */
+                    fun validate(): SandboxesProxyAzureWorkloadIdentityConfig = apply {
+                        if (validated) {
+                            return@apply
+                        }
+
+                        clientId()
+                        tenantId()
+                        resources().ifPresent { it.forEach { it.validate() } }
+                        subjectScope()
+                        validated = true
+                    }
+
+                    fun isValid(): Boolean =
+                        try {
+                            validate()
+                            true
+                        } catch (e: LangChainInvalidDataException) {
+                            false
+                        }
+
+                    /**
+                     * Returns a score indicating how many valid values are contained in this object
+                     * recursively.
+                     *
+                     * Used for best match union deserialization.
+                     */
+                    @JvmSynthetic
+                    internal fun validity(): Int =
+                        (if (clientId.asKnown().isPresent) 1 else 0) +
+                            (if (tenantId.asKnown().isPresent) 1 else 0) +
+                            (resources.asKnown().getOrNull()?.sumOf { it.validity().toInt() }
+                                ?: 0) +
+                            (if (subjectScope.asKnown().isPresent) 1 else 0)
+
+                    class Resource
+                    @JsonCreator
+                    private constructor(private val value: JsonField<String>) : Enum {
+
+                        /**
+                         * Returns this class instance's raw value.
+                         *
+                         * This is usually only useful if this instance was deserialized from data
+                         * that doesn't match any known member, and you want to know that value. For
+                         * example, if the SDK is on an older version than the API, then the API may
+                         * respond with new members that the SDK is unaware of.
+                         */
+                        @com.fasterxml.jackson.annotation.JsonValue
+                        fun _value(): JsonField<String> = value
+
+                        companion object {
+
+                            @JvmField val HTTPS_STORAGE_AZURE_COM = of("https://storage.azure.com")
+
+                            @JvmField val HTTPS_VAULT_AZURE_NET = of("https://vault.azure.net")
+
+                            @JvmField
+                            val HTTPS_MANAGEMENT_AZURE_COM = of("https://management.azure.com")
+
+                            @JvmField
+                            val HTTPS_COGNITIVESERVICES_AZURE_COM =
+                                of("https://cognitiveservices.azure.com")
+
+                            @JvmStatic fun of(value: String) = Resource(JsonField.of(value))
+                        }
+
+                        /** An enum containing [Resource]'s known values. */
+                        enum class Known {
+                            HTTPS_STORAGE_AZURE_COM,
+                            HTTPS_VAULT_AZURE_NET,
+                            HTTPS_MANAGEMENT_AZURE_COM,
+                            HTTPS_COGNITIVESERVICES_AZURE_COM,
+                        }
+
+                        /**
+                         * An enum containing [Resource]'s known values, as well as an [_UNKNOWN]
+                         * member.
+                         *
+                         * An instance of [Resource] can contain an unknown value in a couple of
+                         * cases:
+                         * - It was deserialized from data that doesn't match any known member. For
+                         *   example, if the SDK is on an older version than the API, then the API
+                         *   may respond with new members that the SDK is unaware of.
+                         * - It was constructed with an arbitrary value using the [of] method.
+                         */
+                        enum class Value {
+                            HTTPS_STORAGE_AZURE_COM,
+                            HTTPS_VAULT_AZURE_NET,
+                            HTTPS_MANAGEMENT_AZURE_COM,
+                            HTTPS_COGNITIVESERVICES_AZURE_COM,
+                            /**
+                             * An enum member indicating that [Resource] was instantiated with an
+                             * unknown value.
+                             */
+                            _UNKNOWN,
+                        }
+
+                        /**
+                         * Returns an enum member corresponding to this class instance's value, or
+                         * [Value._UNKNOWN] if the class was instantiated with an unknown value.
+                         *
+                         * Use the [known] method instead if you're certain the value is always
+                         * known or if you want to throw for the unknown case.
+                         */
+                        fun value(): Value =
+                            when (this) {
+                                HTTPS_STORAGE_AZURE_COM -> Value.HTTPS_STORAGE_AZURE_COM
+                                HTTPS_VAULT_AZURE_NET -> Value.HTTPS_VAULT_AZURE_NET
+                                HTTPS_MANAGEMENT_AZURE_COM -> Value.HTTPS_MANAGEMENT_AZURE_COM
+                                HTTPS_COGNITIVESERVICES_AZURE_COM ->
+                                    Value.HTTPS_COGNITIVESERVICES_AZURE_COM
+                                else -> Value._UNKNOWN
+                            }
+
+                        /**
+                         * Returns an enum member corresponding to this class instance's value.
+                         *
+                         * Use the [value] method instead if you're uncertain the value is always
+                         * known and don't want to throw for the unknown case.
+                         *
+                         * @throws LangChainInvalidDataException if this class instance's value is a
+                         *   not a known member.
+                         */
+                        fun known(): Known =
+                            when (this) {
+                                HTTPS_STORAGE_AZURE_COM -> Known.HTTPS_STORAGE_AZURE_COM
+                                HTTPS_VAULT_AZURE_NET -> Known.HTTPS_VAULT_AZURE_NET
+                                HTTPS_MANAGEMENT_AZURE_COM -> Known.HTTPS_MANAGEMENT_AZURE_COM
+                                HTTPS_COGNITIVESERVICES_AZURE_COM ->
+                                    Known.HTTPS_COGNITIVESERVICES_AZURE_COM
+                                else ->
+                                    throw LangChainInvalidDataException("Unknown Resource: $value")
+                            }
+
+                        /**
+                         * Returns this class instance's primitive wire representation.
+                         *
+                         * This differs from the [toString] method because that method is primarily
+                         * for debugging and generally doesn't throw.
+                         *
+                         * @throws LangChainInvalidDataException if this class instance's value does
+                         *   not have the expected primitive type.
+                         */
+                        fun asString(): String =
+                            _value().asString().orElseThrow {
+                                LangChainInvalidDataException("Value is not a String")
+                            }
+
+                        private var validated: Boolean = false
+
+                        /**
+                         * Validates that the types of all values in this object match their
+                         * expected types recursively.
+                         *
+                         * This method is _not_ forwards compatible with new types from the API for
+                         * existing fields.
+                         *
+                         * @throws LangChainInvalidDataException if any value type in this object
+                         *   doesn't match its expected type.
+                         */
+                        fun validate(): Resource = apply {
+                            if (validated) {
+                                return@apply
+                            }
+
+                            known()
+                            validated = true
+                        }
+
+                        fun isValid(): Boolean =
+                            try {
+                                validate()
+                                true
+                            } catch (e: LangChainInvalidDataException) {
+                                false
+                            }
+
+                        /**
+                         * Returns a score indicating how many valid values are contained in this
+                         * object recursively.
+                         *
+                         * Used for best match union deserialization.
+                         */
+                        @JvmSynthetic
+                        internal fun validity(): Int = if (value() == Value._UNKNOWN) 0 else 1
+
+                        override fun equals(other: Any?): Boolean {
+                            if (this === other) {
+                                return true
+                            }
+
+                            return other is Resource && value == other.value
+                        }
+
+                        override fun hashCode() = value.hashCode()
+
+                        override fun toString() = value.toString()
+                    }
+
+                    override fun equals(other: Any?): Boolean {
+                        if (this === other) {
+                            return true
+                        }
+
+                        return other is SandboxesProxyAzureWorkloadIdentityConfig &&
+                            clientId == other.clientId &&
+                            tenantId == other.tenantId &&
+                            resources == other.resources &&
+                            subjectScope == other.subjectScope &&
+                            additionalProperties == other.additionalProperties
+                    }
+
+                    private val hashCode: Int by lazy {
+                        Objects.hash(
+                            clientId,
+                            tenantId,
+                            resources,
+                            subjectScope,
+                            additionalProperties,
+                        )
+                    }
+
+                    override fun hashCode(): Int = hashCode
+
+                    override fun toString() =
+                        "SandboxesProxyAzureWorkloadIdentityConfig{clientId=$clientId, tenantId=$tenantId, resources=$resources, subjectScope=$subjectScope, additionalProperties=$additionalProperties}"
+                }
+
+                class SandboxesProxyAzureAccountKeyConfig
+                @JsonCreator(mode = JsonCreator.Mode.DISABLED)
+                private constructor(
+                    private val accountKey: JsonField<AccountKey>,
+                    private val storageAccount: JsonField<String>,
+                    private val additionalProperties: MutableMap<String, JsonValue>,
+                ) {
+
+                    @JsonCreator
+                    private constructor(
+                        @JsonProperty("account_key")
+                        @ExcludeMissing
+                        accountKey: JsonField<AccountKey> = JsonMissing.of(),
+                        @JsonProperty("storage_account")
+                        @ExcludeMissing
+                        storageAccount: JsonField<String> = JsonMissing.of(),
+                    ) : this(accountKey, storageAccount, mutableMapOf())
+
+                    /**
+                     * @throws LangChainInvalidDataException if the JSON field has an unexpected
+                     *   type or is unexpectedly missing or null (e.g. if the server responded with
+                     *   an unexpected value).
+                     */
+                    fun accountKey(): AccountKey = accountKey.getRequired("account_key")
+
+                    /**
+                     * StorageAccount is the storage account static credentials authenticate to:
+                     * requests to its blob, dfs, queue, table and file endpoints. Requires exactly
+                     * one of account_key (requests are signed with SharedKey) or sas_token
+                     * (appended to each request).
+                     *
+                     * @throws LangChainInvalidDataException if the JSON field has an unexpected
+                     *   type or is unexpectedly missing or null (e.g. if the server responded with
+                     *   an unexpected value).
+                     */
+                    fun storageAccount(): String = storageAccount.getRequired("storage_account")
+
+                    /**
+                     * Returns the raw JSON value of [accountKey].
+                     *
+                     * Unlike [accountKey], this method doesn't throw if the JSON field has an
+                     * unexpected type.
+                     */
+                    @JsonProperty("account_key")
+                    @ExcludeMissing
+                    fun _accountKey(): JsonField<AccountKey> = accountKey
+
+                    /**
+                     * Returns the raw JSON value of [storageAccount].
+                     *
+                     * Unlike [storageAccount], this method doesn't throw if the JSON field has an
+                     * unexpected type.
+                     */
+                    @JsonProperty("storage_account")
+                    @ExcludeMissing
+                    fun _storageAccount(): JsonField<String> = storageAccount
+
+                    @JsonAnySetter
+                    private fun putAdditionalProperty(key: String, value: JsonValue) {
+                        additionalProperties.put(key, value)
+                    }
+
+                    @JsonAnyGetter
+                    @ExcludeMissing
+                    fun _additionalProperties(): Map<String, JsonValue> =
+                        Collections.unmodifiableMap(additionalProperties)
+
+                    fun toBuilder() = Builder().from(this)
+
+                    companion object {
+
+                        /**
+                         * Returns a mutable builder for constructing an instance of
+                         * [SandboxesProxyAzureAccountKeyConfig].
+                         *
+                         * The following fields are required:
+                         * ```java
+                         * .accountKey()
+                         * .storageAccount()
+                         * ```
+                         */
+                        @JvmStatic fun builder() = Builder()
+                    }
+
+                    /** A builder for [SandboxesProxyAzureAccountKeyConfig]. */
+                    class Builder internal constructor() {
+
+                        private var accountKey: JsonField<AccountKey>? = null
+                        private var storageAccount: JsonField<String>? = null
+                        private var additionalProperties: MutableMap<String, JsonValue> =
+                            mutableMapOf()
+
+                        @JvmSynthetic
+                        internal fun from(
+                            sandboxesProxyAzureAccountKeyConfig: SandboxesProxyAzureAccountKeyConfig
+                        ) = apply {
+                            accountKey = sandboxesProxyAzureAccountKeyConfig.accountKey
+                            storageAccount = sandboxesProxyAzureAccountKeyConfig.storageAccount
+                            additionalProperties =
+                                sandboxesProxyAzureAccountKeyConfig.additionalProperties
+                                    .toMutableMap()
+                        }
+
+                        fun accountKey(accountKey: AccountKey) =
+                            accountKey(JsonField.of(accountKey))
+
+                        /**
+                         * Sets [Builder.accountKey] to an arbitrary JSON value.
+                         *
+                         * You should usually call [Builder.accountKey] with a well-typed
+                         * [AccountKey] value instead. This method is primarily for setting the
+                         * field to an undocumented or not yet supported value.
+                         */
+                        fun accountKey(accountKey: JsonField<AccountKey>) = apply {
+                            this.accountKey = accountKey
+                        }
+
+                        /**
+                         * StorageAccount is the storage account static credentials authenticate to:
+                         * requests to its blob, dfs, queue, table and file endpoints. Requires
+                         * exactly one of account_key (requests are signed with SharedKey) or
+                         * sas_token (appended to each request).
+                         */
+                        fun storageAccount(storageAccount: String) =
+                            storageAccount(JsonField.of(storageAccount))
+
+                        /**
+                         * Sets [Builder.storageAccount] to an arbitrary JSON value.
+                         *
+                         * You should usually call [Builder.storageAccount] with a well-typed
+                         * [String] value instead. This method is primarily for setting the field to
+                         * an undocumented or not yet supported value.
+                         */
+                        fun storageAccount(storageAccount: JsonField<String>) = apply {
+                            this.storageAccount = storageAccount
+                        }
+
+                        fun additionalProperties(additionalProperties: Map<String, JsonValue>) =
+                            apply {
+                                this.additionalProperties.clear()
+                                putAllAdditionalProperties(additionalProperties)
+                            }
+
+                        fun putAdditionalProperty(key: String, value: JsonValue) = apply {
+                            additionalProperties.put(key, value)
+                        }
+
+                        fun putAllAdditionalProperties(
+                            additionalProperties: Map<String, JsonValue>
+                        ) = apply { this.additionalProperties.putAll(additionalProperties) }
+
+                        fun removeAdditionalProperty(key: String) = apply {
+                            additionalProperties.remove(key)
+                        }
+
+                        fun removeAllAdditionalProperties(keys: Set<String>) = apply {
+                            keys.forEach(::removeAdditionalProperty)
+                        }
+
+                        /**
+                         * Returns an immutable instance of [SandboxesProxyAzureAccountKeyConfig].
+                         *
+                         * Further updates to this [Builder] will not mutate the returned instance.
+                         *
+                         * The following fields are required:
+                         * ```java
+                         * .accountKey()
+                         * .storageAccount()
+                         * ```
+                         *
+                         * @throws IllegalStateException if any required field is unset.
+                         */
+                        fun build(): SandboxesProxyAzureAccountKeyConfig =
+                            SandboxesProxyAzureAccountKeyConfig(
+                                checkRequired("accountKey", accountKey),
+                                checkRequired("storageAccount", storageAccount),
+                                additionalProperties.toMutableMap(),
+                            )
+                    }
+
+                    private var validated: Boolean = false
+
+                    /**
+                     * Validates that the types of all values in this object match their expected
+                     * types recursively.
+                     *
+                     * This method is _not_ forwards compatible with new types from the API for
+                     * existing fields.
+                     *
+                     * @throws LangChainInvalidDataException if any value type in this object
+                     *   doesn't match its expected type.
+                     */
+                    fun validate(): SandboxesProxyAzureAccountKeyConfig = apply {
+                        if (validated) {
+                            return@apply
+                        }
+
+                        accountKey().validate()
+                        storageAccount()
+                        validated = true
+                    }
+
+                    fun isValid(): Boolean =
+                        try {
+                            validate()
+                            true
+                        } catch (e: LangChainInvalidDataException) {
+                            false
+                        }
+
+                    /**
+                     * Returns a score indicating how many valid values are contained in this object
+                     * recursively.
+                     *
+                     * Used for best match union deserialization.
+                     */
+                    @JvmSynthetic
+                    internal fun validity(): Int =
+                        (accountKey.asKnown().getOrNull()?.validity() ?: 0) +
+                            (if (storageAccount.asKnown().isPresent) 1 else 0)
+
+                    class AccountKey
+                    @JsonCreator(mode = JsonCreator.Mode.DISABLED)
+                    private constructor(
+                        private val type: JsonField<Type>,
+                        private val isSet: JsonField<Boolean>,
+                        private val value: JsonField<String>,
+                        private val additionalProperties: MutableMap<String, JsonValue>,
+                    ) {
+
+                        @JsonCreator
+                        private constructor(
+                            @JsonProperty("type")
+                            @ExcludeMissing
+                            type: JsonField<Type> = JsonMissing.of(),
+                            @JsonProperty("is_set")
+                            @ExcludeMissing
+                            isSet: JsonField<Boolean> = JsonMissing.of(),
+                            @JsonProperty("value")
+                            @ExcludeMissing
+                            value: JsonField<String> = JsonMissing.of(),
+                        ) : this(type, isSet, value, mutableMapOf())
+
+                        /**
+                         * @throws LangChainInvalidDataException if the JSON field has an unexpected
+                         *   type or is unexpectedly missing or null (e.g. if the server responded
+                         *   with an unexpected value).
+                         */
+                        fun type(): Type = type.getRequired("type")
+
+                        /**
+                         * @throws LangChainInvalidDataException if the JSON field has an unexpected
+                         *   type (e.g. if the server responded with an unexpected value).
+                         */
+                        fun isSet(): Optional<Boolean> = isSet.getOptional("is_set")
+
+                        /**
+                         * @throws LangChainInvalidDataException if the JSON field has an unexpected
+                         *   type (e.g. if the server responded with an unexpected value).
+                         */
+                        fun value(): Optional<String> = value.getOptional("value")
+
+                        /**
+                         * Returns the raw JSON value of [type].
+                         *
+                         * Unlike [type], this method doesn't throw if the JSON field has an
+                         * unexpected type.
+                         */
+                        @JsonProperty("type") @ExcludeMissing fun _type(): JsonField<Type> = type
+
+                        /**
+                         * Returns the raw JSON value of [isSet].
+                         *
+                         * Unlike [isSet], this method doesn't throw if the JSON field has an
+                         * unexpected type.
+                         */
+                        @JsonProperty("is_set")
+                        @ExcludeMissing
+                        fun _isSet(): JsonField<Boolean> = isSet
+
+                        /**
+                         * Returns the raw JSON value of [value].
+                         *
+                         * Unlike [value], this method doesn't throw if the JSON field has an
+                         * unexpected type.
+                         */
+                        @JsonProperty("value")
+                        @ExcludeMissing
+                        fun _value(): JsonField<String> = value
+
+                        @JsonAnySetter
+                        private fun putAdditionalProperty(key: String, value: JsonValue) {
+                            additionalProperties.put(key, value)
+                        }
+
+                        @JsonAnyGetter
+                        @ExcludeMissing
+                        fun _additionalProperties(): Map<String, JsonValue> =
+                            Collections.unmodifiableMap(additionalProperties)
+
+                        fun toBuilder() = Builder().from(this)
+
+                        companion object {
+
+                            /**
+                             * Returns a mutable builder for constructing an instance of
+                             * [AccountKey].
+                             *
+                             * The following fields are required:
+                             * ```java
+                             * .type()
+                             * ```
+                             */
+                            @JvmStatic fun builder() = Builder()
+                        }
+
+                        /** A builder for [AccountKey]. */
+                        class Builder internal constructor() {
+
+                            private var type: JsonField<Type>? = null
+                            private var isSet: JsonField<Boolean> = JsonMissing.of()
+                            private var value: JsonField<String> = JsonMissing.of()
+                            private var additionalProperties: MutableMap<String, JsonValue> =
+                                mutableMapOf()
+
+                            @JvmSynthetic
+                            internal fun from(accountKey: AccountKey) = apply {
+                                type = accountKey.type
+                                isSet = accountKey.isSet
+                                value = accountKey.value
+                                additionalProperties =
+                                    accountKey.additionalProperties.toMutableMap()
+                            }
+
+                            fun type(type: Type) = type(JsonField.of(type))
+
+                            /**
+                             * Sets [Builder.type] to an arbitrary JSON value.
+                             *
+                             * You should usually call [Builder.type] with a well-typed [Type] value
+                             * instead. This method is primarily for setting the field to an
+                             * undocumented or not yet supported value.
+                             */
+                            fun type(type: JsonField<Type>) = apply { this.type = type }
+
+                            fun isSet(isSet: Boolean) = isSet(JsonField.of(isSet))
+
+                            /**
+                             * Sets [Builder.isSet] to an arbitrary JSON value.
+                             *
+                             * You should usually call [Builder.isSet] with a well-typed [Boolean]
+                             * value instead. This method is primarily for setting the field to an
+                             * undocumented or not yet supported value.
+                             */
+                            fun isSet(isSet: JsonField<Boolean>) = apply { this.isSet = isSet }
+
+                            fun value(value: String) = value(JsonField.of(value))
+
+                            /**
+                             * Sets [Builder.value] to an arbitrary JSON value.
+                             *
+                             * You should usually call [Builder.value] with a well-typed [String]
+                             * value instead. This method is primarily for setting the field to an
+                             * undocumented or not yet supported value.
+                             */
+                            fun value(value: JsonField<String>) = apply { this.value = value }
+
+                            fun additionalProperties(additionalProperties: Map<String, JsonValue>) =
+                                apply {
+                                    this.additionalProperties.clear()
+                                    putAllAdditionalProperties(additionalProperties)
+                                }
+
+                            fun putAdditionalProperty(key: String, value: JsonValue) = apply {
+                                additionalProperties.put(key, value)
+                            }
+
+                            fun putAllAdditionalProperties(
+                                additionalProperties: Map<String, JsonValue>
+                            ) = apply { this.additionalProperties.putAll(additionalProperties) }
+
+                            fun removeAdditionalProperty(key: String) = apply {
+                                additionalProperties.remove(key)
+                            }
+
+                            fun removeAllAdditionalProperties(keys: Set<String>) = apply {
+                                keys.forEach(::removeAdditionalProperty)
+                            }
+
+                            /**
+                             * Returns an immutable instance of [AccountKey].
+                             *
+                             * Further updates to this [Builder] will not mutate the returned
+                             * instance.
+                             *
+                             * The following fields are required:
+                             * ```java
+                             * .type()
+                             * ```
+                             *
+                             * @throws IllegalStateException if any required field is unset.
+                             */
+                            fun build(): AccountKey =
+                                AccountKey(
+                                    checkRequired("type", type),
+                                    isSet,
+                                    value,
+                                    additionalProperties.toMutableMap(),
+                                )
+                        }
+
+                        private var validated: Boolean = false
+
+                        /**
+                         * Validates that the types of all values in this object match their
+                         * expected types recursively.
+                         *
+                         * This method is _not_ forwards compatible with new types from the API for
+                         * existing fields.
+                         *
+                         * @throws LangChainInvalidDataException if any value type in this object
+                         *   doesn't match its expected type.
+                         */
+                        fun validate(): AccountKey = apply {
+                            if (validated) {
+                                return@apply
+                            }
+
+                            type().validate()
+                            isSet()
+                            value()
+                            validated = true
+                        }
+
+                        fun isValid(): Boolean =
+                            try {
+                                validate()
+                                true
+                            } catch (e: LangChainInvalidDataException) {
+                                false
+                            }
+
+                        /**
+                         * Returns a score indicating how many valid values are contained in this
+                         * object recursively.
+                         *
+                         * Used for best match union deserialization.
+                         */
+                        @JvmSynthetic
+                        internal fun validity(): Int =
+                            (type.asKnown().getOrNull()?.validity() ?: 0) +
+                                (if (isSet.asKnown().isPresent) 1 else 0) +
+                                (if (value.asKnown().isPresent) 1 else 0)
+
+                        class Type
+                        @JsonCreator
+                        private constructor(private val value: JsonField<String>) : Enum {
+
+                            /**
+                             * Returns this class instance's raw value.
+                             *
+                             * This is usually only useful if this instance was deserialized from
+                             * data that doesn't match any known member, and you want to know that
+                             * value. For example, if the SDK is on an older version than the API,
+                             * then the API may respond with new members that the SDK is unaware of.
+                             */
+                            @com.fasterxml.jackson.annotation.JsonValue
+                            fun _value(): JsonField<String> = value
+
+                            companion object {
+
+                                @JvmField val PLAINTEXT = of("plaintext")
+
+                                @JvmField val OPAQUE = of("opaque")
+
+                                @JvmField val WORKSPACE_SECRET = of("workspace_secret")
+
+                                @JvmStatic fun of(value: String) = Type(JsonField.of(value))
+                            }
+
+                            /** An enum containing [Type]'s known values. */
+                            enum class Known {
+                                PLAINTEXT,
+                                OPAQUE,
+                                WORKSPACE_SECRET,
+                            }
+
+                            /**
+                             * An enum containing [Type]'s known values, as well as an [_UNKNOWN]
+                             * member.
+                             *
+                             * An instance of [Type] can contain an unknown value in a couple of
+                             * cases:
+                             * - It was deserialized from data that doesn't match any known member.
+                             *   For example, if the SDK is on an older version than the API, then
+                             *   the API may respond with new members that the SDK is unaware of.
+                             * - It was constructed with an arbitrary value using the [of] method.
+                             */
+                            enum class Value {
+                                PLAINTEXT,
+                                OPAQUE,
+                                WORKSPACE_SECRET,
+                                /**
+                                 * An enum member indicating that [Type] was instantiated with an
+                                 * unknown value.
+                                 */
+                                _UNKNOWN,
+                            }
+
+                            /**
+                             * Returns an enum member corresponding to this class instance's value,
+                             * or [Value._UNKNOWN] if the class was instantiated with an unknown
+                             * value.
+                             *
+                             * Use the [known] method instead if you're certain the value is always
+                             * known or if you want to throw for the unknown case.
+                             */
+                            fun value(): Value =
+                                when (this) {
+                                    PLAINTEXT -> Value.PLAINTEXT
+                                    OPAQUE -> Value.OPAQUE
+                                    WORKSPACE_SECRET -> Value.WORKSPACE_SECRET
+                                    else -> Value._UNKNOWN
+                                }
+
+                            /**
+                             * Returns an enum member corresponding to this class instance's value.
+                             *
+                             * Use the [value] method instead if you're uncertain the value is
+                             * always known and don't want to throw for the unknown case.
+                             *
+                             * @throws LangChainInvalidDataException if this class instance's value
+                             *   is a not a known member.
+                             */
+                            fun known(): Known =
+                                when (this) {
+                                    PLAINTEXT -> Known.PLAINTEXT
+                                    OPAQUE -> Known.OPAQUE
+                                    WORKSPACE_SECRET -> Known.WORKSPACE_SECRET
+                                    else ->
+                                        throw LangChainInvalidDataException("Unknown Type: $value")
+                                }
+
+                            /**
+                             * Returns this class instance's primitive wire representation.
+                             *
+                             * This differs from the [toString] method because that method is
+                             * primarily for debugging and generally doesn't throw.
+                             *
+                             * @throws LangChainInvalidDataException if this class instance's value
+                             *   does not have the expected primitive type.
+                             */
+                            fun asString(): String =
+                                _value().asString().orElseThrow {
+                                    LangChainInvalidDataException("Value is not a String")
+                                }
+
+                            private var validated: Boolean = false
+
+                            /**
+                             * Validates that the types of all values in this object match their
+                             * expected types recursively.
+                             *
+                             * This method is _not_ forwards compatible with new types from the API
+                             * for existing fields.
+                             *
+                             * @throws LangChainInvalidDataException if any value type in this
+                             *   object doesn't match its expected type.
+                             */
+                            fun validate(): Type = apply {
+                                if (validated) {
+                                    return@apply
+                                }
+
+                                known()
+                                validated = true
+                            }
+
+                            fun isValid(): Boolean =
+                                try {
+                                    validate()
+                                    true
+                                } catch (e: LangChainInvalidDataException) {
+                                    false
+                                }
+
+                            /**
+                             * Returns a score indicating how many valid values are contained in
+                             * this object recursively.
+                             *
+                             * Used for best match union deserialization.
+                             */
+                            @JvmSynthetic
+                            internal fun validity(): Int = if (value() == Value._UNKNOWN) 0 else 1
+
+                            override fun equals(other: Any?): Boolean {
+                                if (this === other) {
+                                    return true
+                                }
+
+                                return other is Type && value == other.value
+                            }
+
+                            override fun hashCode() = value.hashCode()
+
+                            override fun toString() = value.toString()
+                        }
+
+                        override fun equals(other: Any?): Boolean {
+                            if (this === other) {
+                                return true
+                            }
+
+                            return other is AccountKey &&
+                                type == other.type &&
+                                isSet == other.isSet &&
+                                value == other.value &&
+                                additionalProperties == other.additionalProperties
+                        }
+
+                        private val hashCode: Int by lazy {
+                            Objects.hash(type, isSet, value, additionalProperties)
+                        }
+
+                        override fun hashCode(): Int = hashCode
+
+                        override fun toString() =
+                            "AccountKey{type=$type, isSet=$isSet, value=$value, additionalProperties=$additionalProperties}"
+                    }
+
+                    override fun equals(other: Any?): Boolean {
+                        if (this === other) {
+                            return true
+                        }
+
+                        return other is SandboxesProxyAzureAccountKeyConfig &&
+                            accountKey == other.accountKey &&
+                            storageAccount == other.storageAccount &&
+                            additionalProperties == other.additionalProperties
+                    }
+
+                    private val hashCode: Int by lazy {
+                        Objects.hash(accountKey, storageAccount, additionalProperties)
+                    }
+
+                    override fun hashCode(): Int = hashCode
+
+                    override fun toString() =
+                        "SandboxesProxyAzureAccountKeyConfig{accountKey=$accountKey, storageAccount=$storageAccount, additionalProperties=$additionalProperties}"
+                }
+
+                class SandboxesProxyAzureSasConfig
+                @JsonCreator(mode = JsonCreator.Mode.DISABLED)
+                private constructor(
+                    private val sasToken: JsonField<SasToken>,
+                    private val storageAccount: JsonField<String>,
+                    private val additionalProperties: MutableMap<String, JsonValue>,
+                ) {
+
+                    @JsonCreator
+                    private constructor(
+                        @JsonProperty("sas_token")
+                        @ExcludeMissing
+                        sasToken: JsonField<SasToken> = JsonMissing.of(),
+                        @JsonProperty("storage_account")
+                        @ExcludeMissing
+                        storageAccount: JsonField<String> = JsonMissing.of(),
+                    ) : this(sasToken, storageAccount, mutableMapOf())
+
+                    /**
+                     * @throws LangChainInvalidDataException if the JSON field has an unexpected
+                     *   type or is unexpectedly missing or null (e.g. if the server responded with
+                     *   an unexpected value).
+                     */
+                    fun sasToken(): SasToken = sasToken.getRequired("sas_token")
+
+                    /**
+                     * StorageAccount is the storage account static credentials authenticate to:
+                     * requests to its blob, dfs, queue, table and file endpoints. Requires exactly
+                     * one of account_key (requests are signed with SharedKey) or sas_token
+                     * (appended to each request).
+                     *
+                     * @throws LangChainInvalidDataException if the JSON field has an unexpected
+                     *   type or is unexpectedly missing or null (e.g. if the server responded with
+                     *   an unexpected value).
+                     */
+                    fun storageAccount(): String = storageAccount.getRequired("storage_account")
+
+                    /**
+                     * Returns the raw JSON value of [sasToken].
+                     *
+                     * Unlike [sasToken], this method doesn't throw if the JSON field has an
+                     * unexpected type.
+                     */
+                    @JsonProperty("sas_token")
+                    @ExcludeMissing
+                    fun _sasToken(): JsonField<SasToken> = sasToken
+
+                    /**
+                     * Returns the raw JSON value of [storageAccount].
+                     *
+                     * Unlike [storageAccount], this method doesn't throw if the JSON field has an
+                     * unexpected type.
+                     */
+                    @JsonProperty("storage_account")
+                    @ExcludeMissing
+                    fun _storageAccount(): JsonField<String> = storageAccount
+
+                    @JsonAnySetter
+                    private fun putAdditionalProperty(key: String, value: JsonValue) {
+                        additionalProperties.put(key, value)
+                    }
+
+                    @JsonAnyGetter
+                    @ExcludeMissing
+                    fun _additionalProperties(): Map<String, JsonValue> =
+                        Collections.unmodifiableMap(additionalProperties)
+
+                    fun toBuilder() = Builder().from(this)
+
+                    companion object {
+
+                        /**
+                         * Returns a mutable builder for constructing an instance of
+                         * [SandboxesProxyAzureSasConfig].
+                         *
+                         * The following fields are required:
+                         * ```java
+                         * .sasToken()
+                         * .storageAccount()
+                         * ```
+                         */
+                        @JvmStatic fun builder() = Builder()
+                    }
+
+                    /** A builder for [SandboxesProxyAzureSasConfig]. */
+                    class Builder internal constructor() {
+
+                        private var sasToken: JsonField<SasToken>? = null
+                        private var storageAccount: JsonField<String>? = null
+                        private var additionalProperties: MutableMap<String, JsonValue> =
+                            mutableMapOf()
+
+                        @JvmSynthetic
+                        internal fun from(
+                            sandboxesProxyAzureSasConfig: SandboxesProxyAzureSasConfig
+                        ) = apply {
+                            sasToken = sandboxesProxyAzureSasConfig.sasToken
+                            storageAccount = sandboxesProxyAzureSasConfig.storageAccount
+                            additionalProperties =
+                                sandboxesProxyAzureSasConfig.additionalProperties.toMutableMap()
+                        }
+
+                        fun sasToken(sasToken: SasToken) = sasToken(JsonField.of(sasToken))
+
+                        /**
+                         * Sets [Builder.sasToken] to an arbitrary JSON value.
+                         *
+                         * You should usually call [Builder.sasToken] with a well-typed [SasToken]
+                         * value instead. This method is primarily for setting the field to an
+                         * undocumented or not yet supported value.
+                         */
+                        fun sasToken(sasToken: JsonField<SasToken>) = apply {
+                            this.sasToken = sasToken
+                        }
+
+                        /**
+                         * StorageAccount is the storage account static credentials authenticate to:
+                         * requests to its blob, dfs, queue, table and file endpoints. Requires
+                         * exactly one of account_key (requests are signed with SharedKey) or
+                         * sas_token (appended to each request).
+                         */
+                        fun storageAccount(storageAccount: String) =
+                            storageAccount(JsonField.of(storageAccount))
+
+                        /**
+                         * Sets [Builder.storageAccount] to an arbitrary JSON value.
+                         *
+                         * You should usually call [Builder.storageAccount] with a well-typed
+                         * [String] value instead. This method is primarily for setting the field to
+                         * an undocumented or not yet supported value.
+                         */
+                        fun storageAccount(storageAccount: JsonField<String>) = apply {
+                            this.storageAccount = storageAccount
+                        }
+
+                        fun additionalProperties(additionalProperties: Map<String, JsonValue>) =
+                            apply {
+                                this.additionalProperties.clear()
+                                putAllAdditionalProperties(additionalProperties)
+                            }
+
+                        fun putAdditionalProperty(key: String, value: JsonValue) = apply {
+                            additionalProperties.put(key, value)
+                        }
+
+                        fun putAllAdditionalProperties(
+                            additionalProperties: Map<String, JsonValue>
+                        ) = apply { this.additionalProperties.putAll(additionalProperties) }
+
+                        fun removeAdditionalProperty(key: String) = apply {
+                            additionalProperties.remove(key)
+                        }
+
+                        fun removeAllAdditionalProperties(keys: Set<String>) = apply {
+                            keys.forEach(::removeAdditionalProperty)
+                        }
+
+                        /**
+                         * Returns an immutable instance of [SandboxesProxyAzureSasConfig].
+                         *
+                         * Further updates to this [Builder] will not mutate the returned instance.
+                         *
+                         * The following fields are required:
+                         * ```java
+                         * .sasToken()
+                         * .storageAccount()
+                         * ```
+                         *
+                         * @throws IllegalStateException if any required field is unset.
+                         */
+                        fun build(): SandboxesProxyAzureSasConfig =
+                            SandboxesProxyAzureSasConfig(
+                                checkRequired("sasToken", sasToken),
+                                checkRequired("storageAccount", storageAccount),
+                                additionalProperties.toMutableMap(),
+                            )
+                    }
+
+                    private var validated: Boolean = false
+
+                    /**
+                     * Validates that the types of all values in this object match their expected
+                     * types recursively.
+                     *
+                     * This method is _not_ forwards compatible with new types from the API for
+                     * existing fields.
+                     *
+                     * @throws LangChainInvalidDataException if any value type in this object
+                     *   doesn't match its expected type.
+                     */
+                    fun validate(): SandboxesProxyAzureSasConfig = apply {
+                        if (validated) {
+                            return@apply
+                        }
+
+                        sasToken().validate()
+                        storageAccount()
+                        validated = true
+                    }
+
+                    fun isValid(): Boolean =
+                        try {
+                            validate()
+                            true
+                        } catch (e: LangChainInvalidDataException) {
+                            false
+                        }
+
+                    /**
+                     * Returns a score indicating how many valid values are contained in this object
+                     * recursively.
+                     *
+                     * Used for best match union deserialization.
+                     */
+                    @JvmSynthetic
+                    internal fun validity(): Int =
+                        (sasToken.asKnown().getOrNull()?.validity() ?: 0) +
+                            (if (storageAccount.asKnown().isPresent) 1 else 0)
+
+                    class SasToken
+                    @JsonCreator(mode = JsonCreator.Mode.DISABLED)
+                    private constructor(
+                        private val type: JsonField<Type>,
+                        private val isSet: JsonField<Boolean>,
+                        private val value: JsonField<String>,
+                        private val additionalProperties: MutableMap<String, JsonValue>,
+                    ) {
+
+                        @JsonCreator
+                        private constructor(
+                            @JsonProperty("type")
+                            @ExcludeMissing
+                            type: JsonField<Type> = JsonMissing.of(),
+                            @JsonProperty("is_set")
+                            @ExcludeMissing
+                            isSet: JsonField<Boolean> = JsonMissing.of(),
+                            @JsonProperty("value")
+                            @ExcludeMissing
+                            value: JsonField<String> = JsonMissing.of(),
+                        ) : this(type, isSet, value, mutableMapOf())
+
+                        /**
+                         * @throws LangChainInvalidDataException if the JSON field has an unexpected
+                         *   type or is unexpectedly missing or null (e.g. if the server responded
+                         *   with an unexpected value).
+                         */
+                        fun type(): Type = type.getRequired("type")
+
+                        /**
+                         * @throws LangChainInvalidDataException if the JSON field has an unexpected
+                         *   type (e.g. if the server responded with an unexpected value).
+                         */
+                        fun isSet(): Optional<Boolean> = isSet.getOptional("is_set")
+
+                        /**
+                         * @throws LangChainInvalidDataException if the JSON field has an unexpected
+                         *   type (e.g. if the server responded with an unexpected value).
+                         */
+                        fun value(): Optional<String> = value.getOptional("value")
+
+                        /**
+                         * Returns the raw JSON value of [type].
+                         *
+                         * Unlike [type], this method doesn't throw if the JSON field has an
+                         * unexpected type.
+                         */
+                        @JsonProperty("type") @ExcludeMissing fun _type(): JsonField<Type> = type
+
+                        /**
+                         * Returns the raw JSON value of [isSet].
+                         *
+                         * Unlike [isSet], this method doesn't throw if the JSON field has an
+                         * unexpected type.
+                         */
+                        @JsonProperty("is_set")
+                        @ExcludeMissing
+                        fun _isSet(): JsonField<Boolean> = isSet
+
+                        /**
+                         * Returns the raw JSON value of [value].
+                         *
+                         * Unlike [value], this method doesn't throw if the JSON field has an
+                         * unexpected type.
+                         */
+                        @JsonProperty("value")
+                        @ExcludeMissing
+                        fun _value(): JsonField<String> = value
+
+                        @JsonAnySetter
+                        private fun putAdditionalProperty(key: String, value: JsonValue) {
+                            additionalProperties.put(key, value)
+                        }
+
+                        @JsonAnyGetter
+                        @ExcludeMissing
+                        fun _additionalProperties(): Map<String, JsonValue> =
+                            Collections.unmodifiableMap(additionalProperties)
+
+                        fun toBuilder() = Builder().from(this)
+
+                        companion object {
+
+                            /**
+                             * Returns a mutable builder for constructing an instance of [SasToken].
+                             *
+                             * The following fields are required:
+                             * ```java
+                             * .type()
+                             * ```
+                             */
+                            @JvmStatic fun builder() = Builder()
+                        }
+
+                        /** A builder for [SasToken]. */
+                        class Builder internal constructor() {
+
+                            private var type: JsonField<Type>? = null
+                            private var isSet: JsonField<Boolean> = JsonMissing.of()
+                            private var value: JsonField<String> = JsonMissing.of()
+                            private var additionalProperties: MutableMap<String, JsonValue> =
+                                mutableMapOf()
+
+                            @JvmSynthetic
+                            internal fun from(sasToken: SasToken) = apply {
+                                type = sasToken.type
+                                isSet = sasToken.isSet
+                                value = sasToken.value
+                                additionalProperties = sasToken.additionalProperties.toMutableMap()
+                            }
+
+                            fun type(type: Type) = type(JsonField.of(type))
+
+                            /**
+                             * Sets [Builder.type] to an arbitrary JSON value.
+                             *
+                             * You should usually call [Builder.type] with a well-typed [Type] value
+                             * instead. This method is primarily for setting the field to an
+                             * undocumented or not yet supported value.
+                             */
+                            fun type(type: JsonField<Type>) = apply { this.type = type }
+
+                            fun isSet(isSet: Boolean) = isSet(JsonField.of(isSet))
+
+                            /**
+                             * Sets [Builder.isSet] to an arbitrary JSON value.
+                             *
+                             * You should usually call [Builder.isSet] with a well-typed [Boolean]
+                             * value instead. This method is primarily for setting the field to an
+                             * undocumented or not yet supported value.
+                             */
+                            fun isSet(isSet: JsonField<Boolean>) = apply { this.isSet = isSet }
+
+                            fun value(value: String) = value(JsonField.of(value))
+
+                            /**
+                             * Sets [Builder.value] to an arbitrary JSON value.
+                             *
+                             * You should usually call [Builder.value] with a well-typed [String]
+                             * value instead. This method is primarily for setting the field to an
+                             * undocumented or not yet supported value.
+                             */
+                            fun value(value: JsonField<String>) = apply { this.value = value }
+
+                            fun additionalProperties(additionalProperties: Map<String, JsonValue>) =
+                                apply {
+                                    this.additionalProperties.clear()
+                                    putAllAdditionalProperties(additionalProperties)
+                                }
+
+                            fun putAdditionalProperty(key: String, value: JsonValue) = apply {
+                                additionalProperties.put(key, value)
+                            }
+
+                            fun putAllAdditionalProperties(
+                                additionalProperties: Map<String, JsonValue>
+                            ) = apply { this.additionalProperties.putAll(additionalProperties) }
+
+                            fun removeAdditionalProperty(key: String) = apply {
+                                additionalProperties.remove(key)
+                            }
+
+                            fun removeAllAdditionalProperties(keys: Set<String>) = apply {
+                                keys.forEach(::removeAdditionalProperty)
+                            }
+
+                            /**
+                             * Returns an immutable instance of [SasToken].
+                             *
+                             * Further updates to this [Builder] will not mutate the returned
+                             * instance.
+                             *
+                             * The following fields are required:
+                             * ```java
+                             * .type()
+                             * ```
+                             *
+                             * @throws IllegalStateException if any required field is unset.
+                             */
+                            fun build(): SasToken =
+                                SasToken(
+                                    checkRequired("type", type),
+                                    isSet,
+                                    value,
+                                    additionalProperties.toMutableMap(),
+                                )
+                        }
+
+                        private var validated: Boolean = false
+
+                        /**
+                         * Validates that the types of all values in this object match their
+                         * expected types recursively.
+                         *
+                         * This method is _not_ forwards compatible with new types from the API for
+                         * existing fields.
+                         *
+                         * @throws LangChainInvalidDataException if any value type in this object
+                         *   doesn't match its expected type.
+                         */
+                        fun validate(): SasToken = apply {
+                            if (validated) {
+                                return@apply
+                            }
+
+                            type().validate()
+                            isSet()
+                            value()
+                            validated = true
+                        }
+
+                        fun isValid(): Boolean =
+                            try {
+                                validate()
+                                true
+                            } catch (e: LangChainInvalidDataException) {
+                                false
+                            }
+
+                        /**
+                         * Returns a score indicating how many valid values are contained in this
+                         * object recursively.
+                         *
+                         * Used for best match union deserialization.
+                         */
+                        @JvmSynthetic
+                        internal fun validity(): Int =
+                            (type.asKnown().getOrNull()?.validity() ?: 0) +
+                                (if (isSet.asKnown().isPresent) 1 else 0) +
+                                (if (value.asKnown().isPresent) 1 else 0)
+
+                        class Type
+                        @JsonCreator
+                        private constructor(private val value: JsonField<String>) : Enum {
+
+                            /**
+                             * Returns this class instance's raw value.
+                             *
+                             * This is usually only useful if this instance was deserialized from
+                             * data that doesn't match any known member, and you want to know that
+                             * value. For example, if the SDK is on an older version than the API,
+                             * then the API may respond with new members that the SDK is unaware of.
+                             */
+                            @com.fasterxml.jackson.annotation.JsonValue
+                            fun _value(): JsonField<String> = value
+
+                            companion object {
+
+                                @JvmField val PLAINTEXT = of("plaintext")
+
+                                @JvmField val OPAQUE = of("opaque")
+
+                                @JvmField val WORKSPACE_SECRET = of("workspace_secret")
+
+                                @JvmStatic fun of(value: String) = Type(JsonField.of(value))
+                            }
+
+                            /** An enum containing [Type]'s known values. */
+                            enum class Known {
+                                PLAINTEXT,
+                                OPAQUE,
+                                WORKSPACE_SECRET,
+                            }
+
+                            /**
+                             * An enum containing [Type]'s known values, as well as an [_UNKNOWN]
+                             * member.
+                             *
+                             * An instance of [Type] can contain an unknown value in a couple of
+                             * cases:
+                             * - It was deserialized from data that doesn't match any known member.
+                             *   For example, if the SDK is on an older version than the API, then
+                             *   the API may respond with new members that the SDK is unaware of.
+                             * - It was constructed with an arbitrary value using the [of] method.
+                             */
+                            enum class Value {
+                                PLAINTEXT,
+                                OPAQUE,
+                                WORKSPACE_SECRET,
+                                /**
+                                 * An enum member indicating that [Type] was instantiated with an
+                                 * unknown value.
+                                 */
+                                _UNKNOWN,
+                            }
+
+                            /**
+                             * Returns an enum member corresponding to this class instance's value,
+                             * or [Value._UNKNOWN] if the class was instantiated with an unknown
+                             * value.
+                             *
+                             * Use the [known] method instead if you're certain the value is always
+                             * known or if you want to throw for the unknown case.
+                             */
+                            fun value(): Value =
+                                when (this) {
+                                    PLAINTEXT -> Value.PLAINTEXT
+                                    OPAQUE -> Value.OPAQUE
+                                    WORKSPACE_SECRET -> Value.WORKSPACE_SECRET
+                                    else -> Value._UNKNOWN
+                                }
+
+                            /**
+                             * Returns an enum member corresponding to this class instance's value.
+                             *
+                             * Use the [value] method instead if you're uncertain the value is
+                             * always known and don't want to throw for the unknown case.
+                             *
+                             * @throws LangChainInvalidDataException if this class instance's value
+                             *   is a not a known member.
+                             */
+                            fun known(): Known =
+                                when (this) {
+                                    PLAINTEXT -> Known.PLAINTEXT
+                                    OPAQUE -> Known.OPAQUE
+                                    WORKSPACE_SECRET -> Known.WORKSPACE_SECRET
+                                    else ->
+                                        throw LangChainInvalidDataException("Unknown Type: $value")
+                                }
+
+                            /**
+                             * Returns this class instance's primitive wire representation.
+                             *
+                             * This differs from the [toString] method because that method is
+                             * primarily for debugging and generally doesn't throw.
+                             *
+                             * @throws LangChainInvalidDataException if this class instance's value
+                             *   does not have the expected primitive type.
+                             */
+                            fun asString(): String =
+                                _value().asString().orElseThrow {
+                                    LangChainInvalidDataException("Value is not a String")
+                                }
+
+                            private var validated: Boolean = false
+
+                            /**
+                             * Validates that the types of all values in this object match their
+                             * expected types recursively.
+                             *
+                             * This method is _not_ forwards compatible with new types from the API
+                             * for existing fields.
+                             *
+                             * @throws LangChainInvalidDataException if any value type in this
+                             *   object doesn't match its expected type.
+                             */
+                            fun validate(): Type = apply {
+                                if (validated) {
+                                    return@apply
+                                }
+
+                                known()
+                                validated = true
+                            }
+
+                            fun isValid(): Boolean =
+                                try {
+                                    validate()
+                                    true
+                                } catch (e: LangChainInvalidDataException) {
+                                    false
+                                }
+
+                            /**
+                             * Returns a score indicating how many valid values are contained in
+                             * this object recursively.
+                             *
+                             * Used for best match union deserialization.
+                             */
+                            @JvmSynthetic
+                            internal fun validity(): Int = if (value() == Value._UNKNOWN) 0 else 1
+
+                            override fun equals(other: Any?): Boolean {
+                                if (this === other) {
+                                    return true
+                                }
+
+                                return other is Type && value == other.value
+                            }
+
+                            override fun hashCode() = value.hashCode()
+
+                            override fun toString() = value.toString()
+                        }
+
+                        override fun equals(other: Any?): Boolean {
+                            if (this === other) {
+                                return true
+                            }
+
+                            return other is SasToken &&
+                                type == other.type &&
+                                isSet == other.isSet &&
+                                value == other.value &&
+                                additionalProperties == other.additionalProperties
+                        }
+
+                        private val hashCode: Int by lazy {
+                            Objects.hash(type, isSet, value, additionalProperties)
+                        }
+
+                        override fun hashCode(): Int = hashCode
+
+                        override fun toString() =
+                            "SasToken{type=$type, isSet=$isSet, value=$value, additionalProperties=$additionalProperties}"
+                    }
+
+                    override fun equals(other: Any?): Boolean {
+                        if (this === other) {
+                            return true
+                        }
+
+                        return other is SandboxesProxyAzureSasConfig &&
+                            sasToken == other.sasToken &&
+                            storageAccount == other.storageAccount &&
+                            additionalProperties == other.additionalProperties
+                    }
+
+                    private val hashCode: Int by lazy {
+                        Objects.hash(sasToken, storageAccount, additionalProperties)
+                    }
+
+                    override fun hashCode(): Int = hashCode
+
+                    override fun toString() =
+                        "SandboxesProxyAzureSasConfig{sasToken=$sasToken, storageAccount=$storageAccount, additionalProperties=$additionalProperties}"
+                }
+            }
+
             /**
              * EnvVars are plaintext env vars set for every command in the sandbox while this rule
              * is enabled. Use them for tools that refuse to run unless a credential env var is
@@ -4849,181 +7181,89 @@ private constructor(
                 override fun toString() = "EnvVars{additionalProperties=$additionalProperties}"
             }
 
+            @JsonDeserialize(using = Gcp.Deserializer::class)
+            @JsonSerialize(using = Gcp.Serializer::class)
             class Gcp
-            @JsonCreator(mode = JsonCreator.Mode.DISABLED)
             private constructor(
-                private val scopes: JsonField<List<String>>,
-                private val serviceAccountJson: JsonField<ServiceAccountJson>,
-                private val additionalProperties: MutableMap<String, JsonValue>,
+                private val sandboxesProxyGcpWorkloadIdentityConfig:
+                    SandboxesProxyGcpWorkloadIdentityConfig? =
+                    null,
+                private val sandboxesProxyGcpServiceAccountConfig:
+                    SandboxesProxyGcpServiceAccountConfig? =
+                    null,
+                private val _json: JsonValue? = null,
             ) {
 
-                @JsonCreator
-                private constructor(
-                    @JsonProperty("scopes")
-                    @ExcludeMissing
-                    scopes: JsonField<List<String>> = JsonMissing.of(),
-                    @JsonProperty("service_account_json")
-                    @ExcludeMissing
-                    serviceAccountJson: JsonField<ServiceAccountJson> = JsonMissing.of(),
-                ) : this(scopes, serviceAccountJson, mutableMapOf())
+                fun sandboxesProxyGcpWorkloadIdentityConfig():
+                    Optional<SandboxesProxyGcpWorkloadIdentityConfig> =
+                    Optional.ofNullable(sandboxesProxyGcpWorkloadIdentityConfig)
+
+                fun sandboxesProxyGcpServiceAccountConfig():
+                    Optional<SandboxesProxyGcpServiceAccountConfig> =
+                    Optional.ofNullable(sandboxesProxyGcpServiceAccountConfig)
+
+                fun isSandboxesProxyGcpWorkloadIdentityConfig(): Boolean =
+                    sandboxesProxyGcpWorkloadIdentityConfig != null
+
+                fun isSandboxesProxyGcpServiceAccountConfig(): Boolean =
+                    sandboxesProxyGcpServiceAccountConfig != null
+
+                fun asSandboxesProxyGcpWorkloadIdentityConfig():
+                    SandboxesProxyGcpWorkloadIdentityConfig =
+                    sandboxesProxyGcpWorkloadIdentityConfig.getOrThrow(
+                        "sandboxesProxyGcpWorkloadIdentityConfig"
+                    )
+
+                fun asSandboxesProxyGcpServiceAccountConfig():
+                    SandboxesProxyGcpServiceAccountConfig =
+                    sandboxesProxyGcpServiceAccountConfig.getOrThrow(
+                        "sandboxesProxyGcpServiceAccountConfig"
+                    )
+
+                fun _json(): Optional<JsonValue> = Optional.ofNullable(_json)
 
                 /**
-                 * @throws LangChainInvalidDataException if the JSON field has an unexpected type or
-                 *   is unexpectedly missing or null (e.g. if the server responded with an
-                 *   unexpected value).
-                 */
-                fun scopes(): List<String> = scopes.getRequired("scopes")
-
-                /**
-                 * @throws LangChainInvalidDataException if the JSON field has an unexpected type or
-                 *   is unexpectedly missing or null (e.g. if the server responded with an
-                 *   unexpected value).
-                 */
-                fun serviceAccountJson(): ServiceAccountJson =
-                    serviceAccountJson.getRequired("service_account_json")
-
-                /**
-                 * Returns the raw JSON value of [scopes].
+                 * Maps this instance's current variant to a value of type [T] using the given
+                 * [visitor].
                  *
-                 * Unlike [scopes], this method doesn't throw if the JSON field has an unexpected
-                 * type.
-                 */
-                @JsonProperty("scopes")
-                @ExcludeMissing
-                fun _scopes(): JsonField<List<String>> = scopes
-
-                /**
-                 * Returns the raw JSON value of [serviceAccountJson].
+                 * Note that this method is _not_ forwards compatible with new variants from the
+                 * API, unless [visitor] overrides [Visitor.unknown]. To handle variants not known
+                 * to this version of the SDK gracefully, consider overriding [Visitor.unknown]:
+                 * ```java
+                 * import com.langchain.smith.core.JsonValue;
+                 * import java.util.Optional;
                  *
-                 * Unlike [serviceAccountJson], this method doesn't throw if the JSON field has an
-                 * unexpected type.
+                 * Optional<String> result = gcp.accept(new Gcp.Visitor<Optional<String>>() {
+                 *     @Override
+                 *     public Optional<String> visitSandboxesProxyGcpWorkloadIdentityConfig(SandboxesProxyGcpWorkloadIdentityConfig sandboxesProxyGcpWorkloadIdentityConfig) {
+                 *         return Optional.of(sandboxesProxyGcpWorkloadIdentityConfig.toString());
+                 *     }
+                 *
+                 *     // ...
+                 *
+                 *     @Override
+                 *     public Optional<String> unknown(JsonValue json) {
+                 *         // Or inspect the `json`.
+                 *         return Optional.empty();
+                 *     }
+                 * });
+                 * ```
+                 *
+                 * @throws LangChainInvalidDataException if [Visitor.unknown] is not overridden in
+                 *   [visitor] and the current variant is unknown.
                  */
-                @JsonProperty("service_account_json")
-                @ExcludeMissing
-                fun _serviceAccountJson(): JsonField<ServiceAccountJson> = serviceAccountJson
-
-                @JsonAnySetter
-                private fun putAdditionalProperty(key: String, value: JsonValue) {
-                    additionalProperties.put(key, value)
-                }
-
-                @JsonAnyGetter
-                @ExcludeMissing
-                fun _additionalProperties(): Map<String, JsonValue> =
-                    Collections.unmodifiableMap(additionalProperties)
-
-                fun toBuilder() = Builder().from(this)
-
-                companion object {
-
-                    /**
-                     * Returns a mutable builder for constructing an instance of [Gcp].
-                     *
-                     * The following fields are required:
-                     * ```java
-                     * .scopes()
-                     * .serviceAccountJson()
-                     * ```
-                     */
-                    @JvmStatic fun builder() = Builder()
-                }
-
-                /** A builder for [Gcp]. */
-                class Builder internal constructor() {
-
-                    private var scopes: JsonField<MutableList<String>>? = null
-                    private var serviceAccountJson: JsonField<ServiceAccountJson>? = null
-                    private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
-
-                    @JvmSynthetic
-                    internal fun from(gcp: Gcp) = apply {
-                        scopes = gcp.scopes.map { it.toMutableList() }
-                        serviceAccountJson = gcp.serviceAccountJson
-                        additionalProperties = gcp.additionalProperties.toMutableMap()
+                fun <T> accept(visitor: Visitor<T>): T =
+                    when {
+                        sandboxesProxyGcpWorkloadIdentityConfig != null ->
+                            visitor.visitSandboxesProxyGcpWorkloadIdentityConfig(
+                                sandboxesProxyGcpWorkloadIdentityConfig
+                            )
+                        sandboxesProxyGcpServiceAccountConfig != null ->
+                            visitor.visitSandboxesProxyGcpServiceAccountConfig(
+                                sandboxesProxyGcpServiceAccountConfig
+                            )
+                        else -> visitor.unknown(_json)
                     }
-
-                    fun scopes(scopes: List<String>) = scopes(JsonField.of(scopes))
-
-                    /**
-                     * Sets [Builder.scopes] to an arbitrary JSON value.
-                     *
-                     * You should usually call [Builder.scopes] with a well-typed `List<String>`
-                     * value instead. This method is primarily for setting the field to an
-                     * undocumented or not yet supported value.
-                     */
-                    fun scopes(scopes: JsonField<List<String>>) = apply {
-                        this.scopes = scopes.map { it.toMutableList() }
-                    }
-
-                    /**
-                     * Adds a single [String] to [scopes].
-                     *
-                     * @throws IllegalStateException if the field was previously set to a non-list.
-                     */
-                    fun addScope(scope: String) = apply {
-                        scopes =
-                            (scopes ?: JsonField.of(mutableListOf())).also {
-                                checkKnown("scopes", it).add(scope)
-                            }
-                    }
-
-                    fun serviceAccountJson(serviceAccountJson: ServiceAccountJson) =
-                        serviceAccountJson(JsonField.of(serviceAccountJson))
-
-                    /**
-                     * Sets [Builder.serviceAccountJson] to an arbitrary JSON value.
-                     *
-                     * You should usually call [Builder.serviceAccountJson] with a well-typed
-                     * [ServiceAccountJson] value instead. This method is primarily for setting the
-                     * field to an undocumented or not yet supported value.
-                     */
-                    fun serviceAccountJson(serviceAccountJson: JsonField<ServiceAccountJson>) =
-                        apply {
-                            this.serviceAccountJson = serviceAccountJson
-                        }
-
-                    fun additionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
-                        this.additionalProperties.clear()
-                        putAllAdditionalProperties(additionalProperties)
-                    }
-
-                    fun putAdditionalProperty(key: String, value: JsonValue) = apply {
-                        additionalProperties.put(key, value)
-                    }
-
-                    fun putAllAdditionalProperties(additionalProperties: Map<String, JsonValue>) =
-                        apply {
-                            this.additionalProperties.putAll(additionalProperties)
-                        }
-
-                    fun removeAdditionalProperty(key: String) = apply {
-                        additionalProperties.remove(key)
-                    }
-
-                    fun removeAllAdditionalProperties(keys: Set<String>) = apply {
-                        keys.forEach(::removeAdditionalProperty)
-                    }
-
-                    /**
-                     * Returns an immutable instance of [Gcp].
-                     *
-                     * Further updates to this [Builder] will not mutate the returned instance.
-                     *
-                     * The following fields are required:
-                     * ```java
-                     * .scopes()
-                     * .serviceAccountJson()
-                     * ```
-                     *
-                     * @throws IllegalStateException if any required field is unset.
-                     */
-                    fun build(): Gcp =
-                        Gcp(
-                            checkRequired("scopes", scopes).map { it.toImmutable() },
-                            checkRequired("serviceAccountJson", serviceAccountJson),
-                            additionalProperties.toMutableMap(),
-                        )
-                }
 
                 private var validated: Boolean = false
 
@@ -5042,8 +7282,23 @@ private constructor(
                         return@apply
                     }
 
-                    scopes()
-                    serviceAccountJson().validate()
+                    accept(
+                        object : Visitor<Unit> {
+                            override fun visitSandboxesProxyGcpWorkloadIdentityConfig(
+                                sandboxesProxyGcpWorkloadIdentityConfig:
+                                    SandboxesProxyGcpWorkloadIdentityConfig
+                            ) {
+                                sandboxesProxyGcpWorkloadIdentityConfig.validate()
+                            }
+
+                            override fun visitSandboxesProxyGcpServiceAccountConfig(
+                                sandboxesProxyGcpServiceAccountConfig:
+                                    SandboxesProxyGcpServiceAccountConfig
+                            ) {
+                                sandboxesProxyGcpServiceAccountConfig.validate()
+                            }
+                        }
+                    )
                     validated = true
                 }
 
@@ -5063,73 +7318,281 @@ private constructor(
                  */
                 @JvmSynthetic
                 internal fun validity(): Int =
-                    (scopes.asKnown().getOrNull()?.size ?: 0) +
-                        (serviceAccountJson.asKnown().getOrNull()?.validity() ?: 0)
+                    accept(
+                        object : Visitor<Int> {
+                            override fun visitSandboxesProxyGcpWorkloadIdentityConfig(
+                                sandboxesProxyGcpWorkloadIdentityConfig:
+                                    SandboxesProxyGcpWorkloadIdentityConfig
+                            ) = sandboxesProxyGcpWorkloadIdentityConfig.validity()
 
-                class ServiceAccountJson
+                            override fun visitSandboxesProxyGcpServiceAccountConfig(
+                                sandboxesProxyGcpServiceAccountConfig:
+                                    SandboxesProxyGcpServiceAccountConfig
+                            ) = sandboxesProxyGcpServiceAccountConfig.validity()
+
+                            override fun unknown(json: JsonValue?) = 0
+                        }
+                    )
+
+                override fun equals(other: Any?): Boolean {
+                    if (this === other) {
+                        return true
+                    }
+
+                    return other is Gcp &&
+                        sandboxesProxyGcpWorkloadIdentityConfig ==
+                            other.sandboxesProxyGcpWorkloadIdentityConfig &&
+                        sandboxesProxyGcpServiceAccountConfig ==
+                            other.sandboxesProxyGcpServiceAccountConfig
+                }
+
+                override fun hashCode(): Int =
+                    Objects.hash(
+                        sandboxesProxyGcpWorkloadIdentityConfig,
+                        sandboxesProxyGcpServiceAccountConfig,
+                    )
+
+                override fun toString(): String =
+                    when {
+                        sandboxesProxyGcpWorkloadIdentityConfig != null ->
+                            "Gcp{sandboxesProxyGcpWorkloadIdentityConfig=$sandboxesProxyGcpWorkloadIdentityConfig}"
+                        sandboxesProxyGcpServiceAccountConfig != null ->
+                            "Gcp{sandboxesProxyGcpServiceAccountConfig=$sandboxesProxyGcpServiceAccountConfig}"
+                        _json != null -> "Gcp{_unknown=$_json}"
+                        else -> throw IllegalStateException("Invalid Gcp")
+                    }
+
+                companion object {
+
+                    @JvmStatic
+                    fun ofSandboxesProxyGcpWorkloadIdentityConfig(
+                        sandboxesProxyGcpWorkloadIdentityConfig:
+                            SandboxesProxyGcpWorkloadIdentityConfig
+                    ) =
+                        Gcp(
+                            sandboxesProxyGcpWorkloadIdentityConfig =
+                                sandboxesProxyGcpWorkloadIdentityConfig
+                        )
+
+                    @JvmStatic
+                    fun ofSandboxesProxyGcpServiceAccountConfig(
+                        sandboxesProxyGcpServiceAccountConfig: SandboxesProxyGcpServiceAccountConfig
+                    ) =
+                        Gcp(
+                            sandboxesProxyGcpServiceAccountConfig =
+                                sandboxesProxyGcpServiceAccountConfig
+                        )
+                }
+
+                /**
+                 * An interface that defines how to map each variant of [Gcp] to a value of type
+                 * [T].
+                 */
+                interface Visitor<out T> {
+
+                    fun visitSandboxesProxyGcpWorkloadIdentityConfig(
+                        sandboxesProxyGcpWorkloadIdentityConfig:
+                            SandboxesProxyGcpWorkloadIdentityConfig
+                    ): T
+
+                    fun visitSandboxesProxyGcpServiceAccountConfig(
+                        sandboxesProxyGcpServiceAccountConfig: SandboxesProxyGcpServiceAccountConfig
+                    ): T
+
+                    /**
+                     * Maps an unknown variant of [Gcp] to a value of type [T].
+                     *
+                     * An instance of [Gcp] can contain an unknown variant if it was deserialized
+                     * from data that doesn't match any known variant. For example, if the SDK is on
+                     * an older version than the API, then the API may respond with new variants
+                     * that the SDK is unaware of.
+                     *
+                     * @throws LangChainInvalidDataException in the default implementation.
+                     */
+                    fun unknown(json: JsonValue?): T {
+                        throw LangChainInvalidDataException("Unknown Gcp: $json")
+                    }
+                }
+
+                internal class Deserializer : BaseDeserializer<Gcp>(Gcp::class) {
+
+                    override fun ObjectCodec.deserialize(node: JsonNode): Gcp {
+                        val json = JsonValue.fromJsonNode(node)
+
+                        val bestMatches =
+                            sequenceOf(
+                                    tryDeserialize(
+                                            node,
+                                            jacksonTypeRef<
+                                                SandboxesProxyGcpWorkloadIdentityConfig
+                                            >(),
+                                        )
+                                        ?.let {
+                                            Gcp(
+                                                sandboxesProxyGcpWorkloadIdentityConfig = it,
+                                                _json = json,
+                                            )
+                                        },
+                                    tryDeserialize(
+                                            node,
+                                            jacksonTypeRef<SandboxesProxyGcpServiceAccountConfig>(),
+                                        )
+                                        ?.let {
+                                            Gcp(
+                                                sandboxesProxyGcpServiceAccountConfig = it,
+                                                _json = json,
+                                            )
+                                        },
+                                )
+                                .filterNotNull()
+                                .allMaxBy { it.validity() }
+                                .toList()
+                        return when (bestMatches.size) {
+                            // This can happen if what we're deserializing is completely
+                            // incompatible with all the possible variants (e.g. deserializing from
+                            // boolean).
+                            0 -> Gcp(_json = json)
+                            1 -> bestMatches.single()
+                            // If there's more than one match with the highest validity, then use
+                            // the first completely valid match, or simply the first match if none
+                            // are completely valid.
+                            else -> bestMatches.firstOrNull { it.isValid() } ?: bestMatches.first()
+                        }
+                    }
+                }
+
+                internal class Serializer : BaseSerializer<Gcp>(Gcp::class) {
+
+                    override fun serialize(
+                        value: Gcp,
+                        generator: JsonGenerator,
+                        provider: SerializerProvider,
+                    ) {
+                        when {
+                            value.sandboxesProxyGcpWorkloadIdentityConfig != null ->
+                                generator.writeObject(value.sandboxesProxyGcpWorkloadIdentityConfig)
+                            value.sandboxesProxyGcpServiceAccountConfig != null ->
+                                generator.writeObject(value.sandboxesProxyGcpServiceAccountConfig)
+                            value._json != null -> generator.writeObject(value._json)
+                            else -> throw IllegalStateException("Invalid Gcp")
+                        }
+                    }
+                }
+
+                class SandboxesProxyGcpWorkloadIdentityConfig
                 @JsonCreator(mode = JsonCreator.Mode.DISABLED)
                 private constructor(
-                    private val type: JsonField<Type>,
-                    private val isSet: JsonField<Boolean>,
-                    private val value: JsonField<String>,
+                    private val workloadIdentityProvider: JsonField<String>,
+                    private val scopes: JsonField<List<String>>,
+                    private val serviceAccountEmail: JsonField<String>,
+                    private val subjectScope: JsonField<String>,
                     private val additionalProperties: MutableMap<String, JsonValue>,
                 ) {
 
                     @JsonCreator
                     private constructor(
-                        @JsonProperty("type")
+                        @JsonProperty("workload_identity_provider")
                         @ExcludeMissing
-                        type: JsonField<Type> = JsonMissing.of(),
-                        @JsonProperty("is_set")
+                        workloadIdentityProvider: JsonField<String> = JsonMissing.of(),
+                        @JsonProperty("scopes")
                         @ExcludeMissing
-                        isSet: JsonField<Boolean> = JsonMissing.of(),
-                        @JsonProperty("value")
+                        scopes: JsonField<List<String>> = JsonMissing.of(),
+                        @JsonProperty("service_account_email")
                         @ExcludeMissing
-                        value: JsonField<String> = JsonMissing.of(),
-                    ) : this(type, isSet, value, mutableMapOf())
+                        serviceAccountEmail: JsonField<String> = JsonMissing.of(),
+                        @JsonProperty("subject_scope")
+                        @ExcludeMissing
+                        subjectScope: JsonField<String> = JsonMissing.of(),
+                    ) : this(
+                        workloadIdentityProvider,
+                        scopes,
+                        serviceAccountEmail,
+                        subjectScope,
+                        mutableMapOf(),
+                    )
 
                     /**
+                     * WorkloadIdentityProvider federates an OIDC token LangSmith signs for this
+                     * workspace through Workload Identity Federation instead of a service account
+                     * key. Use the full resource name:
+                     * //iam.googleapis.com/projects/<number>/locations/global/workloadIdentityPools/<pool>/providers/<provider>.
+                     * Cannot be changed after creation.
+                     *
                      * @throws LangChainInvalidDataException if the JSON field has an unexpected
                      *   type or is unexpectedly missing or null (e.g. if the server responded with
                      *   an unexpected value).
                      */
-                    fun type(): Type = type.getRequired("type")
+                    fun workloadIdentityProvider(): String =
+                        workloadIdentityProvider.getRequired("workload_identity_provider")
 
                     /**
+                     * Scopes are the OAuth scopes requested for the access token. Omit them to use
+                     * https://www.googleapis.com/auth/cloud-platform.
+                     *
                      * @throws LangChainInvalidDataException if the JSON field has an unexpected
                      *   type (e.g. if the server responded with an unexpected value).
                      */
-                    fun isSet(): Optional<Boolean> = isSet.getOptional("is_set")
+                    fun scopes(): Optional<List<String>> = scopes.getOptional("scopes")
 
                     /**
+                     * ServiceAccountEmail is the service account to impersonate with the federated
+                     * token. Omit it to use the federated principal directly.
+                     *
                      * @throws LangChainInvalidDataException if the JSON field has an unexpected
                      *   type (e.g. if the server responded with an unexpected value).
                      */
-                    fun value(): Optional<String> = value.getOptional("value")
+                    fun serviceAccountEmail(): Optional<String> =
+                        serviceAccountEmail.getOptional("service_account_email")
 
                     /**
-                     * Returns the raw JSON value of [type].
+                     * SubjectScope picks the token subject the provider trusts: "workspace" (the
+                     * default) or "tag:<tag value id>", which must be one of the sandbox's
+                     * tag_value_ids. Only valid with workload_identity_provider.
                      *
-                     * Unlike [type], this method doesn't throw if the JSON field has an unexpected
-                     * type.
+                     * @throws LangChainInvalidDataException if the JSON field has an unexpected
+                     *   type (e.g. if the server responded with an unexpected value).
                      */
-                    @JsonProperty("type") @ExcludeMissing fun _type(): JsonField<Type> = type
+                    fun subjectScope(): Optional<String> = subjectScope.getOptional("subject_scope")
 
                     /**
-                     * Returns the raw JSON value of [isSet].
+                     * Returns the raw JSON value of [workloadIdentityProvider].
                      *
-                     * Unlike [isSet], this method doesn't throw if the JSON field has an unexpected
-                     * type.
+                     * Unlike [workloadIdentityProvider], this method doesn't throw if the JSON
+                     * field has an unexpected type.
                      */
-                    @JsonProperty("is_set") @ExcludeMissing fun _isSet(): JsonField<Boolean> = isSet
+                    @JsonProperty("workload_identity_provider")
+                    @ExcludeMissing
+                    fun _workloadIdentityProvider(): JsonField<String> = workloadIdentityProvider
 
                     /**
-                     * Returns the raw JSON value of [value].
+                     * Returns the raw JSON value of [scopes].
                      *
-                     * Unlike [value], this method doesn't throw if the JSON field has an unexpected
-                     * type.
+                     * Unlike [scopes], this method doesn't throw if the JSON field has an
+                     * unexpected type.
                      */
-                    @JsonProperty("value") @ExcludeMissing fun _value(): JsonField<String> = value
+                    @JsonProperty("scopes")
+                    @ExcludeMissing
+                    fun _scopes(): JsonField<List<String>> = scopes
+
+                    /**
+                     * Returns the raw JSON value of [serviceAccountEmail].
+                     *
+                     * Unlike [serviceAccountEmail], this method doesn't throw if the JSON field has
+                     * an unexpected type.
+                     */
+                    @JsonProperty("service_account_email")
+                    @ExcludeMissing
+                    fun _serviceAccountEmail(): JsonField<String> = serviceAccountEmail
+
+                    /**
+                     * Returns the raw JSON value of [subjectScope].
+                     *
+                     * Unlike [subjectScope], this method doesn't throw if the JSON field has an
+                     * unexpected type.
+                     */
+                    @JsonProperty("subject_scope")
+                    @ExcludeMissing
+                    fun _subjectScope(): JsonField<String> = subjectScope
 
                     @JsonAnySetter
                     private fun putAdditionalProperty(key: String, value: JsonValue) {
@@ -5147,66 +7610,133 @@ private constructor(
 
                         /**
                          * Returns a mutable builder for constructing an instance of
-                         * [ServiceAccountJson].
+                         * [SandboxesProxyGcpWorkloadIdentityConfig].
                          *
                          * The following fields are required:
                          * ```java
-                         * .type()
+                         * .workloadIdentityProvider()
                          * ```
                          */
                         @JvmStatic fun builder() = Builder()
                     }
 
-                    /** A builder for [ServiceAccountJson]. */
+                    /** A builder for [SandboxesProxyGcpWorkloadIdentityConfig]. */
                     class Builder internal constructor() {
 
-                        private var type: JsonField<Type>? = null
-                        private var isSet: JsonField<Boolean> = JsonMissing.of()
-                        private var value: JsonField<String> = JsonMissing.of()
+                        private var workloadIdentityProvider: JsonField<String>? = null
+                        private var scopes: JsonField<MutableList<String>>? = null
+                        private var serviceAccountEmail: JsonField<String> = JsonMissing.of()
+                        private var subjectScope: JsonField<String> = JsonMissing.of()
                         private var additionalProperties: MutableMap<String, JsonValue> =
                             mutableMapOf()
 
                         @JvmSynthetic
-                        internal fun from(serviceAccountJson: ServiceAccountJson) = apply {
-                            type = serviceAccountJson.type
-                            isSet = serviceAccountJson.isSet
-                            value = serviceAccountJson.value
+                        internal fun from(
+                            sandboxesProxyGcpWorkloadIdentityConfig:
+                                SandboxesProxyGcpWorkloadIdentityConfig
+                        ) = apply {
+                            workloadIdentityProvider =
+                                sandboxesProxyGcpWorkloadIdentityConfig.workloadIdentityProvider
+                            scopes =
+                                sandboxesProxyGcpWorkloadIdentityConfig.scopes.map {
+                                    it.toMutableList()
+                                }
+                            serviceAccountEmail =
+                                sandboxesProxyGcpWorkloadIdentityConfig.serviceAccountEmail
+                            subjectScope = sandboxesProxyGcpWorkloadIdentityConfig.subjectScope
                             additionalProperties =
-                                serviceAccountJson.additionalProperties.toMutableMap()
+                                sandboxesProxyGcpWorkloadIdentityConfig.additionalProperties
+                                    .toMutableMap()
                         }
 
-                        fun type(type: Type) = type(JsonField.of(type))
+                        /**
+                         * WorkloadIdentityProvider federates an OIDC token LangSmith signs for this
+                         * workspace through Workload Identity Federation instead of a service
+                         * account key. Use the full resource name:
+                         * //iam.googleapis.com/projects/<number>/locations/global/workloadIdentityPools/<pool>/providers/<provider>.
+                         * Cannot be changed after creation.
+                         */
+                        fun workloadIdentityProvider(workloadIdentityProvider: String) =
+                            workloadIdentityProvider(JsonField.of(workloadIdentityProvider))
 
                         /**
-                         * Sets [Builder.type] to an arbitrary JSON value.
+                         * Sets [Builder.workloadIdentityProvider] to an arbitrary JSON value.
                          *
-                         * You should usually call [Builder.type] with a well-typed [Type] value
-                         * instead. This method is primarily for setting the field to an
-                         * undocumented or not yet supported value.
+                         * You should usually call [Builder.workloadIdentityProvider] with a
+                         * well-typed [String] value instead. This method is primarily for setting
+                         * the field to an undocumented or not yet supported value.
                          */
-                        fun type(type: JsonField<Type>) = apply { this.type = type }
-
-                        fun isSet(isSet: Boolean) = isSet(JsonField.of(isSet))
+                        fun workloadIdentityProvider(workloadIdentityProvider: JsonField<String>) =
+                            apply {
+                                this.workloadIdentityProvider = workloadIdentityProvider
+                            }
 
                         /**
-                         * Sets [Builder.isSet] to an arbitrary JSON value.
-                         *
-                         * You should usually call [Builder.isSet] with a well-typed [Boolean] value
-                         * instead. This method is primarily for setting the field to an
-                         * undocumented or not yet supported value.
+                         * Scopes are the OAuth scopes requested for the access token. Omit them to
+                         * use https://www.googleapis.com/auth/cloud-platform.
                          */
-                        fun isSet(isSet: JsonField<Boolean>) = apply { this.isSet = isSet }
-
-                        fun value(value: String) = value(JsonField.of(value))
+                        fun scopes(scopes: List<String>) = scopes(JsonField.of(scopes))
 
                         /**
-                         * Sets [Builder.value] to an arbitrary JSON value.
+                         * Sets [Builder.scopes] to an arbitrary JSON value.
                          *
-                         * You should usually call [Builder.value] with a well-typed [String] value
-                         * instead. This method is primarily for setting the field to an
+                         * You should usually call [Builder.scopes] with a well-typed `List<String>`
+                         * value instead. This method is primarily for setting the field to an
                          * undocumented or not yet supported value.
                          */
-                        fun value(value: JsonField<String>) = apply { this.value = value }
+                        fun scopes(scopes: JsonField<List<String>>) = apply {
+                            this.scopes = scopes.map { it.toMutableList() }
+                        }
+
+                        /**
+                         * Adds a single [String] to [scopes].
+                         *
+                         * @throws IllegalStateException if the field was previously set to a
+                         *   non-list.
+                         */
+                        fun addScope(scope: String) = apply {
+                            scopes =
+                                (scopes ?: JsonField.of(mutableListOf())).also {
+                                    checkKnown("scopes", it).add(scope)
+                                }
+                        }
+
+                        /**
+                         * ServiceAccountEmail is the service account to impersonate with the
+                         * federated token. Omit it to use the federated principal directly.
+                         */
+                        fun serviceAccountEmail(serviceAccountEmail: String) =
+                            serviceAccountEmail(JsonField.of(serviceAccountEmail))
+
+                        /**
+                         * Sets [Builder.serviceAccountEmail] to an arbitrary JSON value.
+                         *
+                         * You should usually call [Builder.serviceAccountEmail] with a well-typed
+                         * [String] value instead. This method is primarily for setting the field to
+                         * an undocumented or not yet supported value.
+                         */
+                        fun serviceAccountEmail(serviceAccountEmail: JsonField<String>) = apply {
+                            this.serviceAccountEmail = serviceAccountEmail
+                        }
+
+                        /**
+                         * SubjectScope picks the token subject the provider trusts: "workspace"
+                         * (the default) or "tag:<tag value id>", which must be one of the sandbox's
+                         * tag_value_ids. Only valid with workload_identity_provider.
+                         */
+                        fun subjectScope(subjectScope: String) =
+                            subjectScope(JsonField.of(subjectScope))
+
+                        /**
+                         * Sets [Builder.subjectScope] to an arbitrary JSON value.
+                         *
+                         * You should usually call [Builder.subjectScope] with a well-typed [String]
+                         * value instead. This method is primarily for setting the field to an
+                         * undocumented or not yet supported value.
+                         */
+                        fun subjectScope(subjectScope: JsonField<String>) = apply {
+                            this.subjectScope = subjectScope
+                        }
 
                         fun additionalProperties(additionalProperties: Map<String, JsonValue>) =
                             apply {
@@ -5231,22 +7761,24 @@ private constructor(
                         }
 
                         /**
-                         * Returns an immutable instance of [ServiceAccountJson].
+                         * Returns an immutable instance of
+                         * [SandboxesProxyGcpWorkloadIdentityConfig].
                          *
                          * Further updates to this [Builder] will not mutate the returned instance.
                          *
                          * The following fields are required:
                          * ```java
-                         * .type()
+                         * .workloadIdentityProvider()
                          * ```
                          *
                          * @throws IllegalStateException if any required field is unset.
                          */
-                        fun build(): ServiceAccountJson =
-                            ServiceAccountJson(
-                                checkRequired("type", type),
-                                isSet,
-                                value,
+                        fun build(): SandboxesProxyGcpWorkloadIdentityConfig =
+                            SandboxesProxyGcpWorkloadIdentityConfig(
+                                checkRequired("workloadIdentityProvider", workloadIdentityProvider),
+                                (scopes ?: JsonMissing.of()).map { it.toImmutable() },
+                                serviceAccountEmail,
+                                subjectScope,
                                 additionalProperties.toMutableMap(),
                             )
                     }
@@ -5263,14 +7795,15 @@ private constructor(
                      * @throws LangChainInvalidDataException if any value type in this object
                      *   doesn't match its expected type.
                      */
-                    fun validate(): ServiceAccountJson = apply {
+                    fun validate(): SandboxesProxyGcpWorkloadIdentityConfig = apply {
                         if (validated) {
                             return@apply
                         }
 
-                        type().validate()
-                        isSet()
-                        value()
+                        workloadIdentityProvider()
+                        scopes()
+                        serviceAccountEmail()
+                        subjectScope()
                         validated = true
                     }
 
@@ -5290,109 +7823,462 @@ private constructor(
                      */
                     @JvmSynthetic
                     internal fun validity(): Int =
-                        (type.asKnown().getOrNull()?.validity() ?: 0) +
-                            (if (isSet.asKnown().isPresent) 1 else 0) +
-                            (if (value.asKnown().isPresent) 1 else 0)
+                        (if (workloadIdentityProvider.asKnown().isPresent) 1 else 0) +
+                            (scopes.asKnown().getOrNull()?.size ?: 0) +
+                            (if (serviceAccountEmail.asKnown().isPresent) 1 else 0) +
+                            (if (subjectScope.asKnown().isPresent) 1 else 0)
 
-                    class Type
+                    override fun equals(other: Any?): Boolean {
+                        if (this === other) {
+                            return true
+                        }
+
+                        return other is SandboxesProxyGcpWorkloadIdentityConfig &&
+                            workloadIdentityProvider == other.workloadIdentityProvider &&
+                            scopes == other.scopes &&
+                            serviceAccountEmail == other.serviceAccountEmail &&
+                            subjectScope == other.subjectScope &&
+                            additionalProperties == other.additionalProperties
+                    }
+
+                    private val hashCode: Int by lazy {
+                        Objects.hash(
+                            workloadIdentityProvider,
+                            scopes,
+                            serviceAccountEmail,
+                            subjectScope,
+                            additionalProperties,
+                        )
+                    }
+
+                    override fun hashCode(): Int = hashCode
+
+                    override fun toString() =
+                        "SandboxesProxyGcpWorkloadIdentityConfig{workloadIdentityProvider=$workloadIdentityProvider, scopes=$scopes, serviceAccountEmail=$serviceAccountEmail, subjectScope=$subjectScope, additionalProperties=$additionalProperties}"
+                }
+
+                class SandboxesProxyGcpServiceAccountConfig
+                @JsonCreator(mode = JsonCreator.Mode.DISABLED)
+                private constructor(
+                    private val serviceAccountJson: JsonField<ServiceAccountJson>,
+                    private val scopes: JsonField<List<String>>,
+                    private val additionalProperties: MutableMap<String, JsonValue>,
+                ) {
+
                     @JsonCreator
-                    private constructor(private val value: JsonField<String>) : Enum {
+                    private constructor(
+                        @JsonProperty("service_account_json")
+                        @ExcludeMissing
+                        serviceAccountJson: JsonField<ServiceAccountJson> = JsonMissing.of(),
+                        @JsonProperty("scopes")
+                        @ExcludeMissing
+                        scopes: JsonField<List<String>> = JsonMissing.of(),
+                    ) : this(serviceAccountJson, scopes, mutableMapOf())
+
+                    /**
+                     * @throws LangChainInvalidDataException if the JSON field has an unexpected
+                     *   type or is unexpectedly missing or null (e.g. if the server responded with
+                     *   an unexpected value).
+                     */
+                    fun serviceAccountJson(): ServiceAccountJson =
+                        serviceAccountJson.getRequired("service_account_json")
+
+                    /**
+                     * Scopes are the OAuth scopes requested for the access token. Omit them to use
+                     * https://www.googleapis.com/auth/cloud-platform.
+                     *
+                     * @throws LangChainInvalidDataException if the JSON field has an unexpected
+                     *   type (e.g. if the server responded with an unexpected value).
+                     */
+                    fun scopes(): Optional<List<String>> = scopes.getOptional("scopes")
+
+                    /**
+                     * Returns the raw JSON value of [serviceAccountJson].
+                     *
+                     * Unlike [serviceAccountJson], this method doesn't throw if the JSON field has
+                     * an unexpected type.
+                     */
+                    @JsonProperty("service_account_json")
+                    @ExcludeMissing
+                    fun _serviceAccountJson(): JsonField<ServiceAccountJson> = serviceAccountJson
+
+                    /**
+                     * Returns the raw JSON value of [scopes].
+                     *
+                     * Unlike [scopes], this method doesn't throw if the JSON field has an
+                     * unexpected type.
+                     */
+                    @JsonProperty("scopes")
+                    @ExcludeMissing
+                    fun _scopes(): JsonField<List<String>> = scopes
+
+                    @JsonAnySetter
+                    private fun putAdditionalProperty(key: String, value: JsonValue) {
+                        additionalProperties.put(key, value)
+                    }
+
+                    @JsonAnyGetter
+                    @ExcludeMissing
+                    fun _additionalProperties(): Map<String, JsonValue> =
+                        Collections.unmodifiableMap(additionalProperties)
+
+                    fun toBuilder() = Builder().from(this)
+
+                    companion object {
 
                         /**
-                         * Returns this class instance's raw value.
+                         * Returns a mutable builder for constructing an instance of
+                         * [SandboxesProxyGcpServiceAccountConfig].
                          *
-                         * This is usually only useful if this instance was deserialized from data
-                         * that doesn't match any known member, and you want to know that value. For
-                         * example, if the SDK is on an older version than the API, then the API may
-                         * respond with new members that the SDK is unaware of.
+                         * The following fields are required:
+                         * ```java
+                         * .serviceAccountJson()
+                         * ```
                          */
-                        @com.fasterxml.jackson.annotation.JsonValue
+                        @JvmStatic fun builder() = Builder()
+                    }
+
+                    /** A builder for [SandboxesProxyGcpServiceAccountConfig]. */
+                    class Builder internal constructor() {
+
+                        private var serviceAccountJson: JsonField<ServiceAccountJson>? = null
+                        private var scopes: JsonField<MutableList<String>>? = null
+                        private var additionalProperties: MutableMap<String, JsonValue> =
+                            mutableMapOf()
+
+                        @JvmSynthetic
+                        internal fun from(
+                            sandboxesProxyGcpServiceAccountConfig:
+                                SandboxesProxyGcpServiceAccountConfig
+                        ) = apply {
+                            serviceAccountJson =
+                                sandboxesProxyGcpServiceAccountConfig.serviceAccountJson
+                            scopes =
+                                sandboxesProxyGcpServiceAccountConfig.scopes.map {
+                                    it.toMutableList()
+                                }
+                            additionalProperties =
+                                sandboxesProxyGcpServiceAccountConfig.additionalProperties
+                                    .toMutableMap()
+                        }
+
+                        fun serviceAccountJson(serviceAccountJson: ServiceAccountJson) =
+                            serviceAccountJson(JsonField.of(serviceAccountJson))
+
+                        /**
+                         * Sets [Builder.serviceAccountJson] to an arbitrary JSON value.
+                         *
+                         * You should usually call [Builder.serviceAccountJson] with a well-typed
+                         * [ServiceAccountJson] value instead. This method is primarily for setting
+                         * the field to an undocumented or not yet supported value.
+                         */
+                        fun serviceAccountJson(serviceAccountJson: JsonField<ServiceAccountJson>) =
+                            apply {
+                                this.serviceAccountJson = serviceAccountJson
+                            }
+
+                        /**
+                         * Scopes are the OAuth scopes requested for the access token. Omit them to
+                         * use https://www.googleapis.com/auth/cloud-platform.
+                         */
+                        fun scopes(scopes: List<String>) = scopes(JsonField.of(scopes))
+
+                        /**
+                         * Sets [Builder.scopes] to an arbitrary JSON value.
+                         *
+                         * You should usually call [Builder.scopes] with a well-typed `List<String>`
+                         * value instead. This method is primarily for setting the field to an
+                         * undocumented or not yet supported value.
+                         */
+                        fun scopes(scopes: JsonField<List<String>>) = apply {
+                            this.scopes = scopes.map { it.toMutableList() }
+                        }
+
+                        /**
+                         * Adds a single [String] to [scopes].
+                         *
+                         * @throws IllegalStateException if the field was previously set to a
+                         *   non-list.
+                         */
+                        fun addScope(scope: String) = apply {
+                            scopes =
+                                (scopes ?: JsonField.of(mutableListOf())).also {
+                                    checkKnown("scopes", it).add(scope)
+                                }
+                        }
+
+                        fun additionalProperties(additionalProperties: Map<String, JsonValue>) =
+                            apply {
+                                this.additionalProperties.clear()
+                                putAllAdditionalProperties(additionalProperties)
+                            }
+
+                        fun putAdditionalProperty(key: String, value: JsonValue) = apply {
+                            additionalProperties.put(key, value)
+                        }
+
+                        fun putAllAdditionalProperties(
+                            additionalProperties: Map<String, JsonValue>
+                        ) = apply { this.additionalProperties.putAll(additionalProperties) }
+
+                        fun removeAdditionalProperty(key: String) = apply {
+                            additionalProperties.remove(key)
+                        }
+
+                        fun removeAllAdditionalProperties(keys: Set<String>) = apply {
+                            keys.forEach(::removeAdditionalProperty)
+                        }
+
+                        /**
+                         * Returns an immutable instance of [SandboxesProxyGcpServiceAccountConfig].
+                         *
+                         * Further updates to this [Builder] will not mutate the returned instance.
+                         *
+                         * The following fields are required:
+                         * ```java
+                         * .serviceAccountJson()
+                         * ```
+                         *
+                         * @throws IllegalStateException if any required field is unset.
+                         */
+                        fun build(): SandboxesProxyGcpServiceAccountConfig =
+                            SandboxesProxyGcpServiceAccountConfig(
+                                checkRequired("serviceAccountJson", serviceAccountJson),
+                                (scopes ?: JsonMissing.of()).map { it.toImmutable() },
+                                additionalProperties.toMutableMap(),
+                            )
+                    }
+
+                    private var validated: Boolean = false
+
+                    /**
+                     * Validates that the types of all values in this object match their expected
+                     * types recursively.
+                     *
+                     * This method is _not_ forwards compatible with new types from the API for
+                     * existing fields.
+                     *
+                     * @throws LangChainInvalidDataException if any value type in this object
+                     *   doesn't match its expected type.
+                     */
+                    fun validate(): SandboxesProxyGcpServiceAccountConfig = apply {
+                        if (validated) {
+                            return@apply
+                        }
+
+                        serviceAccountJson().validate()
+                        scopes()
+                        validated = true
+                    }
+
+                    fun isValid(): Boolean =
+                        try {
+                            validate()
+                            true
+                        } catch (e: LangChainInvalidDataException) {
+                            false
+                        }
+
+                    /**
+                     * Returns a score indicating how many valid values are contained in this object
+                     * recursively.
+                     *
+                     * Used for best match union deserialization.
+                     */
+                    @JvmSynthetic
+                    internal fun validity(): Int =
+                        (serviceAccountJson.asKnown().getOrNull()?.validity() ?: 0) +
+                            (scopes.asKnown().getOrNull()?.size ?: 0)
+
+                    class ServiceAccountJson
+                    @JsonCreator(mode = JsonCreator.Mode.DISABLED)
+                    private constructor(
+                        private val type: JsonField<Type>,
+                        private val isSet: JsonField<Boolean>,
+                        private val value: JsonField<String>,
+                        private val additionalProperties: MutableMap<String, JsonValue>,
+                    ) {
+
+                        @JsonCreator
+                        private constructor(
+                            @JsonProperty("type")
+                            @ExcludeMissing
+                            type: JsonField<Type> = JsonMissing.of(),
+                            @JsonProperty("is_set")
+                            @ExcludeMissing
+                            isSet: JsonField<Boolean> = JsonMissing.of(),
+                            @JsonProperty("value")
+                            @ExcludeMissing
+                            value: JsonField<String> = JsonMissing.of(),
+                        ) : this(type, isSet, value, mutableMapOf())
+
+                        /**
+                         * @throws LangChainInvalidDataException if the JSON field has an unexpected
+                         *   type or is unexpectedly missing or null (e.g. if the server responded
+                         *   with an unexpected value).
+                         */
+                        fun type(): Type = type.getRequired("type")
+
+                        /**
+                         * @throws LangChainInvalidDataException if the JSON field has an unexpected
+                         *   type (e.g. if the server responded with an unexpected value).
+                         */
+                        fun isSet(): Optional<Boolean> = isSet.getOptional("is_set")
+
+                        /**
+                         * @throws LangChainInvalidDataException if the JSON field has an unexpected
+                         *   type (e.g. if the server responded with an unexpected value).
+                         */
+                        fun value(): Optional<String> = value.getOptional("value")
+
+                        /**
+                         * Returns the raw JSON value of [type].
+                         *
+                         * Unlike [type], this method doesn't throw if the JSON field has an
+                         * unexpected type.
+                         */
+                        @JsonProperty("type") @ExcludeMissing fun _type(): JsonField<Type> = type
+
+                        /**
+                         * Returns the raw JSON value of [isSet].
+                         *
+                         * Unlike [isSet], this method doesn't throw if the JSON field has an
+                         * unexpected type.
+                         */
+                        @JsonProperty("is_set")
+                        @ExcludeMissing
+                        fun _isSet(): JsonField<Boolean> = isSet
+
+                        /**
+                         * Returns the raw JSON value of [value].
+                         *
+                         * Unlike [value], this method doesn't throw if the JSON field has an
+                         * unexpected type.
+                         */
+                        @JsonProperty("value")
+                        @ExcludeMissing
                         fun _value(): JsonField<String> = value
+
+                        @JsonAnySetter
+                        private fun putAdditionalProperty(key: String, value: JsonValue) {
+                            additionalProperties.put(key, value)
+                        }
+
+                        @JsonAnyGetter
+                        @ExcludeMissing
+                        fun _additionalProperties(): Map<String, JsonValue> =
+                            Collections.unmodifiableMap(additionalProperties)
+
+                        fun toBuilder() = Builder().from(this)
 
                         companion object {
 
-                            @JvmField val PLAINTEXT = of("plaintext")
-
-                            @JvmField val OPAQUE = of("opaque")
-
-                            @JvmField val WORKSPACE_SECRET = of("workspace_secret")
-
-                            @JvmStatic fun of(value: String) = Type(JsonField.of(value))
-                        }
-
-                        /** An enum containing [Type]'s known values. */
-                        enum class Known {
-                            PLAINTEXT,
-                            OPAQUE,
-                            WORKSPACE_SECRET,
-                        }
-
-                        /**
-                         * An enum containing [Type]'s known values, as well as an [_UNKNOWN]
-                         * member.
-                         *
-                         * An instance of [Type] can contain an unknown value in a couple of cases:
-                         * - It was deserialized from data that doesn't match any known member. For
-                         *   example, if the SDK is on an older version than the API, then the API
-                         *   may respond with new members that the SDK is unaware of.
-                         * - It was constructed with an arbitrary value using the [of] method.
-                         */
-                        enum class Value {
-                            PLAINTEXT,
-                            OPAQUE,
-                            WORKSPACE_SECRET,
                             /**
-                             * An enum member indicating that [Type] was instantiated with an
-                             * unknown value.
+                             * Returns a mutable builder for constructing an instance of
+                             * [ServiceAccountJson].
+                             *
+                             * The following fields are required:
+                             * ```java
+                             * .type()
+                             * ```
                              */
-                            _UNKNOWN,
+                            @JvmStatic fun builder() = Builder()
                         }
 
-                        /**
-                         * Returns an enum member corresponding to this class instance's value, or
-                         * [Value._UNKNOWN] if the class was instantiated with an unknown value.
-                         *
-                         * Use the [known] method instead if you're certain the value is always
-                         * known or if you want to throw for the unknown case.
-                         */
-                        fun value(): Value =
-                            when (this) {
-                                PLAINTEXT -> Value.PLAINTEXT
-                                OPAQUE -> Value.OPAQUE
-                                WORKSPACE_SECRET -> Value.WORKSPACE_SECRET
-                                else -> Value._UNKNOWN
+                        /** A builder for [ServiceAccountJson]. */
+                        class Builder internal constructor() {
+
+                            private var type: JsonField<Type>? = null
+                            private var isSet: JsonField<Boolean> = JsonMissing.of()
+                            private var value: JsonField<String> = JsonMissing.of()
+                            private var additionalProperties: MutableMap<String, JsonValue> =
+                                mutableMapOf()
+
+                            @JvmSynthetic
+                            internal fun from(serviceAccountJson: ServiceAccountJson) = apply {
+                                type = serviceAccountJson.type
+                                isSet = serviceAccountJson.isSet
+                                value = serviceAccountJson.value
+                                additionalProperties =
+                                    serviceAccountJson.additionalProperties.toMutableMap()
                             }
 
-                        /**
-                         * Returns an enum member corresponding to this class instance's value.
-                         *
-                         * Use the [value] method instead if you're uncertain the value is always
-                         * known and don't want to throw for the unknown case.
-                         *
-                         * @throws LangChainInvalidDataException if this class instance's value is a
-                         *   not a known member.
-                         */
-                        fun known(): Known =
-                            when (this) {
-                                PLAINTEXT -> Known.PLAINTEXT
-                                OPAQUE -> Known.OPAQUE
-                                WORKSPACE_SECRET -> Known.WORKSPACE_SECRET
-                                else -> throw LangChainInvalidDataException("Unknown Type: $value")
+                            fun type(type: Type) = type(JsonField.of(type))
+
+                            /**
+                             * Sets [Builder.type] to an arbitrary JSON value.
+                             *
+                             * You should usually call [Builder.type] with a well-typed [Type] value
+                             * instead. This method is primarily for setting the field to an
+                             * undocumented or not yet supported value.
+                             */
+                            fun type(type: JsonField<Type>) = apply { this.type = type }
+
+                            fun isSet(isSet: Boolean) = isSet(JsonField.of(isSet))
+
+                            /**
+                             * Sets [Builder.isSet] to an arbitrary JSON value.
+                             *
+                             * You should usually call [Builder.isSet] with a well-typed [Boolean]
+                             * value instead. This method is primarily for setting the field to an
+                             * undocumented or not yet supported value.
+                             */
+                            fun isSet(isSet: JsonField<Boolean>) = apply { this.isSet = isSet }
+
+                            fun value(value: String) = value(JsonField.of(value))
+
+                            /**
+                             * Sets [Builder.value] to an arbitrary JSON value.
+                             *
+                             * You should usually call [Builder.value] with a well-typed [String]
+                             * value instead. This method is primarily for setting the field to an
+                             * undocumented or not yet supported value.
+                             */
+                            fun value(value: JsonField<String>) = apply { this.value = value }
+
+                            fun additionalProperties(additionalProperties: Map<String, JsonValue>) =
+                                apply {
+                                    this.additionalProperties.clear()
+                                    putAllAdditionalProperties(additionalProperties)
+                                }
+
+                            fun putAdditionalProperty(key: String, value: JsonValue) = apply {
+                                additionalProperties.put(key, value)
                             }
 
-                        /**
-                         * Returns this class instance's primitive wire representation.
-                         *
-                         * This differs from the [toString] method because that method is primarily
-                         * for debugging and generally doesn't throw.
-                         *
-                         * @throws LangChainInvalidDataException if this class instance's value does
-                         *   not have the expected primitive type.
-                         */
-                        fun asString(): String =
-                            _value().asString().orElseThrow {
-                                LangChainInvalidDataException("Value is not a String")
+                            fun putAllAdditionalProperties(
+                                additionalProperties: Map<String, JsonValue>
+                            ) = apply { this.additionalProperties.putAll(additionalProperties) }
+
+                            fun removeAdditionalProperty(key: String) = apply {
+                                additionalProperties.remove(key)
                             }
+
+                            fun removeAllAdditionalProperties(keys: Set<String>) = apply {
+                                keys.forEach(::removeAdditionalProperty)
+                            }
+
+                            /**
+                             * Returns an immutable instance of [ServiceAccountJson].
+                             *
+                             * Further updates to this [Builder] will not mutate the returned
+                             * instance.
+                             *
+                             * The following fields are required:
+                             * ```java
+                             * .type()
+                             * ```
+                             *
+                             * @throws IllegalStateException if any required field is unset.
+                             */
+                            fun build(): ServiceAccountJson =
+                                ServiceAccountJson(
+                                    checkRequired("type", type),
+                                    isSet,
+                                    value,
+                                    additionalProperties.toMutableMap(),
+                                )
+                        }
 
                         private var validated: Boolean = false
 
@@ -5406,12 +8292,14 @@ private constructor(
                          * @throws LangChainInvalidDataException if any value type in this object
                          *   doesn't match its expected type.
                          */
-                        fun validate(): Type = apply {
+                        fun validate(): ServiceAccountJson = apply {
                             if (validated) {
                                 return@apply
                             }
 
-                            known()
+                            type().validate()
+                            isSet()
+                            value()
                             validated = true
                         }
 
@@ -5430,19 +8318,185 @@ private constructor(
                          * Used for best match union deserialization.
                          */
                         @JvmSynthetic
-                        internal fun validity(): Int = if (value() == Value._UNKNOWN) 0 else 1
+                        internal fun validity(): Int =
+                            (type.asKnown().getOrNull()?.validity() ?: 0) +
+                                (if (isSet.asKnown().isPresent) 1 else 0) +
+                                (if (value.asKnown().isPresent) 1 else 0)
+
+                        class Type
+                        @JsonCreator
+                        private constructor(private val value: JsonField<String>) : Enum {
+
+                            /**
+                             * Returns this class instance's raw value.
+                             *
+                             * This is usually only useful if this instance was deserialized from
+                             * data that doesn't match any known member, and you want to know that
+                             * value. For example, if the SDK is on an older version than the API,
+                             * then the API may respond with new members that the SDK is unaware of.
+                             */
+                            @com.fasterxml.jackson.annotation.JsonValue
+                            fun _value(): JsonField<String> = value
+
+                            companion object {
+
+                                @JvmField val PLAINTEXT = of("plaintext")
+
+                                @JvmField val OPAQUE = of("opaque")
+
+                                @JvmField val WORKSPACE_SECRET = of("workspace_secret")
+
+                                @JvmStatic fun of(value: String) = Type(JsonField.of(value))
+                            }
+
+                            /** An enum containing [Type]'s known values. */
+                            enum class Known {
+                                PLAINTEXT,
+                                OPAQUE,
+                                WORKSPACE_SECRET,
+                            }
+
+                            /**
+                             * An enum containing [Type]'s known values, as well as an [_UNKNOWN]
+                             * member.
+                             *
+                             * An instance of [Type] can contain an unknown value in a couple of
+                             * cases:
+                             * - It was deserialized from data that doesn't match any known member.
+                             *   For example, if the SDK is on an older version than the API, then
+                             *   the API may respond with new members that the SDK is unaware of.
+                             * - It was constructed with an arbitrary value using the [of] method.
+                             */
+                            enum class Value {
+                                PLAINTEXT,
+                                OPAQUE,
+                                WORKSPACE_SECRET,
+                                /**
+                                 * An enum member indicating that [Type] was instantiated with an
+                                 * unknown value.
+                                 */
+                                _UNKNOWN,
+                            }
+
+                            /**
+                             * Returns an enum member corresponding to this class instance's value,
+                             * or [Value._UNKNOWN] if the class was instantiated with an unknown
+                             * value.
+                             *
+                             * Use the [known] method instead if you're certain the value is always
+                             * known or if you want to throw for the unknown case.
+                             */
+                            fun value(): Value =
+                                when (this) {
+                                    PLAINTEXT -> Value.PLAINTEXT
+                                    OPAQUE -> Value.OPAQUE
+                                    WORKSPACE_SECRET -> Value.WORKSPACE_SECRET
+                                    else -> Value._UNKNOWN
+                                }
+
+                            /**
+                             * Returns an enum member corresponding to this class instance's value.
+                             *
+                             * Use the [value] method instead if you're uncertain the value is
+                             * always known and don't want to throw for the unknown case.
+                             *
+                             * @throws LangChainInvalidDataException if this class instance's value
+                             *   is a not a known member.
+                             */
+                            fun known(): Known =
+                                when (this) {
+                                    PLAINTEXT -> Known.PLAINTEXT
+                                    OPAQUE -> Known.OPAQUE
+                                    WORKSPACE_SECRET -> Known.WORKSPACE_SECRET
+                                    else ->
+                                        throw LangChainInvalidDataException("Unknown Type: $value")
+                                }
+
+                            /**
+                             * Returns this class instance's primitive wire representation.
+                             *
+                             * This differs from the [toString] method because that method is
+                             * primarily for debugging and generally doesn't throw.
+                             *
+                             * @throws LangChainInvalidDataException if this class instance's value
+                             *   does not have the expected primitive type.
+                             */
+                            fun asString(): String =
+                                _value().asString().orElseThrow {
+                                    LangChainInvalidDataException("Value is not a String")
+                                }
+
+                            private var validated: Boolean = false
+
+                            /**
+                             * Validates that the types of all values in this object match their
+                             * expected types recursively.
+                             *
+                             * This method is _not_ forwards compatible with new types from the API
+                             * for existing fields.
+                             *
+                             * @throws LangChainInvalidDataException if any value type in this
+                             *   object doesn't match its expected type.
+                             */
+                            fun validate(): Type = apply {
+                                if (validated) {
+                                    return@apply
+                                }
+
+                                known()
+                                validated = true
+                            }
+
+                            fun isValid(): Boolean =
+                                try {
+                                    validate()
+                                    true
+                                } catch (e: LangChainInvalidDataException) {
+                                    false
+                                }
+
+                            /**
+                             * Returns a score indicating how many valid values are contained in
+                             * this object recursively.
+                             *
+                             * Used for best match union deserialization.
+                             */
+                            @JvmSynthetic
+                            internal fun validity(): Int = if (value() == Value._UNKNOWN) 0 else 1
+
+                            override fun equals(other: Any?): Boolean {
+                                if (this === other) {
+                                    return true
+                                }
+
+                                return other is Type && value == other.value
+                            }
+
+                            override fun hashCode() = value.hashCode()
+
+                            override fun toString() = value.toString()
+                        }
 
                         override fun equals(other: Any?): Boolean {
                             if (this === other) {
                                 return true
                             }
 
-                            return other is Type && value == other.value
+                            return other is ServiceAccountJson &&
+                                type == other.type &&
+                                isSet == other.isSet &&
+                                value == other.value &&
+                                additionalProperties == other.additionalProperties
                         }
 
-                        override fun hashCode() = value.hashCode()
+                        private val hashCode: Int by lazy {
+                            Objects.hash(type, isSet, value, additionalProperties)
+                        }
 
-                        override fun toString() = value.toString()
+                        override fun hashCode(): Int = hashCode
+
+                        override fun toString() =
+                            "ServiceAccountJson{type=$type, isSet=$isSet, value=$value, additionalProperties=$additionalProperties}"
                     }
 
                     override fun equals(other: Any?): Boolean {
@@ -5450,42 +8504,21 @@ private constructor(
                             return true
                         }
 
-                        return other is ServiceAccountJson &&
-                            type == other.type &&
-                            isSet == other.isSet &&
-                            value == other.value &&
+                        return other is SandboxesProxyGcpServiceAccountConfig &&
+                            serviceAccountJson == other.serviceAccountJson &&
+                            scopes == other.scopes &&
                             additionalProperties == other.additionalProperties
                     }
 
                     private val hashCode: Int by lazy {
-                        Objects.hash(type, isSet, value, additionalProperties)
+                        Objects.hash(serviceAccountJson, scopes, additionalProperties)
                     }
 
                     override fun hashCode(): Int = hashCode
 
                     override fun toString() =
-                        "ServiceAccountJson{type=$type, isSet=$isSet, value=$value, additionalProperties=$additionalProperties}"
+                        "SandboxesProxyGcpServiceAccountConfig{serviceAccountJson=$serviceAccountJson, scopes=$scopes, additionalProperties=$additionalProperties}"
                 }
-
-                override fun equals(other: Any?): Boolean {
-                    if (this === other) {
-                        return true
-                    }
-
-                    return other is Gcp &&
-                        scopes == other.scopes &&
-                        serviceAccountJson == other.serviceAccountJson &&
-                        additionalProperties == other.additionalProperties
-                }
-
-                private val hashCode: Int by lazy {
-                    Objects.hash(scopes, serviceAccountJson, additionalProperties)
-                }
-
-                override fun hashCode(): Int = hashCode
-
-                override fun toString() =
-                    "Gcp{scopes=$scopes, serviceAccountJson=$serviceAccountJson, additionalProperties=$additionalProperties}"
             }
 
             class Header
@@ -5928,6 +8961,7 @@ private constructor(
                 return other is Rule &&
                     bodyName == other.bodyName &&
                     aws == other.aws &&
+                    azure == other.azure &&
                     description == other.description &&
                     enabled == other.enabled &&
                     envVars == other.envVars &&
@@ -5944,6 +8978,7 @@ private constructor(
                 Objects.hash(
                     bodyName,
                     aws,
+                    azure,
                     description,
                     enabled,
                     envVars,
@@ -5960,7 +8995,7 @@ private constructor(
             override fun hashCode(): Int = hashCode
 
             override fun toString() =
-                "Rule{bodyName=$bodyName, aws=$aws, description=$description, enabled=$enabled, envVars=$envVars, gcp=$gcp, headers=$headers, matchHeaders=$matchHeaders, matchHosts=$matchHosts, matchPaths=$matchPaths, type=$type, additionalProperties=$additionalProperties}"
+                "Rule{bodyName=$bodyName, aws=$aws, azure=$azure, description=$description, enabled=$enabled, envVars=$envVars, gcp=$gcp, headers=$headers, matchHeaders=$matchHeaders, matchHosts=$matchHosts, matchPaths=$matchPaths, type=$type, additionalProperties=$additionalProperties}"
         }
 
         override fun equals(other: Any?): Boolean {

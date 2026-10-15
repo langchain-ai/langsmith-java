@@ -16,6 +16,11 @@ internal class ConfigServiceTest {
             LangsmithOkHttpClient.builder().apiKey("My API Key").tenantId("My Tenant ID").build()
         val configService = client.feedback().configs()
 
-        configService.delete(ConfigDeleteParams.builder().feedbackKey("feedback_key").build())
+        configService.delete(
+            ConfigDeleteParams.builder()
+                .id("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                .feedbackKey("feedback_key")
+                .build()
+        )
     }
 }

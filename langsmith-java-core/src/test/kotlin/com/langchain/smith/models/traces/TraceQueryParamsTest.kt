@@ -2,6 +2,7 @@
 
 package com.langchain.smith.models.traces
 
+import com.langchain.smith.core.http.Headers
 import com.langchain.smith.models.runs.RunSelectField
 import java.time.OffsetDateTime
 import kotlin.jvm.optionals.getOrNull
@@ -13,6 +14,8 @@ internal class TraceQueryParamsTest {
     @Test
     fun create() {
         TraceQueryParams.builder()
+            .accept("Accept")
+            .aiSearch("A run that contains a billing dispute")
             .cursor("cursor")
             .maxStartTime(OffsetDateTime.parse("2024-12-31T23:59:59Z"))
             .minStartTime(OffsetDateTime.parse("2024-01-01T00:00:00Z"))
@@ -36,9 +39,52 @@ internal class TraceQueryParamsTest {
     }
 
     @Test
+    fun headers() {
+        val params =
+            TraceQueryParams.builder()
+                .accept("Accept")
+                .aiSearch("A run that contains a billing dispute")
+                .cursor("cursor")
+                .maxStartTime(OffsetDateTime.parse("2024-12-31T23:59:59Z"))
+                .minStartTime(OffsetDateTime.parse("2024-01-01T00:00:00Z"))
+                .pageSize(20L)
+                .projectId("018e4c7e-a9fb-7ef0-a5b6-6ea3a82e9327")
+                .selects(
+                    listOf(
+                        RunSelectField.ID,
+                        RunSelectField.NAME,
+                        RunSelectField.START_TIME,
+                        RunSelectField.STATUS,
+                        RunSelectField.TOTAL_TOKENS,
+                        RunSelectField.TOTAL_COST,
+                        RunSelectField.FIRST_TOKEN_TIME,
+                    )
+                )
+                .traceFilter("eq(status, \"error\")")
+                .addTraceId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                .treeFilter("has(tags, \"production\")")
+                .build()
+
+        val headers = params._headers()
+
+        assertThat(headers).isEqualTo(Headers.builder().put("Accept", "Accept").build())
+    }
+
+    @Test
+    fun headersWithoutOptionalFields() {
+        val params = TraceQueryParams.builder().build()
+
+        val headers = params._headers()
+
+        assertThat(headers).isEqualTo(Headers.builder().build())
+    }
+
+    @Test
     fun body() {
         val params =
             TraceQueryParams.builder()
+                .accept("Accept")
+                .aiSearch("A run that contains a billing dispute")
                 .cursor("cursor")
                 .maxStartTime(OffsetDateTime.parse("2024-12-31T23:59:59Z"))
                 .minStartTime(OffsetDateTime.parse("2024-01-01T00:00:00Z"))
@@ -62,6 +108,7 @@ internal class TraceQueryParamsTest {
 
         val body = params._body()
 
+        assertThat(body.aiSearch()).contains("A run that contains a billing dispute")
         assertThat(body.cursor()).contains("cursor")
         assertThat(body.maxStartTime()).contains(OffsetDateTime.parse("2024-12-31T23:59:59Z"))
         assertThat(body.minStartTime()).contains(OffsetDateTime.parse("2024-01-01T00:00:00Z"))

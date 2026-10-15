@@ -47,6 +47,7 @@ private constructor(
     private val extendTraceRetention: JsonField<Boolean>,
     private val extra: JsonField<Extra>,
     private val feedbackConfig: JsonField<FeedbackConfig>,
+    private val feedbackConfigId: JsonField<String>,
     private val feedbackGroupId: JsonField<String>,
     private val feedbackSource: JsonField<FeedbackSource>,
     private val feedbackThreadId: JsonField<String>,
@@ -83,6 +84,9 @@ private constructor(
         @JsonProperty("feedback_config")
         @ExcludeMissing
         feedbackConfig: JsonField<FeedbackConfig> = JsonMissing.of(),
+        @JsonProperty("feedback_config_id")
+        @ExcludeMissing
+        feedbackConfigId: JsonField<String> = JsonMissing.of(),
         @JsonProperty("feedback_group_id")
         @ExcludeMissing
         feedbackGroupId: JsonField<String> = JsonMissing.of(),
@@ -115,6 +119,7 @@ private constructor(
         extendTraceRetention,
         extra,
         feedbackConfig,
+        feedbackConfigId,
         feedbackGroupId,
         feedbackSource,
         feedbackThreadId,
@@ -201,10 +206,25 @@ private constructor(
     fun extra(): Optional<Extra> = extra.getOptional("extra")
 
     /**
+     * The scale the score is checked against. If the feedback key already has a feedback config,
+     * this must match it exactly or the request is rejected; if it has none, this becomes the key's
+     * feedback config.
+     *
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
      */
     fun feedbackConfig(): Optional<FeedbackConfig> = feedbackConfig.getOptional("feedback_config")
+
+    /**
+     * The ID of the feedback config this feedback was written against. It must be a feedback config
+     * for this feedback key in the same workspace, or the feedback is rejected. It doesn't change
+     * how the score is checked; feedback_config does that. If omitted, the server may record the
+     * key's enforced feedback config, or the one created for the key by this request.
+     *
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
+    fun feedbackConfigId(): Optional<String> = feedbackConfigId.getOptional("feedback_config_id")
 
     /**
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
@@ -364,6 +384,16 @@ private constructor(
     fun _feedbackConfig(): JsonField<FeedbackConfig> = feedbackConfig
 
     /**
+     * Returns the raw JSON value of [feedbackConfigId].
+     *
+     * Unlike [feedbackConfigId], this method doesn't throw if the JSON field has an unexpected
+     * type.
+     */
+    @JsonProperty("feedback_config_id")
+    @ExcludeMissing
+    fun _feedbackConfigId(): JsonField<String> = feedbackConfigId
+
+    /**
      * Returns the raw JSON value of [feedbackGroupId].
      *
      * Unlike [feedbackGroupId], this method doesn't throw if the JSON field has an unexpected type.
@@ -483,6 +513,7 @@ private constructor(
         private var extendTraceRetention: JsonField<Boolean> = JsonMissing.of()
         private var extra: JsonField<Extra> = JsonMissing.of()
         private var feedbackConfig: JsonField<FeedbackConfig> = JsonMissing.of()
+        private var feedbackConfigId: JsonField<String> = JsonMissing.of()
         private var feedbackGroupId: JsonField<String> = JsonMissing.of()
         private var feedbackSource: JsonField<FeedbackSource> = JsonMissing.of()
         private var feedbackThreadId: JsonField<String> = JsonMissing.of()
@@ -508,6 +539,7 @@ private constructor(
             extendTraceRetention = feedbackCreateSchema.extendTraceRetention
             extra = feedbackCreateSchema.extra
             feedbackConfig = feedbackCreateSchema.feedbackConfig
+            feedbackConfigId = feedbackCreateSchema.feedbackConfigId
             feedbackGroupId = feedbackCreateSchema.feedbackGroupId
             feedbackSource = feedbackCreateSchema.feedbackSource
             feedbackThreadId = feedbackCreateSchema.feedbackThreadId
@@ -680,6 +712,11 @@ private constructor(
          */
         fun extra(extra: JsonField<Extra>) = apply { this.extra = extra }
 
+        /**
+         * The scale the score is checked against. If the feedback key already has a feedback
+         * config, this must match it exactly or the request is rejected; if it has none, this
+         * becomes the key's feedback config.
+         */
         fun feedbackConfig(feedbackConfig: FeedbackConfig?) =
             feedbackConfig(JsonField.ofNullable(feedbackConfig))
 
@@ -696,6 +733,31 @@ private constructor(
          */
         fun feedbackConfig(feedbackConfig: JsonField<FeedbackConfig>) = apply {
             this.feedbackConfig = feedbackConfig
+        }
+
+        /**
+         * The ID of the feedback config this feedback was written against. It must be a feedback
+         * config for this feedback key in the same workspace, or the feedback is rejected. It
+         * doesn't change how the score is checked; feedback_config does that. If omitted, the
+         * server may record the key's enforced feedback config, or the one created for the key by
+         * this request.
+         */
+        fun feedbackConfigId(feedbackConfigId: String?) =
+            feedbackConfigId(JsonField.ofNullable(feedbackConfigId))
+
+        /** Alias for calling [Builder.feedbackConfigId] with `feedbackConfigId.orElse(null)`. */
+        fun feedbackConfigId(feedbackConfigId: Optional<String>) =
+            feedbackConfigId(feedbackConfigId.getOrNull())
+
+        /**
+         * Sets [Builder.feedbackConfigId] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.feedbackConfigId] with a well-typed [String] value
+         * instead. This method is primarily for setting the field to an undocumented or not yet
+         * supported value.
+         */
+        fun feedbackConfigId(feedbackConfigId: JsonField<String>) = apply {
+            this.feedbackConfigId = feedbackConfigId
         }
 
         fun feedbackGroupId(feedbackGroupId: String?) =
@@ -926,6 +988,7 @@ private constructor(
                 extendTraceRetention,
                 extra,
                 feedbackConfig,
+                feedbackConfigId,
                 feedbackGroupId,
                 feedbackSource,
                 feedbackThreadId,
@@ -966,6 +1029,7 @@ private constructor(
         extendTraceRetention()
         extra().ifPresent { it.validate() }
         feedbackConfig().ifPresent { it.validate() }
+        feedbackConfigId()
         feedbackGroupId()
         feedbackSource().ifPresent { it.validate() }
         feedbackThreadId()
@@ -1005,6 +1069,7 @@ private constructor(
             (if (extendTraceRetention.asKnown().isPresent) 1 else 0) +
             (extra.asKnown().getOrNull()?.validity() ?: 0) +
             (feedbackConfig.asKnown().getOrNull()?.validity() ?: 0) +
+            (if (feedbackConfigId.asKnown().isPresent) 1 else 0) +
             (if (feedbackGroupId.asKnown().isPresent) 1 else 0) +
             (feedbackSource.asKnown().getOrNull()?.validity() ?: 0) +
             (if (feedbackThreadId.asKnown().isPresent) 1 else 0) +
@@ -1449,6 +1514,11 @@ private constructor(
         override fun toString() = "Extra{additionalProperties=$additionalProperties}"
     }
 
+    /**
+     * The scale the score is checked against. If the feedback key already has a feedback config,
+     * this must match it exactly or the request is rejected; if it has none, this becomes the key's
+     * feedback config.
+     */
     class FeedbackConfig
     @JsonCreator(mode = JsonCreator.Mode.DISABLED)
     private constructor(
@@ -2979,6 +3049,7 @@ private constructor(
             extendTraceRetention == other.extendTraceRetention &&
             extra == other.extra &&
             feedbackConfig == other.feedbackConfig &&
+            feedbackConfigId == other.feedbackConfigId &&
             feedbackGroupId == other.feedbackGroupId &&
             feedbackSource == other.feedbackSource &&
             feedbackThreadId == other.feedbackThreadId &&
@@ -3005,6 +3076,7 @@ private constructor(
             extendTraceRetention,
             extra,
             feedbackConfig,
+            feedbackConfigId,
             feedbackGroupId,
             feedbackSource,
             feedbackThreadId,
@@ -3022,5 +3094,5 @@ private constructor(
     override fun hashCode(): Int = hashCode
 
     override fun toString() =
-        "FeedbackCreateSchema{key=$key, id=$id, address=$address, comment=$comment, comparativeExperimentId=$comparativeExperimentId, correction=$correction, createdAt=$createdAt, error=$error, extendTraceRetention=$extendTraceRetention, extra=$extra, feedbackConfig=$feedbackConfig, feedbackGroupId=$feedbackGroupId, feedbackSource=$feedbackSource, feedbackThreadId=$feedbackThreadId, modifiedAt=$modifiedAt, runId=$runId, score=$score, sessionId=$sessionId, startTime=$startTime, traceId=$traceId, value=$value, additionalProperties=$additionalProperties}"
+        "FeedbackCreateSchema{key=$key, id=$id, address=$address, comment=$comment, comparativeExperimentId=$comparativeExperimentId, correction=$correction, createdAt=$createdAt, error=$error, extendTraceRetention=$extendTraceRetention, extra=$extra, feedbackConfig=$feedbackConfig, feedbackConfigId=$feedbackConfigId, feedbackGroupId=$feedbackGroupId, feedbackSource=$feedbackSource, feedbackThreadId=$feedbackThreadId, modifiedAt=$modifiedAt, runId=$runId, score=$score, sessionId=$sessionId, startTime=$startTime, traceId=$traceId, value=$value, additionalProperties=$additionalProperties}"
 }

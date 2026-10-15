@@ -46,6 +46,7 @@ internal class FeedbackCreateSchemaTest {
                         .min(0.0)
                         .build()
                 )
+                .feedbackConfigId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                 .feedbackGroupId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                 .feedbackSource(
                     AppFeedbackSource.builder()
@@ -106,6 +107,8 @@ internal class FeedbackCreateSchemaTest {
                     .min(0.0)
                     .build()
             )
+        assertThat(feedbackCreateSchema.feedbackConfigId())
+            .contains("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
         assertThat(feedbackCreateSchema.feedbackGroupId())
             .contains("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
         assertThat(feedbackCreateSchema.feedbackSource())
@@ -170,6 +173,7 @@ internal class FeedbackCreateSchemaTest {
                         .min(0.0)
                         .build()
                 )
+                .feedbackConfigId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                 .feedbackGroupId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                 .feedbackSource(
                     AppFeedbackSource.builder()
