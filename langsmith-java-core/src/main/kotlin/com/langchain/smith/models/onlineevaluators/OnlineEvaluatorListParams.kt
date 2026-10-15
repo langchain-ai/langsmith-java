@@ -30,7 +30,10 @@ private constructor(
     private val additionalQueryParams: QueryParams,
 ) : Params {
 
-    /** Filter to evaluators attached to the agent's environments or tagged datasets */
+    /**
+     * Filter to evaluators attached to the agent's environments or tagged datasets; run_rules then
+     * lists only those attachments
+     */
     fun agentId(): Optional<String> = Optional.ofNullable(agentId)
 
     /** Filter by feedback key */
@@ -110,7 +113,10 @@ private constructor(
             additionalQueryParams = onlineEvaluatorListParams.additionalQueryParams.toBuilder()
         }
 
-        /** Filter to evaluators attached to the agent's environments or tagged datasets */
+        /**
+         * Filter to evaluators attached to the agent's environments or tagged datasets; run_rules
+         * then lists only those attachments
+         */
         fun agentId(agentId: String?) = apply { this.agentId = agentId }
 
         /** Alias for calling [Builder.agentId] with `agentId.orElse(null)`. */

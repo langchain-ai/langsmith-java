@@ -200,6 +200,7 @@ internal class OnlineEvaluatorServiceTest {
             onlineEvaluatorService.spend(
                 OnlineEvaluatorSpendParams.builder()
                     .periodStart("period_start")
+                    .agentId("agent_id")
                     .datasetId("dataset_id")
                     .evaluatorId("evaluator_id")
                     .feedbackKey("feedback_key")
