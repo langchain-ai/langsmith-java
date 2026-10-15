@@ -56,6 +56,7 @@ internal class EvaluatorTest {
                 .addCodeEvaluator(
                     CodeEvaluatorTopLevel.builder()
                         .code("code")
+                        .advancedFeaturesEnabled(true)
                         .codeEvaluatorInput(CodeEvaluatorTopLevel.CodeEvaluatorInput.THREAD)
                         .language(CodeEvaluatorTopLevel.Language.PYTHON)
                         .requireAttachments(true)
@@ -175,6 +176,7 @@ internal class EvaluatorTest {
             .containsExactly(
                 CodeEvaluatorTopLevel.builder()
                     .code("code")
+                    .advancedFeaturesEnabled(true)
                     .codeEvaluatorInput(CodeEvaluatorTopLevel.CodeEvaluatorInput.THREAD)
                     .language(CodeEvaluatorTopLevel.Language.PYTHON)
                     .requireAttachments(true)
@@ -293,6 +295,7 @@ internal class EvaluatorTest {
                 .addCodeEvaluator(
                     CodeEvaluatorTopLevel.builder()
                         .code("code")
+                        .advancedFeaturesEnabled(true)
                         .codeEvaluatorInput(CodeEvaluatorTopLevel.CodeEvaluatorInput.THREAD)
                         .language(CodeEvaluatorTopLevel.Language.PYTHON)
                         .requireAttachments(true)

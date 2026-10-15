@@ -22,6 +22,7 @@ class CodeEvaluatorTopLevel
 @JsonCreator(mode = JsonCreator.Mode.DISABLED)
 private constructor(
     private val code: JsonField<String>,
+    private val advancedFeaturesEnabled: JsonField<Boolean>,
     private val codeEvaluatorInput: JsonField<CodeEvaluatorInput>,
     private val language: JsonField<Language>,
     private val requireAttachments: JsonField<Boolean>,
@@ -31,6 +32,9 @@ private constructor(
     @JsonCreator
     private constructor(
         @JsonProperty("code") @ExcludeMissing code: JsonField<String> = JsonMissing.of(),
+        @JsonProperty("advanced_features_enabled")
+        @ExcludeMissing
+        advancedFeaturesEnabled: JsonField<Boolean> = JsonMissing.of(),
         @JsonProperty("code_evaluator_input")
         @ExcludeMissing
         codeEvaluatorInput: JsonField<CodeEvaluatorInput> = JsonMissing.of(),
@@ -38,13 +42,27 @@ private constructor(
         @JsonProperty("require_attachments")
         @ExcludeMissing
         requireAttachments: JsonField<Boolean> = JsonMissing.of(),
-    ) : this(code, codeEvaluatorInput, language, requireAttachments, mutableMapOf())
+    ) : this(
+        code,
+        advancedFeaturesEnabled,
+        codeEvaluatorInput,
+        language,
+        requireAttachments,
+        mutableMapOf(),
+    )
 
     /**
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type or is
      *   unexpectedly missing or null (e.g. if the server responded with an unexpected value).
      */
     fun code(): String = code.getRequired("code")
+
+    /**
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
+    fun advancedFeaturesEnabled(): Optional<Boolean> =
+        advancedFeaturesEnabled.getOptional("advanced_features_enabled")
 
     /**
      * Input provided to a code evaluator.
@@ -74,6 +92,16 @@ private constructor(
      * Unlike [code], this method doesn't throw if the JSON field has an unexpected type.
      */
     @JsonProperty("code") @ExcludeMissing fun _code(): JsonField<String> = code
+
+    /**
+     * Returns the raw JSON value of [advancedFeaturesEnabled].
+     *
+     * Unlike [advancedFeaturesEnabled], this method doesn't throw if the JSON field has an
+     * unexpected type.
+     */
+    @JsonProperty("advanced_features_enabled")
+    @ExcludeMissing
+    fun _advancedFeaturesEnabled(): JsonField<Boolean> = advancedFeaturesEnabled
 
     /**
      * Returns the raw JSON value of [codeEvaluatorInput].
@@ -131,6 +159,7 @@ private constructor(
     class Builder internal constructor() {
 
         private var code: JsonField<String>? = null
+        private var advancedFeaturesEnabled: JsonField<Boolean> = JsonMissing.of()
         private var codeEvaluatorInput: JsonField<CodeEvaluatorInput> = JsonMissing.of()
         private var language: JsonField<Language> = JsonMissing.of()
         private var requireAttachments: JsonField<Boolean> = JsonMissing.of()
@@ -139,6 +168,7 @@ private constructor(
         @JvmSynthetic
         internal fun from(codeEvaluatorTopLevel: CodeEvaluatorTopLevel) = apply {
             code = codeEvaluatorTopLevel.code
+            advancedFeaturesEnabled = codeEvaluatorTopLevel.advancedFeaturesEnabled
             codeEvaluatorInput = codeEvaluatorTopLevel.codeEvaluatorInput
             language = codeEvaluatorTopLevel.language
             requireAttachments = codeEvaluatorTopLevel.requireAttachments
@@ -154,6 +184,20 @@ private constructor(
          * method is primarily for setting the field to an undocumented or not yet supported value.
          */
         fun code(code: JsonField<String>) = apply { this.code = code }
+
+        fun advancedFeaturesEnabled(advancedFeaturesEnabled: Boolean) =
+            advancedFeaturesEnabled(JsonField.of(advancedFeaturesEnabled))
+
+        /**
+         * Sets [Builder.advancedFeaturesEnabled] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.advancedFeaturesEnabled] with a well-typed [Boolean]
+         * value instead. This method is primarily for setting the field to an undocumented or not
+         * yet supported value.
+         */
+        fun advancedFeaturesEnabled(advancedFeaturesEnabled: JsonField<Boolean>) = apply {
+            this.advancedFeaturesEnabled = advancedFeaturesEnabled
+        }
 
         /** Input provided to a code evaluator. */
         fun codeEvaluatorInput(codeEvaluatorInput: CodeEvaluatorInput?) =
@@ -238,6 +282,7 @@ private constructor(
         fun build(): CodeEvaluatorTopLevel =
             CodeEvaluatorTopLevel(
                 checkRequired("code", code),
+                advancedFeaturesEnabled,
                 codeEvaluatorInput,
                 language,
                 requireAttachments,
@@ -261,6 +306,7 @@ private constructor(
         }
 
         code()
+        advancedFeaturesEnabled()
         codeEvaluatorInput().ifPresent { it.validate() }
         language().ifPresent { it.validate() }
         requireAttachments()
@@ -283,6 +329,7 @@ private constructor(
     @JvmSynthetic
     internal fun validity(): Int =
         (if (code.asKnown().isPresent) 1 else 0) +
+            (if (advancedFeaturesEnabled.asKnown().isPresent) 1 else 0) +
             (codeEvaluatorInput.asKnown().getOrNull()?.validity() ?: 0) +
             (language.asKnown().getOrNull()?.validity() ?: 0) +
             (if (requireAttachments.asKnown().isPresent) 1 else 0)
@@ -584,6 +631,7 @@ private constructor(
 
         return other is CodeEvaluatorTopLevel &&
             code == other.code &&
+            advancedFeaturesEnabled == other.advancedFeaturesEnabled &&
             codeEvaluatorInput == other.codeEvaluatorInput &&
             language == other.language &&
             requireAttachments == other.requireAttachments &&
@@ -591,11 +639,18 @@ private constructor(
     }
 
     private val hashCode: Int by lazy {
-        Objects.hash(code, codeEvaluatorInput, language, requireAttachments, additionalProperties)
+        Objects.hash(
+            code,
+            advancedFeaturesEnabled,
+            codeEvaluatorInput,
+            language,
+            requireAttachments,
+            additionalProperties,
+        )
     }
 
     override fun hashCode(): Int = hashCode
 
     override fun toString() =
-        "CodeEvaluatorTopLevel{code=$code, codeEvaluatorInput=$codeEvaluatorInput, language=$language, requireAttachments=$requireAttachments, additionalProperties=$additionalProperties}"
+        "CodeEvaluatorTopLevel{code=$code, advancedFeaturesEnabled=$advancedFeaturesEnabled, codeEvaluatorInput=$codeEvaluatorInput, language=$language, requireAttachments=$requireAttachments, additionalProperties=$additionalProperties}"
 }
