@@ -9,8 +9,8 @@ buildscript {
                 // CVE-2026-64607.
                 "org.apache.httpcomponents.client5:httpclient5:5.6.4",
                 // CVE-2026-54399 and CVE-2026-54428.
-                "org.apache.httpcomponents.core5:httpcore5:5.4.3",
-                "org.apache.httpcomponents.core5:httpcore5-h2:5.4.3",
+                "org.apache.httpcomponents.core5:httpcore5:5.4.4",
+                "org.apache.httpcomponents.core5:httpcore5-h2:5.4.4",
                 // CVE-2026-49844.
                 "org.apache.logging.log4j:log4j-api:2.26.1",
                 "org.apache.logging.log4j:log4j-core:2.26.1",
