@@ -660,6 +660,8 @@ private constructor(
 
             @JvmField val FIRST_HUMAN_LAST_AI = of("first_human_last_ai")
 
+            @JvmField val TRAJECTORY = of("trajectory")
+
             @JvmStatic fun of(value: String) = CodeEvaluatorInput(JsonField.of(value))
         }
 
@@ -669,6 +671,7 @@ private constructor(
             ALL_MESSAGES,
             HUMAN_AI_PAIRS,
             FIRST_HUMAN_LAST_AI,
+            TRAJECTORY,
         }
 
         /**
@@ -685,6 +688,7 @@ private constructor(
             ALL_MESSAGES,
             HUMAN_AI_PAIRS,
             FIRST_HUMAN_LAST_AI,
+            TRAJECTORY,
             /**
              * An enum member indicating that [CodeEvaluatorInput] was instantiated with an unknown
              * value.
@@ -705,6 +709,7 @@ private constructor(
                 ALL_MESSAGES -> Value.ALL_MESSAGES
                 HUMAN_AI_PAIRS -> Value.HUMAN_AI_PAIRS
                 FIRST_HUMAN_LAST_AI -> Value.FIRST_HUMAN_LAST_AI
+                TRAJECTORY -> Value.TRAJECTORY
                 else -> Value._UNKNOWN
             }
 
@@ -723,6 +728,7 @@ private constructor(
                 ALL_MESSAGES -> Known.ALL_MESSAGES
                 HUMAN_AI_PAIRS -> Known.HUMAN_AI_PAIRS
                 FIRST_HUMAN_LAST_AI -> Known.FIRST_HUMAN_LAST_AI
+                TRAJECTORY -> Known.TRAJECTORY
                 else -> throw LangChainInvalidDataException("Unknown CodeEvaluatorInput: $value")
             }
 
