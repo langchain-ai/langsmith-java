@@ -3,6 +3,7 @@
 package com.langchain.smith.models.sandboxes.boxes
 
 import com.langchain.smith.core.JsonValue
+import com.langchain.smith.models.sandboxes.ProxyConfig
 import kotlin.jvm.optionals.getOrNull
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
@@ -20,26 +21,23 @@ internal class BoxUpdateParamsTest {
             .memBytes(0L)
             .bodyName("name")
             .proxyConfig(
-                BoxUpdateParams.ProxyConfig.builder()
+                ProxyConfig.builder()
                     .accessControl(
-                        BoxUpdateParams.ProxyConfig.AccessControl.builder()
+                        ProxyConfig.AccessControl.builder()
                             .addAllowList("string")
                             .addDenyList("string")
                             .build()
                     )
                     .addCallback(
-                        BoxUpdateParams.ProxyConfig.Callback.builder()
+                        ProxyConfig.Callback.builder()
                             .addMatchHost("string")
                             .ttlSeconds(60L)
                             .url("url")
                             .fullRequest(true)
                             .addRequestHeader(
-                                BoxUpdateParams.ProxyConfig.Callback.RequestHeader.builder()
-                                    .bodyName("name")
-                                    .type(
-                                        BoxUpdateParams.ProxyConfig.Callback.RequestHeader.Type
-                                            .PLAINTEXT
-                                    )
+                                ProxyConfig.Callback.RequestHeader.builder()
+                                    .name("name")
+                                    .type(ProxyConfig.Callback.RequestHeader.Type.PLAINTEXT)
                                     .isSet(true)
                                     .value("value")
                                     .build()
@@ -49,23 +47,21 @@ internal class BoxUpdateParamsTest {
                     .description("description")
                     .addNoProxy("string")
                     .addRule(
-                        BoxUpdateParams.ProxyConfig.Rule.builder()
-                            .bodyName("name")
+                        ProxyConfig.Rule.builder()
+                            .name("name")
                             .aws(
-                                BoxUpdateParams.ProxyConfig.Rule.Aws.SandboxesProxyAwsRoleConfig
-                                    .builder()
+                                ProxyConfig.Rule.Aws.SandboxesProxyAwsRoleConfig.builder()
                                     .roleArn("x")
                                     .subjectScope("tag:2fdcD1Dc-bbDb-2BBD-0Afa-1A3C33cFaADc")
                                     .build()
                             )
                             .azure(
-                                BoxUpdateParams.ProxyConfig.Rule.Azure
-                                    .SandboxesProxyAzureWorkloadIdentityConfig
+                                ProxyConfig.Rule.Azure.SandboxesProxyAzureWorkloadIdentityConfig
                                     .builder()
                                     .clientId("E1CB97d8-Ddf3-aAae-0Afa-1A3C33cFaADc")
                                     .tenantId("E1CB97d8-Ddf3-aAae-0Afa-1A3C33cFaADc")
                                     .addResource(
-                                        BoxUpdateParams.ProxyConfig.Rule.Azure
+                                        ProxyConfig.Rule.Azure
                                             .SandboxesProxyAzureWorkloadIdentityConfig
                                             .Resource
                                             .HTTPS_STORAGE_AZURE_COM
@@ -76,13 +72,12 @@ internal class BoxUpdateParamsTest {
                             .description("description")
                             .enabled(true)
                             .envVars(
-                                BoxUpdateParams.ProxyConfig.Rule.EnvVars.builder()
+                                ProxyConfig.Rule.EnvVars.builder()
                                     .putAdditionalProperty("foo", JsonValue.from("string"))
                                     .build()
                             )
                             .gcp(
-                                BoxUpdateParams.ProxyConfig.Rule.Gcp
-                                    .SandboxesProxyGcpWorkloadIdentityConfig
+                                ProxyConfig.Rule.Gcp.SandboxesProxyGcpWorkloadIdentityConfig
                                     .builder()
                                     .workloadIdentityProvider("x")
                                     .addScope("string")
@@ -91,9 +86,9 @@ internal class BoxUpdateParamsTest {
                                     .build()
                             )
                             .addHeader(
-                                BoxUpdateParams.ProxyConfig.Rule.Header.builder()
-                                    .bodyName("name")
-                                    .type(BoxUpdateParams.ProxyConfig.Rule.Header.Type.PLAINTEXT)
+                                ProxyConfig.Rule.Header.builder()
+                                    .name("name")
+                                    .type(ProxyConfig.Rule.Header.Type.PLAINTEXT)
                                     .isSet(true)
                                     .value("value")
                                     .build()
@@ -143,26 +138,23 @@ internal class BoxUpdateParamsTest {
                 .memBytes(0L)
                 .bodyName("name")
                 .proxyConfig(
-                    BoxUpdateParams.ProxyConfig.builder()
+                    ProxyConfig.builder()
                         .accessControl(
-                            BoxUpdateParams.ProxyConfig.AccessControl.builder()
+                            ProxyConfig.AccessControl.builder()
                                 .addAllowList("string")
                                 .addDenyList("string")
                                 .build()
                         )
                         .addCallback(
-                            BoxUpdateParams.ProxyConfig.Callback.builder()
+                            ProxyConfig.Callback.builder()
                                 .addMatchHost("string")
                                 .ttlSeconds(60L)
                                 .url("url")
                                 .fullRequest(true)
                                 .addRequestHeader(
-                                    BoxUpdateParams.ProxyConfig.Callback.RequestHeader.builder()
-                                        .bodyName("name")
-                                        .type(
-                                            BoxUpdateParams.ProxyConfig.Callback.RequestHeader.Type
-                                                .PLAINTEXT
-                                        )
+                                    ProxyConfig.Callback.RequestHeader.builder()
+                                        .name("name")
+                                        .type(ProxyConfig.Callback.RequestHeader.Type.PLAINTEXT)
                                         .isSet(true)
                                         .value("value")
                                         .build()
@@ -172,23 +164,21 @@ internal class BoxUpdateParamsTest {
                         .description("description")
                         .addNoProxy("string")
                         .addRule(
-                            BoxUpdateParams.ProxyConfig.Rule.builder()
-                                .bodyName("name")
+                            ProxyConfig.Rule.builder()
+                                .name("name")
                                 .aws(
-                                    BoxUpdateParams.ProxyConfig.Rule.Aws.SandboxesProxyAwsRoleConfig
-                                        .builder()
+                                    ProxyConfig.Rule.Aws.SandboxesProxyAwsRoleConfig.builder()
                                         .roleArn("x")
                                         .subjectScope("tag:2fdcD1Dc-bbDb-2BBD-0Afa-1A3C33cFaADc")
                                         .build()
                                 )
                                 .azure(
-                                    BoxUpdateParams.ProxyConfig.Rule.Azure
-                                        .SandboxesProxyAzureWorkloadIdentityConfig
+                                    ProxyConfig.Rule.Azure.SandboxesProxyAzureWorkloadIdentityConfig
                                         .builder()
                                         .clientId("E1CB97d8-Ddf3-aAae-0Afa-1A3C33cFaADc")
                                         .tenantId("E1CB97d8-Ddf3-aAae-0Afa-1A3C33cFaADc")
                                         .addResource(
-                                            BoxUpdateParams.ProxyConfig.Rule.Azure
+                                            ProxyConfig.Rule.Azure
                                                 .SandboxesProxyAzureWorkloadIdentityConfig
                                                 .Resource
                                                 .HTTPS_STORAGE_AZURE_COM
@@ -199,13 +189,12 @@ internal class BoxUpdateParamsTest {
                                 .description("description")
                                 .enabled(true)
                                 .envVars(
-                                    BoxUpdateParams.ProxyConfig.Rule.EnvVars.builder()
+                                    ProxyConfig.Rule.EnvVars.builder()
                                         .putAdditionalProperty("foo", JsonValue.from("string"))
                                         .build()
                                 )
                                 .gcp(
-                                    BoxUpdateParams.ProxyConfig.Rule.Gcp
-                                        .SandboxesProxyGcpWorkloadIdentityConfig
+                                    ProxyConfig.Rule.Gcp.SandboxesProxyGcpWorkloadIdentityConfig
                                         .builder()
                                         .workloadIdentityProvider("x")
                                         .addScope("string")
@@ -214,11 +203,9 @@ internal class BoxUpdateParamsTest {
                                         .build()
                                 )
                                 .addHeader(
-                                    BoxUpdateParams.ProxyConfig.Rule.Header.builder()
-                                        .bodyName("name")
-                                        .type(
-                                            BoxUpdateParams.ProxyConfig.Rule.Header.Type.PLAINTEXT
-                                        )
+                                    ProxyConfig.Rule.Header.builder()
+                                        .name("name")
+                                        .type(ProxyConfig.Rule.Header.Type.PLAINTEXT)
                                         .isSet(true)
                                         .value("value")
                                         .build()
@@ -256,26 +243,23 @@ internal class BoxUpdateParamsTest {
         assertThat(body.bodyName()).contains("name")
         assertThat(body.proxyConfig())
             .contains(
-                BoxUpdateParams.ProxyConfig.builder()
+                ProxyConfig.builder()
                     .accessControl(
-                        BoxUpdateParams.ProxyConfig.AccessControl.builder()
+                        ProxyConfig.AccessControl.builder()
                             .addAllowList("string")
                             .addDenyList("string")
                             .build()
                     )
                     .addCallback(
-                        BoxUpdateParams.ProxyConfig.Callback.builder()
+                        ProxyConfig.Callback.builder()
                             .addMatchHost("string")
                             .ttlSeconds(60L)
                             .url("url")
                             .fullRequest(true)
                             .addRequestHeader(
-                                BoxUpdateParams.ProxyConfig.Callback.RequestHeader.builder()
-                                    .bodyName("name")
-                                    .type(
-                                        BoxUpdateParams.ProxyConfig.Callback.RequestHeader.Type
-                                            .PLAINTEXT
-                                    )
+                                ProxyConfig.Callback.RequestHeader.builder()
+                                    .name("name")
+                                    .type(ProxyConfig.Callback.RequestHeader.Type.PLAINTEXT)
                                     .isSet(true)
                                     .value("value")
                                     .build()
@@ -285,23 +269,21 @@ internal class BoxUpdateParamsTest {
                     .description("description")
                     .addNoProxy("string")
                     .addRule(
-                        BoxUpdateParams.ProxyConfig.Rule.builder()
-                            .bodyName("name")
+                        ProxyConfig.Rule.builder()
+                            .name("name")
                             .aws(
-                                BoxUpdateParams.ProxyConfig.Rule.Aws.SandboxesProxyAwsRoleConfig
-                                    .builder()
+                                ProxyConfig.Rule.Aws.SandboxesProxyAwsRoleConfig.builder()
                                     .roleArn("x")
                                     .subjectScope("tag:2fdcD1Dc-bbDb-2BBD-0Afa-1A3C33cFaADc")
                                     .build()
                             )
                             .azure(
-                                BoxUpdateParams.ProxyConfig.Rule.Azure
-                                    .SandboxesProxyAzureWorkloadIdentityConfig
+                                ProxyConfig.Rule.Azure.SandboxesProxyAzureWorkloadIdentityConfig
                                     .builder()
                                     .clientId("E1CB97d8-Ddf3-aAae-0Afa-1A3C33cFaADc")
                                     .tenantId("E1CB97d8-Ddf3-aAae-0Afa-1A3C33cFaADc")
                                     .addResource(
-                                        BoxUpdateParams.ProxyConfig.Rule.Azure
+                                        ProxyConfig.Rule.Azure
                                             .SandboxesProxyAzureWorkloadIdentityConfig
                                             .Resource
                                             .HTTPS_STORAGE_AZURE_COM
@@ -312,13 +294,12 @@ internal class BoxUpdateParamsTest {
                             .description("description")
                             .enabled(true)
                             .envVars(
-                                BoxUpdateParams.ProxyConfig.Rule.EnvVars.builder()
+                                ProxyConfig.Rule.EnvVars.builder()
                                     .putAdditionalProperty("foo", JsonValue.from("string"))
                                     .build()
                             )
                             .gcp(
-                                BoxUpdateParams.ProxyConfig.Rule.Gcp
-                                    .SandboxesProxyGcpWorkloadIdentityConfig
+                                ProxyConfig.Rule.Gcp.SandboxesProxyGcpWorkloadIdentityConfig
                                     .builder()
                                     .workloadIdentityProvider("x")
                                     .addScope("string")
@@ -327,9 +308,9 @@ internal class BoxUpdateParamsTest {
                                     .build()
                             )
                             .addHeader(
-                                BoxUpdateParams.ProxyConfig.Rule.Header.builder()
-                                    .bodyName("name")
-                                    .type(BoxUpdateParams.ProxyConfig.Rule.Header.Type.PLAINTEXT)
+                                ProxyConfig.Rule.Header.builder()
+                                    .name("name")
+                                    .type(ProxyConfig.Rule.Header.Type.PLAINTEXT)
                                     .isSet(true)
                                     .value("value")
                                     .build()

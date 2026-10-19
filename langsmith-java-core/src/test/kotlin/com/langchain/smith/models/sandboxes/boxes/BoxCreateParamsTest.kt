@@ -3,6 +3,8 @@
 package com.langchain.smith.models.sandboxes.boxes
 
 import com.langchain.smith.core.JsonValue
+import com.langchain.smith.models.sandboxes.ProxyConfig
+import com.langchain.smith.models.sandboxes.SandboxMountConfig
 import kotlin.jvm.optionals.getOrNull
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
@@ -34,19 +36,18 @@ internal class BoxCreateParamsTest {
             )
             .memBytes(0L)
             .mountConfig(
-                BoxCreateParams.MountConfig.builder()
+                SandboxMountConfig.builder()
                     .auth(
-                        BoxCreateParams.MountConfig.Auth.builder()
+                        SandboxMountConfig.Auth.builder()
                             .aws(
-                                BoxCreateParams.MountConfig.Auth.Aws
-                                    .SandboxesSandboxAwsMountRoleAuthConfig
+                                SandboxMountConfig.Auth.Aws.SandboxesSandboxAwsMountRoleAuthConfig
                                     .builder()
                                     .roleArn("x")
                                     .subjectScope("tag:2fdcD1Dc-bbDb-2BBD-0Afa-1A3C33cFaADc")
                                     .build()
                             )
                             .azure(
-                                BoxCreateParams.MountConfig.Auth.Azure
+                                SandboxMountConfig.Auth.Azure
                                     .SandboxesSandboxAzureMountWorkloadIdentityAuthConfig
                                     .builder()
                                     .clientId("E1CB97d8-Ddf3-aAae-0Afa-1A3C33cFaADc")
@@ -55,7 +56,7 @@ internal class BoxCreateParamsTest {
                                     .build()
                             )
                             .gcp(
-                                BoxCreateParams.MountConfig.Auth.Gcp
+                                SandboxMountConfig.Auth.Gcp
                                     .SandboxesSandboxGcpMountWorkloadIdentityAuthConfig
                                     .builder()
                                     .workloadIdentityProvider("x")
@@ -66,12 +67,11 @@ internal class BoxCreateParamsTest {
                             .build()
                     )
                     .addMount(
-                        BoxCreateParams.MountConfig.Mount.SandboxapiS3BucketMountSpec.builder()
+                        SandboxMountConfig.Mount.SandboxapiS3BucketMountSpec.builder()
                             .id("id")
                             .mountPath("mount_path")
                             .s3(
-                                BoxCreateParams.MountConfig.Mount.SandboxapiS3BucketMountSpec.S3
-                                    .builder()
+                                SandboxMountConfig.Mount.SandboxapiS3BucketMountSpec.S3.builder()
                                     .bucket("bucket")
                                     .region("region")
                                     .endpointUrl("endpoint_url")
@@ -79,13 +79,9 @@ internal class BoxCreateParamsTest {
                                     .prefix("prefix")
                                     .build()
                             )
-                            .type(
-                                BoxCreateParams.MountConfig.Mount.SandboxapiS3BucketMountSpec.Type
-                                    .S3
-                            )
+                            .type(SandboxMountConfig.Mount.SandboxapiS3BucketMountSpec.Type.S3)
                             .azureBlob(
-                                BoxCreateParams.MountConfig.Mount.SandboxapiS3BucketMountSpec
-                                    .AzureBlob
+                                SandboxMountConfig.Mount.SandboxapiS3BucketMountSpec.AzureBlob
                                     .builder()
                                     .container("container")
                                     .storageAccount("26f1klzn5713")
@@ -93,48 +89,39 @@ internal class BoxCreateParamsTest {
                                     .build()
                             )
                             .cache(
-                                BoxCreateParams.MountConfig.Mount.SandboxapiS3BucketMountSpec.Cache
-                                    .builder()
+                                SandboxMountConfig.Mount.SandboxapiS3BucketMountSpec.Cache.builder()
                                     .maxSizeBytes(0L)
                                     .writebackSeconds(0L)
                                     .build()
                             )
                             .contexthub(
-                                BoxCreateParams.MountConfig.Mount.SandboxapiS3BucketMountSpec
-                                    .Contexthub
+                                SandboxMountConfig.Mount.SandboxapiS3BucketMountSpec.Contexthub
                                     .builder()
                                     .repo("repo")
                                     .initialPullOnly(true)
                                     .build()
                             )
                             .encryption(
-                                BoxCreateParams.MountConfig.Mount.SandboxapiS3BucketMountSpec
-                                    .Encryption
+                                SandboxMountConfig.Mount.SandboxapiS3BucketMountSpec.Encryption
                                     .builder()
                                     .kmsKey("kms_key")
                                     .build()
                             )
                             .gcs(
-                                BoxCreateParams.MountConfig.Mount.SandboxapiS3BucketMountSpec.Gcs
-                                    .builder()
+                                SandboxMountConfig.Mount.SandboxapiS3BucketMountSpec.Gcs.builder()
                                     .bucket("bucket")
                                     .prefix("prefix")
                                     .build()
                             )
                             .git(
-                                BoxCreateParams.MountConfig.Mount.SandboxapiS3BucketMountSpec.Git
-                                    .builder()
+                                SandboxMountConfig.Mount.SandboxapiS3BucketMountSpec.Git.builder()
                                     .remoteUrl("remote_url")
                                     .ref(
-                                        BoxCreateParams.MountConfig.Mount
-                                            .SandboxapiS3BucketMountSpec
-                                            .Git
-                                            .Ref
+                                        SandboxMountConfig.Mount.SandboxapiS3BucketMountSpec.Git.Ref
                                             .builder()
                                             .name("name")
                                             .type(
-                                                BoxCreateParams.MountConfig.Mount
-                                                    .SandboxapiS3BucketMountSpec
+                                                SandboxMountConfig.Mount.SandboxapiS3BucketMountSpec
                                                     .Git
                                                     .Ref
                                                     .Type
@@ -153,26 +140,23 @@ internal class BoxCreateParamsTest {
             .name("name")
             .preserveMemoryOnStop(true)
             .proxyConfig(
-                BoxCreateParams.ProxyConfig.builder()
+                ProxyConfig.builder()
                     .accessControl(
-                        BoxCreateParams.ProxyConfig.AccessControl.builder()
+                        ProxyConfig.AccessControl.builder()
                             .addAllowList("string")
                             .addDenyList("string")
                             .build()
                     )
                     .addCallback(
-                        BoxCreateParams.ProxyConfig.Callback.builder()
+                        ProxyConfig.Callback.builder()
                             .addMatchHost("string")
                             .ttlSeconds(60L)
                             .url("url")
                             .fullRequest(true)
                             .addRequestHeader(
-                                BoxCreateParams.ProxyConfig.Callback.RequestHeader.builder()
+                                ProxyConfig.Callback.RequestHeader.builder()
                                     .name("name")
-                                    .type(
-                                        BoxCreateParams.ProxyConfig.Callback.RequestHeader.Type
-                                            .PLAINTEXT
-                                    )
+                                    .type(ProxyConfig.Callback.RequestHeader.Type.PLAINTEXT)
                                     .isSet(true)
                                     .value("value")
                                     .build()
@@ -182,23 +166,21 @@ internal class BoxCreateParamsTest {
                     .description("description")
                     .addNoProxy("string")
                     .addRule(
-                        BoxCreateParams.ProxyConfig.Rule.builder()
+                        ProxyConfig.Rule.builder()
                             .name("name")
                             .aws(
-                                BoxCreateParams.ProxyConfig.Rule.Aws.SandboxesProxyAwsRoleConfig
-                                    .builder()
+                                ProxyConfig.Rule.Aws.SandboxesProxyAwsRoleConfig.builder()
                                     .roleArn("x")
                                     .subjectScope("tag:2fdcD1Dc-bbDb-2BBD-0Afa-1A3C33cFaADc")
                                     .build()
                             )
                             .azure(
-                                BoxCreateParams.ProxyConfig.Rule.Azure
-                                    .SandboxesProxyAzureWorkloadIdentityConfig
+                                ProxyConfig.Rule.Azure.SandboxesProxyAzureWorkloadIdentityConfig
                                     .builder()
                                     .clientId("E1CB97d8-Ddf3-aAae-0Afa-1A3C33cFaADc")
                                     .tenantId("E1CB97d8-Ddf3-aAae-0Afa-1A3C33cFaADc")
                                     .addResource(
-                                        BoxCreateParams.ProxyConfig.Rule.Azure
+                                        ProxyConfig.Rule.Azure
                                             .SandboxesProxyAzureWorkloadIdentityConfig
                                             .Resource
                                             .HTTPS_STORAGE_AZURE_COM
@@ -209,13 +191,12 @@ internal class BoxCreateParamsTest {
                             .description("description")
                             .enabled(true)
                             .envVars(
-                                BoxCreateParams.ProxyConfig.Rule.EnvVars.builder()
+                                ProxyConfig.Rule.EnvVars.builder()
                                     .putAdditionalProperty("foo", JsonValue.from("string"))
                                     .build()
                             )
                             .gcp(
-                                BoxCreateParams.ProxyConfig.Rule.Gcp
-                                    .SandboxesProxyGcpWorkloadIdentityConfig
+                                ProxyConfig.Rule.Gcp.SandboxesProxyGcpWorkloadIdentityConfig
                                     .builder()
                                     .workloadIdentityProvider("x")
                                     .addScope("string")
@@ -224,9 +205,9 @@ internal class BoxCreateParamsTest {
                                     .build()
                             )
                             .addHeader(
-                                BoxCreateParams.ProxyConfig.Rule.Header.builder()
+                                ProxyConfig.Rule.Header.builder()
                                     .name("name")
-                                    .type(BoxCreateParams.ProxyConfig.Rule.Header.Type.PLAINTEXT)
+                                    .type(ProxyConfig.Rule.Header.Type.PLAINTEXT)
                                     .isSet(true)
                                     .value("value")
                                     .build()
@@ -285,11 +266,11 @@ internal class BoxCreateParamsTest {
                 )
                 .memBytes(0L)
                 .mountConfig(
-                    BoxCreateParams.MountConfig.builder()
+                    SandboxMountConfig.builder()
                         .auth(
-                            BoxCreateParams.MountConfig.Auth.builder()
+                            SandboxMountConfig.Auth.builder()
                                 .aws(
-                                    BoxCreateParams.MountConfig.Auth.Aws
+                                    SandboxMountConfig.Auth.Aws
                                         .SandboxesSandboxAwsMountRoleAuthConfig
                                         .builder()
                                         .roleArn("x")
@@ -297,7 +278,7 @@ internal class BoxCreateParamsTest {
                                         .build()
                                 )
                                 .azure(
-                                    BoxCreateParams.MountConfig.Auth.Azure
+                                    SandboxMountConfig.Auth.Azure
                                         .SandboxesSandboxAzureMountWorkloadIdentityAuthConfig
                                         .builder()
                                         .clientId("E1CB97d8-Ddf3-aAae-0Afa-1A3C33cFaADc")
@@ -306,7 +287,7 @@ internal class BoxCreateParamsTest {
                                         .build()
                                 )
                                 .gcp(
-                                    BoxCreateParams.MountConfig.Auth.Gcp
+                                    SandboxMountConfig.Auth.Gcp
                                         .SandboxesSandboxGcpMountWorkloadIdentityAuthConfig
                                         .builder()
                                         .workloadIdentityProvider("x")
@@ -317,11 +298,11 @@ internal class BoxCreateParamsTest {
                                 .build()
                         )
                         .addMount(
-                            BoxCreateParams.MountConfig.Mount.SandboxapiS3BucketMountSpec.builder()
+                            SandboxMountConfig.Mount.SandboxapiS3BucketMountSpec.builder()
                                 .id("id")
                                 .mountPath("mount_path")
                                 .s3(
-                                    BoxCreateParams.MountConfig.Mount.SandboxapiS3BucketMountSpec.S3
+                                    SandboxMountConfig.Mount.SandboxapiS3BucketMountSpec.S3
                                         .builder()
                                         .bucket("bucket")
                                         .region("region")
@@ -330,14 +311,9 @@ internal class BoxCreateParamsTest {
                                         .prefix("prefix")
                                         .build()
                                 )
-                                .type(
-                                    BoxCreateParams.MountConfig.Mount.SandboxapiS3BucketMountSpec
-                                        .Type
-                                        .S3
-                                )
+                                .type(SandboxMountConfig.Mount.SandboxapiS3BucketMountSpec.Type.S3)
                                 .azureBlob(
-                                    BoxCreateParams.MountConfig.Mount.SandboxapiS3BucketMountSpec
-                                        .AzureBlob
+                                    SandboxMountConfig.Mount.SandboxapiS3BucketMountSpec.AzureBlob
                                         .builder()
                                         .container("container")
                                         .storageAccount("26f1klzn5713")
@@ -345,50 +321,43 @@ internal class BoxCreateParamsTest {
                                         .build()
                                 )
                                 .cache(
-                                    BoxCreateParams.MountConfig.Mount.SandboxapiS3BucketMountSpec
-                                        .Cache
+                                    SandboxMountConfig.Mount.SandboxapiS3BucketMountSpec.Cache
                                         .builder()
                                         .maxSizeBytes(0L)
                                         .writebackSeconds(0L)
                                         .build()
                                 )
                                 .contexthub(
-                                    BoxCreateParams.MountConfig.Mount.SandboxapiS3BucketMountSpec
-                                        .Contexthub
+                                    SandboxMountConfig.Mount.SandboxapiS3BucketMountSpec.Contexthub
                                         .builder()
                                         .repo("repo")
                                         .initialPullOnly(true)
                                         .build()
                                 )
                                 .encryption(
-                                    BoxCreateParams.MountConfig.Mount.SandboxapiS3BucketMountSpec
-                                        .Encryption
+                                    SandboxMountConfig.Mount.SandboxapiS3BucketMountSpec.Encryption
                                         .builder()
                                         .kmsKey("kms_key")
                                         .build()
                                 )
                                 .gcs(
-                                    BoxCreateParams.MountConfig.Mount.SandboxapiS3BucketMountSpec
-                                        .Gcs
+                                    SandboxMountConfig.Mount.SandboxapiS3BucketMountSpec.Gcs
                                         .builder()
                                         .bucket("bucket")
                                         .prefix("prefix")
                                         .build()
                                 )
                                 .git(
-                                    BoxCreateParams.MountConfig.Mount.SandboxapiS3BucketMountSpec
-                                        .Git
+                                    SandboxMountConfig.Mount.SandboxapiS3BucketMountSpec.Git
                                         .builder()
                                         .remoteUrl("remote_url")
                                         .ref(
-                                            BoxCreateParams.MountConfig.Mount
-                                                .SandboxapiS3BucketMountSpec
-                                                .Git
+                                            SandboxMountConfig.Mount.SandboxapiS3BucketMountSpec.Git
                                                 .Ref
                                                 .builder()
                                                 .name("name")
                                                 .type(
-                                                    BoxCreateParams.MountConfig.Mount
+                                                    SandboxMountConfig.Mount
                                                         .SandboxapiS3BucketMountSpec
                                                         .Git
                                                         .Ref
@@ -408,26 +377,23 @@ internal class BoxCreateParamsTest {
                 .name("name")
                 .preserveMemoryOnStop(true)
                 .proxyConfig(
-                    BoxCreateParams.ProxyConfig.builder()
+                    ProxyConfig.builder()
                         .accessControl(
-                            BoxCreateParams.ProxyConfig.AccessControl.builder()
+                            ProxyConfig.AccessControl.builder()
                                 .addAllowList("string")
                                 .addDenyList("string")
                                 .build()
                         )
                         .addCallback(
-                            BoxCreateParams.ProxyConfig.Callback.builder()
+                            ProxyConfig.Callback.builder()
                                 .addMatchHost("string")
                                 .ttlSeconds(60L)
                                 .url("url")
                                 .fullRequest(true)
                                 .addRequestHeader(
-                                    BoxCreateParams.ProxyConfig.Callback.RequestHeader.builder()
+                                    ProxyConfig.Callback.RequestHeader.builder()
                                         .name("name")
-                                        .type(
-                                            BoxCreateParams.ProxyConfig.Callback.RequestHeader.Type
-                                                .PLAINTEXT
-                                        )
+                                        .type(ProxyConfig.Callback.RequestHeader.Type.PLAINTEXT)
                                         .isSet(true)
                                         .value("value")
                                         .build()
@@ -437,23 +403,21 @@ internal class BoxCreateParamsTest {
                         .description("description")
                         .addNoProxy("string")
                         .addRule(
-                            BoxCreateParams.ProxyConfig.Rule.builder()
+                            ProxyConfig.Rule.builder()
                                 .name("name")
                                 .aws(
-                                    BoxCreateParams.ProxyConfig.Rule.Aws.SandboxesProxyAwsRoleConfig
-                                        .builder()
+                                    ProxyConfig.Rule.Aws.SandboxesProxyAwsRoleConfig.builder()
                                         .roleArn("x")
                                         .subjectScope("tag:2fdcD1Dc-bbDb-2BBD-0Afa-1A3C33cFaADc")
                                         .build()
                                 )
                                 .azure(
-                                    BoxCreateParams.ProxyConfig.Rule.Azure
-                                        .SandboxesProxyAzureWorkloadIdentityConfig
+                                    ProxyConfig.Rule.Azure.SandboxesProxyAzureWorkloadIdentityConfig
                                         .builder()
                                         .clientId("E1CB97d8-Ddf3-aAae-0Afa-1A3C33cFaADc")
                                         .tenantId("E1CB97d8-Ddf3-aAae-0Afa-1A3C33cFaADc")
                                         .addResource(
-                                            BoxCreateParams.ProxyConfig.Rule.Azure
+                                            ProxyConfig.Rule.Azure
                                                 .SandboxesProxyAzureWorkloadIdentityConfig
                                                 .Resource
                                                 .HTTPS_STORAGE_AZURE_COM
@@ -464,13 +428,12 @@ internal class BoxCreateParamsTest {
                                 .description("description")
                                 .enabled(true)
                                 .envVars(
-                                    BoxCreateParams.ProxyConfig.Rule.EnvVars.builder()
+                                    ProxyConfig.Rule.EnvVars.builder()
                                         .putAdditionalProperty("foo", JsonValue.from("string"))
                                         .build()
                                 )
                                 .gcp(
-                                    BoxCreateParams.ProxyConfig.Rule.Gcp
-                                        .SandboxesProxyGcpWorkloadIdentityConfig
+                                    ProxyConfig.Rule.Gcp.SandboxesProxyGcpWorkloadIdentityConfig
                                         .builder()
                                         .workloadIdentityProvider("x")
                                         .addScope("string")
@@ -479,11 +442,9 @@ internal class BoxCreateParamsTest {
                                         .build()
                                 )
                                 .addHeader(
-                                    BoxCreateParams.ProxyConfig.Rule.Header.builder()
+                                    ProxyConfig.Rule.Header.builder()
                                         .name("name")
-                                        .type(
-                                            BoxCreateParams.ProxyConfig.Rule.Header.Type.PLAINTEXT
-                                        )
+                                        .type(ProxyConfig.Rule.Header.Type.PLAINTEXT)
                                         .isSet(true)
                                         .value("value")
                                         .build()
@@ -543,19 +504,18 @@ internal class BoxCreateParamsTest {
         assertThat(body.memBytes()).contains(0L)
         assertThat(body.mountConfig())
             .contains(
-                BoxCreateParams.MountConfig.builder()
+                SandboxMountConfig.builder()
                     .auth(
-                        BoxCreateParams.MountConfig.Auth.builder()
+                        SandboxMountConfig.Auth.builder()
                             .aws(
-                                BoxCreateParams.MountConfig.Auth.Aws
-                                    .SandboxesSandboxAwsMountRoleAuthConfig
+                                SandboxMountConfig.Auth.Aws.SandboxesSandboxAwsMountRoleAuthConfig
                                     .builder()
                                     .roleArn("x")
                                     .subjectScope("tag:2fdcD1Dc-bbDb-2BBD-0Afa-1A3C33cFaADc")
                                     .build()
                             )
                             .azure(
-                                BoxCreateParams.MountConfig.Auth.Azure
+                                SandboxMountConfig.Auth.Azure
                                     .SandboxesSandboxAzureMountWorkloadIdentityAuthConfig
                                     .builder()
                                     .clientId("E1CB97d8-Ddf3-aAae-0Afa-1A3C33cFaADc")
@@ -564,7 +524,7 @@ internal class BoxCreateParamsTest {
                                     .build()
                             )
                             .gcp(
-                                BoxCreateParams.MountConfig.Auth.Gcp
+                                SandboxMountConfig.Auth.Gcp
                                     .SandboxesSandboxGcpMountWorkloadIdentityAuthConfig
                                     .builder()
                                     .workloadIdentityProvider("x")
@@ -575,12 +535,11 @@ internal class BoxCreateParamsTest {
                             .build()
                     )
                     .addMount(
-                        BoxCreateParams.MountConfig.Mount.SandboxapiS3BucketMountSpec.builder()
+                        SandboxMountConfig.Mount.SandboxapiS3BucketMountSpec.builder()
                             .id("id")
                             .mountPath("mount_path")
                             .s3(
-                                BoxCreateParams.MountConfig.Mount.SandboxapiS3BucketMountSpec.S3
-                                    .builder()
+                                SandboxMountConfig.Mount.SandboxapiS3BucketMountSpec.S3.builder()
                                     .bucket("bucket")
                                     .region("region")
                                     .endpointUrl("endpoint_url")
@@ -588,13 +547,9 @@ internal class BoxCreateParamsTest {
                                     .prefix("prefix")
                                     .build()
                             )
-                            .type(
-                                BoxCreateParams.MountConfig.Mount.SandboxapiS3BucketMountSpec.Type
-                                    .S3
-                            )
+                            .type(SandboxMountConfig.Mount.SandboxapiS3BucketMountSpec.Type.S3)
                             .azureBlob(
-                                BoxCreateParams.MountConfig.Mount.SandboxapiS3BucketMountSpec
-                                    .AzureBlob
+                                SandboxMountConfig.Mount.SandboxapiS3BucketMountSpec.AzureBlob
                                     .builder()
                                     .container("container")
                                     .storageAccount("26f1klzn5713")
@@ -602,48 +557,39 @@ internal class BoxCreateParamsTest {
                                     .build()
                             )
                             .cache(
-                                BoxCreateParams.MountConfig.Mount.SandboxapiS3BucketMountSpec.Cache
-                                    .builder()
+                                SandboxMountConfig.Mount.SandboxapiS3BucketMountSpec.Cache.builder()
                                     .maxSizeBytes(0L)
                                     .writebackSeconds(0L)
                                     .build()
                             )
                             .contexthub(
-                                BoxCreateParams.MountConfig.Mount.SandboxapiS3BucketMountSpec
-                                    .Contexthub
+                                SandboxMountConfig.Mount.SandboxapiS3BucketMountSpec.Contexthub
                                     .builder()
                                     .repo("repo")
                                     .initialPullOnly(true)
                                     .build()
                             )
                             .encryption(
-                                BoxCreateParams.MountConfig.Mount.SandboxapiS3BucketMountSpec
-                                    .Encryption
+                                SandboxMountConfig.Mount.SandboxapiS3BucketMountSpec.Encryption
                                     .builder()
                                     .kmsKey("kms_key")
                                     .build()
                             )
                             .gcs(
-                                BoxCreateParams.MountConfig.Mount.SandboxapiS3BucketMountSpec.Gcs
-                                    .builder()
+                                SandboxMountConfig.Mount.SandboxapiS3BucketMountSpec.Gcs.builder()
                                     .bucket("bucket")
                                     .prefix("prefix")
                                     .build()
                             )
                             .git(
-                                BoxCreateParams.MountConfig.Mount.SandboxapiS3BucketMountSpec.Git
-                                    .builder()
+                                SandboxMountConfig.Mount.SandboxapiS3BucketMountSpec.Git.builder()
                                     .remoteUrl("remote_url")
                                     .ref(
-                                        BoxCreateParams.MountConfig.Mount
-                                            .SandboxapiS3BucketMountSpec
-                                            .Git
-                                            .Ref
+                                        SandboxMountConfig.Mount.SandboxapiS3BucketMountSpec.Git.Ref
                                             .builder()
                                             .name("name")
                                             .type(
-                                                BoxCreateParams.MountConfig.Mount
-                                                    .SandboxapiS3BucketMountSpec
+                                                SandboxMountConfig.Mount.SandboxapiS3BucketMountSpec
                                                     .Git
                                                     .Ref
                                                     .Type
@@ -663,26 +609,23 @@ internal class BoxCreateParamsTest {
         assertThat(body.preserveMemoryOnStop()).contains(true)
         assertThat(body.proxyConfig())
             .contains(
-                BoxCreateParams.ProxyConfig.builder()
+                ProxyConfig.builder()
                     .accessControl(
-                        BoxCreateParams.ProxyConfig.AccessControl.builder()
+                        ProxyConfig.AccessControl.builder()
                             .addAllowList("string")
                             .addDenyList("string")
                             .build()
                     )
                     .addCallback(
-                        BoxCreateParams.ProxyConfig.Callback.builder()
+                        ProxyConfig.Callback.builder()
                             .addMatchHost("string")
                             .ttlSeconds(60L)
                             .url("url")
                             .fullRequest(true)
                             .addRequestHeader(
-                                BoxCreateParams.ProxyConfig.Callback.RequestHeader.builder()
+                                ProxyConfig.Callback.RequestHeader.builder()
                                     .name("name")
-                                    .type(
-                                        BoxCreateParams.ProxyConfig.Callback.RequestHeader.Type
-                                            .PLAINTEXT
-                                    )
+                                    .type(ProxyConfig.Callback.RequestHeader.Type.PLAINTEXT)
                                     .isSet(true)
                                     .value("value")
                                     .build()
@@ -692,23 +635,21 @@ internal class BoxCreateParamsTest {
                     .description("description")
                     .addNoProxy("string")
                     .addRule(
-                        BoxCreateParams.ProxyConfig.Rule.builder()
+                        ProxyConfig.Rule.builder()
                             .name("name")
                             .aws(
-                                BoxCreateParams.ProxyConfig.Rule.Aws.SandboxesProxyAwsRoleConfig
-                                    .builder()
+                                ProxyConfig.Rule.Aws.SandboxesProxyAwsRoleConfig.builder()
                                     .roleArn("x")
                                     .subjectScope("tag:2fdcD1Dc-bbDb-2BBD-0Afa-1A3C33cFaADc")
                                     .build()
                             )
                             .azure(
-                                BoxCreateParams.ProxyConfig.Rule.Azure
-                                    .SandboxesProxyAzureWorkloadIdentityConfig
+                                ProxyConfig.Rule.Azure.SandboxesProxyAzureWorkloadIdentityConfig
                                     .builder()
                                     .clientId("E1CB97d8-Ddf3-aAae-0Afa-1A3C33cFaADc")
                                     .tenantId("E1CB97d8-Ddf3-aAae-0Afa-1A3C33cFaADc")
                                     .addResource(
-                                        BoxCreateParams.ProxyConfig.Rule.Azure
+                                        ProxyConfig.Rule.Azure
                                             .SandboxesProxyAzureWorkloadIdentityConfig
                                             .Resource
                                             .HTTPS_STORAGE_AZURE_COM
@@ -719,13 +660,12 @@ internal class BoxCreateParamsTest {
                             .description("description")
                             .enabled(true)
                             .envVars(
-                                BoxCreateParams.ProxyConfig.Rule.EnvVars.builder()
+                                ProxyConfig.Rule.EnvVars.builder()
                                     .putAdditionalProperty("foo", JsonValue.from("string"))
                                     .build()
                             )
                             .gcp(
-                                BoxCreateParams.ProxyConfig.Rule.Gcp
-                                    .SandboxesProxyGcpWorkloadIdentityConfig
+                                ProxyConfig.Rule.Gcp.SandboxesProxyGcpWorkloadIdentityConfig
                                     .builder()
                                     .workloadIdentityProvider("x")
                                     .addScope("string")
@@ -734,9 +674,9 @@ internal class BoxCreateParamsTest {
                                     .build()
                             )
                             .addHeader(
-                                BoxCreateParams.ProxyConfig.Rule.Header.builder()
+                                ProxyConfig.Rule.Header.builder()
                                     .name("name")
-                                    .type(BoxCreateParams.ProxyConfig.Rule.Header.Type.PLAINTEXT)
+                                    .type(ProxyConfig.Rule.Header.Type.PLAINTEXT)
                                     .isSet(true)
                                     .value("value")
                                     .build()

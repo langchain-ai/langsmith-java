@@ -38,11 +38,11 @@ internal class SandboxListResponseTest {
                         )
                         .memBytes(0L)
                         .mountConfig(
-                            SandboxResponse.MountConfig.builder()
+                            SandboxMountConfig.builder()
                                 .auth(
-                                    SandboxResponse.MountConfig.Auth.builder()
+                                    SandboxMountConfig.Auth.builder()
                                         .aws(
-                                            SandboxResponse.MountConfig.Auth.Aws
+                                            SandboxMountConfig.Auth.Aws
                                                 .SandboxesSandboxAwsMountRoleAuthConfig
                                                 .builder()
                                                 .roleArn("x")
@@ -52,7 +52,7 @@ internal class SandboxListResponseTest {
                                                 .build()
                                         )
                                         .azure(
-                                            SandboxResponse.MountConfig.Auth.Azure
+                                            SandboxMountConfig.Auth.Azure
                                                 .SandboxesSandboxAzureMountWorkloadIdentityAuthConfig
                                                 .builder()
                                                 .clientId("E1CB97d8-Ddf3-aAae-0Afa-1A3C33cFaADc")
@@ -63,7 +63,7 @@ internal class SandboxListResponseTest {
                                                 .build()
                                         )
                                         .gcp(
-                                            SandboxResponse.MountConfig.Auth.Gcp
+                                            SandboxMountConfig.Auth.Gcp
                                                 .SandboxesSandboxGcpMountWorkloadIdentityAuthConfig
                                                 .builder()
                                                 .workloadIdentityProvider("x")
@@ -76,14 +76,11 @@ internal class SandboxListResponseTest {
                                         .build()
                                 )
                                 .addMount(
-                                    SandboxResponse.MountConfig.Mount.SandboxapiS3BucketMountSpec
-                                        .builder()
+                                    SandboxMountConfig.Mount.SandboxapiS3BucketMountSpec.builder()
                                         .id("id")
                                         .mountPath("mount_path")
                                         .s3(
-                                            SandboxResponse.MountConfig.Mount
-                                                .SandboxapiS3BucketMountSpec
-                                                .S3
+                                            SandboxMountConfig.Mount.SandboxapiS3BucketMountSpec.S3
                                                 .builder()
                                                 .bucket("bucket")
                                                 .region("region")
@@ -93,14 +90,12 @@ internal class SandboxListResponseTest {
                                                 .build()
                                         )
                                         .type(
-                                            SandboxResponse.MountConfig.Mount
-                                                .SandboxapiS3BucketMountSpec
+                                            SandboxMountConfig.Mount.SandboxapiS3BucketMountSpec
                                                 .Type
                                                 .S3
                                         )
                                         .azureBlob(
-                                            SandboxResponse.MountConfig.Mount
-                                                .SandboxapiS3BucketMountSpec
+                                            SandboxMountConfig.Mount.SandboxapiS3BucketMountSpec
                                                 .AzureBlob
                                                 .builder()
                                                 .container("container")
@@ -109,8 +104,7 @@ internal class SandboxListResponseTest {
                                                 .build()
                                         )
                                         .cache(
-                                            SandboxResponse.MountConfig.Mount
-                                                .SandboxapiS3BucketMountSpec
+                                            SandboxMountConfig.Mount.SandboxapiS3BucketMountSpec
                                                 .Cache
                                                 .builder()
                                                 .maxSizeBytes(0L)
@@ -118,8 +112,7 @@ internal class SandboxListResponseTest {
                                                 .build()
                                         )
                                         .contexthub(
-                                            SandboxResponse.MountConfig.Mount
-                                                .SandboxapiS3BucketMountSpec
+                                            SandboxMountConfig.Mount.SandboxapiS3BucketMountSpec
                                                 .Contexthub
                                                 .builder()
                                                 .repo("repo")
@@ -127,37 +120,32 @@ internal class SandboxListResponseTest {
                                                 .build()
                                         )
                                         .encryption(
-                                            SandboxResponse.MountConfig.Mount
-                                                .SandboxapiS3BucketMountSpec
+                                            SandboxMountConfig.Mount.SandboxapiS3BucketMountSpec
                                                 .Encryption
                                                 .builder()
                                                 .kmsKey("kms_key")
                                                 .build()
                                         )
                                         .gcs(
-                                            SandboxResponse.MountConfig.Mount
-                                                .SandboxapiS3BucketMountSpec
-                                                .Gcs
+                                            SandboxMountConfig.Mount.SandboxapiS3BucketMountSpec.Gcs
                                                 .builder()
                                                 .bucket("bucket")
                                                 .prefix("prefix")
                                                 .build()
                                         )
                                         .git(
-                                            SandboxResponse.MountConfig.Mount
-                                                .SandboxapiS3BucketMountSpec
-                                                .Git
+                                            SandboxMountConfig.Mount.SandboxapiS3BucketMountSpec.Git
                                                 .builder()
                                                 .remoteUrl("remote_url")
                                                 .ref(
-                                                    SandboxResponse.MountConfig.Mount
+                                                    SandboxMountConfig.Mount
                                                         .SandboxapiS3BucketMountSpec
                                                         .Git
                                                         .Ref
                                                         .builder()
                                                         .name("name")
                                                         .type(
-                                                            SandboxResponse.MountConfig.Mount
+                                                            SandboxMountConfig.Mount
                                                                 .SandboxapiS3BucketMountSpec
                                                                 .Git
                                                                 .Ref
@@ -177,27 +165,24 @@ internal class SandboxListResponseTest {
                         .name("name")
                         .preserveMemoryOnStop(true)
                         .proxyConfig(
-                            SandboxResponse.ProxyConfig.builder()
+                            ProxyConfig.builder()
                                 .accessControl(
-                                    SandboxResponse.ProxyConfig.AccessControl.builder()
+                                    ProxyConfig.AccessControl.builder()
                                         .addAllowList("string")
                                         .addDenyList("string")
                                         .build()
                                 )
                                 .addCallback(
-                                    SandboxResponse.ProxyConfig.Callback.builder()
+                                    ProxyConfig.Callback.builder()
                                         .addMatchHost("string")
                                         .ttlSeconds(60L)
                                         .url("url")
                                         .fullRequest(true)
                                         .addRequestHeader(
-                                            SandboxResponse.ProxyConfig.Callback.RequestHeader
-                                                .builder()
+                                            ProxyConfig.Callback.RequestHeader.builder()
                                                 .name("name")
                                                 .type(
-                                                    SandboxResponse.ProxyConfig.Callback
-                                                        .RequestHeader
-                                                        .Type
+                                                    ProxyConfig.Callback.RequestHeader.Type
                                                         .PLAINTEXT
                                                 )
                                                 .isSet(true)
@@ -209,11 +194,10 @@ internal class SandboxListResponseTest {
                                 .description("description")
                                 .addNoProxy("string")
                                 .addRule(
-                                    SandboxResponse.ProxyConfig.Rule.builder()
+                                    ProxyConfig.Rule.builder()
                                         .name("name")
                                         .aws(
-                                            SandboxResponse.ProxyConfig.Rule.Aws
-                                                .SandboxesProxyAwsRoleConfig
+                                            ProxyConfig.Rule.Aws.SandboxesProxyAwsRoleConfig
                                                 .builder()
                                                 .roleArn("x")
                                                 .subjectScope(
@@ -222,13 +206,13 @@ internal class SandboxListResponseTest {
                                                 .build()
                                         )
                                         .azure(
-                                            SandboxResponse.ProxyConfig.Rule.Azure
+                                            ProxyConfig.Rule.Azure
                                                 .SandboxesProxyAzureWorkloadIdentityConfig
                                                 .builder()
                                                 .clientId("E1CB97d8-Ddf3-aAae-0Afa-1A3C33cFaADc")
                                                 .tenantId("E1CB97d8-Ddf3-aAae-0Afa-1A3C33cFaADc")
                                                 .addResource(
-                                                    SandboxResponse.ProxyConfig.Rule.Azure
+                                                    ProxyConfig.Rule.Azure
                                                         .SandboxesProxyAzureWorkloadIdentityConfig
                                                         .Resource
                                                         .HTTPS_STORAGE_AZURE_COM
@@ -241,7 +225,7 @@ internal class SandboxListResponseTest {
                                         .description("description")
                                         .enabled(true)
                                         .envVars(
-                                            SandboxResponse.ProxyConfig.Rule.EnvVars.builder()
+                                            ProxyConfig.Rule.EnvVars.builder()
                                                 .putAdditionalProperty(
                                                     "foo",
                                                     JsonValue.from("string"),
@@ -249,7 +233,7 @@ internal class SandboxListResponseTest {
                                                 .build()
                                         )
                                         .gcp(
-                                            SandboxResponse.ProxyConfig.Rule.Gcp
+                                            ProxyConfig.Rule.Gcp
                                                 .SandboxesProxyGcpWorkloadIdentityConfig
                                                 .builder()
                                                 .workloadIdentityProvider("x")
@@ -261,12 +245,9 @@ internal class SandboxListResponseTest {
                                                 .build()
                                         )
                                         .addHeader(
-                                            SandboxResponse.ProxyConfig.Rule.Header.builder()
+                                            ProxyConfig.Rule.Header.builder()
                                                 .name("name")
-                                                .type(
-                                                    SandboxResponse.ProxyConfig.Rule.Header.Type
-                                                        .PLAINTEXT
-                                                )
+                                                .type(ProxyConfig.Rule.Header.Type.PLAINTEXT)
                                                 .isSet(true)
                                                 .value("value")
                                                 .build()
@@ -325,11 +306,11 @@ internal class SandboxListResponseTest {
                         )
                         .memBytes(0L)
                         .mountConfig(
-                            SandboxResponse.MountConfig.builder()
+                            SandboxMountConfig.builder()
                                 .auth(
-                                    SandboxResponse.MountConfig.Auth.builder()
+                                    SandboxMountConfig.Auth.builder()
                                         .aws(
-                                            SandboxResponse.MountConfig.Auth.Aws
+                                            SandboxMountConfig.Auth.Aws
                                                 .SandboxesSandboxAwsMountRoleAuthConfig
                                                 .builder()
                                                 .roleArn("x")
@@ -339,7 +320,7 @@ internal class SandboxListResponseTest {
                                                 .build()
                                         )
                                         .azure(
-                                            SandboxResponse.MountConfig.Auth.Azure
+                                            SandboxMountConfig.Auth.Azure
                                                 .SandboxesSandboxAzureMountWorkloadIdentityAuthConfig
                                                 .builder()
                                                 .clientId("E1CB97d8-Ddf3-aAae-0Afa-1A3C33cFaADc")
@@ -350,7 +331,7 @@ internal class SandboxListResponseTest {
                                                 .build()
                                         )
                                         .gcp(
-                                            SandboxResponse.MountConfig.Auth.Gcp
+                                            SandboxMountConfig.Auth.Gcp
                                                 .SandboxesSandboxGcpMountWorkloadIdentityAuthConfig
                                                 .builder()
                                                 .workloadIdentityProvider("x")
@@ -363,14 +344,11 @@ internal class SandboxListResponseTest {
                                         .build()
                                 )
                                 .addMount(
-                                    SandboxResponse.MountConfig.Mount.SandboxapiS3BucketMountSpec
-                                        .builder()
+                                    SandboxMountConfig.Mount.SandboxapiS3BucketMountSpec.builder()
                                         .id("id")
                                         .mountPath("mount_path")
                                         .s3(
-                                            SandboxResponse.MountConfig.Mount
-                                                .SandboxapiS3BucketMountSpec
-                                                .S3
+                                            SandboxMountConfig.Mount.SandboxapiS3BucketMountSpec.S3
                                                 .builder()
                                                 .bucket("bucket")
                                                 .region("region")
@@ -380,14 +358,12 @@ internal class SandboxListResponseTest {
                                                 .build()
                                         )
                                         .type(
-                                            SandboxResponse.MountConfig.Mount
-                                                .SandboxapiS3BucketMountSpec
+                                            SandboxMountConfig.Mount.SandboxapiS3BucketMountSpec
                                                 .Type
                                                 .S3
                                         )
                                         .azureBlob(
-                                            SandboxResponse.MountConfig.Mount
-                                                .SandboxapiS3BucketMountSpec
+                                            SandboxMountConfig.Mount.SandboxapiS3BucketMountSpec
                                                 .AzureBlob
                                                 .builder()
                                                 .container("container")
@@ -396,8 +372,7 @@ internal class SandboxListResponseTest {
                                                 .build()
                                         )
                                         .cache(
-                                            SandboxResponse.MountConfig.Mount
-                                                .SandboxapiS3BucketMountSpec
+                                            SandboxMountConfig.Mount.SandboxapiS3BucketMountSpec
                                                 .Cache
                                                 .builder()
                                                 .maxSizeBytes(0L)
@@ -405,8 +380,7 @@ internal class SandboxListResponseTest {
                                                 .build()
                                         )
                                         .contexthub(
-                                            SandboxResponse.MountConfig.Mount
-                                                .SandboxapiS3BucketMountSpec
+                                            SandboxMountConfig.Mount.SandboxapiS3BucketMountSpec
                                                 .Contexthub
                                                 .builder()
                                                 .repo("repo")
@@ -414,37 +388,32 @@ internal class SandboxListResponseTest {
                                                 .build()
                                         )
                                         .encryption(
-                                            SandboxResponse.MountConfig.Mount
-                                                .SandboxapiS3BucketMountSpec
+                                            SandboxMountConfig.Mount.SandboxapiS3BucketMountSpec
                                                 .Encryption
                                                 .builder()
                                                 .kmsKey("kms_key")
                                                 .build()
                                         )
                                         .gcs(
-                                            SandboxResponse.MountConfig.Mount
-                                                .SandboxapiS3BucketMountSpec
-                                                .Gcs
+                                            SandboxMountConfig.Mount.SandboxapiS3BucketMountSpec.Gcs
                                                 .builder()
                                                 .bucket("bucket")
                                                 .prefix("prefix")
                                                 .build()
                                         )
                                         .git(
-                                            SandboxResponse.MountConfig.Mount
-                                                .SandboxapiS3BucketMountSpec
-                                                .Git
+                                            SandboxMountConfig.Mount.SandboxapiS3BucketMountSpec.Git
                                                 .builder()
                                                 .remoteUrl("remote_url")
                                                 .ref(
-                                                    SandboxResponse.MountConfig.Mount
+                                                    SandboxMountConfig.Mount
                                                         .SandboxapiS3BucketMountSpec
                                                         .Git
                                                         .Ref
                                                         .builder()
                                                         .name("name")
                                                         .type(
-                                                            SandboxResponse.MountConfig.Mount
+                                                            SandboxMountConfig.Mount
                                                                 .SandboxapiS3BucketMountSpec
                                                                 .Git
                                                                 .Ref
@@ -464,27 +433,24 @@ internal class SandboxListResponseTest {
                         .name("name")
                         .preserveMemoryOnStop(true)
                         .proxyConfig(
-                            SandboxResponse.ProxyConfig.builder()
+                            ProxyConfig.builder()
                                 .accessControl(
-                                    SandboxResponse.ProxyConfig.AccessControl.builder()
+                                    ProxyConfig.AccessControl.builder()
                                         .addAllowList("string")
                                         .addDenyList("string")
                                         .build()
                                 )
                                 .addCallback(
-                                    SandboxResponse.ProxyConfig.Callback.builder()
+                                    ProxyConfig.Callback.builder()
                                         .addMatchHost("string")
                                         .ttlSeconds(60L)
                                         .url("url")
                                         .fullRequest(true)
                                         .addRequestHeader(
-                                            SandboxResponse.ProxyConfig.Callback.RequestHeader
-                                                .builder()
+                                            ProxyConfig.Callback.RequestHeader.builder()
                                                 .name("name")
                                                 .type(
-                                                    SandboxResponse.ProxyConfig.Callback
-                                                        .RequestHeader
-                                                        .Type
+                                                    ProxyConfig.Callback.RequestHeader.Type
                                                         .PLAINTEXT
                                                 )
                                                 .isSet(true)
@@ -496,11 +462,10 @@ internal class SandboxListResponseTest {
                                 .description("description")
                                 .addNoProxy("string")
                                 .addRule(
-                                    SandboxResponse.ProxyConfig.Rule.builder()
+                                    ProxyConfig.Rule.builder()
                                         .name("name")
                                         .aws(
-                                            SandboxResponse.ProxyConfig.Rule.Aws
-                                                .SandboxesProxyAwsRoleConfig
+                                            ProxyConfig.Rule.Aws.SandboxesProxyAwsRoleConfig
                                                 .builder()
                                                 .roleArn("x")
                                                 .subjectScope(
@@ -509,13 +474,13 @@ internal class SandboxListResponseTest {
                                                 .build()
                                         )
                                         .azure(
-                                            SandboxResponse.ProxyConfig.Rule.Azure
+                                            ProxyConfig.Rule.Azure
                                                 .SandboxesProxyAzureWorkloadIdentityConfig
                                                 .builder()
                                                 .clientId("E1CB97d8-Ddf3-aAae-0Afa-1A3C33cFaADc")
                                                 .tenantId("E1CB97d8-Ddf3-aAae-0Afa-1A3C33cFaADc")
                                                 .addResource(
-                                                    SandboxResponse.ProxyConfig.Rule.Azure
+                                                    ProxyConfig.Rule.Azure
                                                         .SandboxesProxyAzureWorkloadIdentityConfig
                                                         .Resource
                                                         .HTTPS_STORAGE_AZURE_COM
@@ -528,7 +493,7 @@ internal class SandboxListResponseTest {
                                         .description("description")
                                         .enabled(true)
                                         .envVars(
-                                            SandboxResponse.ProxyConfig.Rule.EnvVars.builder()
+                                            ProxyConfig.Rule.EnvVars.builder()
                                                 .putAdditionalProperty(
                                                     "foo",
                                                     JsonValue.from("string"),
@@ -536,7 +501,7 @@ internal class SandboxListResponseTest {
                                                 .build()
                                         )
                                         .gcp(
-                                            SandboxResponse.ProxyConfig.Rule.Gcp
+                                            ProxyConfig.Rule.Gcp
                                                 .SandboxesProxyGcpWorkloadIdentityConfig
                                                 .builder()
                                                 .workloadIdentityProvider("x")
@@ -548,12 +513,9 @@ internal class SandboxListResponseTest {
                                                 .build()
                                         )
                                         .addHeader(
-                                            SandboxResponse.ProxyConfig.Rule.Header.builder()
+                                            ProxyConfig.Rule.Header.builder()
                                                 .name("name")
-                                                .type(
-                                                    SandboxResponse.ProxyConfig.Rule.Header.Type
-                                                        .PLAINTEXT
-                                                )
+                                                .type(ProxyConfig.Rule.Header.Type.PLAINTEXT)
                                                 .isSet(true)
                                                 .value("value")
                                                 .build()
@@ -613,11 +575,11 @@ internal class SandboxListResponseTest {
                     )
                     .memBytes(0L)
                     .mountConfig(
-                        SandboxResponse.MountConfig.builder()
+                        SandboxMountConfig.builder()
                             .auth(
-                                SandboxResponse.MountConfig.Auth.builder()
+                                SandboxMountConfig.Auth.builder()
                                     .aws(
-                                        SandboxResponse.MountConfig.Auth.Aws
+                                        SandboxMountConfig.Auth.Aws
                                             .SandboxesSandboxAwsMountRoleAuthConfig
                                             .builder()
                                             .roleArn("x")
@@ -627,7 +589,7 @@ internal class SandboxListResponseTest {
                                             .build()
                                     )
                                     .azure(
-                                        SandboxResponse.MountConfig.Auth.Azure
+                                        SandboxMountConfig.Auth.Azure
                                             .SandboxesSandboxAzureMountWorkloadIdentityAuthConfig
                                             .builder()
                                             .clientId("E1CB97d8-Ddf3-aAae-0Afa-1A3C33cFaADc")
@@ -638,7 +600,7 @@ internal class SandboxListResponseTest {
                                             .build()
                                     )
                                     .gcp(
-                                        SandboxResponse.MountConfig.Auth.Gcp
+                                        SandboxMountConfig.Auth.Gcp
                                             .SandboxesSandboxGcpMountWorkloadIdentityAuthConfig
                                             .builder()
                                             .workloadIdentityProvider("x")
@@ -651,14 +613,11 @@ internal class SandboxListResponseTest {
                                     .build()
                             )
                             .addMount(
-                                SandboxResponse.MountConfig.Mount.SandboxapiS3BucketMountSpec
-                                    .builder()
+                                SandboxMountConfig.Mount.SandboxapiS3BucketMountSpec.builder()
                                     .id("id")
                                     .mountPath("mount_path")
                                     .s3(
-                                        SandboxResponse.MountConfig.Mount
-                                            .SandboxapiS3BucketMountSpec
-                                            .S3
+                                        SandboxMountConfig.Mount.SandboxapiS3BucketMountSpec.S3
                                             .builder()
                                             .bucket("bucket")
                                             .region("region")
@@ -668,14 +627,10 @@ internal class SandboxListResponseTest {
                                             .build()
                                     )
                                     .type(
-                                        SandboxResponse.MountConfig.Mount
-                                            .SandboxapiS3BucketMountSpec
-                                            .Type
-                                            .S3
+                                        SandboxMountConfig.Mount.SandboxapiS3BucketMountSpec.Type.S3
                                     )
                                     .azureBlob(
-                                        SandboxResponse.MountConfig.Mount
-                                            .SandboxapiS3BucketMountSpec
+                                        SandboxMountConfig.Mount.SandboxapiS3BucketMountSpec
                                             .AzureBlob
                                             .builder()
                                             .container("container")
@@ -684,17 +639,14 @@ internal class SandboxListResponseTest {
                                             .build()
                                     )
                                     .cache(
-                                        SandboxResponse.MountConfig.Mount
-                                            .SandboxapiS3BucketMountSpec
-                                            .Cache
+                                        SandboxMountConfig.Mount.SandboxapiS3BucketMountSpec.Cache
                                             .builder()
                                             .maxSizeBytes(0L)
                                             .writebackSeconds(0L)
                                             .build()
                                     )
                                     .contexthub(
-                                        SandboxResponse.MountConfig.Mount
-                                            .SandboxapiS3BucketMountSpec
+                                        SandboxMountConfig.Mount.SandboxapiS3BucketMountSpec
                                             .Contexthub
                                             .builder()
                                             .repo("repo")
@@ -702,37 +654,31 @@ internal class SandboxListResponseTest {
                                             .build()
                                     )
                                     .encryption(
-                                        SandboxResponse.MountConfig.Mount
-                                            .SandboxapiS3BucketMountSpec
+                                        SandboxMountConfig.Mount.SandboxapiS3BucketMountSpec
                                             .Encryption
                                             .builder()
                                             .kmsKey("kms_key")
                                             .build()
                                     )
                                     .gcs(
-                                        SandboxResponse.MountConfig.Mount
-                                            .SandboxapiS3BucketMountSpec
-                                            .Gcs
+                                        SandboxMountConfig.Mount.SandboxapiS3BucketMountSpec.Gcs
                                             .builder()
                                             .bucket("bucket")
                                             .prefix("prefix")
                                             .build()
                                     )
                                     .git(
-                                        SandboxResponse.MountConfig.Mount
-                                            .SandboxapiS3BucketMountSpec
-                                            .Git
+                                        SandboxMountConfig.Mount.SandboxapiS3BucketMountSpec.Git
                                             .builder()
                                             .remoteUrl("remote_url")
                                             .ref(
-                                                SandboxResponse.MountConfig.Mount
-                                                    .SandboxapiS3BucketMountSpec
+                                                SandboxMountConfig.Mount.SandboxapiS3BucketMountSpec
                                                     .Git
                                                     .Ref
                                                     .builder()
                                                     .name("name")
                                                     .type(
-                                                        SandboxResponse.MountConfig.Mount
+                                                        SandboxMountConfig.Mount
                                                             .SandboxapiS3BucketMountSpec
                                                             .Git
                                                             .Ref
@@ -752,27 +698,23 @@ internal class SandboxListResponseTest {
                     .name("name")
                     .preserveMemoryOnStop(true)
                     .proxyConfig(
-                        SandboxResponse.ProxyConfig.builder()
+                        ProxyConfig.builder()
                             .accessControl(
-                                SandboxResponse.ProxyConfig.AccessControl.builder()
+                                ProxyConfig.AccessControl.builder()
                                     .addAllowList("string")
                                     .addDenyList("string")
                                     .build()
                             )
                             .addCallback(
-                                SandboxResponse.ProxyConfig.Callback.builder()
+                                ProxyConfig.Callback.builder()
                                     .addMatchHost("string")
                                     .ttlSeconds(60L)
                                     .url("url")
                                     .fullRequest(true)
                                     .addRequestHeader(
-                                        SandboxResponse.ProxyConfig.Callback.RequestHeader.builder()
+                                        ProxyConfig.Callback.RequestHeader.builder()
                                             .name("name")
-                                            .type(
-                                                SandboxResponse.ProxyConfig.Callback.RequestHeader
-                                                    .Type
-                                                    .PLAINTEXT
-                                            )
+                                            .type(ProxyConfig.Callback.RequestHeader.Type.PLAINTEXT)
                                             .isSet(true)
                                             .value("value")
                                             .build()
@@ -782,12 +724,10 @@ internal class SandboxListResponseTest {
                             .description("description")
                             .addNoProxy("string")
                             .addRule(
-                                SandboxResponse.ProxyConfig.Rule.builder()
+                                ProxyConfig.Rule.builder()
                                     .name("name")
                                     .aws(
-                                        SandboxResponse.ProxyConfig.Rule.Aws
-                                            .SandboxesProxyAwsRoleConfig
-                                            .builder()
+                                        ProxyConfig.Rule.Aws.SandboxesProxyAwsRoleConfig.builder()
                                             .roleArn("x")
                                             .subjectScope(
                                                 "tag:2fdcD1Dc-bbDb-2BBD-0Afa-1A3C33cFaADc"
@@ -795,13 +735,13 @@ internal class SandboxListResponseTest {
                                             .build()
                                     )
                                     .azure(
-                                        SandboxResponse.ProxyConfig.Rule.Azure
+                                        ProxyConfig.Rule.Azure
                                             .SandboxesProxyAzureWorkloadIdentityConfig
                                             .builder()
                                             .clientId("E1CB97d8-Ddf3-aAae-0Afa-1A3C33cFaADc")
                                             .tenantId("E1CB97d8-Ddf3-aAae-0Afa-1A3C33cFaADc")
                                             .addResource(
-                                                SandboxResponse.ProxyConfig.Rule.Azure
+                                                ProxyConfig.Rule.Azure
                                                     .SandboxesProxyAzureWorkloadIdentityConfig
                                                     .Resource
                                                     .HTTPS_STORAGE_AZURE_COM
@@ -814,13 +754,12 @@ internal class SandboxListResponseTest {
                                     .description("description")
                                     .enabled(true)
                                     .envVars(
-                                        SandboxResponse.ProxyConfig.Rule.EnvVars.builder()
+                                        ProxyConfig.Rule.EnvVars.builder()
                                             .putAdditionalProperty("foo", JsonValue.from("string"))
                                             .build()
                                     )
                                     .gcp(
-                                        SandboxResponse.ProxyConfig.Rule.Gcp
-                                            .SandboxesProxyGcpWorkloadIdentityConfig
+                                        ProxyConfig.Rule.Gcp.SandboxesProxyGcpWorkloadIdentityConfig
                                             .builder()
                                             .workloadIdentityProvider("x")
                                             .addScope("string")
@@ -831,12 +770,9 @@ internal class SandboxListResponseTest {
                                             .build()
                                     )
                                     .addHeader(
-                                        SandboxResponse.ProxyConfig.Rule.Header.builder()
+                                        ProxyConfig.Rule.Header.builder()
                                             .name("name")
-                                            .type(
-                                                SandboxResponse.ProxyConfig.Rule.Header.Type
-                                                    .PLAINTEXT
-                                            )
+                                            .type(ProxyConfig.Rule.Header.Type.PLAINTEXT)
                                             .isSet(true)
                                             .value("value")
                                             .build()
@@ -896,11 +832,11 @@ internal class SandboxListResponseTest {
                     )
                     .memBytes(0L)
                     .mountConfig(
-                        SandboxResponse.MountConfig.builder()
+                        SandboxMountConfig.builder()
                             .auth(
-                                SandboxResponse.MountConfig.Auth.builder()
+                                SandboxMountConfig.Auth.builder()
                                     .aws(
-                                        SandboxResponse.MountConfig.Auth.Aws
+                                        SandboxMountConfig.Auth.Aws
                                             .SandboxesSandboxAwsMountRoleAuthConfig
                                             .builder()
                                             .roleArn("x")
@@ -910,7 +846,7 @@ internal class SandboxListResponseTest {
                                             .build()
                                     )
                                     .azure(
-                                        SandboxResponse.MountConfig.Auth.Azure
+                                        SandboxMountConfig.Auth.Azure
                                             .SandboxesSandboxAzureMountWorkloadIdentityAuthConfig
                                             .builder()
                                             .clientId("E1CB97d8-Ddf3-aAae-0Afa-1A3C33cFaADc")
@@ -921,7 +857,7 @@ internal class SandboxListResponseTest {
                                             .build()
                                     )
                                     .gcp(
-                                        SandboxResponse.MountConfig.Auth.Gcp
+                                        SandboxMountConfig.Auth.Gcp
                                             .SandboxesSandboxGcpMountWorkloadIdentityAuthConfig
                                             .builder()
                                             .workloadIdentityProvider("x")
@@ -934,14 +870,11 @@ internal class SandboxListResponseTest {
                                     .build()
                             )
                             .addMount(
-                                SandboxResponse.MountConfig.Mount.SandboxapiS3BucketMountSpec
-                                    .builder()
+                                SandboxMountConfig.Mount.SandboxapiS3BucketMountSpec.builder()
                                     .id("id")
                                     .mountPath("mount_path")
                                     .s3(
-                                        SandboxResponse.MountConfig.Mount
-                                            .SandboxapiS3BucketMountSpec
-                                            .S3
+                                        SandboxMountConfig.Mount.SandboxapiS3BucketMountSpec.S3
                                             .builder()
                                             .bucket("bucket")
                                             .region("region")
@@ -951,14 +884,10 @@ internal class SandboxListResponseTest {
                                             .build()
                                     )
                                     .type(
-                                        SandboxResponse.MountConfig.Mount
-                                            .SandboxapiS3BucketMountSpec
-                                            .Type
-                                            .S3
+                                        SandboxMountConfig.Mount.SandboxapiS3BucketMountSpec.Type.S3
                                     )
                                     .azureBlob(
-                                        SandboxResponse.MountConfig.Mount
-                                            .SandboxapiS3BucketMountSpec
+                                        SandboxMountConfig.Mount.SandboxapiS3BucketMountSpec
                                             .AzureBlob
                                             .builder()
                                             .container("container")
@@ -967,17 +896,14 @@ internal class SandboxListResponseTest {
                                             .build()
                                     )
                                     .cache(
-                                        SandboxResponse.MountConfig.Mount
-                                            .SandboxapiS3BucketMountSpec
-                                            .Cache
+                                        SandboxMountConfig.Mount.SandboxapiS3BucketMountSpec.Cache
                                             .builder()
                                             .maxSizeBytes(0L)
                                             .writebackSeconds(0L)
                                             .build()
                                     )
                                     .contexthub(
-                                        SandboxResponse.MountConfig.Mount
-                                            .SandboxapiS3BucketMountSpec
+                                        SandboxMountConfig.Mount.SandboxapiS3BucketMountSpec
                                             .Contexthub
                                             .builder()
                                             .repo("repo")
@@ -985,37 +911,31 @@ internal class SandboxListResponseTest {
                                             .build()
                                     )
                                     .encryption(
-                                        SandboxResponse.MountConfig.Mount
-                                            .SandboxapiS3BucketMountSpec
+                                        SandboxMountConfig.Mount.SandboxapiS3BucketMountSpec
                                             .Encryption
                                             .builder()
                                             .kmsKey("kms_key")
                                             .build()
                                     )
                                     .gcs(
-                                        SandboxResponse.MountConfig.Mount
-                                            .SandboxapiS3BucketMountSpec
-                                            .Gcs
+                                        SandboxMountConfig.Mount.SandboxapiS3BucketMountSpec.Gcs
                                             .builder()
                                             .bucket("bucket")
                                             .prefix("prefix")
                                             .build()
                                     )
                                     .git(
-                                        SandboxResponse.MountConfig.Mount
-                                            .SandboxapiS3BucketMountSpec
-                                            .Git
+                                        SandboxMountConfig.Mount.SandboxapiS3BucketMountSpec.Git
                                             .builder()
                                             .remoteUrl("remote_url")
                                             .ref(
-                                                SandboxResponse.MountConfig.Mount
-                                                    .SandboxapiS3BucketMountSpec
+                                                SandboxMountConfig.Mount.SandboxapiS3BucketMountSpec
                                                     .Git
                                                     .Ref
                                                     .builder()
                                                     .name("name")
                                                     .type(
-                                                        SandboxResponse.MountConfig.Mount
+                                                        SandboxMountConfig.Mount
                                                             .SandboxapiS3BucketMountSpec
                                                             .Git
                                                             .Ref
@@ -1035,27 +955,23 @@ internal class SandboxListResponseTest {
                     .name("name")
                     .preserveMemoryOnStop(true)
                     .proxyConfig(
-                        SandboxResponse.ProxyConfig.builder()
+                        ProxyConfig.builder()
                             .accessControl(
-                                SandboxResponse.ProxyConfig.AccessControl.builder()
+                                ProxyConfig.AccessControl.builder()
                                     .addAllowList("string")
                                     .addDenyList("string")
                                     .build()
                             )
                             .addCallback(
-                                SandboxResponse.ProxyConfig.Callback.builder()
+                                ProxyConfig.Callback.builder()
                                     .addMatchHost("string")
                                     .ttlSeconds(60L)
                                     .url("url")
                                     .fullRequest(true)
                                     .addRequestHeader(
-                                        SandboxResponse.ProxyConfig.Callback.RequestHeader.builder()
+                                        ProxyConfig.Callback.RequestHeader.builder()
                                             .name("name")
-                                            .type(
-                                                SandboxResponse.ProxyConfig.Callback.RequestHeader
-                                                    .Type
-                                                    .PLAINTEXT
-                                            )
+                                            .type(ProxyConfig.Callback.RequestHeader.Type.PLAINTEXT)
                                             .isSet(true)
                                             .value("value")
                                             .build()
@@ -1065,12 +981,10 @@ internal class SandboxListResponseTest {
                             .description("description")
                             .addNoProxy("string")
                             .addRule(
-                                SandboxResponse.ProxyConfig.Rule.builder()
+                                ProxyConfig.Rule.builder()
                                     .name("name")
                                     .aws(
-                                        SandboxResponse.ProxyConfig.Rule.Aws
-                                            .SandboxesProxyAwsRoleConfig
-                                            .builder()
+                                        ProxyConfig.Rule.Aws.SandboxesProxyAwsRoleConfig.builder()
                                             .roleArn("x")
                                             .subjectScope(
                                                 "tag:2fdcD1Dc-bbDb-2BBD-0Afa-1A3C33cFaADc"
@@ -1078,13 +992,13 @@ internal class SandboxListResponseTest {
                                             .build()
                                     )
                                     .azure(
-                                        SandboxResponse.ProxyConfig.Rule.Azure
+                                        ProxyConfig.Rule.Azure
                                             .SandboxesProxyAzureWorkloadIdentityConfig
                                             .builder()
                                             .clientId("E1CB97d8-Ddf3-aAae-0Afa-1A3C33cFaADc")
                                             .tenantId("E1CB97d8-Ddf3-aAae-0Afa-1A3C33cFaADc")
                                             .addResource(
-                                                SandboxResponse.ProxyConfig.Rule.Azure
+                                                ProxyConfig.Rule.Azure
                                                     .SandboxesProxyAzureWorkloadIdentityConfig
                                                     .Resource
                                                     .HTTPS_STORAGE_AZURE_COM
@@ -1097,13 +1011,12 @@ internal class SandboxListResponseTest {
                                     .description("description")
                                     .enabled(true)
                                     .envVars(
-                                        SandboxResponse.ProxyConfig.Rule.EnvVars.builder()
+                                        ProxyConfig.Rule.EnvVars.builder()
                                             .putAdditionalProperty("foo", JsonValue.from("string"))
                                             .build()
                                     )
                                     .gcp(
-                                        SandboxResponse.ProxyConfig.Rule.Gcp
-                                            .SandboxesProxyGcpWorkloadIdentityConfig
+                                        ProxyConfig.Rule.Gcp.SandboxesProxyGcpWorkloadIdentityConfig
                                             .builder()
                                             .workloadIdentityProvider("x")
                                             .addScope("string")
@@ -1114,12 +1027,9 @@ internal class SandboxListResponseTest {
                                             .build()
                                     )
                                     .addHeader(
-                                        SandboxResponse.ProxyConfig.Rule.Header.builder()
+                                        ProxyConfig.Rule.Header.builder()
                                             .name("name")
-                                            .type(
-                                                SandboxResponse.ProxyConfig.Rule.Header.Type
-                                                    .PLAINTEXT
-                                            )
+                                            .type(ProxyConfig.Rule.Header.Type.PLAINTEXT)
                                             .isSet(true)
                                             .value("value")
                                             .build()
@@ -1183,11 +1093,11 @@ internal class SandboxListResponseTest {
                         )
                         .memBytes(0L)
                         .mountConfig(
-                            SandboxResponse.MountConfig.builder()
+                            SandboxMountConfig.builder()
                                 .auth(
-                                    SandboxResponse.MountConfig.Auth.builder()
+                                    SandboxMountConfig.Auth.builder()
                                         .aws(
-                                            SandboxResponse.MountConfig.Auth.Aws
+                                            SandboxMountConfig.Auth.Aws
                                                 .SandboxesSandboxAwsMountRoleAuthConfig
                                                 .builder()
                                                 .roleArn("x")
@@ -1197,7 +1107,7 @@ internal class SandboxListResponseTest {
                                                 .build()
                                         )
                                         .azure(
-                                            SandboxResponse.MountConfig.Auth.Azure
+                                            SandboxMountConfig.Auth.Azure
                                                 .SandboxesSandboxAzureMountWorkloadIdentityAuthConfig
                                                 .builder()
                                                 .clientId("E1CB97d8-Ddf3-aAae-0Afa-1A3C33cFaADc")
@@ -1208,7 +1118,7 @@ internal class SandboxListResponseTest {
                                                 .build()
                                         )
                                         .gcp(
-                                            SandboxResponse.MountConfig.Auth.Gcp
+                                            SandboxMountConfig.Auth.Gcp
                                                 .SandboxesSandboxGcpMountWorkloadIdentityAuthConfig
                                                 .builder()
                                                 .workloadIdentityProvider("x")
@@ -1221,14 +1131,11 @@ internal class SandboxListResponseTest {
                                         .build()
                                 )
                                 .addMount(
-                                    SandboxResponse.MountConfig.Mount.SandboxapiS3BucketMountSpec
-                                        .builder()
+                                    SandboxMountConfig.Mount.SandboxapiS3BucketMountSpec.builder()
                                         .id("id")
                                         .mountPath("mount_path")
                                         .s3(
-                                            SandboxResponse.MountConfig.Mount
-                                                .SandboxapiS3BucketMountSpec
-                                                .S3
+                                            SandboxMountConfig.Mount.SandboxapiS3BucketMountSpec.S3
                                                 .builder()
                                                 .bucket("bucket")
                                                 .region("region")
@@ -1238,14 +1145,12 @@ internal class SandboxListResponseTest {
                                                 .build()
                                         )
                                         .type(
-                                            SandboxResponse.MountConfig.Mount
-                                                .SandboxapiS3BucketMountSpec
+                                            SandboxMountConfig.Mount.SandboxapiS3BucketMountSpec
                                                 .Type
                                                 .S3
                                         )
                                         .azureBlob(
-                                            SandboxResponse.MountConfig.Mount
-                                                .SandboxapiS3BucketMountSpec
+                                            SandboxMountConfig.Mount.SandboxapiS3BucketMountSpec
                                                 .AzureBlob
                                                 .builder()
                                                 .container("container")
@@ -1254,8 +1159,7 @@ internal class SandboxListResponseTest {
                                                 .build()
                                         )
                                         .cache(
-                                            SandboxResponse.MountConfig.Mount
-                                                .SandboxapiS3BucketMountSpec
+                                            SandboxMountConfig.Mount.SandboxapiS3BucketMountSpec
                                                 .Cache
                                                 .builder()
                                                 .maxSizeBytes(0L)
@@ -1263,8 +1167,7 @@ internal class SandboxListResponseTest {
                                                 .build()
                                         )
                                         .contexthub(
-                                            SandboxResponse.MountConfig.Mount
-                                                .SandboxapiS3BucketMountSpec
+                                            SandboxMountConfig.Mount.SandboxapiS3BucketMountSpec
                                                 .Contexthub
                                                 .builder()
                                                 .repo("repo")
@@ -1272,37 +1175,32 @@ internal class SandboxListResponseTest {
                                                 .build()
                                         )
                                         .encryption(
-                                            SandboxResponse.MountConfig.Mount
-                                                .SandboxapiS3BucketMountSpec
+                                            SandboxMountConfig.Mount.SandboxapiS3BucketMountSpec
                                                 .Encryption
                                                 .builder()
                                                 .kmsKey("kms_key")
                                                 .build()
                                         )
                                         .gcs(
-                                            SandboxResponse.MountConfig.Mount
-                                                .SandboxapiS3BucketMountSpec
-                                                .Gcs
+                                            SandboxMountConfig.Mount.SandboxapiS3BucketMountSpec.Gcs
                                                 .builder()
                                                 .bucket("bucket")
                                                 .prefix("prefix")
                                                 .build()
                                         )
                                         .git(
-                                            SandboxResponse.MountConfig.Mount
-                                                .SandboxapiS3BucketMountSpec
-                                                .Git
+                                            SandboxMountConfig.Mount.SandboxapiS3BucketMountSpec.Git
                                                 .builder()
                                                 .remoteUrl("remote_url")
                                                 .ref(
-                                                    SandboxResponse.MountConfig.Mount
+                                                    SandboxMountConfig.Mount
                                                         .SandboxapiS3BucketMountSpec
                                                         .Git
                                                         .Ref
                                                         .builder()
                                                         .name("name")
                                                         .type(
-                                                            SandboxResponse.MountConfig.Mount
+                                                            SandboxMountConfig.Mount
                                                                 .SandboxapiS3BucketMountSpec
                                                                 .Git
                                                                 .Ref
@@ -1322,27 +1220,24 @@ internal class SandboxListResponseTest {
                         .name("name")
                         .preserveMemoryOnStop(true)
                         .proxyConfig(
-                            SandboxResponse.ProxyConfig.builder()
+                            ProxyConfig.builder()
                                 .accessControl(
-                                    SandboxResponse.ProxyConfig.AccessControl.builder()
+                                    ProxyConfig.AccessControl.builder()
                                         .addAllowList("string")
                                         .addDenyList("string")
                                         .build()
                                 )
                                 .addCallback(
-                                    SandboxResponse.ProxyConfig.Callback.builder()
+                                    ProxyConfig.Callback.builder()
                                         .addMatchHost("string")
                                         .ttlSeconds(60L)
                                         .url("url")
                                         .fullRequest(true)
                                         .addRequestHeader(
-                                            SandboxResponse.ProxyConfig.Callback.RequestHeader
-                                                .builder()
+                                            ProxyConfig.Callback.RequestHeader.builder()
                                                 .name("name")
                                                 .type(
-                                                    SandboxResponse.ProxyConfig.Callback
-                                                        .RequestHeader
-                                                        .Type
+                                                    ProxyConfig.Callback.RequestHeader.Type
                                                         .PLAINTEXT
                                                 )
                                                 .isSet(true)
@@ -1354,11 +1249,10 @@ internal class SandboxListResponseTest {
                                 .description("description")
                                 .addNoProxy("string")
                                 .addRule(
-                                    SandboxResponse.ProxyConfig.Rule.builder()
+                                    ProxyConfig.Rule.builder()
                                         .name("name")
                                         .aws(
-                                            SandboxResponse.ProxyConfig.Rule.Aws
-                                                .SandboxesProxyAwsRoleConfig
+                                            ProxyConfig.Rule.Aws.SandboxesProxyAwsRoleConfig
                                                 .builder()
                                                 .roleArn("x")
                                                 .subjectScope(
@@ -1367,13 +1261,13 @@ internal class SandboxListResponseTest {
                                                 .build()
                                         )
                                         .azure(
-                                            SandboxResponse.ProxyConfig.Rule.Azure
+                                            ProxyConfig.Rule.Azure
                                                 .SandboxesProxyAzureWorkloadIdentityConfig
                                                 .builder()
                                                 .clientId("E1CB97d8-Ddf3-aAae-0Afa-1A3C33cFaADc")
                                                 .tenantId("E1CB97d8-Ddf3-aAae-0Afa-1A3C33cFaADc")
                                                 .addResource(
-                                                    SandboxResponse.ProxyConfig.Rule.Azure
+                                                    ProxyConfig.Rule.Azure
                                                         .SandboxesProxyAzureWorkloadIdentityConfig
                                                         .Resource
                                                         .HTTPS_STORAGE_AZURE_COM
@@ -1386,7 +1280,7 @@ internal class SandboxListResponseTest {
                                         .description("description")
                                         .enabled(true)
                                         .envVars(
-                                            SandboxResponse.ProxyConfig.Rule.EnvVars.builder()
+                                            ProxyConfig.Rule.EnvVars.builder()
                                                 .putAdditionalProperty(
                                                     "foo",
                                                     JsonValue.from("string"),
@@ -1394,7 +1288,7 @@ internal class SandboxListResponseTest {
                                                 .build()
                                         )
                                         .gcp(
-                                            SandboxResponse.ProxyConfig.Rule.Gcp
+                                            ProxyConfig.Rule.Gcp
                                                 .SandboxesProxyGcpWorkloadIdentityConfig
                                                 .builder()
                                                 .workloadIdentityProvider("x")
@@ -1406,12 +1300,9 @@ internal class SandboxListResponseTest {
                                                 .build()
                                         )
                                         .addHeader(
-                                            SandboxResponse.ProxyConfig.Rule.Header.builder()
+                                            ProxyConfig.Rule.Header.builder()
                                                 .name("name")
-                                                .type(
-                                                    SandboxResponse.ProxyConfig.Rule.Header.Type
-                                                        .PLAINTEXT
-                                                )
+                                                .type(ProxyConfig.Rule.Header.Type.PLAINTEXT)
                                                 .isSet(true)
                                                 .value("value")
                                                 .build()
@@ -1470,11 +1361,11 @@ internal class SandboxListResponseTest {
                         )
                         .memBytes(0L)
                         .mountConfig(
-                            SandboxResponse.MountConfig.builder()
+                            SandboxMountConfig.builder()
                                 .auth(
-                                    SandboxResponse.MountConfig.Auth.builder()
+                                    SandboxMountConfig.Auth.builder()
                                         .aws(
-                                            SandboxResponse.MountConfig.Auth.Aws
+                                            SandboxMountConfig.Auth.Aws
                                                 .SandboxesSandboxAwsMountRoleAuthConfig
                                                 .builder()
                                                 .roleArn("x")
@@ -1484,7 +1375,7 @@ internal class SandboxListResponseTest {
                                                 .build()
                                         )
                                         .azure(
-                                            SandboxResponse.MountConfig.Auth.Azure
+                                            SandboxMountConfig.Auth.Azure
                                                 .SandboxesSandboxAzureMountWorkloadIdentityAuthConfig
                                                 .builder()
                                                 .clientId("E1CB97d8-Ddf3-aAae-0Afa-1A3C33cFaADc")
@@ -1495,7 +1386,7 @@ internal class SandboxListResponseTest {
                                                 .build()
                                         )
                                         .gcp(
-                                            SandboxResponse.MountConfig.Auth.Gcp
+                                            SandboxMountConfig.Auth.Gcp
                                                 .SandboxesSandboxGcpMountWorkloadIdentityAuthConfig
                                                 .builder()
                                                 .workloadIdentityProvider("x")
@@ -1508,14 +1399,11 @@ internal class SandboxListResponseTest {
                                         .build()
                                 )
                                 .addMount(
-                                    SandboxResponse.MountConfig.Mount.SandboxapiS3BucketMountSpec
-                                        .builder()
+                                    SandboxMountConfig.Mount.SandboxapiS3BucketMountSpec.builder()
                                         .id("id")
                                         .mountPath("mount_path")
                                         .s3(
-                                            SandboxResponse.MountConfig.Mount
-                                                .SandboxapiS3BucketMountSpec
-                                                .S3
+                                            SandboxMountConfig.Mount.SandboxapiS3BucketMountSpec.S3
                                                 .builder()
                                                 .bucket("bucket")
                                                 .region("region")
@@ -1525,14 +1413,12 @@ internal class SandboxListResponseTest {
                                                 .build()
                                         )
                                         .type(
-                                            SandboxResponse.MountConfig.Mount
-                                                .SandboxapiS3BucketMountSpec
+                                            SandboxMountConfig.Mount.SandboxapiS3BucketMountSpec
                                                 .Type
                                                 .S3
                                         )
                                         .azureBlob(
-                                            SandboxResponse.MountConfig.Mount
-                                                .SandboxapiS3BucketMountSpec
+                                            SandboxMountConfig.Mount.SandboxapiS3BucketMountSpec
                                                 .AzureBlob
                                                 .builder()
                                                 .container("container")
@@ -1541,8 +1427,7 @@ internal class SandboxListResponseTest {
                                                 .build()
                                         )
                                         .cache(
-                                            SandboxResponse.MountConfig.Mount
-                                                .SandboxapiS3BucketMountSpec
+                                            SandboxMountConfig.Mount.SandboxapiS3BucketMountSpec
                                                 .Cache
                                                 .builder()
                                                 .maxSizeBytes(0L)
@@ -1550,8 +1435,7 @@ internal class SandboxListResponseTest {
                                                 .build()
                                         )
                                         .contexthub(
-                                            SandboxResponse.MountConfig.Mount
-                                                .SandboxapiS3BucketMountSpec
+                                            SandboxMountConfig.Mount.SandboxapiS3BucketMountSpec
                                                 .Contexthub
                                                 .builder()
                                                 .repo("repo")
@@ -1559,37 +1443,32 @@ internal class SandboxListResponseTest {
                                                 .build()
                                         )
                                         .encryption(
-                                            SandboxResponse.MountConfig.Mount
-                                                .SandboxapiS3BucketMountSpec
+                                            SandboxMountConfig.Mount.SandboxapiS3BucketMountSpec
                                                 .Encryption
                                                 .builder()
                                                 .kmsKey("kms_key")
                                                 .build()
                                         )
                                         .gcs(
-                                            SandboxResponse.MountConfig.Mount
-                                                .SandboxapiS3BucketMountSpec
-                                                .Gcs
+                                            SandboxMountConfig.Mount.SandboxapiS3BucketMountSpec.Gcs
                                                 .builder()
                                                 .bucket("bucket")
                                                 .prefix("prefix")
                                                 .build()
                                         )
                                         .git(
-                                            SandboxResponse.MountConfig.Mount
-                                                .SandboxapiS3BucketMountSpec
-                                                .Git
+                                            SandboxMountConfig.Mount.SandboxapiS3BucketMountSpec.Git
                                                 .builder()
                                                 .remoteUrl("remote_url")
                                                 .ref(
-                                                    SandboxResponse.MountConfig.Mount
+                                                    SandboxMountConfig.Mount
                                                         .SandboxapiS3BucketMountSpec
                                                         .Git
                                                         .Ref
                                                         .builder()
                                                         .name("name")
                                                         .type(
-                                                            SandboxResponse.MountConfig.Mount
+                                                            SandboxMountConfig.Mount
                                                                 .SandboxapiS3BucketMountSpec
                                                                 .Git
                                                                 .Ref
@@ -1609,27 +1488,24 @@ internal class SandboxListResponseTest {
                         .name("name")
                         .preserveMemoryOnStop(true)
                         .proxyConfig(
-                            SandboxResponse.ProxyConfig.builder()
+                            ProxyConfig.builder()
                                 .accessControl(
-                                    SandboxResponse.ProxyConfig.AccessControl.builder()
+                                    ProxyConfig.AccessControl.builder()
                                         .addAllowList("string")
                                         .addDenyList("string")
                                         .build()
                                 )
                                 .addCallback(
-                                    SandboxResponse.ProxyConfig.Callback.builder()
+                                    ProxyConfig.Callback.builder()
                                         .addMatchHost("string")
                                         .ttlSeconds(60L)
                                         .url("url")
                                         .fullRequest(true)
                                         .addRequestHeader(
-                                            SandboxResponse.ProxyConfig.Callback.RequestHeader
-                                                .builder()
+                                            ProxyConfig.Callback.RequestHeader.builder()
                                                 .name("name")
                                                 .type(
-                                                    SandboxResponse.ProxyConfig.Callback
-                                                        .RequestHeader
-                                                        .Type
+                                                    ProxyConfig.Callback.RequestHeader.Type
                                                         .PLAINTEXT
                                                 )
                                                 .isSet(true)
@@ -1641,11 +1517,10 @@ internal class SandboxListResponseTest {
                                 .description("description")
                                 .addNoProxy("string")
                                 .addRule(
-                                    SandboxResponse.ProxyConfig.Rule.builder()
+                                    ProxyConfig.Rule.builder()
                                         .name("name")
                                         .aws(
-                                            SandboxResponse.ProxyConfig.Rule.Aws
-                                                .SandboxesProxyAwsRoleConfig
+                                            ProxyConfig.Rule.Aws.SandboxesProxyAwsRoleConfig
                                                 .builder()
                                                 .roleArn("x")
                                                 .subjectScope(
@@ -1654,13 +1529,13 @@ internal class SandboxListResponseTest {
                                                 .build()
                                         )
                                         .azure(
-                                            SandboxResponse.ProxyConfig.Rule.Azure
+                                            ProxyConfig.Rule.Azure
                                                 .SandboxesProxyAzureWorkloadIdentityConfig
                                                 .builder()
                                                 .clientId("E1CB97d8-Ddf3-aAae-0Afa-1A3C33cFaADc")
                                                 .tenantId("E1CB97d8-Ddf3-aAae-0Afa-1A3C33cFaADc")
                                                 .addResource(
-                                                    SandboxResponse.ProxyConfig.Rule.Azure
+                                                    ProxyConfig.Rule.Azure
                                                         .SandboxesProxyAzureWorkloadIdentityConfig
                                                         .Resource
                                                         .HTTPS_STORAGE_AZURE_COM
@@ -1673,7 +1548,7 @@ internal class SandboxListResponseTest {
                                         .description("description")
                                         .enabled(true)
                                         .envVars(
-                                            SandboxResponse.ProxyConfig.Rule.EnvVars.builder()
+                                            ProxyConfig.Rule.EnvVars.builder()
                                                 .putAdditionalProperty(
                                                     "foo",
                                                     JsonValue.from("string"),
@@ -1681,7 +1556,7 @@ internal class SandboxListResponseTest {
                                                 .build()
                                         )
                                         .gcp(
-                                            SandboxResponse.ProxyConfig.Rule.Gcp
+                                            ProxyConfig.Rule.Gcp
                                                 .SandboxesProxyGcpWorkloadIdentityConfig
                                                 .builder()
                                                 .workloadIdentityProvider("x")
@@ -1693,12 +1568,9 @@ internal class SandboxListResponseTest {
                                                 .build()
                                         )
                                         .addHeader(
-                                            SandboxResponse.ProxyConfig.Rule.Header.builder()
+                                            ProxyConfig.Rule.Header.builder()
                                                 .name("name")
-                                                .type(
-                                                    SandboxResponse.ProxyConfig.Rule.Header.Type
-                                                        .PLAINTEXT
-                                                )
+                                                .type(ProxyConfig.Rule.Header.Type.PLAINTEXT)
                                                 .isSet(true)
                                                 .value("value")
                                                 .build()
