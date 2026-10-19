@@ -477,9 +477,11 @@ internal class BoxServiceAsyncTest {
                     .pathName("name")
                     .bodyName("name")
                     .checkpoint("checkpoint")
+                    .confirmAllowSnapshotSecretValues(true)
                     .description("description")
                     .dockerImage("docker_image")
                     .fsCapacityBytes(0L)
+                    .addInclude(BoxCreateSnapshotParams.Include.ALL)
                     .includeMemory(true)
                     .labels(
                         BoxCreateSnapshotParams.Labels.builder()

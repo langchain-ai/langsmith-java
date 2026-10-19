@@ -6,11 +6,13 @@ import com.fasterxml.jackson.annotation.JsonAnyGetter
 import com.fasterxml.jackson.annotation.JsonAnySetter
 import com.fasterxml.jackson.annotation.JsonCreator
 import com.fasterxml.jackson.annotation.JsonProperty
+import com.langchain.smith.core.Enum
 import com.langchain.smith.core.ExcludeMissing
 import com.langchain.smith.core.JsonField
 import com.langchain.smith.core.JsonMissing
 import com.langchain.smith.core.JsonValue
 import com.langchain.smith.core.Params
+import com.langchain.smith.core.checkKnown
 import com.langchain.smith.core.checkRequired
 import com.langchain.smith.core.http.Headers
 import com.langchain.smith.core.http.QueryParams
@@ -50,6 +52,17 @@ private constructor(
     fun checkpoint(): Optional<String> = body.checkpoint()
 
     /**
+     * Must be true when the included settings hold literal secret values (opaque values rather than
+     * workspace secret references, and any env var value), acknowledging that the snapshot stores
+     * them and every sandbox created from it can use them.
+     *
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
+    fun confirmAllowSnapshotSecretValues(): Optional<Boolean> =
+        body.confirmAllowSnapshotSecretValues()
+
+    /**
      * Description says what this snapshot's image can do, so a caller can hand it to an agent as a
      * capability summary. At most 1024 characters.
      *
@@ -73,6 +86,21 @@ private constructor(
      *   server responded with an unexpected value).
      */
     fun fsCapacityBytes(): Optional<Long> = body.fsCapacityBytes()
+
+    /**
+     * Sandbox settings to carry into the snapshot. Sandboxes created from it start with each
+     * carried setting their create request leaves unset: "mounts" (the mount_config, with its
+     * auth), "proxy_config", "env_vars", "resources" (CPU and memory), "lifecycle"
+     * (idle_ttl_seconds, delete_after_stop_seconds, preserve_memory_on_stop), and "labels" (merged
+     * under this request's labels; reserved com.langchain.* labels are left out). "all" names every
+     * one of these. VM memory is captured with include_memory, not here. Warning: mounts,
+     * proxy_config and env_vars carry the sandbox's credentials, and every sandbox created from the
+     * snapshot can use them.
+     *
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
+    fun include(): Optional<List<Include>> = body.include()
 
     /**
      * IncludeMemory, when true, captures a full VM memory snapshot alongside the filesystem clone.
@@ -126,6 +154,15 @@ private constructor(
     fun _checkpoint(): JsonField<String> = body._checkpoint()
 
     /**
+     * Returns the raw JSON value of [confirmAllowSnapshotSecretValues].
+     *
+     * Unlike [confirmAllowSnapshotSecretValues], this method doesn't throw if the JSON field has an
+     * unexpected type.
+     */
+    fun _confirmAllowSnapshotSecretValues(): JsonField<Boolean> =
+        body._confirmAllowSnapshotSecretValues()
+
+    /**
      * Returns the raw JSON value of [description].
      *
      * Unlike [description], this method doesn't throw if the JSON field has an unexpected type.
@@ -145,6 +182,13 @@ private constructor(
      * Unlike [fsCapacityBytes], this method doesn't throw if the JSON field has an unexpected type.
      */
     fun _fsCapacityBytes(): JsonField<Long> = body._fsCapacityBytes()
+
+    /**
+     * Returns the raw JSON value of [include].
+     *
+     * Unlike [include], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    fun _include(): JsonField<List<Include>> = body._include()
 
     /**
      * Returns the raw JSON value of [includeMemory].
@@ -225,9 +269,9 @@ private constructor(
          * Otherwise, it's more convenient to use the top-level setters instead:
          * - [bodyName]
          * - [checkpoint]
+         * - [confirmAllowSnapshotSecretValues]
          * - [description]
          * - [dockerImage]
-         * - [fsCapacityBytes]
          * - etc.
          */
         fun body(body: Body) = apply { this.body = body.toBuilder() }
@@ -253,6 +297,27 @@ private constructor(
          * value.
          */
         fun checkpoint(checkpoint: JsonField<String>) = apply { body.checkpoint(checkpoint) }
+
+        /**
+         * Must be true when the included settings hold literal secret values (opaque values rather
+         * than workspace secret references, and any env var value), acknowledging that the snapshot
+         * stores them and every sandbox created from it can use them.
+         */
+        fun confirmAllowSnapshotSecretValues(confirmAllowSnapshotSecretValues: Boolean) = apply {
+            body.confirmAllowSnapshotSecretValues(confirmAllowSnapshotSecretValues)
+        }
+
+        /**
+         * Sets [Builder.confirmAllowSnapshotSecretValues] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.confirmAllowSnapshotSecretValues] with a well-typed
+         * [Boolean] value instead. This method is primarily for setting the field to an
+         * undocumented or not yet supported value.
+         */
+        fun confirmAllowSnapshotSecretValues(confirmAllowSnapshotSecretValues: JsonField<Boolean>) =
+            apply {
+                body.confirmAllowSnapshotSecretValues(confirmAllowSnapshotSecretValues)
+            }
 
         /**
          * Description says what this snapshot's image can do, so a caller can hand it to an agent
@@ -294,6 +359,34 @@ private constructor(
         fun fsCapacityBytes(fsCapacityBytes: JsonField<Long>) = apply {
             body.fsCapacityBytes(fsCapacityBytes)
         }
+
+        /**
+         * Sandbox settings to carry into the snapshot. Sandboxes created from it start with each
+         * carried setting their create request leaves unset: "mounts" (the mount_config, with its
+         * auth), "proxy_config", "env_vars", "resources" (CPU and memory), "lifecycle"
+         * (idle_ttl_seconds, delete_after_stop_seconds, preserve_memory_on_stop), and "labels"
+         * (merged under this request's labels; reserved com.langchain.* labels are left out). "all"
+         * names every one of these. VM memory is captured with include_memory, not here. Warning:
+         * mounts, proxy_config and env_vars carry the sandbox's credentials, and every sandbox
+         * created from the snapshot can use them.
+         */
+        fun include(include: List<Include>) = apply { body.include(include) }
+
+        /**
+         * Sets [Builder.include] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.include] with a well-typed `List<Include>` value
+         * instead. This method is primarily for setting the field to an undocumented or not yet
+         * supported value.
+         */
+        fun include(include: JsonField<List<Include>>) = apply { body.include(include) }
+
+        /**
+         * Adds a single [Include] to [Builder.include].
+         *
+         * @throws IllegalStateException if the field was previously set to a non-list.
+         */
+        fun addInclude(include: Include) = apply { body.addInclude(include) }
 
         /**
          * IncludeMemory, when true, captures a full VM memory snapshot alongside the filesystem
@@ -507,9 +600,11 @@ private constructor(
     private constructor(
         private val bodyName: JsonField<String>,
         private val checkpoint: JsonField<String>,
+        private val confirmAllowSnapshotSecretValues: JsonField<Boolean>,
         private val description: JsonField<String>,
         private val dockerImage: JsonField<String>,
         private val fsCapacityBytes: JsonField<Long>,
+        private val include: JsonField<List<Include>>,
         private val includeMemory: JsonField<Boolean>,
         private val labels: JsonField<Labels>,
         private val runConfig: JsonField<RunConfig>,
@@ -523,6 +618,9 @@ private constructor(
             @JsonProperty("checkpoint")
             @ExcludeMissing
             checkpoint: JsonField<String> = JsonMissing.of(),
+            @JsonProperty("confirm_allow_snapshot_secret_values")
+            @ExcludeMissing
+            confirmAllowSnapshotSecretValues: JsonField<Boolean> = JsonMissing.of(),
             @JsonProperty("description")
             @ExcludeMissing
             description: JsonField<String> = JsonMissing.of(),
@@ -532,6 +630,9 @@ private constructor(
             @JsonProperty("fs_capacity_bytes")
             @ExcludeMissing
             fsCapacityBytes: JsonField<Long> = JsonMissing.of(),
+            @JsonProperty("include")
+            @ExcludeMissing
+            include: JsonField<List<Include>> = JsonMissing.of(),
             @JsonProperty("include_memory")
             @ExcludeMissing
             includeMemory: JsonField<Boolean> = JsonMissing.of(),
@@ -543,9 +644,11 @@ private constructor(
         ) : this(
             bodyName,
             checkpoint,
+            confirmAllowSnapshotSecretValues,
             description,
             dockerImage,
             fsCapacityBytes,
+            include,
             includeMemory,
             labels,
             runConfig,
@@ -566,6 +669,17 @@ private constructor(
          *   the server responded with an unexpected value).
          */
         fun checkpoint(): Optional<String> = checkpoint.getOptional("checkpoint")
+
+        /**
+         * Must be true when the included settings hold literal secret values (opaque values rather
+         * than workspace secret references, and any env var value), acknowledging that the snapshot
+         * stores them and every sandbox created from it can use them.
+         *
+         * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
+         *   the server responded with an unexpected value).
+         */
+        fun confirmAllowSnapshotSecretValues(): Optional<Boolean> =
+            confirmAllowSnapshotSecretValues.getOptional("confirm_allow_snapshot_secret_values")
 
         /**
          * Description says what this snapshot's image can do, so a caller can hand it to an agent
@@ -591,6 +705,21 @@ private constructor(
          *   the server responded with an unexpected value).
          */
         fun fsCapacityBytes(): Optional<Long> = fsCapacityBytes.getOptional("fs_capacity_bytes")
+
+        /**
+         * Sandbox settings to carry into the snapshot. Sandboxes created from it start with each
+         * carried setting their create request leaves unset: "mounts" (the mount_config, with its
+         * auth), "proxy_config", "env_vars", "resources" (CPU and memory), "lifecycle"
+         * (idle_ttl_seconds, delete_after_stop_seconds, preserve_memory_on_stop), and "labels"
+         * (merged under this request's labels; reserved com.langchain.* labels are left out). "all"
+         * names every one of these. VM memory is captured with include_memory, not here. Warning:
+         * mounts, proxy_config and env_vars carry the sandbox's credentials, and every sandbox
+         * created from the snapshot can use them.
+         *
+         * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
+         *   the server responded with an unexpected value).
+         */
+        fun include(): Optional<List<Include>> = include.getOptional("include")
 
         /**
          * IncludeMemory, when true, captures a full VM memory snapshot alongside the filesystem
@@ -646,6 +775,17 @@ private constructor(
         fun _checkpoint(): JsonField<String> = checkpoint
 
         /**
+         * Returns the raw JSON value of [confirmAllowSnapshotSecretValues].
+         *
+         * Unlike [confirmAllowSnapshotSecretValues], this method doesn't throw if the JSON field
+         * has an unexpected type.
+         */
+        @JsonProperty("confirm_allow_snapshot_secret_values")
+        @ExcludeMissing
+        fun _confirmAllowSnapshotSecretValues(): JsonField<Boolean> =
+            confirmAllowSnapshotSecretValues
+
+        /**
          * Returns the raw JSON value of [description].
          *
          * Unlike [description], this method doesn't throw if the JSON field has an unexpected type.
@@ -672,6 +812,13 @@ private constructor(
         @JsonProperty("fs_capacity_bytes")
         @ExcludeMissing
         fun _fsCapacityBytes(): JsonField<Long> = fsCapacityBytes
+
+        /**
+         * Returns the raw JSON value of [include].
+         *
+         * Unlike [include], this method doesn't throw if the JSON field has an unexpected type.
+         */
+        @JsonProperty("include") @ExcludeMissing fun _include(): JsonField<List<Include>> = include
 
         /**
          * Returns the raw JSON value of [includeMemory].
@@ -736,9 +883,11 @@ private constructor(
 
             private var bodyName: JsonField<String>? = null
             private var checkpoint: JsonField<String> = JsonMissing.of()
+            private var confirmAllowSnapshotSecretValues: JsonField<Boolean> = JsonMissing.of()
             private var description: JsonField<String> = JsonMissing.of()
             private var dockerImage: JsonField<String> = JsonMissing.of()
             private var fsCapacityBytes: JsonField<Long> = JsonMissing.of()
+            private var include: JsonField<MutableList<Include>>? = null
             private var includeMemory: JsonField<Boolean> = JsonMissing.of()
             private var labels: JsonField<Labels> = JsonMissing.of()
             private var runConfig: JsonField<RunConfig> = JsonMissing.of()
@@ -749,9 +898,11 @@ private constructor(
             internal fun from(body: Body) = apply {
                 bodyName = body.bodyName
                 checkpoint = body.checkpoint
+                confirmAllowSnapshotSecretValues = body.confirmAllowSnapshotSecretValues
                 description = body.description
                 dockerImage = body.dockerImage
                 fsCapacityBytes = body.fsCapacityBytes
+                include = body.include.map { it.toMutableList() }
                 includeMemory = body.includeMemory
                 labels = body.labels
                 runConfig = body.runConfig
@@ -781,6 +932,25 @@ private constructor(
              * supported value.
              */
             fun checkpoint(checkpoint: JsonField<String>) = apply { this.checkpoint = checkpoint }
+
+            /**
+             * Must be true when the included settings hold literal secret values (opaque values
+             * rather than workspace secret references, and any env var value), acknowledging that
+             * the snapshot stores them and every sandbox created from it can use them.
+             */
+            fun confirmAllowSnapshotSecretValues(confirmAllowSnapshotSecretValues: Boolean) =
+                confirmAllowSnapshotSecretValues(JsonField.of(confirmAllowSnapshotSecretValues))
+
+            /**
+             * Sets [Builder.confirmAllowSnapshotSecretValues] to an arbitrary JSON value.
+             *
+             * You should usually call [Builder.confirmAllowSnapshotSecretValues] with a well-typed
+             * [Boolean] value instead. This method is primarily for setting the field to an
+             * undocumented or not yet supported value.
+             */
+            fun confirmAllowSnapshotSecretValues(
+                confirmAllowSnapshotSecretValues: JsonField<Boolean>
+            ) = apply { this.confirmAllowSnapshotSecretValues = confirmAllowSnapshotSecretValues }
 
             /**
              * Description says what this snapshot's image can do, so a caller can hand it to an
@@ -826,6 +996,41 @@ private constructor(
              */
             fun fsCapacityBytes(fsCapacityBytes: JsonField<Long>) = apply {
                 this.fsCapacityBytes = fsCapacityBytes
+            }
+
+            /**
+             * Sandbox settings to carry into the snapshot. Sandboxes created from it start with
+             * each carried setting their create request leaves unset: "mounts" (the mount_config,
+             * with its auth), "proxy_config", "env_vars", "resources" (CPU and memory), "lifecycle"
+             * (idle_ttl_seconds, delete_after_stop_seconds, preserve_memory_on_stop), and "labels"
+             * (merged under this request's labels; reserved com.langchain.* labels are left out).
+             * "all" names every one of these. VM memory is captured with include_memory, not here.
+             * Warning: mounts, proxy_config and env_vars carry the sandbox's credentials, and every
+             * sandbox created from the snapshot can use them.
+             */
+            fun include(include: List<Include>) = include(JsonField.of(include))
+
+            /**
+             * Sets [Builder.include] to an arbitrary JSON value.
+             *
+             * You should usually call [Builder.include] with a well-typed `List<Include>` value
+             * instead. This method is primarily for setting the field to an undocumented or not yet
+             * supported value.
+             */
+            fun include(include: JsonField<List<Include>>) = apply {
+                this.include = include.map { it.toMutableList() }
+            }
+
+            /**
+             * Adds a single [Include] to [Builder.include].
+             *
+             * @throws IllegalStateException if the field was previously set to a non-list.
+             */
+            fun addInclude(include: Include) = apply {
+                this.include =
+                    (this.include ?: JsonField.of(mutableListOf())).also {
+                        checkKnown("include", it).add(include)
+                    }
             }
 
             /**
@@ -922,9 +1127,11 @@ private constructor(
                 Body(
                     checkRequired("bodyName", bodyName),
                     checkpoint,
+                    confirmAllowSnapshotSecretValues,
                     description,
                     dockerImage,
                     fsCapacityBytes,
+                    (include ?: JsonMissing.of()).map { it.toImmutable() },
                     includeMemory,
                     labels,
                     runConfig,
@@ -951,9 +1158,11 @@ private constructor(
 
             bodyName()
             checkpoint()
+            confirmAllowSnapshotSecretValues()
             description()
             dockerImage()
             fsCapacityBytes()
+            include().ifPresent { it.forEach { it.validate() } }
             includeMemory()
             labels().ifPresent { it.validate() }
             runConfig().ifPresent { it.validate() }
@@ -979,9 +1188,11 @@ private constructor(
         internal fun validity(): Int =
             (if (bodyName.asKnown().isPresent) 1 else 0) +
                 (if (checkpoint.asKnown().isPresent) 1 else 0) +
+                (if (confirmAllowSnapshotSecretValues.asKnown().isPresent) 1 else 0) +
                 (if (description.asKnown().isPresent) 1 else 0) +
                 (if (dockerImage.asKnown().isPresent) 1 else 0) +
                 (if (fsCapacityBytes.asKnown().isPresent) 1 else 0) +
+                (include.asKnown().getOrNull()?.sumOf { it.validity().toInt() } ?: 0) +
                 (if (includeMemory.asKnown().isPresent) 1 else 0) +
                 (labels.asKnown().getOrNull()?.validity() ?: 0) +
                 (runConfig.asKnown().getOrNull()?.validity() ?: 0) +
@@ -995,9 +1206,11 @@ private constructor(
             return other is Body &&
                 bodyName == other.bodyName &&
                 checkpoint == other.checkpoint &&
+                confirmAllowSnapshotSecretValues == other.confirmAllowSnapshotSecretValues &&
                 description == other.description &&
                 dockerImage == other.dockerImage &&
                 fsCapacityBytes == other.fsCapacityBytes &&
+                include == other.include &&
                 includeMemory == other.includeMemory &&
                 labels == other.labels &&
                 runConfig == other.runConfig &&
@@ -1009,9 +1222,11 @@ private constructor(
             Objects.hash(
                 bodyName,
                 checkpoint,
+                confirmAllowSnapshotSecretValues,
                 description,
                 dockerImage,
                 fsCapacityBytes,
+                include,
                 includeMemory,
                 labels,
                 runConfig,
@@ -1023,7 +1238,173 @@ private constructor(
         override fun hashCode(): Int = hashCode
 
         override fun toString() =
-            "Body{bodyName=$bodyName, checkpoint=$checkpoint, description=$description, dockerImage=$dockerImage, fsCapacityBytes=$fsCapacityBytes, includeMemory=$includeMemory, labels=$labels, runConfig=$runConfig, tag=$tag, additionalProperties=$additionalProperties}"
+            "Body{bodyName=$bodyName, checkpoint=$checkpoint, confirmAllowSnapshotSecretValues=$confirmAllowSnapshotSecretValues, description=$description, dockerImage=$dockerImage, fsCapacityBytes=$fsCapacityBytes, include=$include, includeMemory=$includeMemory, labels=$labels, runConfig=$runConfig, tag=$tag, additionalProperties=$additionalProperties}"
+    }
+
+    class Include @JsonCreator private constructor(private val value: JsonField<String>) : Enum {
+
+        /**
+         * Returns this class instance's raw value.
+         *
+         * This is usually only useful if this instance was deserialized from data that doesn't
+         * match any known member, and you want to know that value. For example, if the SDK is on an
+         * older version than the API, then the API may respond with new members that the SDK is
+         * unaware of.
+         */
+        @com.fasterxml.jackson.annotation.JsonValue fun _value(): JsonField<String> = value
+
+        companion object {
+
+            @JvmField val ALL = of("all")
+
+            @JvmField val MOUNTS = of("mounts")
+
+            @JvmField val PROXY_CONFIG = of("proxy_config")
+
+            @JvmField val ENV_VARS = of("env_vars")
+
+            @JvmField val RESOURCES = of("resources")
+
+            @JvmField val LIFECYCLE = of("lifecycle")
+
+            @JvmField val LABELS = of("labels")
+
+            @JvmStatic fun of(value: String) = Include(JsonField.of(value))
+        }
+
+        /** An enum containing [Include]'s known values. */
+        enum class Known {
+            ALL,
+            MOUNTS,
+            PROXY_CONFIG,
+            ENV_VARS,
+            RESOURCES,
+            LIFECYCLE,
+            LABELS,
+        }
+
+        /**
+         * An enum containing [Include]'s known values, as well as an [_UNKNOWN] member.
+         *
+         * An instance of [Include] can contain an unknown value in a couple of cases:
+         * - It was deserialized from data that doesn't match any known member. For example, if the
+         *   SDK is on an older version than the API, then the API may respond with new members that
+         *   the SDK is unaware of.
+         * - It was constructed with an arbitrary value using the [of] method.
+         */
+        enum class Value {
+            ALL,
+            MOUNTS,
+            PROXY_CONFIG,
+            ENV_VARS,
+            RESOURCES,
+            LIFECYCLE,
+            LABELS,
+            /** An enum member indicating that [Include] was instantiated with an unknown value. */
+            _UNKNOWN,
+        }
+
+        /**
+         * Returns an enum member corresponding to this class instance's value, or [Value._UNKNOWN]
+         * if the class was instantiated with an unknown value.
+         *
+         * Use the [known] method instead if you're certain the value is always known or if you want
+         * to throw for the unknown case.
+         */
+        fun value(): Value =
+            when (this) {
+                ALL -> Value.ALL
+                MOUNTS -> Value.MOUNTS
+                PROXY_CONFIG -> Value.PROXY_CONFIG
+                ENV_VARS -> Value.ENV_VARS
+                RESOURCES -> Value.RESOURCES
+                LIFECYCLE -> Value.LIFECYCLE
+                LABELS -> Value.LABELS
+                else -> Value._UNKNOWN
+            }
+
+        /**
+         * Returns an enum member corresponding to this class instance's value.
+         *
+         * Use the [value] method instead if you're uncertain the value is always known and don't
+         * want to throw for the unknown case.
+         *
+         * @throws LangChainInvalidDataException if this class instance's value is a not a known
+         *   member.
+         */
+        fun known(): Known =
+            when (this) {
+                ALL -> Known.ALL
+                MOUNTS -> Known.MOUNTS
+                PROXY_CONFIG -> Known.PROXY_CONFIG
+                ENV_VARS -> Known.ENV_VARS
+                RESOURCES -> Known.RESOURCES
+                LIFECYCLE -> Known.LIFECYCLE
+                LABELS -> Known.LABELS
+                else -> throw LangChainInvalidDataException("Unknown Include: $value")
+            }
+
+        /**
+         * Returns this class instance's primitive wire representation.
+         *
+         * This differs from the [toString] method because that method is primarily for debugging
+         * and generally doesn't throw.
+         *
+         * @throws LangChainInvalidDataException if this class instance's value does not have the
+         *   expected primitive type.
+         */
+        fun asString(): String =
+            _value().asString().orElseThrow {
+                LangChainInvalidDataException("Value is not a String")
+            }
+
+        private var validated: Boolean = false
+
+        /**
+         * Validates that the types of all values in this object match their expected types
+         * recursively.
+         *
+         * This method is _not_ forwards compatible with new types from the API for existing fields.
+         *
+         * @throws LangChainInvalidDataException if any value type in this object doesn't match its
+         *   expected type.
+         */
+        fun validate(): Include = apply {
+            if (validated) {
+                return@apply
+            }
+
+            known()
+            validated = true
+        }
+
+        fun isValid(): Boolean =
+            try {
+                validate()
+                true
+            } catch (e: LangChainInvalidDataException) {
+                false
+            }
+
+        /**
+         * Returns a score indicating how many valid values are contained in this object
+         * recursively.
+         *
+         * Used for best match union deserialization.
+         */
+        @JvmSynthetic internal fun validity(): Int = if (value() == Value._UNKNOWN) 0 else 1
+
+        override fun equals(other: Any?): Boolean {
+            if (this === other) {
+                return true
+            }
+
+            return other is Include && value == other.value
+        }
+
+        override fun hashCode() = value.hashCode()
+
+        override fun toString() = value.toString()
     }
 
     /** Labels seed the captured snapshot's labels. */

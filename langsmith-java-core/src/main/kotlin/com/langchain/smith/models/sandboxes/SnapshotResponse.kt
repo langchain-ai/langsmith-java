@@ -6,6 +6,7 @@ import com.fasterxml.jackson.annotation.JsonAnyGetter
 import com.fasterxml.jackson.annotation.JsonAnySetter
 import com.fasterxml.jackson.annotation.JsonCreator
 import com.fasterxml.jackson.annotation.JsonProperty
+import com.langchain.smith.core.Enum
 import com.langchain.smith.core.ExcludeMissing
 import com.langchain.smith.core.JsonField
 import com.langchain.smith.core.JsonMissing
@@ -29,9 +30,12 @@ private constructor(
     private val fsCapacityBytes: JsonField<Long>,
     private val fsUsedBytes: JsonField<Long>,
     private val imageDigest: JsonField<String>,
+    private val included: JsonField<List<Included>>,
     private val labels: JsonField<Labels>,
     private val memorySnapshotSizeBytes: JsonField<Long>,
+    private val mountConfig: JsonField<SandboxMountConfig>,
     private val name: JsonField<String>,
+    private val proxyConfig: JsonField<ProxyConfig>,
     private val registryId: JsonField<String>,
     private val runConfig: JsonField<RunConfig>,
     private val sourceSandboxId: JsonField<String>,
@@ -62,11 +66,20 @@ private constructor(
         @JsonProperty("image_digest")
         @ExcludeMissing
         imageDigest: JsonField<String> = JsonMissing.of(),
+        @JsonProperty("included")
+        @ExcludeMissing
+        included: JsonField<List<Included>> = JsonMissing.of(),
         @JsonProperty("labels") @ExcludeMissing labels: JsonField<Labels> = JsonMissing.of(),
         @JsonProperty("memory_snapshot_size_bytes")
         @ExcludeMissing
         memorySnapshotSizeBytes: JsonField<Long> = JsonMissing.of(),
+        @JsonProperty("mount_config")
+        @ExcludeMissing
+        mountConfig: JsonField<SandboxMountConfig> = JsonMissing.of(),
         @JsonProperty("name") @ExcludeMissing name: JsonField<String> = JsonMissing.of(),
+        @JsonProperty("proxy_config")
+        @ExcludeMissing
+        proxyConfig: JsonField<ProxyConfig> = JsonMissing.of(),
         @JsonProperty("registry_id")
         @ExcludeMissing
         registryId: JsonField<String> = JsonMissing.of(),
@@ -91,9 +104,12 @@ private constructor(
         fsCapacityBytes,
         fsUsedBytes,
         imageDigest,
+        included,
         labels,
         memorySnapshotSizeBytes,
+        mountConfig,
         name,
+        proxyConfig,
         registryId,
         runConfig,
         sourceSandboxId,
@@ -156,6 +172,15 @@ private constructor(
     fun imageDigest(): Optional<String> = imageDigest.getOptional("image_digest")
 
     /**
+     * The settings this snapshot carries, in include terms: sandboxes created from it start with
+     * each one their create request leaves unset. Env var values are never returned.
+     *
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
+    fun included(): Optional<List<Included>> = included.getOptional("included")
+
+    /**
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
      */
@@ -173,10 +198,30 @@ private constructor(
         memorySnapshotSizeBytes.getOptional("memory_snapshot_size_bytes")
 
     /**
+     * The mount_config sandboxes created from this snapshot start with when their create request
+     * has none, with secret values redacted. Present only on snapshots captured with include
+     * "mounts" or "all" from a sandbox that had mounts.
+     *
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
+    fun mountConfig(): Optional<SandboxMountConfig> = mountConfig.getOptional("mount_config")
+
+    /**
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
      */
     fun name(): Optional<String> = name.getOptional("name")
+
+    /**
+     * The proxy_config sandboxes created from this snapshot start with when their create request
+     * has none, with secret values redacted. Present only on snapshots captured with include
+     * "proxy_config" or "all".
+     *
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
+    fun proxyConfig(): Optional<ProxyConfig> = proxyConfig.getOptional("proxy_config")
 
     /**
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
@@ -289,6 +334,13 @@ private constructor(
     fun _imageDigest(): JsonField<String> = imageDigest
 
     /**
+     * Returns the raw JSON value of [included].
+     *
+     * Unlike [included], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    @JsonProperty("included") @ExcludeMissing fun _included(): JsonField<List<Included>> = included
+
+    /**
      * Returns the raw JSON value of [labels].
      *
      * Unlike [labels], this method doesn't throw if the JSON field has an unexpected type.
@@ -306,11 +358,29 @@ private constructor(
     fun _memorySnapshotSizeBytes(): JsonField<Long> = memorySnapshotSizeBytes
 
     /**
+     * Returns the raw JSON value of [mountConfig].
+     *
+     * Unlike [mountConfig], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    @JsonProperty("mount_config")
+    @ExcludeMissing
+    fun _mountConfig(): JsonField<SandboxMountConfig> = mountConfig
+
+    /**
      * Returns the raw JSON value of [name].
      *
      * Unlike [name], this method doesn't throw if the JSON field has an unexpected type.
      */
     @JsonProperty("name") @ExcludeMissing fun _name(): JsonField<String> = name
+
+    /**
+     * Returns the raw JSON value of [proxyConfig].
+     *
+     * Unlike [proxyConfig], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    @JsonProperty("proxy_config")
+    @ExcludeMissing
+    fun _proxyConfig(): JsonField<ProxyConfig> = proxyConfig
 
     /**
      * Returns the raw JSON value of [registryId].
@@ -394,9 +464,12 @@ private constructor(
         private var fsCapacityBytes: JsonField<Long> = JsonMissing.of()
         private var fsUsedBytes: JsonField<Long> = JsonMissing.of()
         private var imageDigest: JsonField<String> = JsonMissing.of()
+        private var included: JsonField<MutableList<Included>>? = null
         private var labels: JsonField<Labels> = JsonMissing.of()
         private var memorySnapshotSizeBytes: JsonField<Long> = JsonMissing.of()
+        private var mountConfig: JsonField<SandboxMountConfig> = JsonMissing.of()
         private var name: JsonField<String> = JsonMissing.of()
+        private var proxyConfig: JsonField<ProxyConfig> = JsonMissing.of()
         private var registryId: JsonField<String> = JsonMissing.of()
         private var runConfig: JsonField<RunConfig> = JsonMissing.of()
         private var sourceSandboxId: JsonField<String> = JsonMissing.of()
@@ -416,9 +489,12 @@ private constructor(
             fsCapacityBytes = snapshotResponse.fsCapacityBytes
             fsUsedBytes = snapshotResponse.fsUsedBytes
             imageDigest = snapshotResponse.imageDigest
+            included = snapshotResponse.included.map { it.toMutableList() }
             labels = snapshotResponse.labels
             memorySnapshotSizeBytes = snapshotResponse.memorySnapshotSizeBytes
+            mountConfig = snapshotResponse.mountConfig
             name = snapshotResponse.name
+            proxyConfig = snapshotResponse.proxyConfig
             registryId = snapshotResponse.registryId
             runConfig = snapshotResponse.runConfig
             sourceSandboxId = snapshotResponse.sourceSandboxId
@@ -522,6 +598,35 @@ private constructor(
          */
         fun imageDigest(imageDigest: JsonField<String>) = apply { this.imageDigest = imageDigest }
 
+        /**
+         * The settings this snapshot carries, in include terms: sandboxes created from it start
+         * with each one their create request leaves unset. Env var values are never returned.
+         */
+        fun included(included: List<Included>) = included(JsonField.of(included))
+
+        /**
+         * Sets [Builder.included] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.included] with a well-typed `List<Included>` value
+         * instead. This method is primarily for setting the field to an undocumented or not yet
+         * supported value.
+         */
+        fun included(included: JsonField<List<Included>>) = apply {
+            this.included = included.map { it.toMutableList() }
+        }
+
+        /**
+         * Adds a single [Included] to [Builder.included].
+         *
+         * @throws IllegalStateException if the field was previously set to a non-list.
+         */
+        fun addIncluded(included: Included) = apply {
+            this.included =
+                (this.included ?: JsonField.of(mutableListOf())).also {
+                    checkKnown("included", it).add(included)
+                }
+        }
+
         fun labels(labels: Labels) = labels(JsonField.of(labels))
 
         /**
@@ -551,6 +656,24 @@ private constructor(
             this.memorySnapshotSizeBytes = memorySnapshotSizeBytes
         }
 
+        /**
+         * The mount_config sandboxes created from this snapshot start with when their create
+         * request has none, with secret values redacted. Present only on snapshots captured with
+         * include "mounts" or "all" from a sandbox that had mounts.
+         */
+        fun mountConfig(mountConfig: SandboxMountConfig) = mountConfig(JsonField.of(mountConfig))
+
+        /**
+         * Sets [Builder.mountConfig] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.mountConfig] with a well-typed [SandboxMountConfig]
+         * value instead. This method is primarily for setting the field to an undocumented or not
+         * yet supported value.
+         */
+        fun mountConfig(mountConfig: JsonField<SandboxMountConfig>) = apply {
+            this.mountConfig = mountConfig
+        }
+
         fun name(name: String) = name(JsonField.of(name))
 
         /**
@@ -560,6 +683,24 @@ private constructor(
          * method is primarily for setting the field to an undocumented or not yet supported value.
          */
         fun name(name: JsonField<String>) = apply { this.name = name }
+
+        /**
+         * The proxy_config sandboxes created from this snapshot start with when their create
+         * request has none, with secret values redacted. Present only on snapshots captured with
+         * include "proxy_config" or "all".
+         */
+        fun proxyConfig(proxyConfig: ProxyConfig) = proxyConfig(JsonField.of(proxyConfig))
+
+        /**
+         * Sets [Builder.proxyConfig] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.proxyConfig] with a well-typed [ProxyConfig] value
+         * instead. This method is primarily for setting the field to an undocumented or not yet
+         * supported value.
+         */
+        fun proxyConfig(proxyConfig: JsonField<ProxyConfig>) = apply {
+            this.proxyConfig = proxyConfig
+        }
 
         fun registryId(registryId: String) = registryId(JsonField.of(registryId))
 
@@ -695,9 +836,12 @@ private constructor(
                 fsCapacityBytes,
                 fsUsedBytes,
                 imageDigest,
+                (included ?: JsonMissing.of()).map { it.toImmutable() },
                 labels,
                 memorySnapshotSizeBytes,
+                mountConfig,
                 name,
+                proxyConfig,
                 registryId,
                 runConfig,
                 sourceSandboxId,
@@ -732,9 +876,12 @@ private constructor(
         fsCapacityBytes()
         fsUsedBytes()
         imageDigest()
+        included().ifPresent { it.forEach { it.validate() } }
         labels().ifPresent { it.validate() }
         memorySnapshotSizeBytes()
+        mountConfig().ifPresent { it.validate() }
         name()
+        proxyConfig().ifPresent { it.validate() }
         registryId()
         runConfig().ifPresent { it.validate() }
         sourceSandboxId()
@@ -768,9 +915,12 @@ private constructor(
             (if (fsCapacityBytes.asKnown().isPresent) 1 else 0) +
             (if (fsUsedBytes.asKnown().isPresent) 1 else 0) +
             (if (imageDigest.asKnown().isPresent) 1 else 0) +
+            (included.asKnown().getOrNull()?.sumOf { it.validity().toInt() } ?: 0) +
             (labels.asKnown().getOrNull()?.validity() ?: 0) +
             (if (memorySnapshotSizeBytes.asKnown().isPresent) 1 else 0) +
+            (mountConfig.asKnown().getOrNull()?.validity() ?: 0) +
             (if (name.asKnown().isPresent) 1 else 0) +
+            (proxyConfig.asKnown().getOrNull()?.validity() ?: 0) +
             (if (registryId.asKnown().isPresent) 1 else 0) +
             (runConfig.asKnown().getOrNull()?.validity() ?: 0) +
             (if (sourceSandboxId.asKnown().isPresent) 1 else 0) +
@@ -778,6 +928,166 @@ private constructor(
             (if (statusMessage.asKnown().isPresent) 1 else 0) +
             (tags.asKnown().getOrNull()?.size ?: 0) +
             (if (updatedAt.asKnown().isPresent) 1 else 0)
+
+    class Included @JsonCreator private constructor(private val value: JsonField<String>) : Enum {
+
+        /**
+         * Returns this class instance's raw value.
+         *
+         * This is usually only useful if this instance was deserialized from data that doesn't
+         * match any known member, and you want to know that value. For example, if the SDK is on an
+         * older version than the API, then the API may respond with new members that the SDK is
+         * unaware of.
+         */
+        @com.fasterxml.jackson.annotation.JsonValue fun _value(): JsonField<String> = value
+
+        companion object {
+
+            @JvmField val MOUNTS = of("mounts")
+
+            @JvmField val PROXY_CONFIG = of("proxy_config")
+
+            @JvmField val ENV_VARS = of("env_vars")
+
+            @JvmField val RESOURCES = of("resources")
+
+            @JvmField val LIFECYCLE = of("lifecycle")
+
+            @JvmField val LABELS = of("labels")
+
+            @JvmStatic fun of(value: String) = Included(JsonField.of(value))
+        }
+
+        /** An enum containing [Included]'s known values. */
+        enum class Known {
+            MOUNTS,
+            PROXY_CONFIG,
+            ENV_VARS,
+            RESOURCES,
+            LIFECYCLE,
+            LABELS,
+        }
+
+        /**
+         * An enum containing [Included]'s known values, as well as an [_UNKNOWN] member.
+         *
+         * An instance of [Included] can contain an unknown value in a couple of cases:
+         * - It was deserialized from data that doesn't match any known member. For example, if the
+         *   SDK is on an older version than the API, then the API may respond with new members that
+         *   the SDK is unaware of.
+         * - It was constructed with an arbitrary value using the [of] method.
+         */
+        enum class Value {
+            MOUNTS,
+            PROXY_CONFIG,
+            ENV_VARS,
+            RESOURCES,
+            LIFECYCLE,
+            LABELS,
+            /** An enum member indicating that [Included] was instantiated with an unknown value. */
+            _UNKNOWN,
+        }
+
+        /**
+         * Returns an enum member corresponding to this class instance's value, or [Value._UNKNOWN]
+         * if the class was instantiated with an unknown value.
+         *
+         * Use the [known] method instead if you're certain the value is always known or if you want
+         * to throw for the unknown case.
+         */
+        fun value(): Value =
+            when (this) {
+                MOUNTS -> Value.MOUNTS
+                PROXY_CONFIG -> Value.PROXY_CONFIG
+                ENV_VARS -> Value.ENV_VARS
+                RESOURCES -> Value.RESOURCES
+                LIFECYCLE -> Value.LIFECYCLE
+                LABELS -> Value.LABELS
+                else -> Value._UNKNOWN
+            }
+
+        /**
+         * Returns an enum member corresponding to this class instance's value.
+         *
+         * Use the [value] method instead if you're uncertain the value is always known and don't
+         * want to throw for the unknown case.
+         *
+         * @throws LangChainInvalidDataException if this class instance's value is a not a known
+         *   member.
+         */
+        fun known(): Known =
+            when (this) {
+                MOUNTS -> Known.MOUNTS
+                PROXY_CONFIG -> Known.PROXY_CONFIG
+                ENV_VARS -> Known.ENV_VARS
+                RESOURCES -> Known.RESOURCES
+                LIFECYCLE -> Known.LIFECYCLE
+                LABELS -> Known.LABELS
+                else -> throw LangChainInvalidDataException("Unknown Included: $value")
+            }
+
+        /**
+         * Returns this class instance's primitive wire representation.
+         *
+         * This differs from the [toString] method because that method is primarily for debugging
+         * and generally doesn't throw.
+         *
+         * @throws LangChainInvalidDataException if this class instance's value does not have the
+         *   expected primitive type.
+         */
+        fun asString(): String =
+            _value().asString().orElseThrow {
+                LangChainInvalidDataException("Value is not a String")
+            }
+
+        private var validated: Boolean = false
+
+        /**
+         * Validates that the types of all values in this object match their expected types
+         * recursively.
+         *
+         * This method is _not_ forwards compatible with new types from the API for existing fields.
+         *
+         * @throws LangChainInvalidDataException if any value type in this object doesn't match its
+         *   expected type.
+         */
+        fun validate(): Included = apply {
+            if (validated) {
+                return@apply
+            }
+
+            known()
+            validated = true
+        }
+
+        fun isValid(): Boolean =
+            try {
+                validate()
+                true
+            } catch (e: LangChainInvalidDataException) {
+                false
+            }
+
+        /**
+         * Returns a score indicating how many valid values are contained in this object
+         * recursively.
+         *
+         * Used for best match union deserialization.
+         */
+        @JvmSynthetic internal fun validity(): Int = if (value() == Value._UNKNOWN) 0 else 1
+
+        override fun equals(other: Any?): Boolean {
+            if (this === other) {
+                return true
+            }
+
+            return other is Included && value == other.value
+        }
+
+        override fun hashCode() = value.hashCode()
+
+        override fun toString() = value.toString()
+    }
 
     class Labels
     @JsonCreator
@@ -1233,9 +1543,12 @@ private constructor(
             fsCapacityBytes == other.fsCapacityBytes &&
             fsUsedBytes == other.fsUsedBytes &&
             imageDigest == other.imageDigest &&
+            included == other.included &&
             labels == other.labels &&
             memorySnapshotSizeBytes == other.memorySnapshotSizeBytes &&
+            mountConfig == other.mountConfig &&
             name == other.name &&
+            proxyConfig == other.proxyConfig &&
             registryId == other.registryId &&
             runConfig == other.runConfig &&
             sourceSandboxId == other.sourceSandboxId &&
@@ -1256,9 +1569,12 @@ private constructor(
             fsCapacityBytes,
             fsUsedBytes,
             imageDigest,
+            included,
             labels,
             memorySnapshotSizeBytes,
+            mountConfig,
             name,
+            proxyConfig,
             registryId,
             runConfig,
             sourceSandboxId,
@@ -1273,5 +1589,5 @@ private constructor(
     override fun hashCode(): Int = hashCode
 
     override fun toString() =
-        "SnapshotResponse{id=$id, createdAt=$createdAt, createdBy=$createdBy, description=$description, dockerImage=$dockerImage, fsCapacityBytes=$fsCapacityBytes, fsUsedBytes=$fsUsedBytes, imageDigest=$imageDigest, labels=$labels, memorySnapshotSizeBytes=$memorySnapshotSizeBytes, name=$name, registryId=$registryId, runConfig=$runConfig, sourceSandboxId=$sourceSandboxId, status=$status, statusMessage=$statusMessage, tags=$tags, updatedAt=$updatedAt, additionalProperties=$additionalProperties}"
+        "SnapshotResponse{id=$id, createdAt=$createdAt, createdBy=$createdBy, description=$description, dockerImage=$dockerImage, fsCapacityBytes=$fsCapacityBytes, fsUsedBytes=$fsUsedBytes, imageDigest=$imageDigest, included=$included, labels=$labels, memorySnapshotSizeBytes=$memorySnapshotSizeBytes, mountConfig=$mountConfig, name=$name, proxyConfig=$proxyConfig, registryId=$registryId, runConfig=$runConfig, sourceSandboxId=$sourceSandboxId, status=$status, statusMessage=$statusMessage, tags=$tags, updatedAt=$updatedAt, additionalProperties=$additionalProperties}"
 }

@@ -3,6 +3,7 @@
 package com.langchain.smith.models.sandboxes.boxes
 
 import com.langchain.smith.core.JsonValue
+import kotlin.jvm.optionals.getOrNull
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
@@ -14,9 +15,11 @@ internal class BoxCreateSnapshotParamsTest {
             .pathName("name")
             .bodyName("name")
             .checkpoint("checkpoint")
+            .confirmAllowSnapshotSecretValues(true)
             .description("description")
             .dockerImage("docker_image")
             .fsCapacityBytes(0L)
+            .addInclude(BoxCreateSnapshotParams.Include.ALL)
             .includeMemory(true)
             .labels(
                 BoxCreateSnapshotParams.Labels.builder()
@@ -54,9 +57,11 @@ internal class BoxCreateSnapshotParamsTest {
                 .pathName("name")
                 .bodyName("name")
                 .checkpoint("checkpoint")
+                .confirmAllowSnapshotSecretValues(true)
                 .description("description")
                 .dockerImage("docker_image")
                 .fsCapacityBytes(0L)
+                .addInclude(BoxCreateSnapshotParams.Include.ALL)
                 .includeMemory(true)
                 .labels(
                     BoxCreateSnapshotParams.Labels.builder()
@@ -81,9 +86,11 @@ internal class BoxCreateSnapshotParamsTest {
 
         assertThat(body.bodyName()).isEqualTo("name")
         assertThat(body.checkpoint()).contains("checkpoint")
+        assertThat(body.confirmAllowSnapshotSecretValues()).contains(true)
         assertThat(body.description()).contains("description")
         assertThat(body.dockerImage()).contains("docker_image")
         assertThat(body.fsCapacityBytes()).contains(0L)
+        assertThat(body.include().getOrNull()).containsExactly(BoxCreateSnapshotParams.Include.ALL)
         assertThat(body.includeMemory()).contains(true)
         assertThat(body.labels())
             .contains(
