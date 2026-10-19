@@ -1,17 +1,25 @@
 package com.langchain.smith.address
 
+import com.fasterxml.jackson.annotation.JsonProperty
+import com.fasterxml.jackson.core.JsonParser
+import com.fasterxml.jackson.databind.DeserializationContext
+import com.fasterxml.jackson.databind.JsonNode
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize
+import com.fasterxml.jackson.databind.deser.std.StdDeserializer
 import com.langchain.smith.errors.LangChainException
 import com.langchain.smith.errors.LangChainInvalidDataException
 import com.langchain.smith.models.sessions.SessionResolveParams
 import com.langchain.smith.tracing.AddressEnv
 import java.util.Locale
 
-/**
- * (beta) Names the tracing project of a feature. Only an [AgentAddress] can receive traces; the
- * others are for queries.
- */
-interface Address {
-    /** (beta) Returns the address as `sessions().resolve` takes it. */
+/** (beta) Names the tracing project of a feature; only an [AgentAddress] can receive traces. */
+@JsonDeserialize(using = AnyAddressDeserializer::class)
+sealed interface Address {
+    /** (beta) `AGENT`, `EXPERIMENT` or `EVALUATOR`. */
+    // Explicit @JsonProperty: the SDK mapper disables getter auto-detection.
+    @get:JsonProperty("kind") val kind: String
+
+    /** (beta) Adapts the address to the generated params of `sessions().resolve`. */
     fun toApiAddress(): SessionResolveParams
 }
 
@@ -19,13 +27,17 @@ interface Address {
 class EnvAddressException internal constructor(message: String) : LangChainException(message)
 
 /**
- * (beta) The address of an agent's environment: a DNS-label [id] and one of `local`, `development`,
- * `staging` or `production` (any case, stored upper-case).
+ * (beta) The address of an agent's environment: [id] is a DNS label and [environment] one of
+ * `local`, `development`, `staging` or `production` (any case, stored upper-case).
  *
  * @throws LangChainInvalidDataException if a value is invalid. The message never echoes it.
  */
-class AgentAddress(val id: String, environment: String) : Address {
-    val environment: String = environment.uppercase(Locale.ROOT)
+@JsonDeserialize(using = AgentAddressDeserializer::class)
+class AgentAddress(@get:JsonProperty("id") val id: String, environment: String) : Address {
+    override val kind: String
+        get() = "AGENT"
+
+    @get:JsonProperty("environment") val environment: String = environment.uppercase(Locale.ROOT)
 
     init {
         if (!AGENT_ID_PATTERN.matches(id)) {
@@ -67,7 +79,7 @@ class AgentAddress(val id: String, environment: String) : Address {
         private const val ENV_ID = "LANGSMITH_AGENT_ID"
         private const val ENV_ENVIRONMENT = "LANGSMITH_AGENT_ENVIRONMENT"
 
-        /** Parses an untrusted wire LRN; the value is never echoed in the error. */
+        /** Parses an untrusted LRN. */
         internal fun fromLrn(value: String): AgentAddress {
             val match =
                 LRN_PATTERN.matchEntire(value)
@@ -76,8 +88,8 @@ class AgentAddress(val id: String, environment: String) : Address {
         }
 
         /**
-         * (beta) Reads `LANGSMITH_AGENT_ID` and `LANGSMITH_AGENT_ENVIRONMENT`: `null` if neither is
-         * set.
+         * (beta) Reads the agent named by `LANGSMITH_AGENT_ID` and `LANGSMITH_AGENT_ENVIRONMENT`;
+         * null if neither is set.
          *
          * @throws EnvAddressException if only one is set, or a value is invalid.
          */
@@ -102,12 +114,16 @@ class AgentAddress(val id: String, environment: String) : Address {
 }
 
 /**
- * (beta) The tracing project of an experiment, by its hyphenated UUID (stored lower-case).
+ * (beta) The tracing project of an experiment: [id] is a hyphenated UUID, stored lower-case.
  *
- * @throws LangChainInvalidDataException if [id] is not one. The message never echoes it.
+ * @throws LangChainInvalidDataException if [id] is invalid. The message never echoes it.
  */
+@JsonDeserialize(using = ExperimentAddressDeserializer::class)
 class ExperimentAddress(id: String) : Address {
-    val id: String = id.lowercase(Locale.ROOT)
+    override val kind: String
+        get() = "EXPERIMENT"
+
+    @get:JsonProperty("id") val id: String = id.lowercase(Locale.ROOT)
 
     init {
         if (!UUID_PATTERN.matches(this.id)) {
@@ -134,7 +150,11 @@ class ExperimentAddress(id: String) : Address {
 }
 
 /** (beta) The tracing project of the workspace's evaluators. */
+@JsonDeserialize(using = EvaluatorAddressDeserializer::class)
 class EvaluatorAddress : Address {
+    override val kind: String
+        get() = "EVALUATOR"
+
     override fun toApiAddress(): SessionResolveParams =
         SessionResolveParams.builder().kind(SessionResolveParams.Kind.EVALUATOR).build()
 
@@ -144,3 +164,40 @@ class EvaluatorAddress : Address {
 
     override fun toString(): String = "EvaluatorAddress{}"
 }
+
+private fun addressFromJson(node: JsonNode): Address {
+    fun text(name: String) = node.get(name)?.takeIf { it.isTextual }?.asText().orEmpty()
+    if (!node.isObject) throw LangChainInvalidDataException("Not an address.")
+    return when (node.get("kind")?.takeIf { it.isTextual }?.asText()) {
+        "AGENT" -> AgentAddress(id = text("id"), environment = text("environment"))
+        "EXPERIMENT" -> ExperimentAddress(text("id"))
+        "EVALUATOR" -> EvaluatorAddress()
+        else -> throw LangChainInvalidDataException("Not an address.")
+    }
+}
+
+internal open class AddressDeserializer<T : Address>(
+    private val type: Class<T>,
+    private val label: String,
+) : StdDeserializer<T>(type) {
+    override fun deserialize(p: JsonParser, ctxt: DeserializationContext): T {
+        val address = addressFromJson(ctxt.readTree(p))
+        if (!type.isInstance(address)) throw LangChainInvalidDataException("Not an $label address.")
+        return type.cast(address)
+    }
+}
+
+internal class AnyAddressDeserializer :
+    AddressDeserializer<Address>(type = Address::class.java, label = "")
+
+internal class AgentAddressDeserializer :
+    AddressDeserializer<AgentAddress>(type = AgentAddress::class.java, label = "agent")
+
+internal class ExperimentAddressDeserializer :
+    AddressDeserializer<ExperimentAddress>(
+        type = ExperimentAddress::class.java,
+        label = "experiment",
+    )
+
+internal class EvaluatorAddressDeserializer :
+    AddressDeserializer<EvaluatorAddress>(type = EvaluatorAddress::class.java, label = "evaluator")

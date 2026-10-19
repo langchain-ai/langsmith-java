@@ -1,5 +1,6 @@
 package com.langchain.smith.tracing
 
+import com.langchain.smith.address.Address
 import com.langchain.smith.address.AgentAddress
 import com.langchain.smith.address.EnvAddressException
 import com.langchain.smith.errors.LangChainInvalidDataException
@@ -10,9 +11,7 @@ import org.slf4j.LoggerFactory
 
 private val logger = LoggerFactory.getLogger("com.langchain.smith.tracing.Addressing")
 
-/**
- * Env access for addressing. Process env vars are cached; the thread-local override is for tests.
- */
+/** The thread-local override is for tests. */
 internal object AddressEnv {
     val override = ThreadLocal<Map<String, String>?>()
 
@@ -31,6 +30,13 @@ internal object AddressEnv {
         if (override.get() != null) get("LANGSMITH_PROJECT")?.takeIf { it.isNotBlank() }
         else DEFAULT_PROJECT_NAME
 }
+
+internal fun ensureAgent(address: Address?): AgentAddress? =
+    when (address) {
+        null -> null
+        is AgentAddress -> address
+        else -> throw LangChainInvalidDataException("Only an AgentAddress can receive traces.")
+    }
 
 internal class Destination(val projectName: String?, val address: AgentAddress?)
 
@@ -70,7 +76,6 @@ internal fun resolveRootDestination(
 
 private val loggedUntraced = ConcurrentHashMap.newKeySet<String>()
 
-/** Logs each distinct bad-env cause once. */
 internal fun logUntraced(error: EnvAddressException) {
     if (loggedUntraced.add(error.message.orEmpty())) {
         logger.warn("LangSmith is not tracing this call: {}", error.message)

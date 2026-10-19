@@ -1,5 +1,6 @@
 package com.langchain.smith.tracing
 
+import com.langchain.smith.address.Address
 import com.langchain.smith.address.AgentAddress
 import com.langchain.smith.client.LangsmithClient
 import com.langchain.smith.core.JsonValue
@@ -87,11 +88,12 @@ class RunTree(
     /** ISO-8601 end time. Set when the run completes. */
     var endTime: String? = null,
     /** (beta) The agent address to send this run to instead of a project. */
-    val address: AgentAddress? = null,
+    address: Address? = null,
 ) {
+    val address: AgentAddress? = ensureAgent(address)
 
     init {
-        rejectConflicting(projectName, sessionId, address)
+        rejectConflicting(projectName, sessionId, this.address)
     }
 
     /**
@@ -294,7 +296,7 @@ class RunTree(
         private var dottedOrder: String? = null
         private var parentRunId: String? = null
         private var endTime: String? = null
-        private var address: AgentAddress? = null
+        private var address: Address? = null
 
         @JvmSynthetic
         internal fun from(run: RunTree) = apply {
@@ -364,7 +366,7 @@ class RunTree(
         fun endTime(endTime: String) = apply { this.endTime = endTime }
 
         /** (beta) The agent address to send this run to instead of a project. */
-        fun address(address: AgentAddress) = apply { this.address = address }
+        fun address(address: Address) = apply { this.address = address }
 
         fun build(): RunTree {
             val resolvedId = id ?: defaultId()

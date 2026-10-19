@@ -1,10 +1,13 @@
 package com.langchain.smith.address
 
+import com.fasterxml.jackson.annotation.JsonProperty
+import com.langchain.smith.core.jsonMapper
 import com.langchain.smith.errors.LangChainInvalidDataException
 import com.langchain.smith.models.sessions.SessionResolveParams
 import com.langchain.smith.tracing.AddressEnv
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
+import org.assertj.core.api.Assertions.catchThrowable
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.params.ParameterizedTest
@@ -14,6 +17,68 @@ import org.junit.jupiter.params.provider.ValueSource
 internal class AddressTest {
 
     @AfterEach fun resetEnv() = AddressEnv.override.set(null)
+
+    @Test
+    fun `addresses round trip as plain kind id environment data`() {
+        val cases =
+            mapOf<Address, String>(
+                AgentAddress("support", "Staging") to
+                    """{"kind":"AGENT","id":"support","environment":"STAGING"}""",
+                ExperimentAddress("0190C3D4-0000-7000-8000-0000000000B1") to
+                    """{"kind":"EXPERIMENT","id":"0190c3d4-0000-7000-8000-0000000000b1"}""",
+                EvaluatorAddress() to """{"kind":"EVALUATOR"}""",
+            )
+        cases.forEach { (address, json) ->
+            val mapper = jsonMapper()
+            assertThat(mapper.readTree(mapper.writeValueAsString(address)))
+                .isEqualTo(mapper.readTree(json))
+            assertThat(mapper.readValue(json, Address::class.java)).isEqualTo(address)
+            assertThat(mapper.readValue(json, address.javaClass)).isEqualTo(address)
+        }
+        val lower = """{"kind":"AGENT","id":"support","environment":"staging"}"""
+        assertThat(jsonMapper().readValue(lower, AgentAddress::class.java).environment)
+            .isEqualTo("STAGING")
+    }
+
+    @ParameterizedTest
+    @ValueSource(
+        strings =
+            [
+                """{"kind":"AGENT","id":"Secret_Id","environment":"STAGING"}""",
+                """{"kind":"AGENT","id":"support","environment":"secret"}""",
+                """{"kind":"AGENT","id":"support"}""",
+                """{"kind":"EXPERIMENT","id":"secret"}""",
+                """{"kind":"secret","id":"support"}""",
+                """{"id":"support","environment":"STAGING"}""",
+                "\"secret\"",
+            ]
+    )
+    fun `invalid serialized addresses are rejected without echoing them`(json: String) {
+        assertThatThrownBy { jsonMapper().readValue(json, Address::class.java) }
+            .isInstanceOf(LangChainInvalidDataException::class.java)
+            .satisfies({ assertThat(it.message).doesNotContain("secret", "Secret") })
+    }
+
+    @Test
+    fun `a concrete type rejects another kind with a message naming the expected kind`() {
+        assertThatThrownBy {
+                jsonMapper().readValue("""{"kind":"EVALUATOR"}""", AgentAddress::class.java)
+            }
+            .isInstanceOf(LangChainInvalidDataException::class.java)
+            .hasMessage("Not an agent address.")
+    }
+
+    private data class Holder(@JsonProperty("address") val address: Address)
+
+    @Test
+    fun `an invalid address nested in a bean fails with a clean cause chain`() {
+        val json = """{"address":{"kind":"AGENT","id":"Secret_Id","environment":"STAGING"}}"""
+        val error = catchThrowable { jsonMapper().readValue(json, Holder::class.java) }
+        val chain = generateSequence(error) { it.cause }.toList()
+        assertThat(chain).isNotEmpty()
+        assertThat(chain.any { it is LangChainInvalidDataException }).isTrue()
+        assertThat(chain.map { it.message.orEmpty() }).noneMatch { it.contains("Secret") }
+    }
 
     @Test
     fun `valid addresses map to resolve params`() {

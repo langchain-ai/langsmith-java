@@ -1,6 +1,8 @@
 package com.langchain.smith.tracing
 
 import com.langchain.smith.address.AgentAddress
+import com.langchain.smith.address.EvaluatorAddress
+import com.langchain.smith.address.ExperimentAddress
 import com.langchain.smith.errors.LangChainInvalidDataException
 import com.langchain.smith.models.feedback.FeedbackCreateSchema
 import org.assertj.core.api.Assertions.assertThat
@@ -32,6 +34,19 @@ internal class AddressingTest {
             )
         conflicts.forEach {
             assertThatThrownBy { it() }.isInstanceOf(LangChainInvalidDataException::class.java)
+        }
+    }
+
+    @Test
+    fun `only an agent address can receive traces`() {
+        val others =
+            listOf(EvaluatorAddress(), ExperimentAddress("0190c3d4-0000-7000-8000-0000000000b1"))
+        others.forEach {
+            assertThatThrownBy { TraceConfig.builder().address(it).build() }
+                .isInstanceOf(LangChainInvalidDataException::class.java)
+                .hasMessageContaining("Only an AgentAddress")
+            assertThatThrownBy { RunTree.builder().address(it).build() }
+                .isInstanceOf(LangChainInvalidDataException::class.java)
         }
     }
 

@@ -2,6 +2,7 @@
 
 package com.langchain.smith.tracing
 
+import com.langchain.smith.address.Address
 import com.langchain.smith.address.AgentAddress
 import com.langchain.smith.address.EnvAddressException
 import com.langchain.smith.client.LangsmithClient
@@ -328,10 +329,12 @@ class TraceConfig(
      */
     val parent: ParentConfig = ParentConfig.AUTO,
     /** (beta) The agent address to send the trace to instead of a project. */
-    val address: AgentAddress? = null,
+    address: Address? = null,
 ) {
+    val address: AgentAddress? = ensureAgent(address)
+
     init {
-        rejectConflicting(projectName, sessionId, address)
+        rejectConflicting(projectName, sessionId, this.address)
     }
 
     companion object {
@@ -366,7 +369,7 @@ class TraceConfig(
         private var tracingEnabled: Boolean? = null
         private var processTracedIO: TraceProcessIO<*, *>? = null
         private var parent: ParentConfig = ParentConfig.AUTO
-        private var address: AgentAddress? = null
+        private var address: Address? = null
 
         @JvmSynthetic
         internal fun from(config: TraceConfig) = apply {
@@ -441,7 +444,7 @@ class TraceConfig(
         }
 
         /** (beta) The agent address to send the trace to instead of a project. */
-        fun address(address: AgentAddress) = apply { this.address = address }
+        fun address(address: Address) = apply { this.address = address }
 
         /** Builds the [TraceConfig]. */
         fun build() =
