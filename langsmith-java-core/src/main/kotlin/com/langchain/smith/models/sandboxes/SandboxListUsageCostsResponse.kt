@@ -16,6 +16,7 @@ import com.langchain.smith.errors.LangChainInvalidDataException
 import java.time.OffsetDateTime
 import java.util.Collections
 import java.util.Objects
+import java.util.Optional
 import kotlin.jvm.optionals.getOrNull
 
 class SandboxListUsageCostsResponse
@@ -26,6 +27,8 @@ private constructor(
     private val periodStart: JsonField<OffsetDateTime>,
     private val resourceId: JsonField<String>,
     private val resourceType: JsonField<ResourceType>,
+    private val computeStandardUnits: JsonField<String>,
+    private val storageStandardUnits: JsonField<String>,
     private val additionalProperties: MutableMap<String, JsonValue>,
 ) {
 
@@ -42,7 +45,22 @@ private constructor(
         @JsonProperty("resource_type")
         @ExcludeMissing
         resourceType: JsonField<ResourceType> = JsonMissing.of(),
-    ) : this(lcu, lsu, periodStart, resourceId, resourceType, mutableMapOf())
+        @JsonProperty("compute_standard_units")
+        @ExcludeMissing
+        computeStandardUnits: JsonField<String> = JsonMissing.of(),
+        @JsonProperty("storage_standard_units")
+        @ExcludeMissing
+        storageStandardUnits: JsonField<String> = JsonMissing.of(),
+    ) : this(
+        lcu,
+        lsu,
+        periodStart,
+        resourceId,
+        resourceType,
+        computeStandardUnits,
+        storageStandardUnits,
+        mutableMapOf(),
+    )
 
     /**
      * Recorded compute usage in LangSmith Compute Units (LCU), as a decimal string with up to six
@@ -79,6 +97,26 @@ private constructor(
      *   unexpectedly missing or null (e.g. if the server responded with an unexpected value).
      */
     fun resourceType(): ResourceType = resourceType.getRequired("resource_type")
+
+    /**
+     * Recorded compute usage in Standard Units, as a decimal string, separate from LCU. Null means
+     * complete Standard compute usage is unavailable; "0" means known zero usage.
+     *
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
+    fun computeStandardUnits(): Optional<String> =
+        computeStandardUnits.getOptional("compute_standard_units")
+
+    /**
+     * Allocated storage usage in Standard Units, as a decimal string, separate from LSU. Null means
+     * complete Standard storage usage is unavailable; "0" means known zero usage.
+     *
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
+    fun storageStandardUnits(): Optional<String> =
+        storageStandardUnits.getOptional("storage_standard_units")
 
     /**
      * Returns the raw JSON value of [lcu].
@@ -119,6 +157,26 @@ private constructor(
     @ExcludeMissing
     fun _resourceType(): JsonField<ResourceType> = resourceType
 
+    /**
+     * Returns the raw JSON value of [computeStandardUnits].
+     *
+     * Unlike [computeStandardUnits], this method doesn't throw if the JSON field has an unexpected
+     * type.
+     */
+    @JsonProperty("compute_standard_units")
+    @ExcludeMissing
+    fun _computeStandardUnits(): JsonField<String> = computeStandardUnits
+
+    /**
+     * Returns the raw JSON value of [storageStandardUnits].
+     *
+     * Unlike [storageStandardUnits], this method doesn't throw if the JSON field has an unexpected
+     * type.
+     */
+    @JsonProperty("storage_standard_units")
+    @ExcludeMissing
+    fun _storageStandardUnits(): JsonField<String> = storageStandardUnits
+
     @JsonAnySetter
     private fun putAdditionalProperty(key: String, value: JsonValue) {
         additionalProperties.put(key, value)
@@ -157,6 +215,8 @@ private constructor(
         private var periodStart: JsonField<OffsetDateTime>? = null
         private var resourceId: JsonField<String>? = null
         private var resourceType: JsonField<ResourceType>? = null
+        private var computeStandardUnits: JsonField<String> = JsonMissing.of()
+        private var storageStandardUnits: JsonField<String> = JsonMissing.of()
         private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
 
         @JvmSynthetic
@@ -166,6 +226,8 @@ private constructor(
             periodStart = sandboxListUsageCostsResponse.periodStart
             resourceId = sandboxListUsageCostsResponse.resourceId
             resourceType = sandboxListUsageCostsResponse.resourceType
+            computeStandardUnits = sandboxListUsageCostsResponse.computeStandardUnits
+            storageStandardUnits = sandboxListUsageCostsResponse.storageStandardUnits
             additionalProperties = sandboxListUsageCostsResponse.additionalProperties.toMutableMap()
         }
 
@@ -234,6 +296,56 @@ private constructor(
             this.resourceType = resourceType
         }
 
+        /**
+         * Recorded compute usage in Standard Units, as a decimal string, separate from LCU. Null
+         * means complete Standard compute usage is unavailable; "0" means known zero usage.
+         */
+        fun computeStandardUnits(computeStandardUnits: String?) =
+            computeStandardUnits(JsonField.ofNullable(computeStandardUnits))
+
+        /**
+         * Alias for calling [Builder.computeStandardUnits] with
+         * `computeStandardUnits.orElse(null)`.
+         */
+        fun computeStandardUnits(computeStandardUnits: Optional<String>) =
+            computeStandardUnits(computeStandardUnits.getOrNull())
+
+        /**
+         * Sets [Builder.computeStandardUnits] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.computeStandardUnits] with a well-typed [String] value
+         * instead. This method is primarily for setting the field to an undocumented or not yet
+         * supported value.
+         */
+        fun computeStandardUnits(computeStandardUnits: JsonField<String>) = apply {
+            this.computeStandardUnits = computeStandardUnits
+        }
+
+        /**
+         * Allocated storage usage in Standard Units, as a decimal string, separate from LSU. Null
+         * means complete Standard storage usage is unavailable; "0" means known zero usage.
+         */
+        fun storageStandardUnits(storageStandardUnits: String?) =
+            storageStandardUnits(JsonField.ofNullable(storageStandardUnits))
+
+        /**
+         * Alias for calling [Builder.storageStandardUnits] with
+         * `storageStandardUnits.orElse(null)`.
+         */
+        fun storageStandardUnits(storageStandardUnits: Optional<String>) =
+            storageStandardUnits(storageStandardUnits.getOrNull())
+
+        /**
+         * Sets [Builder.storageStandardUnits] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.storageStandardUnits] with a well-typed [String] value
+         * instead. This method is primarily for setting the field to an undocumented or not yet
+         * supported value.
+         */
+        fun storageStandardUnits(storageStandardUnits: JsonField<String>) = apply {
+            this.storageStandardUnits = storageStandardUnits
+        }
+
         fun additionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
             this.additionalProperties.clear()
             putAllAdditionalProperties(additionalProperties)
@@ -276,6 +388,8 @@ private constructor(
                 checkRequired("periodStart", periodStart),
                 checkRequired("resourceId", resourceId),
                 checkRequired("resourceType", resourceType),
+                computeStandardUnits,
+                storageStandardUnits,
                 additionalProperties.toMutableMap(),
             )
     }
@@ -300,6 +414,8 @@ private constructor(
         periodStart()
         resourceId()
         resourceType().validate()
+        computeStandardUnits()
+        storageStandardUnits()
         validated = true
     }
 
@@ -322,7 +438,9 @@ private constructor(
             (if (lsu.asKnown().isPresent) 1 else 0) +
             (if (periodStart.asKnown().isPresent) 1 else 0) +
             (if (resourceId.asKnown().isPresent) 1 else 0) +
-            (resourceType.asKnown().getOrNull()?.validity() ?: 0)
+            (resourceType.asKnown().getOrNull()?.validity() ?: 0) +
+            (if (computeStandardUnits.asKnown().isPresent) 1 else 0) +
+            (if (storageStandardUnits.asKnown().isPresent) 1 else 0)
 
     class ResourceType @JsonCreator private constructor(private val value: JsonField<String>) :
         Enum {
@@ -474,15 +592,26 @@ private constructor(
             periodStart == other.periodStart &&
             resourceId == other.resourceId &&
             resourceType == other.resourceType &&
+            computeStandardUnits == other.computeStandardUnits &&
+            storageStandardUnits == other.storageStandardUnits &&
             additionalProperties == other.additionalProperties
     }
 
     private val hashCode: Int by lazy {
-        Objects.hash(lcu, lsu, periodStart, resourceId, resourceType, additionalProperties)
+        Objects.hash(
+            lcu,
+            lsu,
+            periodStart,
+            resourceId,
+            resourceType,
+            computeStandardUnits,
+            storageStandardUnits,
+            additionalProperties,
+        )
     }
 
     override fun hashCode(): Int = hashCode
 
     override fun toString() =
-        "SandboxListUsageCostsResponse{lcu=$lcu, lsu=$lsu, periodStart=$periodStart, resourceId=$resourceId, resourceType=$resourceType, additionalProperties=$additionalProperties}"
+        "SandboxListUsageCostsResponse{lcu=$lcu, lsu=$lsu, periodStart=$periodStart, resourceId=$resourceId, resourceType=$resourceType, computeStandardUnits=$computeStandardUnits, storageStandardUnits=$storageStandardUnits, additionalProperties=$additionalProperties}"
 }

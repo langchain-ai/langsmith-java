@@ -269,6 +269,8 @@ private constructor(
     private constructor(
         private val lcu: JsonField<String>,
         private val lsu: JsonField<String>,
+        private val computeStandardUnits: JsonField<String>,
+        private val storageStandardUnits: JsonField<String>,
         private val additionalProperties: MutableMap<String, JsonValue>,
     ) {
 
@@ -276,7 +278,13 @@ private constructor(
         private constructor(
             @JsonProperty("lcu") @ExcludeMissing lcu: JsonField<String> = JsonMissing.of(),
             @JsonProperty("lsu") @ExcludeMissing lsu: JsonField<String> = JsonMissing.of(),
-        ) : this(lcu, lsu, mutableMapOf())
+            @JsonProperty("compute_standard_units")
+            @ExcludeMissing
+            computeStandardUnits: JsonField<String> = JsonMissing.of(),
+            @JsonProperty("storage_standard_units")
+            @ExcludeMissing
+            storageStandardUnits: JsonField<String> = JsonMissing.of(),
+        ) : this(lcu, lsu, computeStandardUnits, storageStandardUnits, mutableMapOf())
 
         /**
          * @throws LangChainInvalidDataException if the JSON field has an unexpected type or is
@@ -291,6 +299,28 @@ private constructor(
         fun lsu(): String = lsu.getRequired("lsu")
 
         /**
+         * Total compute usage in Standard Units across the entire filtered interval, independent of
+         * pagination, as a decimal string, separate from LCU. Null means complete Standard compute
+         * usage is unavailable; "0" means known zero usage.
+         *
+         * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
+         *   the server responded with an unexpected value).
+         */
+        fun computeStandardUnits(): Optional<String> =
+            computeStandardUnits.getOptional("compute_standard_units")
+
+        /**
+         * Total storage usage in Standard Units across the entire filtered interval, independent of
+         * pagination, as a decimal string, separate from LSU. Null means complete Standard storage
+         * usage is unavailable; "0" means known zero usage.
+         *
+         * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
+         *   the server responded with an unexpected value).
+         */
+        fun storageStandardUnits(): Optional<String> =
+            storageStandardUnits.getOptional("storage_standard_units")
+
+        /**
          * Returns the raw JSON value of [lcu].
          *
          * Unlike [lcu], this method doesn't throw if the JSON field has an unexpected type.
@@ -303,6 +333,26 @@ private constructor(
          * Unlike [lsu], this method doesn't throw if the JSON field has an unexpected type.
          */
         @JsonProperty("lsu") @ExcludeMissing fun _lsu(): JsonField<String> = lsu
+
+        /**
+         * Returns the raw JSON value of [computeStandardUnits].
+         *
+         * Unlike [computeStandardUnits], this method doesn't throw if the JSON field has an
+         * unexpected type.
+         */
+        @JsonProperty("compute_standard_units")
+        @ExcludeMissing
+        fun _computeStandardUnits(): JsonField<String> = computeStandardUnits
+
+        /**
+         * Returns the raw JSON value of [storageStandardUnits].
+         *
+         * Unlike [storageStandardUnits], this method doesn't throw if the JSON field has an
+         * unexpected type.
+         */
+        @JsonProperty("storage_standard_units")
+        @ExcludeMissing
+        fun _storageStandardUnits(): JsonField<String> = storageStandardUnits
 
         @JsonAnySetter
         private fun putAdditionalProperty(key: String, value: JsonValue) {
@@ -335,12 +385,16 @@ private constructor(
 
             private var lcu: JsonField<String>? = null
             private var lsu: JsonField<String>? = null
+            private var computeStandardUnits: JsonField<String> = JsonMissing.of()
+            private var storageStandardUnits: JsonField<String> = JsonMissing.of()
             private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
 
             @JvmSynthetic
             internal fun from(totals: Totals) = apply {
                 lcu = totals.lcu
                 lsu = totals.lsu
+                computeStandardUnits = totals.computeStandardUnits
+                storageStandardUnits = totals.storageStandardUnits
                 additionalProperties = totals.additionalProperties.toMutableMap()
             }
 
@@ -365,6 +419,58 @@ private constructor(
              * value.
              */
             fun lsu(lsu: JsonField<String>) = apply { this.lsu = lsu }
+
+            /**
+             * Total compute usage in Standard Units across the entire filtered interval,
+             * independent of pagination, as a decimal string, separate from LCU. Null means
+             * complete Standard compute usage is unavailable; "0" means known zero usage.
+             */
+            fun computeStandardUnits(computeStandardUnits: String?) =
+                computeStandardUnits(JsonField.ofNullable(computeStandardUnits))
+
+            /**
+             * Alias for calling [Builder.computeStandardUnits] with
+             * `computeStandardUnits.orElse(null)`.
+             */
+            fun computeStandardUnits(computeStandardUnits: Optional<String>) =
+                computeStandardUnits(computeStandardUnits.getOrNull())
+
+            /**
+             * Sets [Builder.computeStandardUnits] to an arbitrary JSON value.
+             *
+             * You should usually call [Builder.computeStandardUnits] with a well-typed [String]
+             * value instead. This method is primarily for setting the field to an undocumented or
+             * not yet supported value.
+             */
+            fun computeStandardUnits(computeStandardUnits: JsonField<String>) = apply {
+                this.computeStandardUnits = computeStandardUnits
+            }
+
+            /**
+             * Total storage usage in Standard Units across the entire filtered interval,
+             * independent of pagination, as a decimal string, separate from LSU. Null means
+             * complete Standard storage usage is unavailable; "0" means known zero usage.
+             */
+            fun storageStandardUnits(storageStandardUnits: String?) =
+                storageStandardUnits(JsonField.ofNullable(storageStandardUnits))
+
+            /**
+             * Alias for calling [Builder.storageStandardUnits] with
+             * `storageStandardUnits.orElse(null)`.
+             */
+            fun storageStandardUnits(storageStandardUnits: Optional<String>) =
+                storageStandardUnits(storageStandardUnits.getOrNull())
+
+            /**
+             * Sets [Builder.storageStandardUnits] to an arbitrary JSON value.
+             *
+             * You should usually call [Builder.storageStandardUnits] with a well-typed [String]
+             * value instead. This method is primarily for setting the field to an undocumented or
+             * not yet supported value.
+             */
+            fun storageStandardUnits(storageStandardUnits: JsonField<String>) = apply {
+                this.storageStandardUnits = storageStandardUnits
+            }
 
             fun additionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
                 this.additionalProperties.clear()
@@ -402,6 +508,8 @@ private constructor(
                 Totals(
                     checkRequired("lcu", lcu),
                     checkRequired("lsu", lsu),
+                    computeStandardUnits,
+                    storageStandardUnits,
                     additionalProperties.toMutableMap(),
                 )
         }
@@ -424,6 +532,8 @@ private constructor(
 
             lcu()
             lsu()
+            computeStandardUnits()
+            storageStandardUnits()
             validated = true
         }
 
@@ -443,7 +553,10 @@ private constructor(
          */
         @JvmSynthetic
         internal fun validity(): Int =
-            (if (lcu.asKnown().isPresent) 1 else 0) + (if (lsu.asKnown().isPresent) 1 else 0)
+            (if (lcu.asKnown().isPresent) 1 else 0) +
+                (if (lsu.asKnown().isPresent) 1 else 0) +
+                (if (computeStandardUnits.asKnown().isPresent) 1 else 0) +
+                (if (storageStandardUnits.asKnown().isPresent) 1 else 0)
 
         override fun equals(other: Any?): Boolean {
             if (this === other) {
@@ -453,15 +566,19 @@ private constructor(
             return other is Totals &&
                 lcu == other.lcu &&
                 lsu == other.lsu &&
+                computeStandardUnits == other.computeStandardUnits &&
+                storageStandardUnits == other.storageStandardUnits &&
                 additionalProperties == other.additionalProperties
         }
 
-        private val hashCode: Int by lazy { Objects.hash(lcu, lsu, additionalProperties) }
+        private val hashCode: Int by lazy {
+            Objects.hash(lcu, lsu, computeStandardUnits, storageStandardUnits, additionalProperties)
+        }
 
         override fun hashCode(): Int = hashCode
 
         override fun toString() =
-            "Totals{lcu=$lcu, lsu=$lsu, additionalProperties=$additionalProperties}"
+            "Totals{lcu=$lcu, lsu=$lsu, computeStandardUnits=$computeStandardUnits, storageStandardUnits=$storageStandardUnits, additionalProperties=$additionalProperties}"
     }
 
     override fun equals(other: Any?): Boolean {

@@ -19,6 +19,8 @@ internal class SandboxListUsageCostsResponseTest {
                 .periodStart(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
                 .resourceId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                 .resourceType(SandboxListUsageCostsResponse.ResourceType.SANDBOX)
+                .computeStandardUnits("compute_standard_units")
+                .storageStandardUnits("storage_standard_units")
                 .build()
 
         assertThat(sandboxListUsageCostsResponse.lcu()).isEqualTo("1.234567")
@@ -29,6 +31,10 @@ internal class SandboxListUsageCostsResponseTest {
             .isEqualTo("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
         assertThat(sandboxListUsageCostsResponse.resourceType())
             .isEqualTo(SandboxListUsageCostsResponse.ResourceType.SANDBOX)
+        assertThat(sandboxListUsageCostsResponse.computeStandardUnits())
+            .contains("compute_standard_units")
+        assertThat(sandboxListUsageCostsResponse.storageStandardUnits())
+            .contains("storage_standard_units")
     }
 
     @Test
@@ -41,6 +47,8 @@ internal class SandboxListUsageCostsResponseTest {
                 .periodStart(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
                 .resourceId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                 .resourceType(SandboxListUsageCostsResponse.ResourceType.SANDBOX)
+                .computeStandardUnits("compute_standard_units")
+                .storageStandardUnits("storage_standard_units")
                 .build()
 
         val roundtrippedSandboxListUsageCostsResponse =
