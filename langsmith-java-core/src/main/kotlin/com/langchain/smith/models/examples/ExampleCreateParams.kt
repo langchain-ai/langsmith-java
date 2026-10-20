@@ -73,10 +73,18 @@ private constructor(
     fun metadata(): Optional<Metadata> = body.metadata()
 
     /**
+     * Deprecated: use reference_outputs instead.
+     *
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
      */
-    fun outputs(): Optional<Outputs> = body.outputs()
+    @Deprecated("deprecated") fun outputs(): Optional<Outputs> = body.outputs()
+
+    /**
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
+    fun referenceOutputs(): Optional<ReferenceOutputs> = body.referenceOutputs()
 
     /**
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
@@ -168,7 +176,15 @@ private constructor(
      *
      * Unlike [outputs], this method doesn't throw if the JSON field has an unexpected type.
      */
-    fun _outputs(): JsonField<Outputs> = body._outputs()
+    @Deprecated("deprecated") fun _outputs(): JsonField<Outputs> = body._outputs()
+
+    /**
+     * Returns the raw JSON value of [referenceOutputs].
+     *
+     * Unlike [referenceOutputs], this method doesn't throw if the JSON field has an unexpected
+     * type.
+     */
+    fun _referenceOutputs(): JsonField<ReferenceOutputs> = body._referenceOutputs()
 
     /**
      * Returns the raw JSON value of [sourceRunId].
@@ -342,9 +358,11 @@ private constructor(
          */
         fun metadata(metadata: JsonField<Metadata>) = apply { body.metadata(metadata) }
 
-        fun outputs(outputs: Outputs?) = apply { body.outputs(outputs) }
+        /** Deprecated: use reference_outputs instead. */
+        @Deprecated("deprecated") fun outputs(outputs: Outputs?) = apply { body.outputs(outputs) }
 
         /** Alias for calling [Builder.outputs] with `outputs.orElse(null)`. */
+        @Deprecated("deprecated")
         fun outputs(outputs: Optional<Outputs>) = outputs(outputs.getOrNull())
 
         /**
@@ -353,7 +371,27 @@ private constructor(
          * You should usually call [Builder.outputs] with a well-typed [Outputs] value instead. This
          * method is primarily for setting the field to an undocumented or not yet supported value.
          */
+        @Deprecated("deprecated")
         fun outputs(outputs: JsonField<Outputs>) = apply { body.outputs(outputs) }
+
+        fun referenceOutputs(referenceOutputs: ReferenceOutputs?) = apply {
+            body.referenceOutputs(referenceOutputs)
+        }
+
+        /** Alias for calling [Builder.referenceOutputs] with `referenceOutputs.orElse(null)`. */
+        fun referenceOutputs(referenceOutputs: Optional<ReferenceOutputs>) =
+            referenceOutputs(referenceOutputs.getOrNull())
+
+        /**
+         * Sets [Builder.referenceOutputs] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.referenceOutputs] with a well-typed [ReferenceOutputs]
+         * value instead. This method is primarily for setting the field to an undocumented or not
+         * yet supported value.
+         */
+        fun referenceOutputs(referenceOutputs: JsonField<ReferenceOutputs>) = apply {
+            body.referenceOutputs(referenceOutputs)
+        }
 
         fun sourceRunId(sourceRunId: String?) = apply { body.sourceRunId(sourceRunId) }
 
@@ -651,6 +689,7 @@ private constructor(
         private val inputs: JsonField<Inputs>,
         private val metadata: JsonField<Metadata>,
         private val outputs: JsonField<Outputs>,
+        private val referenceOutputs: JsonField<ReferenceOutputs>,
         private val sourceRunId: JsonField<String>,
         private val sourceRunStartTime: JsonField<OffsetDateTime>,
         private val sourceSessionId: JsonField<String>,
@@ -676,6 +715,9 @@ private constructor(
             @ExcludeMissing
             metadata: JsonField<Metadata> = JsonMissing.of(),
             @JsonProperty("outputs") @ExcludeMissing outputs: JsonField<Outputs> = JsonMissing.of(),
+            @JsonProperty("reference_outputs")
+            @ExcludeMissing
+            referenceOutputs: JsonField<ReferenceOutputs> = JsonMissing.of(),
             @JsonProperty("source_run_id")
             @ExcludeMissing
             sourceRunId: JsonField<String> = JsonMissing.of(),
@@ -705,6 +747,7 @@ private constructor(
             inputs,
             metadata,
             outputs,
+            referenceOutputs,
             sourceRunId,
             sourceRunStartTime,
             sourceSessionId,
@@ -747,10 +790,19 @@ private constructor(
         fun metadata(): Optional<Metadata> = metadata.getOptional("metadata")
 
         /**
+         * Deprecated: use reference_outputs instead.
+         *
          * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
          *   the server responded with an unexpected value).
          */
-        fun outputs(): Optional<Outputs> = outputs.getOptional("outputs")
+        @Deprecated("deprecated") fun outputs(): Optional<Outputs> = outputs.getOptional("outputs")
+
+        /**
+         * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
+         *   the server responded with an unexpected value).
+         */
+        fun referenceOutputs(): Optional<ReferenceOutputs> =
+            referenceOutputs.getOptional("reference_outputs")
 
         /**
          * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
@@ -845,7 +897,20 @@ private constructor(
          *
          * Unlike [outputs], this method doesn't throw if the JSON field has an unexpected type.
          */
-        @JsonProperty("outputs") @ExcludeMissing fun _outputs(): JsonField<Outputs> = outputs
+        @Deprecated("deprecated")
+        @JsonProperty("outputs")
+        @ExcludeMissing
+        fun _outputs(): JsonField<Outputs> = outputs
+
+        /**
+         * Returns the raw JSON value of [referenceOutputs].
+         *
+         * Unlike [referenceOutputs], this method doesn't throw if the JSON field has an unexpected
+         * type.
+         */
+        @JsonProperty("reference_outputs")
+        @ExcludeMissing
+        fun _referenceOutputs(): JsonField<ReferenceOutputs> = referenceOutputs
 
         /**
          * Returns the raw JSON value of [sourceRunId].
@@ -957,6 +1022,7 @@ private constructor(
             private var inputs: JsonField<Inputs> = JsonMissing.of()
             private var metadata: JsonField<Metadata> = JsonMissing.of()
             private var outputs: JsonField<Outputs> = JsonMissing.of()
+            private var referenceOutputs: JsonField<ReferenceOutputs> = JsonMissing.of()
             private var sourceRunId: JsonField<String> = JsonMissing.of()
             private var sourceRunStartTime: JsonField<OffsetDateTime> = JsonMissing.of()
             private var sourceSessionId: JsonField<String> = JsonMissing.of()
@@ -975,6 +1041,7 @@ private constructor(
                 inputs = body.inputs
                 metadata = body.metadata
                 outputs = body.outputs
+                referenceOutputs = body.referenceOutputs
                 sourceRunId = body.sourceRunId
                 sourceRunStartTime = body.sourceRunStartTime
                 sourceSessionId = body.sourceSessionId
@@ -1050,9 +1117,12 @@ private constructor(
              */
             fun metadata(metadata: JsonField<Metadata>) = apply { this.metadata = metadata }
 
+            /** Deprecated: use reference_outputs instead. */
+            @Deprecated("deprecated")
             fun outputs(outputs: Outputs?) = outputs(JsonField.ofNullable(outputs))
 
             /** Alias for calling [Builder.outputs] with `outputs.orElse(null)`. */
+            @Deprecated("deprecated")
             fun outputs(outputs: Optional<Outputs>) = outputs(outputs.getOrNull())
 
             /**
@@ -1062,7 +1132,28 @@ private constructor(
              * This method is primarily for setting the field to an undocumented or not yet
              * supported value.
              */
+            @Deprecated("deprecated")
             fun outputs(outputs: JsonField<Outputs>) = apply { this.outputs = outputs }
+
+            fun referenceOutputs(referenceOutputs: ReferenceOutputs?) =
+                referenceOutputs(JsonField.ofNullable(referenceOutputs))
+
+            /**
+             * Alias for calling [Builder.referenceOutputs] with `referenceOutputs.orElse(null)`.
+             */
+            fun referenceOutputs(referenceOutputs: Optional<ReferenceOutputs>) =
+                referenceOutputs(referenceOutputs.getOrNull())
+
+            /**
+             * Sets [Builder.referenceOutputs] to an arbitrary JSON value.
+             *
+             * You should usually call [Builder.referenceOutputs] with a well-typed
+             * [ReferenceOutputs] value instead. This method is primarily for setting the field to
+             * an undocumented or not yet supported value.
+             */
+            fun referenceOutputs(referenceOutputs: JsonField<ReferenceOutputs>) = apply {
+                this.referenceOutputs = referenceOutputs
+            }
 
             fun sourceRunId(sourceRunId: String?) = sourceRunId(JsonField.ofNullable(sourceRunId))
 
@@ -1251,6 +1342,7 @@ private constructor(
                     inputs,
                     metadata,
                     outputs,
+                    referenceOutputs,
                     sourceRunId,
                     sourceRunStartTime,
                     sourceSessionId,
@@ -1285,6 +1377,7 @@ private constructor(
             inputs().ifPresent { it.validate() }
             metadata().ifPresent { it.validate() }
             outputs().ifPresent { it.validate() }
+            referenceOutputs().ifPresent { it.validate() }
             sourceRunId()
             sourceRunStartTime()
             sourceSessionId()
@@ -1318,6 +1411,7 @@ private constructor(
                 (inputs.asKnown().getOrNull()?.validity() ?: 0) +
                 (metadata.asKnown().getOrNull()?.validity() ?: 0) +
                 (outputs.asKnown().getOrNull()?.validity() ?: 0) +
+                (referenceOutputs.asKnown().getOrNull()?.validity() ?: 0) +
                 (if (sourceRunId.asKnown().isPresent) 1 else 0) +
                 (if (sourceRunStartTime.asKnown().isPresent) 1 else 0) +
                 (if (sourceSessionId.asKnown().isPresent) 1 else 0) +
@@ -1339,6 +1433,7 @@ private constructor(
                 inputs == other.inputs &&
                 metadata == other.metadata &&
                 outputs == other.outputs &&
+                referenceOutputs == other.referenceOutputs &&
                 sourceRunId == other.sourceRunId &&
                 sourceRunStartTime == other.sourceRunStartTime &&
                 sourceSessionId == other.sourceSessionId &&
@@ -1358,6 +1453,7 @@ private constructor(
                 inputs,
                 metadata,
                 outputs,
+                referenceOutputs,
                 sourceRunId,
                 sourceRunStartTime,
                 sourceSessionId,
@@ -1373,7 +1469,7 @@ private constructor(
         override fun hashCode(): Int = hashCode
 
         override fun toString() =
-            "Body{datasetId=$datasetId, id=$id, createdAt=$createdAt, inputs=$inputs, metadata=$metadata, outputs=$outputs, sourceRunId=$sourceRunId, sourceRunStartTime=$sourceRunStartTime, sourceSessionId=$sourceSessionId, sourceTraceId=$sourceTraceId, split=$split, useLegacyMessageFormat=$useLegacyMessageFormat, useSourceRunAttachments=$useSourceRunAttachments, useSourceRunIo=$useSourceRunIo, additionalProperties=$additionalProperties}"
+            "Body{datasetId=$datasetId, id=$id, createdAt=$createdAt, inputs=$inputs, metadata=$metadata, outputs=$outputs, referenceOutputs=$referenceOutputs, sourceRunId=$sourceRunId, sourceRunStartTime=$sourceRunStartTime, sourceSessionId=$sourceSessionId, sourceTraceId=$sourceTraceId, split=$split, useLegacyMessageFormat=$useLegacyMessageFormat, useSourceRunAttachments=$useSourceRunAttachments, useSourceRunIo=$useSourceRunIo, additionalProperties=$additionalProperties}"
     }
 
     class Inputs
@@ -1592,6 +1688,8 @@ private constructor(
         override fun toString() = "Metadata{additionalProperties=$additionalProperties}"
     }
 
+    /** Deprecated: use reference_outputs instead. */
+    @Deprecated("deprecated")
     class Outputs
     @JsonCreator
     private constructor(
@@ -1698,6 +1796,114 @@ private constructor(
         override fun hashCode(): Int = hashCode
 
         override fun toString() = "Outputs{additionalProperties=$additionalProperties}"
+    }
+
+    class ReferenceOutputs
+    @JsonCreator
+    private constructor(
+        @com.fasterxml.jackson.annotation.JsonValue
+        private val additionalProperties: Map<String, JsonValue>
+    ) {
+
+        @JsonAnyGetter
+        @ExcludeMissing
+        fun _additionalProperties(): Map<String, JsonValue> = additionalProperties
+
+        fun toBuilder() = Builder().from(this)
+
+        companion object {
+
+            /** Returns a mutable builder for constructing an instance of [ReferenceOutputs]. */
+            @JvmStatic fun builder() = Builder()
+        }
+
+        /** A builder for [ReferenceOutputs]. */
+        class Builder internal constructor() {
+
+            private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
+
+            @JvmSynthetic
+            internal fun from(referenceOutputs: ReferenceOutputs) = apply {
+                additionalProperties = referenceOutputs.additionalProperties.toMutableMap()
+            }
+
+            fun additionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
+                this.additionalProperties.clear()
+                putAllAdditionalProperties(additionalProperties)
+            }
+
+            fun putAdditionalProperty(key: String, value: JsonValue) = apply {
+                additionalProperties.put(key, value)
+            }
+
+            fun putAllAdditionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
+                this.additionalProperties.putAll(additionalProperties)
+            }
+
+            fun removeAdditionalProperty(key: String) = apply { additionalProperties.remove(key) }
+
+            fun removeAllAdditionalProperties(keys: Set<String>) = apply {
+                keys.forEach(::removeAdditionalProperty)
+            }
+
+            /**
+             * Returns an immutable instance of [ReferenceOutputs].
+             *
+             * Further updates to this [Builder] will not mutate the returned instance.
+             */
+            fun build(): ReferenceOutputs = ReferenceOutputs(additionalProperties.toImmutable())
+        }
+
+        private var validated: Boolean = false
+
+        /**
+         * Validates that the types of all values in this object match their expected types
+         * recursively.
+         *
+         * This method is _not_ forwards compatible with new types from the API for existing fields.
+         *
+         * @throws LangChainInvalidDataException if any value type in this object doesn't match its
+         *   expected type.
+         */
+        fun validate(): ReferenceOutputs = apply {
+            if (validated) {
+                return@apply
+            }
+
+            validated = true
+        }
+
+        fun isValid(): Boolean =
+            try {
+                validate()
+                true
+            } catch (e: LangChainInvalidDataException) {
+                false
+            }
+
+        /**
+         * Returns a score indicating how many valid values are contained in this object
+         * recursively.
+         *
+         * Used for best match union deserialization.
+         */
+        @JvmSynthetic
+        internal fun validity(): Int =
+            additionalProperties.count { (_, value) -> !value.isNull() && !value.isMissing() }
+
+        override fun equals(other: Any?): Boolean {
+            if (this === other) {
+                return true
+            }
+
+            return other is ReferenceOutputs && additionalProperties == other.additionalProperties
+        }
+
+        private val hashCode: Int by lazy { Objects.hash(additionalProperties) }
+
+        override fun hashCode(): Int = hashCode
+
+        override fun toString() = "ReferenceOutputs{additionalProperties=$additionalProperties}"
     }
 
     @JsonDeserialize(using = Split.Deserializer::class)
