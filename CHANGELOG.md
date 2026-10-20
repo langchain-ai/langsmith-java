@@ -1,5 +1,41 @@
 # Changelog
 
+## [0.1.0-beta.27](https://github.com/langchain-ai/langsmith-java/compare/v0.1.0-beta.26...v0.1.0-beta.27) (2026-10-20)
+
+
+### Features
+
+* **code-eval-v2:** allow trajectory on code_evaluator_input storage ([e05b843](https://github.com/langchain-ai/langsmith-java/commit/e05b843c9fe80571fdd8cb70ca3229e2e96ab250))
+* **code-evals:** require advanced_features for code_evaluator_input ([a0f586c](https://github.com/langchain-ai/langsmith-java/commit/a0f586c0adbce6ac3a6e5fbb4db51efc84234b4a))
+* **evaluators:** add a decision evaluator type ([704307e](https://github.com/langchain-ai/langsmith-java/commit/704307e5466243ea46cfcd5e2f4fa87c36c65efe))
+* **evaluators:** scope evaluator spend and run rules to an agent ([bc9fe0f](https://github.com/langchain-ai/langsmith-java/commit/bc9fe0fb6e1bb3c6bae440ebaf8c3281b7a65d18))
+* **evaluators:** workspace_secrets_keys on code evaluator CRUD ([c578219](https://github.com/langchain-ai/langsmith-java/commit/c57821939a03c50ba4dec3cb6cc7bf829edfd8ce))
+* **runs:** add feedback modified_at window to /v2/traces/query ([b67f0cb](https://github.com/langchain-ai/langsmith-java/commit/b67f0cb0be64761080f6509e31668a6a206e25d6))
+* **sandboxes:** carry sandbox settings into snapshots with include ([9a4c4cb](https://github.com/langchain-ai/langsmith-java/commit/9a4c4cb47a6270c4c559fba0c1ff6d86fe845f7a))
+* **sdk:** expose prompt webhooks in the SDKs and the langsmith CLI ([ee7f66f](https://github.com/langchain-ai/langsmith-java/commit/ee7f66f154f4cd36be93d38b29194b0ebfd8d8c2))
+* **sdks:** send OTLP traces to an Agent environment from the Java exporter ([d8f28f5](https://github.com/langchain-ai/langsmith-java/commit/d8f28f5dc3e5cf8a5cf4de24ba1d515a942c2794))
+
+
+### Bug Fixes
+
+* **sdks:** serialize Java addresses as plain data ([8f205a3](https://github.com/langchain-ai/langsmith-java/commit/8f205a355092dcf83cf76a814640563b845e37a7))
+* support Standard Units in sandbox cost breakdowns ([50a5a49](https://github.com/langchain-ai/langsmith-java/commit/50a5a49c03569642ff93b9f6f93ec6be4581619d))
+
+
+### Performance Improvements
+
+* load sandbox cost pages and totals independently ([7b51f91](https://github.com/langchain-ai/langsmith-java/commit/7b51f914a22a17340901e29e9ec76d0bf399f452))
+
+
+### Chores
+
+* **sdks:** stop committing generated .stats.yml ([1f1d4e8](https://github.com/langchain-ai/langsmith-java/commit/1f1d4e802c54999416122cfe7f030dfa7ec1b110))
+
+
+### Build System
+
+* **sdks:** share sandbox mount and proxy config models ([7dd3368](https://github.com/langchain-ai/langsmith-java/commit/7dd33682c1bb304a5851e13232ea7fe20c122950))
+
 ## [0.1.0-beta.26](https://github.com/langchain-ai/langsmith-java/compare/v0.1.0-beta.25...v0.1.0-beta.26) (2026-10-09)
 
 
