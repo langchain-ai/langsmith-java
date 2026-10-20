@@ -25,6 +25,8 @@ class OnlineEvaluatorType @JsonCreator private constructor(private val value: Js
 
         @JvmField val CODE = of("code")
 
+        @JvmField val DECISION_MODEL = of("decision_model")
+
         @JvmStatic fun of(value: String) = OnlineEvaluatorType(JsonField.of(value))
     }
 
@@ -32,6 +34,7 @@ class OnlineEvaluatorType @JsonCreator private constructor(private val value: Js
     enum class Known {
         LLM,
         CODE,
+        DECISION_MODEL,
     }
 
     /**
@@ -46,6 +49,7 @@ class OnlineEvaluatorType @JsonCreator private constructor(private val value: Js
     enum class Value {
         LLM,
         CODE,
+        DECISION_MODEL,
         /**
          * An enum member indicating that [OnlineEvaluatorType] was instantiated with an unknown
          * value.
@@ -64,6 +68,7 @@ class OnlineEvaluatorType @JsonCreator private constructor(private val value: Js
         when (this) {
             LLM -> Value.LLM
             CODE -> Value.CODE
+            DECISION_MODEL -> Value.DECISION_MODEL
             else -> Value._UNKNOWN
         }
 
@@ -79,6 +84,7 @@ class OnlineEvaluatorType @JsonCreator private constructor(private val value: Js
         when (this) {
             LLM -> Known.LLM
             CODE -> Known.CODE
+            DECISION_MODEL -> Known.DECISION_MODEL
             else -> throw LangChainInvalidDataException("Unknown OnlineEvaluatorType: $value")
         }
 

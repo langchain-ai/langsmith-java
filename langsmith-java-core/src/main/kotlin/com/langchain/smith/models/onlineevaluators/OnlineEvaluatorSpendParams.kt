@@ -72,7 +72,10 @@ private constructor(
      */
     fun tagValueId(): Optional<List<String>> = Optional.ofNullable(tagValueId)
 
-    /** Filter grouped results by evaluator type: 'llm' or 'code'. Only valid with group_by. */
+    /**
+     * Filter grouped results by evaluator type: 'llm', 'code' or 'decision_model'. Only valid with
+     * group_by.
+     */
     fun type(): Optional<String> = Optional.ofNullable(type)
 
     /** Additional headers to send with the request. */
@@ -213,7 +216,10 @@ private constructor(
             this.tagValueId = (this.tagValueId ?: mutableListOf()).apply { add(tagValueId) }
         }
 
-        /** Filter grouped results by evaluator type: 'llm' or 'code'. Only valid with group_by. */
+        /**
+         * Filter grouped results by evaluator type: 'llm', 'code' or 'decision_model'. Only valid
+         * with group_by.
+         */
         fun type(type: String?) = apply { this.type = type }
 
         /** Alias for calling [Builder.type] with `type.orElse(null)`. */
