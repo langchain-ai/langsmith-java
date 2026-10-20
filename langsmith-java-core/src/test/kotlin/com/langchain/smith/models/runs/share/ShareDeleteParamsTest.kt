@@ -18,7 +18,10 @@ internal class ShareDeleteParamsTest {
     @Test
     fun pathParams() {
         val params =
-            ShareDeleteParams.builder().traceId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e").build()
+            ShareDeleteParams.builder()
+                .traceId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                .sessionId("018e4c7e-a9fb-7ef0-a5b6-6ea3a82e9327")
+                .build()
 
         assertThat(params._pathParam(0)).isEqualTo("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
         // out-of-bound path param
@@ -35,14 +38,6 @@ internal class ShareDeleteParamsTest {
 
         val body = params._body()
 
-        assertThat(body.sessionId()).contains("018e4c7e-a9fb-7ef0-a5b6-6ea3a82e9327")
-    }
-
-    @Test
-    fun bodyWithoutOptionalFields() {
-        val params =
-            ShareDeleteParams.builder().traceId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e").build()
-
-        val body = params._body()
+        assertThat(body.sessionId()).isEqualTo("018e4c7e-a9fb-7ef0-a5b6-6ea3a82e9327")
     }
 }

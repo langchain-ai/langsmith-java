@@ -11,6 +11,7 @@ import com.langchain.smith.core.JsonField
 import com.langchain.smith.core.JsonMissing
 import com.langchain.smith.core.JsonValue
 import com.langchain.smith.core.Params
+import com.langchain.smith.core.checkRequired
 import com.langchain.smith.core.http.Headers
 import com.langchain.smith.core.http.QueryParams
 import com.langchain.smith.errors.LangChainInvalidDataException
@@ -38,10 +39,10 @@ private constructor(
     /**
      * session_id is the tracing project UUID containing the trace.
      *
-     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
-     *   server responded with an unexpected value).
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type or is
+     *   unexpectedly missing or null (e.g. if the server responded with an unexpected value).
      */
-    fun sessionId(): Optional<String> = body.sessionId()
+    fun sessionId(): String = body.sessionId()
 
     /**
      * Returns the raw JSON value of [sessionId].
@@ -62,9 +63,14 @@ private constructor(
 
     companion object {
 
-        @JvmStatic fun none(): ShareDeleteParams = builder().build()
-
-        /** Returns a mutable builder for constructing an instance of [ShareDeleteParams]. */
+        /**
+         * Returns a mutable builder for constructing an instance of [ShareDeleteParams].
+         *
+         * The following fields are required:
+         * ```java
+         * .sessionId()
+         * ```
+         */
         @JvmStatic fun builder() = Builder()
     }
 
@@ -231,6 +237,13 @@ private constructor(
          * Returns an immutable instance of [ShareDeleteParams].
          *
          * Further updates to this [Builder] will not mutate the returned instance.
+         *
+         * The following fields are required:
+         * ```java
+         * .sessionId()
+         * ```
+         *
+         * @throws IllegalStateException if any required field is unset.
          */
         fun build(): ShareDeleteParams =
             ShareDeleteParams(
@@ -270,10 +283,10 @@ private constructor(
         /**
          * session_id is the tracing project UUID containing the trace.
          *
-         * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
-         *   the server responded with an unexpected value).
+         * @throws LangChainInvalidDataException if the JSON field has an unexpected type or is
+         *   unexpectedly missing or null (e.g. if the server responded with an unexpected value).
          */
-        fun sessionId(): Optional<String> = sessionId.getOptional("session_id")
+        fun sessionId(): String = sessionId.getRequired("session_id")
 
         /**
          * Returns the raw JSON value of [sessionId].
@@ -296,14 +309,21 @@ private constructor(
 
         companion object {
 
-            /** Returns a mutable builder for constructing an instance of [Body]. */
+            /**
+             * Returns a mutable builder for constructing an instance of [Body].
+             *
+             * The following fields are required:
+             * ```java
+             * .sessionId()
+             * ```
+             */
             @JvmStatic fun builder() = Builder()
         }
 
         /** A builder for [Body]. */
         class Builder internal constructor() {
 
-            private var sessionId: JsonField<String> = JsonMissing.of()
+            private var sessionId: JsonField<String>? = null
             private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
 
             @JvmSynthetic
@@ -347,8 +367,16 @@ private constructor(
              * Returns an immutable instance of [Body].
              *
              * Further updates to this [Builder] will not mutate the returned instance.
+             *
+             * The following fields are required:
+             * ```java
+             * .sessionId()
+             * ```
+             *
+             * @throws IllegalStateException if any required field is unset.
              */
-            fun build(): Body = Body(sessionId, additionalProperties.toMutableMap())
+            fun build(): Body =
+                Body(checkRequired("sessionId", sessionId), additionalProperties.toMutableMap())
         }
 
         private var validated: Boolean = false
