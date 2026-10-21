@@ -2,6 +2,7 @@
 
 package com.langchain.smith.models.sandboxes.boxes
 
+import kotlin.jvm.optionals.getOrNull
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
@@ -12,6 +13,7 @@ internal class BoxGenerateServiceUrlParamsTest {
         BoxGenerateServiceUrlParams.builder()
             .name("name")
             .access(BoxGenerateServiceUrlParams.Access.RESTRICTED)
+            .addEmbedOrigin("string")
             .expiresInSeconds(0L)
             .port(0L)
             .build()
@@ -32,6 +34,7 @@ internal class BoxGenerateServiceUrlParamsTest {
             BoxGenerateServiceUrlParams.builder()
                 .name("name")
                 .access(BoxGenerateServiceUrlParams.Access.RESTRICTED)
+                .addEmbedOrigin("string")
                 .expiresInSeconds(0L)
                 .port(0L)
                 .build()
@@ -39,6 +42,7 @@ internal class BoxGenerateServiceUrlParamsTest {
         val body = params._body()
 
         assertThat(body.access()).contains(BoxGenerateServiceUrlParams.Access.RESTRICTED)
+        assertThat(body.embedOrigins().getOrNull()).containsExactly("string")
         assertThat(body.expiresInSeconds()).contains(0L)
         assertThat(body.port()).contains(0L)
     }

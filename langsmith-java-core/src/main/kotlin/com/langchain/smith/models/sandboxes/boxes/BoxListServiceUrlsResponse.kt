@@ -11,7 +11,9 @@ import com.langchain.smith.core.ExcludeMissing
 import com.langchain.smith.core.JsonField
 import com.langchain.smith.core.JsonMissing
 import com.langchain.smith.core.JsonValue
+import com.langchain.smith.core.checkKnown
 import com.langchain.smith.core.checkRequired
+import com.langchain.smith.core.toImmutable
 import com.langchain.smith.errors.LangChainInvalidDataException
 import java.time.OffsetDateTime
 import java.util.Collections
@@ -26,6 +28,7 @@ private constructor(
     private val createdAt: JsonField<OffsetDateTime>,
     private val port: JsonField<Long>,
     private val createdBy: JsonField<String>,
+    private val embedOrigins: JsonField<List<String>>,
     private val expiresAt: JsonField<OffsetDateTime>,
     private val additionalProperties: MutableMap<String, JsonValue>,
 ) {
@@ -38,10 +41,13 @@ private constructor(
         createdAt: JsonField<OffsetDateTime> = JsonMissing.of(),
         @JsonProperty("port") @ExcludeMissing port: JsonField<Long> = JsonMissing.of(),
         @JsonProperty("created_by") @ExcludeMissing createdBy: JsonField<String> = JsonMissing.of(),
+        @JsonProperty("embed_origins")
+        @ExcludeMissing
+        embedOrigins: JsonField<List<String>> = JsonMissing.of(),
         @JsonProperty("expires_at")
         @ExcludeMissing
         expiresAt: JsonField<OffsetDateTime> = JsonMissing.of(),
-    ) : this(access, createdAt, port, createdBy, expiresAt, mutableMapOf())
+    ) : this(access, createdAt, port, createdBy, embedOrigins, expiresAt, mutableMapOf())
 
     /**
      * How the port is shared: "token" for a minted service token, or "restricted"/"workspace" for
@@ -71,6 +77,14 @@ private constructor(
      *   server responded with an unexpected value).
      */
     fun createdBy(): Optional<String> = createdBy.getOptional("created_by")
+
+    /**
+     * Origins that may embed a LangSmith login URL in an iframe; omitted when there are none.
+     *
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
+    fun embedOrigins(): Optional<List<String>> = embedOrigins.getOptional("embed_origins")
 
     /**
      * When the share expires. Set only for "token"; a login grant does not expire.
@@ -109,6 +123,15 @@ private constructor(
      * Unlike [createdBy], this method doesn't throw if the JSON field has an unexpected type.
      */
     @JsonProperty("created_by") @ExcludeMissing fun _createdBy(): JsonField<String> = createdBy
+
+    /**
+     * Returns the raw JSON value of [embedOrigins].
+     *
+     * Unlike [embedOrigins], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    @JsonProperty("embed_origins")
+    @ExcludeMissing
+    fun _embedOrigins(): JsonField<List<String>> = embedOrigins
 
     /**
      * Returns the raw JSON value of [expiresAt].
@@ -153,6 +176,7 @@ private constructor(
         private var createdAt: JsonField<OffsetDateTime>? = null
         private var port: JsonField<Long>? = null
         private var createdBy: JsonField<String> = JsonMissing.of()
+        private var embedOrigins: JsonField<MutableList<String>>? = null
         private var expiresAt: JsonField<OffsetDateTime> = JsonMissing.of()
         private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
 
@@ -162,6 +186,7 @@ private constructor(
             createdAt = boxListServiceUrlsResponse.createdAt
             port = boxListServiceUrlsResponse.port
             createdBy = boxListServiceUrlsResponse.createdBy
+            embedOrigins = boxListServiceUrlsResponse.embedOrigins.map { it.toMutableList() }
             expiresAt = boxListServiceUrlsResponse.expiresAt
             additionalProperties = boxListServiceUrlsResponse.additionalProperties.toMutableMap()
         }
@@ -212,6 +237,34 @@ private constructor(
          * value.
          */
         fun createdBy(createdBy: JsonField<String>) = apply { this.createdBy = createdBy }
+
+        /**
+         * Origins that may embed a LangSmith login URL in an iframe; omitted when there are none.
+         */
+        fun embedOrigins(embedOrigins: List<String>) = embedOrigins(JsonField.of(embedOrigins))
+
+        /**
+         * Sets [Builder.embedOrigins] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.embedOrigins] with a well-typed `List<String>` value
+         * instead. This method is primarily for setting the field to an undocumented or not yet
+         * supported value.
+         */
+        fun embedOrigins(embedOrigins: JsonField<List<String>>) = apply {
+            this.embedOrigins = embedOrigins.map { it.toMutableList() }
+        }
+
+        /**
+         * Adds a single [String] to [embedOrigins].
+         *
+         * @throws IllegalStateException if the field was previously set to a non-list.
+         */
+        fun addEmbedOrigin(embedOrigin: String) = apply {
+            embedOrigins =
+                (embedOrigins ?: JsonField.of(mutableListOf())).also {
+                    checkKnown("embedOrigins", it).add(embedOrigin)
+                }
+        }
 
         /** When the share expires. Set only for "token"; a login grant does not expire. */
         fun expiresAt(expiresAt: OffsetDateTime) = expiresAt(JsonField.of(expiresAt))
@@ -264,6 +317,7 @@ private constructor(
                 checkRequired("createdAt", createdAt),
                 checkRequired("port", port),
                 createdBy,
+                (embedOrigins ?: JsonMissing.of()).map { it.toImmutable() },
                 expiresAt,
                 additionalProperties.toMutableMap(),
             )
@@ -288,6 +342,7 @@ private constructor(
         createdAt()
         port()
         createdBy()
+        embedOrigins()
         expiresAt()
         validated = true
     }
@@ -311,6 +366,7 @@ private constructor(
             (if (createdAt.asKnown().isPresent) 1 else 0) +
             (if (port.asKnown().isPresent) 1 else 0) +
             (if (createdBy.asKnown().isPresent) 1 else 0) +
+            (embedOrigins.asKnown().getOrNull()?.size ?: 0) +
             (if (expiresAt.asKnown().isPresent) 1 else 0)
 
     /**
@@ -469,16 +525,25 @@ private constructor(
             createdAt == other.createdAt &&
             port == other.port &&
             createdBy == other.createdBy &&
+            embedOrigins == other.embedOrigins &&
             expiresAt == other.expiresAt &&
             additionalProperties == other.additionalProperties
     }
 
     private val hashCode: Int by lazy {
-        Objects.hash(access, createdAt, port, createdBy, expiresAt, additionalProperties)
+        Objects.hash(
+            access,
+            createdAt,
+            port,
+            createdBy,
+            embedOrigins,
+            expiresAt,
+            additionalProperties,
+        )
     }
 
     override fun hashCode(): Int = hashCode
 
     override fun toString() =
-        "BoxListServiceUrlsResponse{access=$access, createdAt=$createdAt, port=$port, createdBy=$createdBy, expiresAt=$expiresAt, additionalProperties=$additionalProperties}"
+        "BoxListServiceUrlsResponse{access=$access, createdAt=$createdAt, port=$port, createdBy=$createdBy, embedOrigins=$embedOrigins, expiresAt=$expiresAt, additionalProperties=$additionalProperties}"
 }

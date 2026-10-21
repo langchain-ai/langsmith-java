@@ -4,6 +4,7 @@ package com.langchain.smith.models.sandboxes
 
 import com.fasterxml.jackson.module.kotlin.jacksonTypeRef
 import com.langchain.smith.core.jsonMapper
+import kotlin.jvm.optionals.getOrNull
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
@@ -16,6 +17,7 @@ internal class ServiceUrlResponseTest {
                 .token("token")
                 .access(ServiceUrlResponse.Access.RESTRICTED)
                 .browserUrl("browser_url")
+                .addEmbedOrigin("string")
                 .expiresAt("expires_at")
                 .serviceUrl("service_url")
                 .build()
@@ -23,6 +25,7 @@ internal class ServiceUrlResponseTest {
         assertThat(serviceUrlResponse.token()).contains("token")
         assertThat(serviceUrlResponse.access()).contains(ServiceUrlResponse.Access.RESTRICTED)
         assertThat(serviceUrlResponse.browserUrl()).contains("browser_url")
+        assertThat(serviceUrlResponse.embedOrigins().getOrNull()).containsExactly("string")
         assertThat(serviceUrlResponse.expiresAt()).contains("expires_at")
         assertThat(serviceUrlResponse.serviceUrl()).contains("service_url")
     }
@@ -35,6 +38,7 @@ internal class ServiceUrlResponseTest {
                 .token("token")
                 .access(ServiceUrlResponse.Access.RESTRICTED)
                 .browserUrl("browser_url")
+                .addEmbedOrigin("string")
                 .expiresAt("expires_at")
                 .serviceUrl("service_url")
                 .build()

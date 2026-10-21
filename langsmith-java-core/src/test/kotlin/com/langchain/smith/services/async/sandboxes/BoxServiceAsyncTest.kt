@@ -568,6 +568,7 @@ internal class BoxServiceAsyncTest {
                 BoxGenerateServiceUrlParams.builder()
                     .name("name")
                     .access(BoxGenerateServiceUrlParams.Access.RESTRICTED)
+                    .addEmbedOrigin("string")
                     .expiresInSeconds(0L)
                     .port(0L)
                     .build()

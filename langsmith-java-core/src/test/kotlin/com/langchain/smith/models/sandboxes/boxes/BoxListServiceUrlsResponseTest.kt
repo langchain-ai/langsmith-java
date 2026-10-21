@@ -5,6 +5,7 @@ package com.langchain.smith.models.sandboxes.boxes
 import com.fasterxml.jackson.module.kotlin.jacksonTypeRef
 import com.langchain.smith.core.jsonMapper
 import java.time.OffsetDateTime
+import kotlin.jvm.optionals.getOrNull
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
@@ -18,6 +19,7 @@ internal class BoxListServiceUrlsResponseTest {
                 .createdAt(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
                 .port(0L)
                 .createdBy("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                .addEmbedOrigin("string")
                 .expiresAt(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
                 .build()
 
@@ -28,6 +30,7 @@ internal class BoxListServiceUrlsResponseTest {
         assertThat(boxListServiceUrlsResponse.port()).isEqualTo(0L)
         assertThat(boxListServiceUrlsResponse.createdBy())
             .contains("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+        assertThat(boxListServiceUrlsResponse.embedOrigins().getOrNull()).containsExactly("string")
         assertThat(boxListServiceUrlsResponse.expiresAt())
             .contains(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
     }
@@ -41,6 +44,7 @@ internal class BoxListServiceUrlsResponseTest {
                 .createdAt(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
                 .port(0L)
                 .createdBy("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                .addEmbedOrigin("string")
                 .expiresAt(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
                 .build()
 

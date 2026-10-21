@@ -11,6 +11,8 @@ import com.langchain.smith.core.ExcludeMissing
 import com.langchain.smith.core.JsonField
 import com.langchain.smith.core.JsonMissing
 import com.langchain.smith.core.JsonValue
+import com.langchain.smith.core.checkKnown
+import com.langchain.smith.core.toImmutable
 import com.langchain.smith.errors.LangChainInvalidDataException
 import java.util.Collections
 import java.util.Objects
@@ -23,6 +25,7 @@ private constructor(
     private val token: JsonField<String>,
     private val access: JsonField<Access>,
     private val browserUrl: JsonField<String>,
+    private val embedOrigins: JsonField<List<String>>,
     private val expiresAt: JsonField<String>,
     private val serviceUrl: JsonField<String>,
     private val additionalProperties: MutableMap<String, JsonValue>,
@@ -35,11 +38,14 @@ private constructor(
         @JsonProperty("browser_url")
         @ExcludeMissing
         browserUrl: JsonField<String> = JsonMissing.of(),
+        @JsonProperty("embed_origins")
+        @ExcludeMissing
+        embedOrigins: JsonField<List<String>> = JsonMissing.of(),
         @JsonProperty("expires_at") @ExcludeMissing expiresAt: JsonField<String> = JsonMissing.of(),
         @JsonProperty("service_url")
         @ExcludeMissing
         serviceUrl: JsonField<String> = JsonMissing.of(),
-    ) : this(token, access, browserUrl, expiresAt, serviceUrl, mutableMapOf())
+    ) : this(token, access, browserUrl, embedOrigins, expiresAt, serviceUrl, mutableMapOf())
 
     /**
      * Token and ExpiresAt are empty in LangSmith login mode (no token is minted).
@@ -63,6 +69,15 @@ private constructor(
      *   server responded with an unexpected value).
      */
     fun browserUrl(): Optional<String> = browserUrl.getOptional("browser_url")
+
+    /**
+     * EmbedOrigins echoes the origins that may embed a LangSmith login URL, normalized; omitted
+     * when there are none.
+     *
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
+    fun embedOrigins(): Optional<List<String>> = embedOrigins.getOptional("embed_origins")
 
     /**
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
@@ -96,6 +111,15 @@ private constructor(
      * Unlike [browserUrl], this method doesn't throw if the JSON field has an unexpected type.
      */
     @JsonProperty("browser_url") @ExcludeMissing fun _browserUrl(): JsonField<String> = browserUrl
+
+    /**
+     * Returns the raw JSON value of [embedOrigins].
+     *
+     * Unlike [embedOrigins], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    @JsonProperty("embed_origins")
+    @ExcludeMissing
+    fun _embedOrigins(): JsonField<List<String>> = embedOrigins
 
     /**
      * Returns the raw JSON value of [expiresAt].
@@ -135,6 +159,7 @@ private constructor(
         private var token: JsonField<String> = JsonMissing.of()
         private var access: JsonField<Access> = JsonMissing.of()
         private var browserUrl: JsonField<String> = JsonMissing.of()
+        private var embedOrigins: JsonField<MutableList<String>>? = null
         private var expiresAt: JsonField<String> = JsonMissing.of()
         private var serviceUrl: JsonField<String> = JsonMissing.of()
         private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
@@ -144,6 +169,7 @@ private constructor(
             token = serviceUrlResponse.token
             access = serviceUrlResponse.access
             browserUrl = serviceUrlResponse.browserUrl
+            embedOrigins = serviceUrlResponse.embedOrigins.map { it.toMutableList() }
             expiresAt = serviceUrlResponse.expiresAt
             serviceUrl = serviceUrlResponse.serviceUrl
             additionalProperties = serviceUrlResponse.additionalProperties.toMutableMap()
@@ -184,6 +210,35 @@ private constructor(
          * value.
          */
         fun browserUrl(browserUrl: JsonField<String>) = apply { this.browserUrl = browserUrl }
+
+        /**
+         * EmbedOrigins echoes the origins that may embed a LangSmith login URL, normalized; omitted
+         * when there are none.
+         */
+        fun embedOrigins(embedOrigins: List<String>) = embedOrigins(JsonField.of(embedOrigins))
+
+        /**
+         * Sets [Builder.embedOrigins] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.embedOrigins] with a well-typed `List<String>` value
+         * instead. This method is primarily for setting the field to an undocumented or not yet
+         * supported value.
+         */
+        fun embedOrigins(embedOrigins: JsonField<List<String>>) = apply {
+            this.embedOrigins = embedOrigins.map { it.toMutableList() }
+        }
+
+        /**
+         * Adds a single [String] to [embedOrigins].
+         *
+         * @throws IllegalStateException if the field was previously set to a non-list.
+         */
+        fun addEmbedOrigin(embedOrigin: String) = apply {
+            embedOrigins =
+                (embedOrigins ?: JsonField.of(mutableListOf())).also {
+                    checkKnown("embedOrigins", it).add(embedOrigin)
+                }
+        }
 
         fun expiresAt(expiresAt: String) = expiresAt(JsonField.of(expiresAt))
 
@@ -236,6 +291,7 @@ private constructor(
                 token,
                 access,
                 browserUrl,
+                (embedOrigins ?: JsonMissing.of()).map { it.toImmutable() },
                 expiresAt,
                 serviceUrl,
                 additionalProperties.toMutableMap(),
@@ -260,6 +316,7 @@ private constructor(
         token()
         access().ifPresent { it.validate() }
         browserUrl()
+        embedOrigins()
         expiresAt()
         serviceUrl()
         validated = true
@@ -283,6 +340,7 @@ private constructor(
         (if (token.asKnown().isPresent) 1 else 0) +
             (access.asKnown().getOrNull()?.validity() ?: 0) +
             (if (browserUrl.asKnown().isPresent) 1 else 0) +
+            (embedOrigins.asKnown().getOrNull()?.size ?: 0) +
             (if (expiresAt.asKnown().isPresent) 1 else 0) +
             (if (serviceUrl.asKnown().isPresent) 1 else 0)
 
@@ -435,17 +493,26 @@ private constructor(
             token == other.token &&
             access == other.access &&
             browserUrl == other.browserUrl &&
+            embedOrigins == other.embedOrigins &&
             expiresAt == other.expiresAt &&
             serviceUrl == other.serviceUrl &&
             additionalProperties == other.additionalProperties
     }
 
     private val hashCode: Int by lazy {
-        Objects.hash(token, access, browserUrl, expiresAt, serviceUrl, additionalProperties)
+        Objects.hash(
+            token,
+            access,
+            browserUrl,
+            embedOrigins,
+            expiresAt,
+            serviceUrl,
+            additionalProperties,
+        )
     }
 
     override fun hashCode(): Int = hashCode
 
     override fun toString() =
-        "ServiceUrlResponse{token=$token, access=$access, browserUrl=$browserUrl, expiresAt=$expiresAt, serviceUrl=$serviceUrl, additionalProperties=$additionalProperties}"
+        "ServiceUrlResponse{token=$token, access=$access, browserUrl=$browserUrl, embedOrigins=$embedOrigins, expiresAt=$expiresAt, serviceUrl=$serviceUrl, additionalProperties=$additionalProperties}"
 }

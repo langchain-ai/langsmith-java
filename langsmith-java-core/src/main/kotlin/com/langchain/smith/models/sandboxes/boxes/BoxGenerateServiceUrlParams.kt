@@ -12,8 +12,10 @@ import com.langchain.smith.core.JsonField
 import com.langchain.smith.core.JsonMissing
 import com.langchain.smith.core.JsonValue
 import com.langchain.smith.core.Params
+import com.langchain.smith.core.checkKnown
 import com.langchain.smith.core.http.Headers
 import com.langchain.smith.core.http.QueryParams
+import com.langchain.smith.core.toImmutable
 import com.langchain.smith.errors.LangChainInvalidDataException
 import java.util.Collections
 import java.util.Objects
@@ -25,8 +27,10 @@ import kotlin.jvm.optionals.getOrNull
  * sandbox. Returns a browser_url (sets auth cookie via redirect), a service_url (for use with the
  * X-Langsmith-Sandbox-Service-Token header), the raw token, and its expiry. Set
  * access=restricted|workspace to instead enable durable LangSmith login (no token; users
- * authenticate with their normal LangSmith session), or access=off to disable it. LangSmith login
- * and token access are mutually exclusive per service URL.
+ * authenticate with their normal LangSmith session), or access=off to disable it. With LangSmith
+ * login, embed_origins names the pages that may show the URL in an iframe; a viewer signs in from
+ * inside the frame through a LangSmith popup. LangSmith login and token access are mutually
+ * exclusive per service URL.
  */
 class BoxGenerateServiceUrlParams
 private constructor(
@@ -52,6 +56,17 @@ private constructor(
     fun access(): Optional<Access> = body.access()
 
     /**
+     * EmbedOrigins are the pages allowed to show a LangSmith login service URL in an iframe,
+     * besides LangSmith itself: at most 5 origins such as https://app.example.com (http only for
+     * localhost). Valid only with access "restricted" or "workspace". Each call sets the URL's
+     * whole list, so omitting the field removes any origins set before.
+     *
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
+    fun embedOrigins(): Optional<List<String>> = body.embedOrigins()
+
+    /**
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
      */
@@ -69,6 +84,13 @@ private constructor(
      * Unlike [access], this method doesn't throw if the JSON field has an unexpected type.
      */
     fun _access(): JsonField<Access> = body._access()
+
+    /**
+     * Returns the raw JSON value of [embedOrigins].
+     *
+     * Unlike [embedOrigins], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    fun _embedOrigins(): JsonField<List<String>> = body._embedOrigins()
 
     /**
      * Returns the raw JSON value of [expiresInSeconds].
@@ -132,6 +154,7 @@ private constructor(
          * This is generally only useful if you are already constructing the body separately.
          * Otherwise, it's more convenient to use the top-level setters instead:
          * - [access]
+         * - [embedOrigins]
          * - [expiresInSeconds]
          * - [port]
          */
@@ -154,6 +177,32 @@ private constructor(
          * method is primarily for setting the field to an undocumented or not yet supported value.
          */
         fun access(access: JsonField<Access>) = apply { body.access(access) }
+
+        /**
+         * EmbedOrigins are the pages allowed to show a LangSmith login service URL in an iframe,
+         * besides LangSmith itself: at most 5 origins such as https://app.example.com (http only
+         * for localhost). Valid only with access "restricted" or "workspace". Each call sets the
+         * URL's whole list, so omitting the field removes any origins set before.
+         */
+        fun embedOrigins(embedOrigins: List<String>) = apply { body.embedOrigins(embedOrigins) }
+
+        /**
+         * Sets [Builder.embedOrigins] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.embedOrigins] with a well-typed `List<String>` value
+         * instead. This method is primarily for setting the field to an undocumented or not yet
+         * supported value.
+         */
+        fun embedOrigins(embedOrigins: JsonField<List<String>>) = apply {
+            body.embedOrigins(embedOrigins)
+        }
+
+        /**
+         * Adds a single [String] to [embedOrigins].
+         *
+         * @throws IllegalStateException if the field was previously set to a non-list.
+         */
+        fun addEmbedOrigin(embedOrigin: String) = apply { body.addEmbedOrigin(embedOrigin) }
 
         fun expiresInSeconds(expiresInSeconds: Long) = apply {
             body.expiresInSeconds(expiresInSeconds)
@@ -327,6 +376,7 @@ private constructor(
     @JsonCreator(mode = JsonCreator.Mode.DISABLED)
     private constructor(
         private val access: JsonField<Access>,
+        private val embedOrigins: JsonField<List<String>>,
         private val expiresInSeconds: JsonField<Long>,
         private val port: JsonField<Long>,
         private val additionalProperties: MutableMap<String, JsonValue>,
@@ -335,11 +385,14 @@ private constructor(
         @JsonCreator
         private constructor(
             @JsonProperty("access") @ExcludeMissing access: JsonField<Access> = JsonMissing.of(),
+            @JsonProperty("embed_origins")
+            @ExcludeMissing
+            embedOrigins: JsonField<List<String>> = JsonMissing.of(),
             @JsonProperty("expires_in_seconds")
             @ExcludeMissing
             expiresInSeconds: JsonField<Long> = JsonMissing.of(),
             @JsonProperty("port") @ExcludeMissing port: JsonField<Long> = JsonMissing.of(),
-        ) : this(access, expiresInSeconds, port, mutableMapOf())
+        ) : this(access, embedOrigins, expiresInSeconds, port, mutableMapOf())
 
         /**
          * Access selects the login mode, mutually exclusive with the minted token. Omit the field
@@ -353,6 +406,17 @@ private constructor(
          *   the server responded with an unexpected value).
          */
         fun access(): Optional<Access> = access.getOptional("access")
+
+        /**
+         * EmbedOrigins are the pages allowed to show a LangSmith login service URL in an iframe,
+         * besides LangSmith itself: at most 5 origins such as https://app.example.com (http only
+         * for localhost). Valid only with access "restricted" or "workspace". Each call sets the
+         * URL's whole list, so omitting the field removes any origins set before.
+         *
+         * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
+         *   the server responded with an unexpected value).
+         */
+        fun embedOrigins(): Optional<List<String>> = embedOrigins.getOptional("embed_origins")
 
         /**
          * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
@@ -372,6 +436,16 @@ private constructor(
          * Unlike [access], this method doesn't throw if the JSON field has an unexpected type.
          */
         @JsonProperty("access") @ExcludeMissing fun _access(): JsonField<Access> = access
+
+        /**
+         * Returns the raw JSON value of [embedOrigins].
+         *
+         * Unlike [embedOrigins], this method doesn't throw if the JSON field has an unexpected
+         * type.
+         */
+        @JsonProperty("embed_origins")
+        @ExcludeMissing
+        fun _embedOrigins(): JsonField<List<String>> = embedOrigins
 
         /**
          * Returns the raw JSON value of [expiresInSeconds].
@@ -412,6 +486,7 @@ private constructor(
         class Builder internal constructor() {
 
             private var access: JsonField<Access> = JsonMissing.of()
+            private var embedOrigins: JsonField<MutableList<String>>? = null
             private var expiresInSeconds: JsonField<Long> = JsonMissing.of()
             private var port: JsonField<Long> = JsonMissing.of()
             private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
@@ -419,6 +494,7 @@ private constructor(
             @JvmSynthetic
             internal fun from(body: Body) = apply {
                 access = body.access
+                embedOrigins = body.embedOrigins.map { it.toMutableList() }
                 expiresInSeconds = body.expiresInSeconds
                 port = body.port
                 additionalProperties = body.additionalProperties.toMutableMap()
@@ -442,6 +518,37 @@ private constructor(
              * supported value.
              */
             fun access(access: JsonField<Access>) = apply { this.access = access }
+
+            /**
+             * EmbedOrigins are the pages allowed to show a LangSmith login service URL in an
+             * iframe, besides LangSmith itself: at most 5 origins such as https://app.example.com
+             * (http only for localhost). Valid only with access "restricted" or "workspace". Each
+             * call sets the URL's whole list, so omitting the field removes any origins set before.
+             */
+            fun embedOrigins(embedOrigins: List<String>) = embedOrigins(JsonField.of(embedOrigins))
+
+            /**
+             * Sets [Builder.embedOrigins] to an arbitrary JSON value.
+             *
+             * You should usually call [Builder.embedOrigins] with a well-typed `List<String>` value
+             * instead. This method is primarily for setting the field to an undocumented or not yet
+             * supported value.
+             */
+            fun embedOrigins(embedOrigins: JsonField<List<String>>) = apply {
+                this.embedOrigins = embedOrigins.map { it.toMutableList() }
+            }
+
+            /**
+             * Adds a single [String] to [embedOrigins].
+             *
+             * @throws IllegalStateException if the field was previously set to a non-list.
+             */
+            fun addEmbedOrigin(embedOrigin: String) = apply {
+                embedOrigins =
+                    (embedOrigins ?: JsonField.of(mutableListOf())).also {
+                        checkKnown("embedOrigins", it).add(embedOrigin)
+                    }
+            }
 
             fun expiresInSeconds(expiresInSeconds: Long) =
                 expiresInSeconds(JsonField.of(expiresInSeconds))
@@ -493,7 +600,13 @@ private constructor(
              * Further updates to this [Builder] will not mutate the returned instance.
              */
             fun build(): Body =
-                Body(access, expiresInSeconds, port, additionalProperties.toMutableMap())
+                Body(
+                    access,
+                    (embedOrigins ?: JsonMissing.of()).map { it.toImmutable() },
+                    expiresInSeconds,
+                    port,
+                    additionalProperties.toMutableMap(),
+                )
         }
 
         private var validated: Boolean = false
@@ -513,6 +626,7 @@ private constructor(
             }
 
             access().ifPresent { it.validate() }
+            embedOrigins()
             expiresInSeconds()
             port()
             validated = true
@@ -535,6 +649,7 @@ private constructor(
         @JvmSynthetic
         internal fun validity(): Int =
             (access.asKnown().getOrNull()?.validity() ?: 0) +
+                (embedOrigins.asKnown().getOrNull()?.size ?: 0) +
                 (if (expiresInSeconds.asKnown().isPresent) 1 else 0) +
                 (if (port.asKnown().isPresent) 1 else 0)
 
@@ -545,19 +660,20 @@ private constructor(
 
             return other is Body &&
                 access == other.access &&
+                embedOrigins == other.embedOrigins &&
                 expiresInSeconds == other.expiresInSeconds &&
                 port == other.port &&
                 additionalProperties == other.additionalProperties
         }
 
         private val hashCode: Int by lazy {
-            Objects.hash(access, expiresInSeconds, port, additionalProperties)
+            Objects.hash(access, embedOrigins, expiresInSeconds, port, additionalProperties)
         }
 
         override fun hashCode(): Int = hashCode
 
         override fun toString() =
-            "Body{access=$access, expiresInSeconds=$expiresInSeconds, port=$port, additionalProperties=$additionalProperties}"
+            "Body{access=$access, embedOrigins=$embedOrigins, expiresInSeconds=$expiresInSeconds, port=$port, additionalProperties=$additionalProperties}"
     }
 
     /**
