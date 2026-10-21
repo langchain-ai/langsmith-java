@@ -4,6 +4,8 @@ package com.langchain.smith.client
 
 import com.langchain.smith.core.ClientOptions
 import com.langchain.smith.core.getPackageVersion
+import com.langchain.smith.services.async.AgentServiceAsync
+import com.langchain.smith.services.async.AgentServiceAsyncImpl
 import com.langchain.smith.services.async.AnnotationQueueServiceAsync
 import com.langchain.smith.services.async.AnnotationQueueServiceAsyncImpl
 import com.langchain.smith.services.async.ChartServiceAsync
@@ -69,6 +71,10 @@ class LangsmithClientAsyncImpl(private val clientOptions: ClientOptions) : Langs
 
     private val productFeedback: ProductFeedbackServiceAsync by lazy {
         ProductFeedbackServiceAsyncImpl(clientOptionsWithUserAgent)
+    }
+
+    private val agents: AgentServiceAsync by lazy {
+        AgentServiceAsyncImpl(clientOptionsWithUserAgent)
     }
 
     private val fleet: FleetServiceAsync by lazy {
@@ -158,6 +164,8 @@ class LangsmithClientAsyncImpl(private val clientOptions: ClientOptions) : Langs
 
     override fun productFeedback(): ProductFeedbackServiceAsync = productFeedback
 
+    override fun agents(): AgentServiceAsync = agents
+
     override fun fleet(): FleetServiceAsync = fleet
 
     override fun sessions(): SessionServiceAsync = sessions
@@ -216,6 +224,10 @@ class LangsmithClientAsyncImpl(private val clientOptions: ClientOptions) : Langs
 
         private val productFeedback: ProductFeedbackServiceAsync.WithRawResponse by lazy {
             ProductFeedbackServiceAsyncImpl.WithRawResponseImpl(clientOptions)
+        }
+
+        private val agents: AgentServiceAsync.WithRawResponse by lazy {
+            AgentServiceAsyncImpl.WithRawResponseImpl(clientOptions)
         }
 
         private val fleet: FleetServiceAsync.WithRawResponse by lazy {
@@ -311,6 +323,8 @@ class LangsmithClientAsyncImpl(private val clientOptions: ClientOptions) : Langs
 
         override fun productFeedback(): ProductFeedbackServiceAsync.WithRawResponse =
             productFeedback
+
+        override fun agents(): AgentServiceAsync.WithRawResponse = agents
 
         override fun fleet(): FleetServiceAsync.WithRawResponse = fleet
 

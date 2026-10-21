@@ -3,6 +3,7 @@
 package com.langchain.smith.client
 
 import com.langchain.smith.core.ClientOptions
+import com.langchain.smith.services.blocking.AgentService
 import com.langchain.smith.services.blocking.AnnotationQueueService
 import com.langchain.smith.services.blocking.ChartService
 import com.langchain.smith.services.blocking.CommitService
@@ -64,6 +65,8 @@ interface LangsmithClient {
     fun withOptions(modifier: Consumer<ClientOptions.Builder>): LangsmithClient
 
     fun productFeedback(): ProductFeedbackService
+
+    fun agents(): AgentService
 
     fun fleet(): FleetService
 
@@ -131,6 +134,8 @@ interface LangsmithClient {
         fun withOptions(modifier: Consumer<ClientOptions.Builder>): LangsmithClient.WithRawResponse
 
         fun productFeedback(): ProductFeedbackService.WithRawResponse
+
+        fun agents(): AgentService.WithRawResponse
 
         fun fleet(): FleetService.WithRawResponse
 

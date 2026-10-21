@@ -4,6 +4,8 @@ package com.langchain.smith.client
 
 import com.langchain.smith.core.ClientOptions
 import com.langchain.smith.core.getPackageVersion
+import com.langchain.smith.services.blocking.AgentService
+import com.langchain.smith.services.blocking.AgentServiceImpl
 import com.langchain.smith.services.blocking.AnnotationQueueService
 import com.langchain.smith.services.blocking.AnnotationQueueServiceImpl
 import com.langchain.smith.services.blocking.ChartService
@@ -71,6 +73,8 @@ class LangsmithClientImpl(private val clientOptions: ClientOptions) : LangsmithC
         ProductFeedbackServiceImpl(clientOptionsWithUserAgent)
     }
 
+    private val agents: AgentService by lazy { AgentServiceImpl(clientOptionsWithUserAgent) }
+
     private val fleet: FleetService by lazy { FleetServiceImpl(clientOptionsWithUserAgent) }
 
     private val sessions: SessionService by lazy { SessionServiceImpl(clientOptionsWithUserAgent) }
@@ -134,6 +138,8 @@ class LangsmithClientImpl(private val clientOptions: ClientOptions) : LangsmithC
 
     override fun productFeedback(): ProductFeedbackService = productFeedback
 
+    override fun agents(): AgentService = agents
+
     override fun fleet(): FleetService = fleet
 
     override fun sessions(): SessionService = sessions
@@ -188,6 +194,10 @@ class LangsmithClientImpl(private val clientOptions: ClientOptions) : LangsmithC
 
         private val productFeedback: ProductFeedbackService.WithRawResponse by lazy {
             ProductFeedbackServiceImpl.WithRawResponseImpl(clientOptions)
+        }
+
+        private val agents: AgentService.WithRawResponse by lazy {
+            AgentServiceImpl.WithRawResponseImpl(clientOptions)
         }
 
         private val fleet: FleetService.WithRawResponse by lazy {
@@ -282,6 +292,8 @@ class LangsmithClientImpl(private val clientOptions: ClientOptions) : LangsmithC
             )
 
         override fun productFeedback(): ProductFeedbackService.WithRawResponse = productFeedback
+
+        override fun agents(): AgentService.WithRawResponse = agents
 
         override fun fleet(): FleetService.WithRawResponse = fleet
 
