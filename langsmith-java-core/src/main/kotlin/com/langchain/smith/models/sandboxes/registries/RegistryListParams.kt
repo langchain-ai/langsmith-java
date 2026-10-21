@@ -9,24 +9,37 @@ import java.util.Objects
 import java.util.Optional
 import kotlin.jvm.optionals.getOrNull
 
-/** List sandbox registries for pulling private images. */
+/**
+ * List sandbox registries for pulling private images. Page with page_size and cursor, replaying
+ * next_cursor until it is null. Results are ordered newest first, with stable ordering for equal
+ * creation times. Keep filters unchanged between pages. Requests without page_size or cursor retain
+ * the legacy default of 50 results. Cursor requests default to 20 results, with a maximum of 100.
+ */
 class RegistryListParams
 private constructor(
+    private val cursor: String?,
     private val limit: Long?,
     private val nameContains: String?,
     private val offset: Long?,
+    private val pageSize: Long?,
     private val additionalHeaders: Headers,
     private val additionalQueryParams: QueryParams,
 ) : Params {
 
-    /** Maximum number of registries to return */
+    /** Opaque cursor from a prior response's next_cursor */
+    fun cursor(): Optional<String> = Optional.ofNullable(cursor)
+
+    /** Deprecated: use page_size. Maximum number of registries to return */
     fun limit(): Optional<Long> = Optional.ofNullable(limit)
 
     /** Filter to registries whose name contains this substring */
     fun nameContains(): Optional<String> = Optional.ofNullable(nameContains)
 
-    /** Number of registries to skip */
+    /** Deprecated: use cursor. Number of registries to skip */
     fun offset(): Optional<Long> = Optional.ofNullable(offset)
+
+    /** Number of results per cursor page */
+    fun pageSize(): Optional<Long> = Optional.ofNullable(pageSize)
 
     /** Additional headers to send with the request. */
     fun _additionalHeaders(): Headers = additionalHeaders
@@ -47,22 +60,32 @@ private constructor(
     /** A builder for [RegistryListParams]. */
     class Builder internal constructor() {
 
+        private var cursor: String? = null
         private var limit: Long? = null
         private var nameContains: String? = null
         private var offset: Long? = null
+        private var pageSize: Long? = null
         private var additionalHeaders: Headers.Builder = Headers.builder()
         private var additionalQueryParams: QueryParams.Builder = QueryParams.builder()
 
         @JvmSynthetic
         internal fun from(registryListParams: RegistryListParams) = apply {
+            cursor = registryListParams.cursor
             limit = registryListParams.limit
             nameContains = registryListParams.nameContains
             offset = registryListParams.offset
+            pageSize = registryListParams.pageSize
             additionalHeaders = registryListParams.additionalHeaders.toBuilder()
             additionalQueryParams = registryListParams.additionalQueryParams.toBuilder()
         }
 
-        /** Maximum number of registries to return */
+        /** Opaque cursor from a prior response's next_cursor */
+        fun cursor(cursor: String?) = apply { this.cursor = cursor }
+
+        /** Alias for calling [Builder.cursor] with `cursor.orElse(null)`. */
+        fun cursor(cursor: Optional<String>) = cursor(cursor.getOrNull())
+
+        /** Deprecated: use page_size. Maximum number of registries to return */
         fun limit(limit: Long?) = apply { this.limit = limit }
 
         /**
@@ -81,7 +104,7 @@ private constructor(
         /** Alias for calling [Builder.nameContains] with `nameContains.orElse(null)`. */
         fun nameContains(nameContains: Optional<String>) = nameContains(nameContains.getOrNull())
 
-        /** Number of registries to skip */
+        /** Deprecated: use cursor. Number of registries to skip */
         fun offset(offset: Long?) = apply { this.offset = offset }
 
         /**
@@ -93,6 +116,19 @@ private constructor(
 
         /** Alias for calling [Builder.offset] with `offset.orElse(null)`. */
         fun offset(offset: Optional<Long>) = offset(offset.getOrNull())
+
+        /** Number of results per cursor page */
+        fun pageSize(pageSize: Long?) = apply { this.pageSize = pageSize }
+
+        /**
+         * Alias for [Builder.pageSize].
+         *
+         * This unboxed primitive overload exists for backwards compatibility.
+         */
+        fun pageSize(pageSize: Long) = pageSize(pageSize as Long?)
+
+        /** Alias for calling [Builder.pageSize] with `pageSize.orElse(null)`. */
+        fun pageSize(pageSize: Optional<Long>) = pageSize(pageSize.getOrNull())
 
         fun additionalHeaders(additionalHeaders: Headers) = apply {
             this.additionalHeaders.clear()
@@ -199,9 +235,11 @@ private constructor(
          */
         fun build(): RegistryListParams =
             RegistryListParams(
+                cursor,
                 limit,
                 nameContains,
                 offset,
+                pageSize,
                 additionalHeaders.build(),
                 additionalQueryParams.build(),
             )
@@ -212,9 +250,11 @@ private constructor(
     override fun _queryParams(): QueryParams =
         QueryParams.builder()
             .apply {
+                cursor?.let { put("cursor", it) }
                 limit?.let { put("limit", it.toString()) }
                 nameContains?.let { put("name_contains", it) }
                 offset?.let { put("offset", it.toString()) }
+                pageSize?.let { put("page_size", it.toString()) }
                 putAll(additionalQueryParams)
             }
             .build()
@@ -225,16 +265,26 @@ private constructor(
         }
 
         return other is RegistryListParams &&
+            cursor == other.cursor &&
             limit == other.limit &&
             nameContains == other.nameContains &&
             offset == other.offset &&
+            pageSize == other.pageSize &&
             additionalHeaders == other.additionalHeaders &&
             additionalQueryParams == other.additionalQueryParams
     }
 
     override fun hashCode(): Int =
-        Objects.hash(limit, nameContains, offset, additionalHeaders, additionalQueryParams)
+        Objects.hash(
+            cursor,
+            limit,
+            nameContains,
+            offset,
+            pageSize,
+            additionalHeaders,
+            additionalQueryParams,
+        )
 
     override fun toString() =
-        "RegistryListParams{limit=$limit, nameContains=$nameContains, offset=$offset, additionalHeaders=$additionalHeaders, additionalQueryParams=$additionalQueryParams}"
+        "RegistryListParams{cursor=$cursor, limit=$limit, nameContains=$nameContains, offset=$offset, pageSize=$pageSize, additionalHeaders=$additionalHeaders, additionalQueryParams=$additionalQueryParams}"
 }

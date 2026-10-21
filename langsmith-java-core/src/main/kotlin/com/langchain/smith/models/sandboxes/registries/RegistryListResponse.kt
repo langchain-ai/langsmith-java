@@ -21,6 +21,8 @@ import kotlin.jvm.optionals.getOrNull
 class RegistryListResponse
 @JsonCreator(mode = JsonCreator.Mode.DISABLED)
 private constructor(
+    private val items: JsonField<List<RegistryResponse>>,
+    private val nextCursor: JsonField<String>,
     private val offset: JsonField<Long>,
     private val registries: JsonField<List<RegistryResponse>>,
     private val additionalProperties: MutableMap<String, JsonValue>,
@@ -28,23 +30,59 @@ private constructor(
 
     @JsonCreator
     private constructor(
+        @JsonProperty("items")
+        @ExcludeMissing
+        items: JsonField<List<RegistryResponse>> = JsonMissing.of(),
+        @JsonProperty("next_cursor")
+        @ExcludeMissing
+        nextCursor: JsonField<String> = JsonMissing.of(),
         @JsonProperty("offset") @ExcludeMissing offset: JsonField<Long> = JsonMissing.of(),
         @JsonProperty("registries")
         @ExcludeMissing
         registries: JsonField<List<RegistryResponse>> = JsonMissing.of(),
-    ) : this(offset, registries, mutableMapOf())
+    ) : this(items, nextCursor, offset, registries, mutableMapOf())
 
     /**
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
+    fun items(): Optional<List<RegistryResponse>> = items.getOptional("items")
+
+    /**
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
+    fun nextCursor(): Optional<String> = nextCursor.getOptional("next_cursor")
+
+    /**
+     * Deprecated: only applies to limit/offset requests. Use next_cursor when paging with a cursor.
+     *
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
      */
     fun offset(): Optional<Long> = offset.getOptional("offset")
 
     /**
+     * Deprecated: use items.
+     *
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
      */
     fun registries(): Optional<List<RegistryResponse>> = registries.getOptional("registries")
+
+    /**
+     * Returns the raw JSON value of [items].
+     *
+     * Unlike [items], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    @JsonProperty("items") @ExcludeMissing fun _items(): JsonField<List<RegistryResponse>> = items
+
+    /**
+     * Returns the raw JSON value of [nextCursor].
+     *
+     * Unlike [nextCursor], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    @JsonProperty("next_cursor") @ExcludeMissing fun _nextCursor(): JsonField<String> = nextCursor
 
     /**
      * Returns the raw JSON value of [offset].
@@ -83,17 +121,62 @@ private constructor(
     /** A builder for [RegistryListResponse]. */
     class Builder internal constructor() {
 
+        private var items: JsonField<MutableList<RegistryResponse>>? = null
+        private var nextCursor: JsonField<String> = JsonMissing.of()
         private var offset: JsonField<Long> = JsonMissing.of()
         private var registries: JsonField<MutableList<RegistryResponse>>? = null
         private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
 
         @JvmSynthetic
         internal fun from(registryListResponse: RegistryListResponse) = apply {
+            items = registryListResponse.items.map { it.toMutableList() }
+            nextCursor = registryListResponse.nextCursor
             offset = registryListResponse.offset
             registries = registryListResponse.registries.map { it.toMutableList() }
             additionalProperties = registryListResponse.additionalProperties.toMutableMap()
         }
 
+        fun items(items: List<RegistryResponse>) = items(JsonField.of(items))
+
+        /**
+         * Sets [Builder.items] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.items] with a well-typed `List<RegistryResponse>` value
+         * instead. This method is primarily for setting the field to an undocumented or not yet
+         * supported value.
+         */
+        fun items(items: JsonField<List<RegistryResponse>>) = apply {
+            this.items = items.map { it.toMutableList() }
+        }
+
+        /**
+         * Adds a single [RegistryResponse] to [items].
+         *
+         * @throws IllegalStateException if the field was previously set to a non-list.
+         */
+        fun addItem(item: RegistryResponse) = apply {
+            items =
+                (items ?: JsonField.of(mutableListOf())).also { checkKnown("items", it).add(item) }
+        }
+
+        fun nextCursor(nextCursor: String?) = nextCursor(JsonField.ofNullable(nextCursor))
+
+        /** Alias for calling [Builder.nextCursor] with `nextCursor.orElse(null)`. */
+        fun nextCursor(nextCursor: Optional<String>) = nextCursor(nextCursor.getOrNull())
+
+        /**
+         * Sets [Builder.nextCursor] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.nextCursor] with a well-typed [String] value instead.
+         * This method is primarily for setting the field to an undocumented or not yet supported
+         * value.
+         */
+        fun nextCursor(nextCursor: JsonField<String>) = apply { this.nextCursor = nextCursor }
+
+        /**
+         * Deprecated: only applies to limit/offset requests. Use next_cursor when paging with a
+         * cursor.
+         */
         fun offset(offset: Long) = offset(JsonField.of(offset))
 
         /**
@@ -104,6 +187,7 @@ private constructor(
          */
         fun offset(offset: JsonField<Long>) = apply { this.offset = offset }
 
+        /** Deprecated: use items. */
         fun registries(registries: List<RegistryResponse>) = registries(JsonField.of(registries))
 
         /**
@@ -155,6 +239,8 @@ private constructor(
          */
         fun build(): RegistryListResponse =
             RegistryListResponse(
+                (items ?: JsonMissing.of()).map { it.toImmutable() },
+                nextCursor,
                 offset,
                 (registries ?: JsonMissing.of()).map { it.toImmutable() },
                 additionalProperties.toMutableMap(),
@@ -176,6 +262,8 @@ private constructor(
             return@apply
         }
 
+        items().ifPresent { it.forEach { it.validate() } }
+        nextCursor()
         offset()
         registries().ifPresent { it.forEach { it.validate() } }
         validated = true
@@ -196,7 +284,9 @@ private constructor(
      */
     @JvmSynthetic
     internal fun validity(): Int =
-        (if (offset.asKnown().isPresent) 1 else 0) +
+        (items.asKnown().getOrNull()?.sumOf { it.validity().toInt() } ?: 0) +
+            (if (nextCursor.asKnown().isPresent) 1 else 0) +
+            (if (offset.asKnown().isPresent) 1 else 0) +
             (registries.asKnown().getOrNull()?.sumOf { it.validity().toInt() } ?: 0)
 
     override fun equals(other: Any?): Boolean {
@@ -205,15 +295,19 @@ private constructor(
         }
 
         return other is RegistryListResponse &&
+            items == other.items &&
+            nextCursor == other.nextCursor &&
             offset == other.offset &&
             registries == other.registries &&
             additionalProperties == other.additionalProperties
     }
 
-    private val hashCode: Int by lazy { Objects.hash(offset, registries, additionalProperties) }
+    private val hashCode: Int by lazy {
+        Objects.hash(items, nextCursor, offset, registries, additionalProperties)
+    }
 
     override fun hashCode(): Int = hashCode
 
     override fun toString() =
-        "RegistryListResponse{offset=$offset, registries=$registries, additionalProperties=$additionalProperties}"
+        "RegistryListResponse{items=$items, nextCursor=$nextCursor, offset=$offset, registries=$registries, additionalProperties=$additionalProperties}"
 }

@@ -93,9 +93,11 @@ internal class RegistryServiceAsyncTest {
         val registryListResponseFuture =
             registryServiceAsync.list(
                 RegistryListParams.builder()
+                    .cursor("cursor")
                     .limit(0L)
                     .nameContains("name_contains")
                     .offset(0L)
+                    .pageSize(1L)
                     .build()
             )
 
