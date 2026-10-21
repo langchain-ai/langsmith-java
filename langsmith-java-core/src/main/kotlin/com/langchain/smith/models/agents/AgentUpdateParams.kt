@@ -21,11 +21,13 @@ import java.util.Optional
 import kotlin.jvm.optionals.getOrNull
 
 /**
- * Updates an Agent's name, source_type, or agent_type. Omitted fields keep their values. Changing
- * agent_type requires workspaces:manage in addition to project update access; repeating the current
- * type is a no-op. Source type can change only for an EXTERNAL Agent without runtime bindings. The
- * id is immutable and is rejected when present. Requires update permission on every environment
- * project.
+ * Updates an Agent's name, source_type, agent_type, or owner_id. Omitted fields keep their values.
+ * Changing or clearing owner_id additionally requires workspaces:manage; assigning an owner also
+ * requires workspaces:read and active workspace membership. Fleet ownership cannot be changed
+ * through this endpoint. Changing agent_type requires workspaces:manage in addition to project
+ * update access; repeating the current type is a no-op. Source type can change only for an EXTERNAL
+ * Agent without runtime bindings. The id is immutable and is rejected when present. Requires update
+ * permission on every environment project.
  */
 class AgentUpdateParams
 private constructor(
@@ -54,6 +56,14 @@ private constructor(
     fun name(): Optional<String> = body.name()
 
     /**
+     * Omit to leave the owner unchanged; null clears it.
+     *
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
+    fun ownerId(): Optional<String> = body.ownerId()
+
+    /**
      * New runtime kind. Only EXTERNAL agents without runtime bindings can change kind.
      *
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
@@ -74,6 +84,13 @@ private constructor(
      * Unlike [name], this method doesn't throw if the JSON field has an unexpected type.
      */
     fun _name(): JsonField<String> = body._name()
+
+    /**
+     * Returns the raw JSON value of [ownerId].
+     *
+     * Unlike [ownerId], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    fun _ownerId(): JsonField<String> = body._ownerId()
 
     /**
      * Returns the raw JSON value of [sourceType].
@@ -128,6 +145,7 @@ private constructor(
          * Otherwise, it's more convenient to use the top-level setters instead:
          * - [agentType]
          * - [name]
+         * - [ownerId]
          * - [sourceType]
          */
         fun body(body: Body) = apply { this.body = body.toBuilder() }
@@ -154,6 +172,20 @@ private constructor(
          * method is primarily for setting the field to an undocumented or not yet supported value.
          */
         fun name(name: JsonField<String>) = apply { body.name(name) }
+
+        /** Omit to leave the owner unchanged; null clears it. */
+        fun ownerId(ownerId: String?) = apply { body.ownerId(ownerId) }
+
+        /** Alias for calling [Builder.ownerId] with `ownerId.orElse(null)`. */
+        fun ownerId(ownerId: Optional<String>) = ownerId(ownerId.getOrNull())
+
+        /**
+         * Sets [Builder.ownerId] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.ownerId] with a well-typed [String] value instead. This
+         * method is primarily for setting the field to an undocumented or not yet supported value.
+         */
+        fun ownerId(ownerId: JsonField<String>) = apply { body.ownerId(ownerId) }
 
         /** New runtime kind. Only EXTERNAL agents without runtime bindings can change kind. */
         fun sourceType(sourceType: SourceType) = apply { body.sourceType(sourceType) }
@@ -315,6 +347,7 @@ private constructor(
     private constructor(
         private val agentType: JsonField<AgentType>,
         private val name: JsonField<String>,
+        private val ownerId: JsonField<String>,
         private val sourceType: JsonField<SourceType>,
         private val additionalProperties: MutableMap<String, JsonValue>,
     ) {
@@ -325,10 +358,11 @@ private constructor(
             @ExcludeMissing
             agentType: JsonField<AgentType> = JsonMissing.of(),
             @JsonProperty("name") @ExcludeMissing name: JsonField<String> = JsonMissing.of(),
+            @JsonProperty("owner_id") @ExcludeMissing ownerId: JsonField<String> = JsonMissing.of(),
             @JsonProperty("source_type")
             @ExcludeMissing
             sourceType: JsonField<SourceType> = JsonMissing.of(),
-        ) : this(agentType, name, sourceType, mutableMapOf())
+        ) : this(agentType, name, ownerId, sourceType, mutableMapOf())
 
         /**
          * New classification. Omit to keep the current classification.
@@ -345,6 +379,14 @@ private constructor(
          *   the server responded with an unexpected value).
          */
         fun name(): Optional<String> = name.getOptional("name")
+
+        /**
+         * Omit to leave the owner unchanged; null clears it.
+         *
+         * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
+         *   the server responded with an unexpected value).
+         */
+        fun ownerId(): Optional<String> = ownerId.getOptional("owner_id")
 
         /**
          * New runtime kind. Only EXTERNAL agents without runtime bindings can change kind.
@@ -369,6 +411,13 @@ private constructor(
          * Unlike [name], this method doesn't throw if the JSON field has an unexpected type.
          */
         @JsonProperty("name") @ExcludeMissing fun _name(): JsonField<String> = name
+
+        /**
+         * Returns the raw JSON value of [ownerId].
+         *
+         * Unlike [ownerId], this method doesn't throw if the JSON field has an unexpected type.
+         */
+        @JsonProperty("owner_id") @ExcludeMissing fun _ownerId(): JsonField<String> = ownerId
 
         /**
          * Returns the raw JSON value of [sourceType].
@@ -402,6 +451,7 @@ private constructor(
 
             private var agentType: JsonField<AgentType> = JsonMissing.of()
             private var name: JsonField<String> = JsonMissing.of()
+            private var ownerId: JsonField<String> = JsonMissing.of()
             private var sourceType: JsonField<SourceType> = JsonMissing.of()
             private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
 
@@ -409,6 +459,7 @@ private constructor(
             internal fun from(body: Body) = apply {
                 agentType = body.agentType
                 name = body.name
+                ownerId = body.ownerId
                 sourceType = body.sourceType
                 additionalProperties = body.additionalProperties.toMutableMap()
             }
@@ -436,6 +487,21 @@ private constructor(
              * value.
              */
             fun name(name: JsonField<String>) = apply { this.name = name }
+
+            /** Omit to leave the owner unchanged; null clears it. */
+            fun ownerId(ownerId: String?) = ownerId(JsonField.ofNullable(ownerId))
+
+            /** Alias for calling [Builder.ownerId] with `ownerId.orElse(null)`. */
+            fun ownerId(ownerId: Optional<String>) = ownerId(ownerId.getOrNull())
+
+            /**
+             * Sets [Builder.ownerId] to an arbitrary JSON value.
+             *
+             * You should usually call [Builder.ownerId] with a well-typed [String] value instead.
+             * This method is primarily for setting the field to an undocumented or not yet
+             * supported value.
+             */
+            fun ownerId(ownerId: JsonField<String>) = apply { this.ownerId = ownerId }
 
             /** New runtime kind. Only EXTERNAL agents without runtime bindings can change kind. */
             fun sourceType(sourceType: SourceType) = sourceType(JsonField.of(sourceType))
@@ -476,7 +542,7 @@ private constructor(
              * Further updates to this [Builder] will not mutate the returned instance.
              */
             fun build(): Body =
-                Body(agentType, name, sourceType, additionalProperties.toMutableMap())
+                Body(agentType, name, ownerId, sourceType, additionalProperties.toMutableMap())
         }
 
         private var validated: Boolean = false
@@ -497,6 +563,7 @@ private constructor(
 
             agentType().ifPresent { it.validate() }
             name()
+            ownerId()
             sourceType().ifPresent { it.validate() }
             validated = true
         }
@@ -519,6 +586,7 @@ private constructor(
         internal fun validity(): Int =
             (agentType.asKnown().getOrNull()?.validity() ?: 0) +
                 (if (name.asKnown().isPresent) 1 else 0) +
+                (if (ownerId.asKnown().isPresent) 1 else 0) +
                 (sourceType.asKnown().getOrNull()?.validity() ?: 0)
 
         override fun equals(other: Any?): Boolean {
@@ -529,18 +597,19 @@ private constructor(
             return other is Body &&
                 agentType == other.agentType &&
                 name == other.name &&
+                ownerId == other.ownerId &&
                 sourceType == other.sourceType &&
                 additionalProperties == other.additionalProperties
         }
 
         private val hashCode: Int by lazy {
-            Objects.hash(agentType, name, sourceType, additionalProperties)
+            Objects.hash(agentType, name, ownerId, sourceType, additionalProperties)
         }
 
         override fun hashCode(): Int = hashCode
 
         override fun toString() =
-            "Body{agentType=$agentType, name=$name, sourceType=$sourceType, additionalProperties=$additionalProperties}"
+            "Body{agentType=$agentType, name=$name, ownerId=$ownerId, sourceType=$sourceType, additionalProperties=$additionalProperties}"
     }
 
     /** New classification. Omit to keep the current classification. */

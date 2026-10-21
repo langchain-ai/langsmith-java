@@ -33,8 +33,8 @@ interface AgentServiceAsync {
     /**
      * Creates an Agent with a caller-assigned ID. Returns 409 if the ID already exists. Creates all
      * four environments unless production_only is set for a FLEET agent. agent_type defaults to
-     * CUSTOM. Requires permission to create projects. The response does not include runtime
-     * bindings.
+     * CUSTOM. The authenticated user becomes the owner when available. Requires permission to
+     * create projects. The response does not include runtime bindings.
      */
     fun create(params: AgentCreateParams): CompletableFuture<Agent> =
         create(params, RequestOptions.none())
@@ -82,11 +82,13 @@ interface AgentServiceAsync {
         retrieve(agentId, AgentRetrieveParams.none(), requestOptions)
 
     /**
-     * Updates an Agent's name, source_type, or agent_type. Omitted fields keep their values.
-     * Changing agent_type requires workspaces:manage in addition to project update access;
-     * repeating the current type is a no-op. Source type can change only for an EXTERNAL Agent
-     * without runtime bindings. The id is immutable and is rejected when present. Requires update
-     * permission on every environment project.
+     * Updates an Agent's name, source_type, agent_type, or owner_id. Omitted fields keep their
+     * values. Changing or clearing owner_id additionally requires workspaces:manage; assigning an
+     * owner also requires workspaces:read and active workspace membership. Fleet ownership cannot
+     * be changed through this endpoint. Changing agent_type requires workspaces:manage in addition
+     * to project update access; repeating the current type is a no-op. Source type can change only
+     * for an EXTERNAL Agent without runtime bindings. The id is immutable and is rejected when
+     * present. Requires update permission on every environment project.
      */
     fun update(agentId: String): CompletableFuture<Agent> =
         update(agentId, AgentUpdateParams.none())

@@ -74,6 +74,7 @@ internal class AgentServiceAsyncTest {
                     .agentId("agent_id")
                     .agentType(AgentUpdateParams.AgentType.CUSTOM)
                     .name("name")
+                    .ownerId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                     .sourceType(AgentUpdateParams.SourceType.LSD)
                     .build()
             )

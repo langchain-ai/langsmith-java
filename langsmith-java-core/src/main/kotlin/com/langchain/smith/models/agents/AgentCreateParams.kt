@@ -24,7 +24,8 @@ import kotlin.jvm.optionals.getOrNull
 /**
  * Creates an Agent with a caller-assigned ID. Returns 409 if the ID already exists. Creates all
  * four environments unless production_only is set for a FLEET agent. agent_type defaults to CUSTOM.
- * Requires permission to create projects. The response does not include runtime bindings.
+ * The authenticated user becomes the owner when available. Requires permission to create projects.
+ * The response does not include runtime bindings.
  */
 class AgentCreateParams
 private constructor(

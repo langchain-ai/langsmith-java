@@ -13,6 +13,7 @@ internal class AgentUpdateParamsTest {
             .agentId("agent_id")
             .agentType(AgentUpdateParams.AgentType.CUSTOM)
             .name("name")
+            .ownerId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
             .sourceType(AgentUpdateParams.SourceType.LSD)
             .build()
     }
@@ -33,6 +34,7 @@ internal class AgentUpdateParamsTest {
                 .agentId("agent_id")
                 .agentType(AgentUpdateParams.AgentType.CUSTOM)
                 .name("name")
+                .ownerId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                 .sourceType(AgentUpdateParams.SourceType.LSD)
                 .build()
 
@@ -40,6 +42,7 @@ internal class AgentUpdateParamsTest {
 
         assertThat(body.agentType()).contains(AgentUpdateParams.AgentType.CUSTOM)
         assertThat(body.name()).contains("name")
+        assertThat(body.ownerId()).contains("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
         assertThat(body.sourceType()).contains(AgentUpdateParams.SourceType.LSD)
     }
 
