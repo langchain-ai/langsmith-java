@@ -52,6 +52,7 @@ private constructor(
     private val datasetName: JsonField<String>,
     private val evaluatorId: JsonField<String>,
     private val evaluatorName: JsonField<String>,
+    private val evaluatorType: JsonField<String>,
     private val evaluators: JsonField<List<EvaluatorTopLevel>>,
     private val extendAnnotationQueueTraceRetention: JsonField<Boolean>,
     private val extendDatasetTraceRetention: JsonField<Boolean>,
@@ -154,6 +155,9 @@ private constructor(
         @JsonProperty("evaluator_name")
         @ExcludeMissing
         evaluatorName: JsonField<String> = JsonMissing.of(),
+        @JsonProperty("evaluator_type")
+        @ExcludeMissing
+        evaluatorType: JsonField<String> = JsonMissing.of(),
         @JsonProperty("evaluators")
         @ExcludeMissing
         evaluators: JsonField<List<EvaluatorTopLevel>> = JsonMissing.of(),
@@ -238,6 +242,7 @@ private constructor(
         datasetName,
         evaluatorId,
         evaluatorName,
+        evaluatorType,
         evaluators,
         extendAnnotationQueueTraceRetention,
         extendDatasetTraceRetention,
@@ -431,6 +436,12 @@ private constructor(
      *   server responded with an unexpected value).
      */
     fun evaluatorName(): Optional<String> = evaluatorName.getOptional("evaluator_name")
+
+    /**
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
+    fun evaluatorType(): Optional<String> = evaluatorType.getOptional("evaluator_type")
 
     /**
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
@@ -818,6 +829,15 @@ private constructor(
     fun _evaluatorName(): JsonField<String> = evaluatorName
 
     /**
+     * Returns the raw JSON value of [evaluatorType].
+     *
+     * Unlike [evaluatorType], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    @JsonProperty("evaluator_type")
+    @ExcludeMissing
+    fun _evaluatorType(): JsonField<String> = evaluatorType
+
+    /**
      * Returns the raw JSON value of [evaluators].
      *
      * Unlike [evaluators], this method doesn't throw if the JSON field has an unexpected type.
@@ -1069,6 +1089,7 @@ private constructor(
         private var datasetName: JsonField<String> = JsonMissing.of()
         private var evaluatorId: JsonField<String> = JsonMissing.of()
         private var evaluatorName: JsonField<String> = JsonMissing.of()
+        private var evaluatorType: JsonField<String> = JsonMissing.of()
         private var evaluators: JsonField<MutableList<EvaluatorTopLevel>>? = null
         private var extendAnnotationQueueTraceRetention: JsonField<Boolean> = JsonMissing.of()
         private var extendDatasetTraceRetention: JsonField<Boolean> = JsonMissing.of()
@@ -1122,6 +1143,7 @@ private constructor(
             datasetName = evaluator.datasetName
             evaluatorId = evaluator.evaluatorId
             evaluatorName = evaluator.evaluatorName
+            evaluatorType = evaluator.evaluatorType
             evaluators = evaluator.evaluators.map { it.toMutableList() }
             extendAnnotationQueueTraceRetention = evaluator.extendAnnotationQueueTraceRetention
             extendDatasetTraceRetention = evaluator.extendDatasetTraceRetention
@@ -1621,6 +1643,24 @@ private constructor(
             this.evaluatorName = evaluatorName
         }
 
+        fun evaluatorType(evaluatorType: String?) =
+            evaluatorType(JsonField.ofNullable(evaluatorType))
+
+        /** Alias for calling [Builder.evaluatorType] with `evaluatorType.orElse(null)`. */
+        fun evaluatorType(evaluatorType: Optional<String>) =
+            evaluatorType(evaluatorType.getOrNull())
+
+        /**
+         * Sets [Builder.evaluatorType] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.evaluatorType] with a well-typed [String] value instead.
+         * This method is primarily for setting the field to an undocumented or not yet supported
+         * value.
+         */
+        fun evaluatorType(evaluatorType: JsonField<String>) = apply {
+            this.evaluatorType = evaluatorType
+        }
+
         fun evaluators(evaluators: List<EvaluatorTopLevel>?) =
             evaluators(JsonField.ofNullable(evaluators))
 
@@ -2091,6 +2131,7 @@ private constructor(
                 datasetName,
                 evaluatorId,
                 evaluatorName,
+                evaluatorType,
                 (evaluators ?: JsonMissing.of()).map { it.toImmutable() },
                 extendAnnotationQueueTraceRetention,
                 extendDatasetTraceRetention,
@@ -2159,6 +2200,7 @@ private constructor(
         datasetName()
         evaluatorId()
         evaluatorName()
+        evaluatorType()
         evaluators().ifPresent { it.forEach { it.validate() } }
         extendAnnotationQueueTraceRetention()
         extendDatasetTraceRetention()
@@ -2226,6 +2268,7 @@ private constructor(
             (if (datasetName.asKnown().isPresent) 1 else 0) +
             (if (evaluatorId.asKnown().isPresent) 1 else 0) +
             (if (evaluatorName.asKnown().isPresent) 1 else 0) +
+            (if (evaluatorType.asKnown().isPresent) 1 else 0) +
             (evaluators.asKnown().getOrNull()?.sumOf { it.validity().toInt() } ?: 0) +
             (if (extendAnnotationQueueTraceRetention.asKnown().isPresent) 1 else 0) +
             (if (extendDatasetTraceRetention.asKnown().isPresent) 1 else 0) +
@@ -2754,6 +2797,7 @@ private constructor(
             datasetName == other.datasetName &&
             evaluatorId == other.evaluatorId &&
             evaluatorName == other.evaluatorName &&
+            evaluatorType == other.evaluatorType &&
             evaluators == other.evaluators &&
             extendAnnotationQueueTraceRetention == other.extendAnnotationQueueTraceRetention &&
             extendDatasetTraceRetention == other.extendDatasetTraceRetention &&
@@ -2808,6 +2852,7 @@ private constructor(
             datasetName,
             evaluatorId,
             evaluatorName,
+            evaluatorType,
             evaluators,
             extendAnnotationQueueTraceRetention,
             extendDatasetTraceRetention,
@@ -2837,5 +2882,5 @@ private constructor(
     override fun hashCode(): Int = hashCode
 
     override fun toString() =
-        "Evaluator{id=$id, createdAt=$createdAt, displayName=$displayName, evaluatorVersion=$evaluatorVersion, samplingRate=$samplingRate, tenantId=$tenantId, updatedAt=$updatedAt, webhooks=$webhooks, addToAnnotationQueueId=$addToAnnotationQueueId, addToAnnotationQueueName=$addToAnnotationQueueName, addToDatasetId=$addToDatasetId, addToDatasetName=$addToDatasetName, addToDatasetPreferCorrection=$addToDatasetPreferCorrection, alerts=$alerts, alignmentAnnotationQueueId=$alignmentAnnotationQueueId, backfillCompletedAt=$backfillCompletedAt, backfillError=$backfillError, backfillFrom=$backfillFrom, backfillId=$backfillId, backfillProgress=$backfillProgress, backfillStatus=$backfillStatus, codeEvaluators=$codeEvaluators, correctionsDatasetId=$correctionsDatasetId, datasetId=$datasetId, datasetName=$datasetName, evaluatorId=$evaluatorId, evaluatorName=$evaluatorName, evaluators=$evaluators, extendAnnotationQueueTraceRetention=$extendAnnotationQueueTraceRetention, extendDatasetTraceRetention=$extendDatasetTraceRetention, extendEvaluatorTraceRetention=$extendEvaluatorTraceRetention, extendOnly=$extendOnly, extendWebhookTraceRetention=$extendWebhookTraceRetention, filter=$filter, groupBy=$groupBy, includeExtendedStats=$includeExtendedStats, isEnabled=$isEnabled, isManagedEvaluator=$isManagedEvaluator, isTracingDisabled=$isTracingDisabled, numFewShotExamples=$numFewShotExamples, sessionId=$sessionId, sessionName=$sessionName, spendLimit=$spendLimit, spendUsd=$spendUsd, traceCount=$traceCount, traceFilter=$traceFilter, isTransient=$isTransient, treeFilter=$treeFilter, useCorrectionsDataset=$useCorrectionsDataset, additionalProperties=$additionalProperties}"
+        "Evaluator{id=$id, createdAt=$createdAt, displayName=$displayName, evaluatorVersion=$evaluatorVersion, samplingRate=$samplingRate, tenantId=$tenantId, updatedAt=$updatedAt, webhooks=$webhooks, addToAnnotationQueueId=$addToAnnotationQueueId, addToAnnotationQueueName=$addToAnnotationQueueName, addToDatasetId=$addToDatasetId, addToDatasetName=$addToDatasetName, addToDatasetPreferCorrection=$addToDatasetPreferCorrection, alerts=$alerts, alignmentAnnotationQueueId=$alignmentAnnotationQueueId, backfillCompletedAt=$backfillCompletedAt, backfillError=$backfillError, backfillFrom=$backfillFrom, backfillId=$backfillId, backfillProgress=$backfillProgress, backfillStatus=$backfillStatus, codeEvaluators=$codeEvaluators, correctionsDatasetId=$correctionsDatasetId, datasetId=$datasetId, datasetName=$datasetName, evaluatorId=$evaluatorId, evaluatorName=$evaluatorName, evaluatorType=$evaluatorType, evaluators=$evaluators, extendAnnotationQueueTraceRetention=$extendAnnotationQueueTraceRetention, extendDatasetTraceRetention=$extendDatasetTraceRetention, extendEvaluatorTraceRetention=$extendEvaluatorTraceRetention, extendOnly=$extendOnly, extendWebhookTraceRetention=$extendWebhookTraceRetention, filter=$filter, groupBy=$groupBy, includeExtendedStats=$includeExtendedStats, isEnabled=$isEnabled, isManagedEvaluator=$isManagedEvaluator, isTracingDisabled=$isTracingDisabled, numFewShotExamples=$numFewShotExamples, sessionId=$sessionId, sessionName=$sessionName, spendLimit=$spendLimit, spendUsd=$spendUsd, traceCount=$traceCount, traceFilter=$traceFilter, isTransient=$isTransient, treeFilter=$treeFilter, useCorrectionsDataset=$useCorrectionsDataset, additionalProperties=$additionalProperties}"
 }

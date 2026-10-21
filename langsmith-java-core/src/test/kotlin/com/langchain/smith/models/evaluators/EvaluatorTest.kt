@@ -67,6 +67,7 @@ internal class EvaluatorTest {
                 .datasetName("dataset_name")
                 .evaluatorId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                 .evaluatorName("evaluator_name")
+                .evaluatorType("evaluator_type")
                 .addEvaluator(
                     EvaluatorTopLevel.builder()
                         .structured(
@@ -188,6 +189,7 @@ internal class EvaluatorTest {
         assertThat(evaluator.datasetName()).contains("dataset_name")
         assertThat(evaluator.evaluatorId()).contains("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
         assertThat(evaluator.evaluatorName()).contains("evaluator_name")
+        assertThat(evaluator.evaluatorType()).contains("evaluator_type")
         assertThat(evaluator.evaluators().getOrNull())
             .containsExactly(
                 EvaluatorTopLevel.builder()
@@ -306,6 +308,7 @@ internal class EvaluatorTest {
                 .datasetName("dataset_name")
                 .evaluatorId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                 .evaluatorName("evaluator_name")
+                .evaluatorType("evaluator_type")
                 .addEvaluator(
                     EvaluatorTopLevel.builder()
                         .structured(
