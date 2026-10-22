@@ -34,7 +34,16 @@ import java.util.Objects
 import java.util.Optional
 import kotlin.jvm.optionals.getOrNull
 
-/** Clone a dataset. */
+/**
+ * Copy examples from a source dataset into an existing target dataset.
+ *
+ * Each copied example gets a new ID and keeps the inputs, outputs, metadata, and source run ID of
+ * its source example. Attachments are copied when blob storage is enabled. Copying the same
+ * examples twice adds them twice. Requires the datasets:clone permission on both datasets. Returns
+ * the ID, dataset ID, creation and modification times, and source run ID of each new example.
+ * Without example IDs, a source or target that is not found can return an empty list instead of an
+ * error.
+ */
 class DatasetCloneParams
 private constructor(
     private val body: Body,
@@ -43,12 +52,17 @@ private constructor(
 ) : Params {
 
     /**
+     * ID of the dataset in this workspace to copy examples from. It is not modified.
+     *
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type or is
      *   unexpectedly missing or null (e.g. if the server responded with an unexpected value).
      */
     fun sourceDatasetId(): String = body.sourceDatasetId()
 
     /**
+     * ID of the dataset in this workspace that receives the copied examples. Its current examples
+     * are kept.
+     *
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type or is
      *   unexpectedly missing or null (e.g. if the server responded with an unexpected value).
      */
@@ -64,18 +78,28 @@ private constructor(
     fun asOf(): Optional<AsOf> = body.asOf()
 
     /**
+     * IDs of source examples to copy. Defaults to every example in the source version. When IDs are
+     * given and nothing is copied, because none match or either dataset is not found, the request
+     * fails with 404.
+     *
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
      */
     fun examples(): Optional<List<String>> = body.examples()
 
     /**
+     * Split name, or list of split names, assigned to every copied example in place of its source
+     * splits. Defaults to keeping the source splits.
+     *
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
      */
     fun split(): Optional<Split> = body.split()
 
     /**
+     * List of resource tag value IDs to attach to the target dataset, up to 100. Requires the
+     * datasets:tag_on_create permission.
+     *
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
      */
@@ -175,6 +199,7 @@ private constructor(
          */
         fun body(body: Body) = apply { this.body = body.toBuilder() }
 
+        /** ID of the dataset in this workspace to copy examples from. It is not modified. */
         fun sourceDatasetId(sourceDatasetId: String) = apply {
             body.sourceDatasetId(sourceDatasetId)
         }
@@ -190,6 +215,10 @@ private constructor(
             body.sourceDatasetId(sourceDatasetId)
         }
 
+        /**
+         * ID of the dataset in this workspace that receives the copied examples. Its current
+         * examples are kept.
+         */
         fun targetDatasetId(targetDatasetId: String) = apply {
             body.targetDatasetId(targetDatasetId)
         }
@@ -228,6 +257,11 @@ private constructor(
         /** Alias for calling [asOf] with `AsOf.ofString(string)`. */
         fun asOf(string: String) = apply { body.asOf(string) }
 
+        /**
+         * IDs of source examples to copy. Defaults to every example in the source version. When IDs
+         * are given and nothing is copied, because none match or either dataset is not found, the
+         * request fails with 404.
+         */
         fun examples(examples: List<String>) = apply { body.examples(examples) }
 
         /**
@@ -246,6 +280,10 @@ private constructor(
          */
         fun addExample(example: String) = apply { body.addExample(example) }
 
+        /**
+         * Split name, or list of split names, assigned to every copied example in place of its
+         * source splits. Defaults to keeping the source splits.
+         */
         fun split(split: Split?) = apply { body.split(split) }
 
         /** Alias for calling [Builder.split] with `split.orElse(null)`. */
@@ -265,6 +303,10 @@ private constructor(
         /** Alias for calling [split] with `Split.ofStrings(strings)`. */
         fun splitOfStrings(strings: List<String>) = apply { body.splitOfStrings(strings) }
 
+        /**
+         * List of resource tag value IDs to attach to the target dataset, up to 100. Requires the
+         * datasets:tag_on_create permission.
+         */
         fun tagValueIds(tagValueIds: List<String>?) = apply { body.tagValueIds(tagValueIds) }
 
         /** Alias for calling [Builder.tagValueIds] with `tagValueIds.orElse(null)`. */
@@ -471,12 +513,17 @@ private constructor(
         )
 
         /**
+         * ID of the dataset in this workspace to copy examples from. It is not modified.
+         *
          * @throws LangChainInvalidDataException if the JSON field has an unexpected type or is
          *   unexpectedly missing or null (e.g. if the server responded with an unexpected value).
          */
         fun sourceDatasetId(): String = sourceDatasetId.getRequired("source_dataset_id")
 
         /**
+         * ID of the dataset in this workspace that receives the copied examples. Its current
+         * examples are kept.
+         *
          * @throws LangChainInvalidDataException if the JSON field has an unexpected type or is
          *   unexpectedly missing or null (e.g. if the server responded with an unexpected value).
          */
@@ -492,18 +539,28 @@ private constructor(
         fun asOf(): Optional<AsOf> = asOf.getOptional("as_of")
 
         /**
+         * IDs of source examples to copy. Defaults to every example in the source version. When IDs
+         * are given and nothing is copied, because none match or either dataset is not found, the
+         * request fails with 404.
+         *
          * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
          *   the server responded with an unexpected value).
          */
         fun examples(): Optional<List<String>> = examples.getOptional("examples")
 
         /**
+         * Split name, or list of split names, assigned to every copied example in place of its
+         * source splits. Defaults to keeping the source splits.
+         *
          * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
          *   the server responded with an unexpected value).
          */
         fun split(): Optional<Split> = split.getOptional("split")
 
         /**
+         * List of resource tag value IDs to attach to the target dataset, up to 100. Requires the
+         * datasets:tag_on_create permission.
+         *
          * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
          *   the server responded with an unexpected value).
          */
@@ -609,6 +666,7 @@ private constructor(
                 additionalProperties = body.additionalProperties.toMutableMap()
             }
 
+            /** ID of the dataset in this workspace to copy examples from. It is not modified. */
             fun sourceDatasetId(sourceDatasetId: String) =
                 sourceDatasetId(JsonField.of(sourceDatasetId))
 
@@ -623,6 +681,10 @@ private constructor(
                 this.sourceDatasetId = sourceDatasetId
             }
 
+            /**
+             * ID of the dataset in this workspace that receives the copied examples. Its current
+             * examples are kept.
+             */
             fun targetDatasetId(targetDatasetId: String) =
                 targetDatasetId(JsonField.of(targetDatasetId))
 
@@ -661,6 +723,11 @@ private constructor(
             /** Alias for calling [asOf] with `AsOf.ofString(string)`. */
             fun asOf(string: String) = asOf(AsOf.ofString(string))
 
+            /**
+             * IDs of source examples to copy. Defaults to every example in the source version. When
+             * IDs are given and nothing is copied, because none match or either dataset is not
+             * found, the request fails with 404.
+             */
             fun examples(examples: List<String>) = examples(JsonField.of(examples))
 
             /**
@@ -686,6 +753,10 @@ private constructor(
                     }
             }
 
+            /**
+             * Split name, or list of split names, assigned to every copied example in place of its
+             * source splits. Defaults to keeping the source splits.
+             */
             fun split(split: Split?) = split(JsonField.ofNullable(split))
 
             /** Alias for calling [Builder.split] with `split.orElse(null)`. */
@@ -706,6 +777,10 @@ private constructor(
             /** Alias for calling [split] with `Split.ofStrings(strings)`. */
             fun splitOfStrings(strings: List<String>) = split(Split.ofStrings(strings))
 
+            /**
+             * List of resource tag value IDs to attach to the target dataset, up to 100. Requires
+             * the datasets:tag_on_create permission.
+             */
             fun tagValueIds(tagValueIds: List<String>?) =
                 tagValueIds(JsonField.ofNullable(tagValueIds))
 
@@ -1071,6 +1146,10 @@ private constructor(
         }
     }
 
+    /**
+     * Split name, or list of split names, assigned to every copied example in place of its source
+     * splits. Defaults to keeping the source splits.
+     */
     @JsonDeserialize(using = Split.Deserializer::class)
     @JsonSerialize(using = Split.Serializer::class)
     class Split
