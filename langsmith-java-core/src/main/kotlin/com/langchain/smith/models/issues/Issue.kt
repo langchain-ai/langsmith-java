@@ -6545,6 +6545,8 @@ private constructor(
         private val branch: JsonField<String>,
         private val createdAt: JsonField<OffsetDateTime>,
         private val prNumber: JsonField<Long>,
+        private val provider: JsonField<Provider>,
+        private val providerWebBaseUrl: JsonField<String>,
         private val repoUrl: JsonField<String>,
         private val updatedAt: JsonField<OffsetDateTime>,
         private val additionalProperties: MutableMap<String, JsonValue>,
@@ -6558,11 +6560,27 @@ private constructor(
             @ExcludeMissing
             createdAt: JsonField<OffsetDateTime> = JsonMissing.of(),
             @JsonProperty("pr_number") @ExcludeMissing prNumber: JsonField<Long> = JsonMissing.of(),
+            @JsonProperty("provider")
+            @ExcludeMissing
+            provider: JsonField<Provider> = JsonMissing.of(),
+            @JsonProperty("provider_web_base_url")
+            @ExcludeMissing
+            providerWebBaseUrl: JsonField<String> = JsonMissing.of(),
             @JsonProperty("repo_url") @ExcludeMissing repoUrl: JsonField<String> = JsonMissing.of(),
             @JsonProperty("updated_at")
             @ExcludeMissing
             updatedAt: JsonField<OffsetDateTime> = JsonMissing.of(),
-        ) : this(id, branch, createdAt, prNumber, repoUrl, updatedAt, mutableMapOf())
+        ) : this(
+            id,
+            branch,
+            createdAt,
+            prNumber,
+            provider,
+            providerWebBaseUrl,
+            repoUrl,
+            updatedAt,
+            mutableMapOf(),
+        )
 
         /**
          * @throws LangChainInvalidDataException if the JSON field has an unexpected type or is
@@ -6587,6 +6605,21 @@ private constructor(
          *   the server responded with an unexpected value).
          */
         fun prNumber(): Optional<Long> = prNumber.getOptional("pr_number")
+
+        /**
+         * @throws LangChainInvalidDataException if the JSON field has an unexpected type or is
+         *   unexpectedly missing or null (e.g. if the server responded with an unexpected value).
+         */
+        fun provider(): Provider = provider.getRequired("provider")
+
+        /**
+         * ProviderWebBaseURL is the GitLab instance a GitLab fix lives on; null for GitHub.
+         *
+         * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
+         *   the server responded with an unexpected value).
+         */
+        fun providerWebBaseUrl(): Optional<String> =
+            providerWebBaseUrl.getOptional("provider_web_base_url")
 
         /**
          * @throws LangChainInvalidDataException if the JSON field has an unexpected type or is
@@ -6631,6 +6664,23 @@ private constructor(
         @JsonProperty("pr_number") @ExcludeMissing fun _prNumber(): JsonField<Long> = prNumber
 
         /**
+         * Returns the raw JSON value of [provider].
+         *
+         * Unlike [provider], this method doesn't throw if the JSON field has an unexpected type.
+         */
+        @JsonProperty("provider") @ExcludeMissing fun _provider(): JsonField<Provider> = provider
+
+        /**
+         * Returns the raw JSON value of [providerWebBaseUrl].
+         *
+         * Unlike [providerWebBaseUrl], this method doesn't throw if the JSON field has an
+         * unexpected type.
+         */
+        @JsonProperty("provider_web_base_url")
+        @ExcludeMissing
+        fun _providerWebBaseUrl(): JsonField<String> = providerWebBaseUrl
+
+        /**
          * Returns the raw JSON value of [repoUrl].
          *
          * Unlike [repoUrl], this method doesn't throw if the JSON field has an unexpected type.
@@ -6669,6 +6719,8 @@ private constructor(
              * .branch()
              * .createdAt()
              * .prNumber()
+             * .provider()
+             * .providerWebBaseUrl()
              * .repoUrl()
              * .updatedAt()
              * ```
@@ -6683,6 +6735,8 @@ private constructor(
             private var branch: JsonField<String>? = null
             private var createdAt: JsonField<OffsetDateTime>? = null
             private var prNumber: JsonField<Long>? = null
+            private var provider: JsonField<Provider>? = null
+            private var providerWebBaseUrl: JsonField<String>? = null
             private var repoUrl: JsonField<String>? = null
             private var updatedAt: JsonField<OffsetDateTime>? = null
             private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
@@ -6693,6 +6747,8 @@ private constructor(
                 branch = fix.branch
                 createdAt = fix.createdAt
                 prNumber = fix.prNumber
+                provider = fix.provider
+                providerWebBaseUrl = fix.providerWebBaseUrl
                 repoUrl = fix.repoUrl
                 updatedAt = fix.updatedAt
                 additionalProperties = fix.additionalProperties.toMutableMap()
@@ -6757,6 +6813,39 @@ private constructor(
              */
             fun prNumber(prNumber: JsonField<Long>) = apply { this.prNumber = prNumber }
 
+            fun provider(provider: Provider) = provider(JsonField.of(provider))
+
+            /**
+             * Sets [Builder.provider] to an arbitrary JSON value.
+             *
+             * You should usually call [Builder.provider] with a well-typed [Provider] value
+             * instead. This method is primarily for setting the field to an undocumented or not yet
+             * supported value.
+             */
+            fun provider(provider: JsonField<Provider>) = apply { this.provider = provider }
+
+            /** ProviderWebBaseURL is the GitLab instance a GitLab fix lives on; null for GitHub. */
+            fun providerWebBaseUrl(providerWebBaseUrl: String?) =
+                providerWebBaseUrl(JsonField.ofNullable(providerWebBaseUrl))
+
+            /**
+             * Alias for calling [Builder.providerWebBaseUrl] with
+             * `providerWebBaseUrl.orElse(null)`.
+             */
+            fun providerWebBaseUrl(providerWebBaseUrl: Optional<String>) =
+                providerWebBaseUrl(providerWebBaseUrl.getOrNull())
+
+            /**
+             * Sets [Builder.providerWebBaseUrl] to an arbitrary JSON value.
+             *
+             * You should usually call [Builder.providerWebBaseUrl] with a well-typed [String] value
+             * instead. This method is primarily for setting the field to an undocumented or not yet
+             * supported value.
+             */
+            fun providerWebBaseUrl(providerWebBaseUrl: JsonField<String>) = apply {
+                this.providerWebBaseUrl = providerWebBaseUrl
+            }
+
             fun repoUrl(repoUrl: String) = repoUrl(JsonField.of(repoUrl))
 
             /**
@@ -6811,6 +6900,8 @@ private constructor(
              * .branch()
              * .createdAt()
              * .prNumber()
+             * .provider()
+             * .providerWebBaseUrl()
              * .repoUrl()
              * .updatedAt()
              * ```
@@ -6823,6 +6914,8 @@ private constructor(
                     checkRequired("branch", branch),
                     checkRequired("createdAt", createdAt),
                     checkRequired("prNumber", prNumber),
+                    checkRequired("provider", provider),
+                    checkRequired("providerWebBaseUrl", providerWebBaseUrl),
                     checkRequired("repoUrl", repoUrl),
                     checkRequired("updatedAt", updatedAt),
                     additionalProperties.toMutableMap(),
@@ -6849,6 +6942,8 @@ private constructor(
             branch()
             createdAt()
             prNumber()
+            provider().validate()
+            providerWebBaseUrl()
             repoUrl()
             updatedAt()
             validated = true
@@ -6874,8 +6969,150 @@ private constructor(
                 (if (branch.asKnown().isPresent) 1 else 0) +
                 (if (createdAt.asKnown().isPresent) 1 else 0) +
                 (if (prNumber.asKnown().isPresent) 1 else 0) +
+                (provider.asKnown().getOrNull()?.validity() ?: 0) +
+                (if (providerWebBaseUrl.asKnown().isPresent) 1 else 0) +
                 (if (repoUrl.asKnown().isPresent) 1 else 0) +
                 (if (updatedAt.asKnown().isPresent) 1 else 0)
+
+        class Provider @JsonCreator private constructor(private val value: JsonField<String>) :
+            Enum {
+
+            /**
+             * Returns this class instance's raw value.
+             *
+             * This is usually only useful if this instance was deserialized from data that doesn't
+             * match any known member, and you want to know that value. For example, if the SDK is
+             * on an older version than the API, then the API may respond with new members that the
+             * SDK is unaware of.
+             */
+            @com.fasterxml.jackson.annotation.JsonValue fun _value(): JsonField<String> = value
+
+            companion object {
+
+                @JvmField val GITHUB = of("github")
+
+                @JvmField val GITLAB = of("gitlab")
+
+                @JvmStatic fun of(value: String) = Provider(JsonField.of(value))
+            }
+
+            /** An enum containing [Provider]'s known values. */
+            enum class Known {
+                GITHUB,
+                GITLAB,
+            }
+
+            /**
+             * An enum containing [Provider]'s known values, as well as an [_UNKNOWN] member.
+             *
+             * An instance of [Provider] can contain an unknown value in a couple of cases:
+             * - It was deserialized from data that doesn't match any known member. For example, if
+             *   the SDK is on an older version than the API, then the API may respond with new
+             *   members that the SDK is unaware of.
+             * - It was constructed with an arbitrary value using the [of] method.
+             */
+            enum class Value {
+                GITHUB,
+                GITLAB,
+                /**
+                 * An enum member indicating that [Provider] was instantiated with an unknown value.
+                 */
+                _UNKNOWN,
+            }
+
+            /**
+             * Returns an enum member corresponding to this class instance's value, or
+             * [Value._UNKNOWN] if the class was instantiated with an unknown value.
+             *
+             * Use the [known] method instead if you're certain the value is always known or if you
+             * want to throw for the unknown case.
+             */
+            fun value(): Value =
+                when (this) {
+                    GITHUB -> Value.GITHUB
+                    GITLAB -> Value.GITLAB
+                    else -> Value._UNKNOWN
+                }
+
+            /**
+             * Returns an enum member corresponding to this class instance's value.
+             *
+             * Use the [value] method instead if you're uncertain the value is always known and
+             * don't want to throw for the unknown case.
+             *
+             * @throws LangChainInvalidDataException if this class instance's value is a not a known
+             *   member.
+             */
+            fun known(): Known =
+                when (this) {
+                    GITHUB -> Known.GITHUB
+                    GITLAB -> Known.GITLAB
+                    else -> throw LangChainInvalidDataException("Unknown Provider: $value")
+                }
+
+            /**
+             * Returns this class instance's primitive wire representation.
+             *
+             * This differs from the [toString] method because that method is primarily for
+             * debugging and generally doesn't throw.
+             *
+             * @throws LangChainInvalidDataException if this class instance's value does not have
+             *   the expected primitive type.
+             */
+            fun asString(): String =
+                _value().asString().orElseThrow {
+                    LangChainInvalidDataException("Value is not a String")
+                }
+
+            private var validated: Boolean = false
+
+            /**
+             * Validates that the types of all values in this object match their expected types
+             * recursively.
+             *
+             * This method is _not_ forwards compatible with new types from the API for existing
+             * fields.
+             *
+             * @throws LangChainInvalidDataException if any value type in this object doesn't match
+             *   its expected type.
+             */
+            fun validate(): Provider = apply {
+                if (validated) {
+                    return@apply
+                }
+
+                known()
+                validated = true
+            }
+
+            fun isValid(): Boolean =
+                try {
+                    validate()
+                    true
+                } catch (e: LangChainInvalidDataException) {
+                    false
+                }
+
+            /**
+             * Returns a score indicating how many valid values are contained in this object
+             * recursively.
+             *
+             * Used for best match union deserialization.
+             */
+            @JvmSynthetic internal fun validity(): Int = if (value() == Value._UNKNOWN) 0 else 1
+
+            override fun equals(other: Any?): Boolean {
+                if (this === other) {
+                    return true
+                }
+
+                return other is Provider && value == other.value
+            }
+
+            override fun hashCode() = value.hashCode()
+
+            override fun toString() = value.toString()
+        }
 
         override fun equals(other: Any?): Boolean {
             if (this === other) {
@@ -6887,19 +7124,31 @@ private constructor(
                 branch == other.branch &&
                 createdAt == other.createdAt &&
                 prNumber == other.prNumber &&
+                provider == other.provider &&
+                providerWebBaseUrl == other.providerWebBaseUrl &&
                 repoUrl == other.repoUrl &&
                 updatedAt == other.updatedAt &&
                 additionalProperties == other.additionalProperties
         }
 
         private val hashCode: Int by lazy {
-            Objects.hash(id, branch, createdAt, prNumber, repoUrl, updatedAt, additionalProperties)
+            Objects.hash(
+                id,
+                branch,
+                createdAt,
+                prNumber,
+                provider,
+                providerWebBaseUrl,
+                repoUrl,
+                updatedAt,
+                additionalProperties,
+            )
         }
 
         override fun hashCode(): Int = hashCode
 
         override fun toString() =
-            "Fix{id=$id, branch=$branch, createdAt=$createdAt, prNumber=$prNumber, repoUrl=$repoUrl, updatedAt=$updatedAt, additionalProperties=$additionalProperties}"
+            "Fix{id=$id, branch=$branch, createdAt=$createdAt, prNumber=$prNumber, provider=$provider, providerWebBaseUrl=$providerWebBaseUrl, repoUrl=$repoUrl, updatedAt=$updatedAt, additionalProperties=$additionalProperties}"
     }
 
     class LinearContext
