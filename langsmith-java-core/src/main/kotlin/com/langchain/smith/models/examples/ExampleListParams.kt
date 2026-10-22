@@ -24,6 +24,7 @@ private constructor(
     private val asOf: AsOf?,
     private val dataset: String?,
     private val descending: Boolean?,
+    private val excludeDefaultFields: Boolean?,
     private val filter: String?,
     private val fullTextContains: List<String>?,
     private val limit: Long?,
@@ -48,6 +49,12 @@ private constructor(
     fun dataset(): Optional<String> = Optional.ofNullable(dataset)
 
     fun descending(): Optional<Boolean> = Optional.ofNullable(descending)
+
+    /**
+     * Return only the fields in `select`, plus id. Other default fields (created_at, modified_at,
+     * inputs, name, dataset_id) are absent unless selected.
+     */
+    fun excludeDefaultFields(): Optional<Boolean> = Optional.ofNullable(excludeDefaultFields)
 
     fun filter(): Optional<String> = Optional.ofNullable(filter)
 
@@ -90,6 +97,7 @@ private constructor(
         private var asOf: AsOf? = null
         private var dataset: String? = null
         private var descending: Boolean? = null
+        private var excludeDefaultFields: Boolean? = null
         private var filter: String? = null
         private var fullTextContains: MutableList<String>? = null
         private var limit: Long? = null
@@ -108,6 +116,7 @@ private constructor(
             asOf = exampleListParams.asOf
             dataset = exampleListParams.dataset
             descending = exampleListParams.descending
+            excludeDefaultFields = exampleListParams.excludeDefaultFields
             filter = exampleListParams.filter
             fullTextContains = exampleListParams.fullTextContains?.toMutableList()
             limit = exampleListParams.limit
@@ -164,6 +173,29 @@ private constructor(
 
         /** Alias for calling [Builder.descending] with `descending.orElse(null)`. */
         fun descending(descending: Optional<Boolean>) = descending(descending.getOrNull())
+
+        /**
+         * Return only the fields in `select`, plus id. Other default fields (created_at,
+         * modified_at, inputs, name, dataset_id) are absent unless selected.
+         */
+        fun excludeDefaultFields(excludeDefaultFields: Boolean?) = apply {
+            this.excludeDefaultFields = excludeDefaultFields
+        }
+
+        /**
+         * Alias for [Builder.excludeDefaultFields].
+         *
+         * This unboxed primitive overload exists for backwards compatibility.
+         */
+        fun excludeDefaultFields(excludeDefaultFields: Boolean) =
+            excludeDefaultFields(excludeDefaultFields as Boolean?)
+
+        /**
+         * Alias for calling [Builder.excludeDefaultFields] with
+         * `excludeDefaultFields.orElse(null)`.
+         */
+        fun excludeDefaultFields(excludeDefaultFields: Optional<Boolean>) =
+            excludeDefaultFields(excludeDefaultFields.getOrNull())
 
         fun filter(filter: String?) = apply { this.filter = filter }
 
@@ -370,6 +402,7 @@ private constructor(
                 asOf,
                 dataset,
                 descending,
+                excludeDefaultFields,
                 filter,
                 fullTextContains?.toImmutable(),
                 limit,
@@ -406,6 +439,7 @@ private constructor(
                 )
                 dataset?.let { put("dataset", it) }
                 descending?.let { put("descending", it.toString()) }
+                excludeDefaultFields?.let { put("exclude_default_fields", it.toString()) }
                 filter?.let { put("filter", it) }
                 fullTextContains?.forEach { put("full_text_contains", it) }
                 limit?.let { put("limit", it.toString()) }
@@ -644,6 +678,7 @@ private constructor(
             asOf == other.asOf &&
             dataset == other.dataset &&
             descending == other.descending &&
+            excludeDefaultFields == other.excludeDefaultFields &&
             filter == other.filter &&
             fullTextContains == other.fullTextContains &&
             limit == other.limit &&
@@ -663,6 +698,7 @@ private constructor(
             asOf,
             dataset,
             descending,
+            excludeDefaultFields,
             filter,
             fullTextContains,
             limit,
@@ -677,5 +713,5 @@ private constructor(
         )
 
     override fun toString() =
-        "ExampleListParams{id=$id, asOf=$asOf, dataset=$dataset, descending=$descending, filter=$filter, fullTextContains=$fullTextContains, limit=$limit, metadata=$metadata, offset=$offset, order=$order, randomSeed=$randomSeed, select=$select, splits=$splits, additionalHeaders=$additionalHeaders, additionalQueryParams=$additionalQueryParams}"
+        "ExampleListParams{id=$id, asOf=$asOf, dataset=$dataset, descending=$descending, excludeDefaultFields=$excludeDefaultFields, filter=$filter, fullTextContains=$fullTextContains, limit=$limit, metadata=$metadata, offset=$offset, order=$order, randomSeed=$randomSeed, select=$select, splits=$splits, additionalHeaders=$additionalHeaders, additionalQueryParams=$additionalQueryParams}"
 }
