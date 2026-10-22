@@ -32,7 +32,14 @@ import java.util.Objects
 import java.util.Optional
 import kotlin.jvm.optionals.getOrNull
 
-/** Set a tag on a dataset version. */
+/**
+ * Tag a dataset version.
+ *
+ * Points the tag at the version given by as_of, creating the tag or moving it if the dataset
+ * already has it. Other tags are unchanged. Requires permission to update datasets. Returns the
+ * version's time and all of its tags. Returns 400 if the tag is latest, and 404 if the dataset or
+ * the as_of tag does not exist.
+ */
 class DatasetUpdateTagsParams
 private constructor(
     private val datasetId: String?,
@@ -44,8 +51,13 @@ private constructor(
     fun datasetId(): Optional<String> = Optional.ofNullable(datasetId)
 
     /**
-     * Only modifications made on or before this time are included. If None, the latest version of
-     * the dataset is used.
+     * The version to tag: an ISO 8601 timestamp, or the name of an existing tag on this dataset
+     * (latest resolves to the most recent example change, and returns 404 for a dataset with no
+     * examples). A value that does not parse as a timestamp is treated as a tag name, and an
+     * unknown tag name returns 404. Timestamps are not checked against the dataset history: the tag
+     * covers every example change made on or before that time, so a future time keeps picking up
+     * new changes until it passes. Use the exact as_of of an existing version, since looking up a
+     * version by tag returns 404 when the tag's time does not match a version.
      *
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type or is
      *   unexpectedly missing or null (e.g. if the server responded with an unexpected value).
@@ -53,6 +65,9 @@ private constructor(
     fun asOf(): AsOf = body.asOf()
 
     /**
+     * The tag to set. If the dataset already has this tag, it is moved to the new version. The tag
+     * latest is reserved and returns 400.
+     *
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type or is
      *   unexpectedly missing or null (e.g. if the server responded with an unexpected value).
      */
@@ -128,8 +143,13 @@ private constructor(
         fun body(body: Body) = apply { this.body = body.toBuilder() }
 
         /**
-         * Only modifications made on or before this time are included. If None, the latest version
-         * of the dataset is used.
+         * The version to tag: an ISO 8601 timestamp, or the name of an existing tag on this dataset
+         * (latest resolves to the most recent example change, and returns 404 for a dataset with no
+         * examples). A value that does not parse as a timestamp is treated as a tag name, and an
+         * unknown tag name returns 404. Timestamps are not checked against the dataset history: the
+         * tag covers every example change made on or before that time, so a future time keeps
+         * picking up new changes until it passes. Use the exact as_of of an existing version, since
+         * looking up a version by tag returns 404 when the tag's time does not match a version.
          */
         fun asOf(asOf: AsOf) = apply { body.asOf(asOf) }
 
@@ -147,6 +167,10 @@ private constructor(
         /** Alias for calling [asOf] with `AsOf.ofString(string)`. */
         fun asOf(string: String) = apply { body.asOf(string) }
 
+        /**
+         * The tag to set. If the dataset already has this tag, it is moved to the new version. The
+         * tag latest is reserved and returns 400.
+         */
         fun tag(tag: String) = apply { body.tag(tag) }
 
         /**
@@ -323,8 +347,13 @@ private constructor(
         ) : this(asOf, tag, mutableMapOf())
 
         /**
-         * Only modifications made on or before this time are included. If None, the latest version
-         * of the dataset is used.
+         * The version to tag: an ISO 8601 timestamp, or the name of an existing tag on this dataset
+         * (latest resolves to the most recent example change, and returns 404 for a dataset with no
+         * examples). A value that does not parse as a timestamp is treated as a tag name, and an
+         * unknown tag name returns 404. Timestamps are not checked against the dataset history: the
+         * tag covers every example change made on or before that time, so a future time keeps
+         * picking up new changes until it passes. Use the exact as_of of an existing version, since
+         * looking up a version by tag returns 404 when the tag's time does not match a version.
          *
          * @throws LangChainInvalidDataException if the JSON field has an unexpected type or is
          *   unexpectedly missing or null (e.g. if the server responded with an unexpected value).
@@ -332,6 +361,9 @@ private constructor(
         fun asOf(): AsOf = asOf.getRequired("as_of")
 
         /**
+         * The tag to set. If the dataset already has this tag, it is moved to the new version. The
+         * tag latest is reserved and returns 400.
+         *
          * @throws LangChainInvalidDataException if the JSON field has an unexpected type or is
          *   unexpectedly missing or null (e.g. if the server responded with an unexpected value).
          */
@@ -392,8 +424,14 @@ private constructor(
             }
 
             /**
-             * Only modifications made on or before this time are included. If None, the latest
-             * version of the dataset is used.
+             * The version to tag: an ISO 8601 timestamp, or the name of an existing tag on this
+             * dataset (latest resolves to the most recent example change, and returns 404 for a
+             * dataset with no examples). A value that does not parse as a timestamp is treated as a
+             * tag name, and an unknown tag name returns 404. Timestamps are not checked against the
+             * dataset history: the tag covers every example change made on or before that time, so
+             * a future time keeps picking up new changes until it passes. Use the exact as_of of an
+             * existing version, since looking up a version by tag returns 404 when the tag's time
+             * does not match a version.
              */
             fun asOf(asOf: AsOf) = asOf(JsonField.of(asOf))
 
@@ -412,6 +450,10 @@ private constructor(
             /** Alias for calling [asOf] with `AsOf.ofString(string)`. */
             fun asOf(string: String) = asOf(AsOf.ofString(string))
 
+            /**
+             * The tag to set. If the dataset already has this tag, it is moved to the new version.
+             * The tag latest is reserved and returns 400.
+             */
             fun tag(tag: String) = tag(JsonField.of(tag))
 
             /**
@@ -522,8 +564,13 @@ private constructor(
     }
 
     /**
-     * Only modifications made on or before this time are included. If None, the latest version of
-     * the dataset is used.
+     * The version to tag: an ISO 8601 timestamp, or the name of an existing tag on this dataset
+     * (latest resolves to the most recent example change, and returns 404 for a dataset with no
+     * examples). A value that does not parse as a timestamp is treated as a tag name, and an
+     * unknown tag name returns 404. Timestamps are not checked against the dataset history: the tag
+     * covers every example change made on or before that time, so a future time keeps picking up
+     * new changes until it passes. Use the exact as_of of an existing version, since looking up a
+     * version by tag returns 404 when the tag's time does not match a version.
      */
     @JsonDeserialize(using = AsOf.Deserializer::class)
     @JsonSerialize(using = AsOf.Serializer::class)
