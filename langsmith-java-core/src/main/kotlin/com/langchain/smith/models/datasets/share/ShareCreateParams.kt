@@ -11,7 +11,13 @@ import java.util.Objects
 import java.util.Optional
 import kotlin.jvm.optionals.getOrNull
 
-/** Share a dataset. */
+/**
+ * Share a dataset publicly and return its share token.
+ *
+ * Anyone with the share token can view the dataset, its examples, and its experiments, including
+ * their runs and feedback, without signing in. When the dataset is already shared, returns its
+ * existing share token. Fails with 403 when the organization disables public sharing.
+ */
 class ShareCreateParams
 private constructor(
     private val datasetId: String?,
@@ -23,6 +29,8 @@ private constructor(
 
     fun datasetId(): Optional<String> = Optional.ofNullable(datasetId)
 
+    /** Deprecated and has no effect. A shared dataset always shows its experiments. */
+    @Deprecated("deprecated")
     fun shareProjects(): Optional<Boolean> = Optional.ofNullable(shareProjects)
 
     /** Additional body properties to send with the request. */
@@ -67,6 +75,8 @@ private constructor(
         /** Alias for calling [Builder.datasetId] with `datasetId.orElse(null)`. */
         fun datasetId(datasetId: Optional<String>) = datasetId(datasetId.getOrNull())
 
+        /** Deprecated and has no effect. A shared dataset always shows its experiments. */
+        @Deprecated("deprecated")
         fun shareProjects(shareProjects: Boolean?) = apply { this.shareProjects = shareProjects }
 
         /**
@@ -74,9 +84,11 @@ private constructor(
          *
          * This unboxed primitive overload exists for backwards compatibility.
          */
+        @Deprecated("deprecated")
         fun shareProjects(shareProjects: Boolean) = shareProjects(shareProjects as Boolean?)
 
         /** Alias for calling [Builder.shareProjects] with `shareProjects.orElse(null)`. */
+        @Deprecated("deprecated")
         fun shareProjects(shareProjects: Optional<Boolean>) =
             shareProjects(shareProjects.getOrNull())
 

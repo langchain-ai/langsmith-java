@@ -9,7 +9,11 @@ import java.util.Objects
 import java.util.Optional
 import kotlin.jvm.optionals.getOrNull
 
-/** Get the state of sharing a dataset */
+/**
+ * Get a dataset's share token.
+ *
+ * Returns null when the dataset is not shared.
+ */
 class ShareRetrieveParams
 private constructor(
     private val datasetId: String?,

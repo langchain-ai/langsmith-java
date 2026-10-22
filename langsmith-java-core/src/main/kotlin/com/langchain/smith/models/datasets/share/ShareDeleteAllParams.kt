@@ -11,7 +11,11 @@ import java.util.Objects
 import java.util.Optional
 import kotlin.jvm.optionals.getOrNull
 
-/** Unshare a dataset. */
+/**
+ * Stop sharing a dataset.
+ *
+ * Its share token stops working. Succeeds when the dataset is not shared.
+ */
 class ShareDeleteAllParams
 private constructor(
     private val datasetId: String?,

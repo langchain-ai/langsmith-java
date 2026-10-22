@@ -28,7 +28,14 @@ interface ShareService {
      */
     fun withOptions(modifier: Consumer<ClientOptions.Builder>): ShareService
 
-    /** Share a dataset. */
+    /**
+     * Share a dataset publicly and return its share token.
+     *
+     * Anyone with the share token can view the dataset, its examples, and its experiments,
+     * including their runs and feedback, without signing in. When the dataset is already shared,
+     * returns its existing share token. Fails with 403 when the organization disables public
+     * sharing.
+     */
     fun create(datasetId: String): DatasetShareSchema = create(datasetId, ShareCreateParams.none())
 
     /** @see create */
@@ -58,7 +65,11 @@ interface ShareService {
     fun create(datasetId: String, requestOptions: RequestOptions): DatasetShareSchema =
         create(datasetId, ShareCreateParams.none(), requestOptions)
 
-    /** Get the state of sharing a dataset */
+    /**
+     * Get a dataset's share token.
+     *
+     * Returns null when the dataset is not shared.
+     */
     fun retrieve(datasetId: String): Optional<DatasetShareSchema> =
         retrieve(datasetId, ShareRetrieveParams.none())
 
@@ -90,7 +101,11 @@ interface ShareService {
     fun retrieve(datasetId: String, requestOptions: RequestOptions): Optional<DatasetShareSchema> =
         retrieve(datasetId, ShareRetrieveParams.none(), requestOptions)
 
-    /** Unshare a dataset. */
+    /**
+     * Stop sharing a dataset.
+     *
+     * Its share token stops working. Succeeds when the dataset is not shared.
+     */
     fun deleteAll(datasetId: String): ShareDeleteAllResponse =
         deleteAll(datasetId, ShareDeleteAllParams.none())
 
