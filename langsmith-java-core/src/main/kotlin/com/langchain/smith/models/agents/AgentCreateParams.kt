@@ -44,7 +44,8 @@ private constructor(
     fun id(): String = body.id()
 
     /**
-     * Agent runtime kind. Use EXTERNAL for an application hosted outside LangSmith.
+     * Agent runtime kind. Defaults to EXTERNAL for an application hosted outside LangSmith when
+     * omitted.
      *
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type or is
      *   unexpectedly missing or null (e.g. if the server responded with an unexpected value).
@@ -129,7 +130,6 @@ private constructor(
          * The following fields are required:
          * ```java
          * .id()
-         * .sourceType()
          * ```
          */
         @JvmStatic fun builder() = Builder()
@@ -177,7 +177,10 @@ private constructor(
          */
         fun id(id: JsonField<String>) = apply { body.id(id) }
 
-        /** Agent runtime kind. Use EXTERNAL for an application hosted outside LangSmith. */
+        /**
+         * Agent runtime kind. Defaults to EXTERNAL for an application hosted outside LangSmith when
+         * omitted.
+         */
         fun sourceType(sourceType: SourceType) = apply { body.sourceType(sourceType) }
 
         /**
@@ -354,7 +357,6 @@ private constructor(
          * The following fields are required:
          * ```java
          * .id()
-         * .sourceType()
          * ```
          *
          * @throws IllegalStateException if any required field is unset.
@@ -409,7 +411,8 @@ private constructor(
         fun id(): String = id.getRequired("id")
 
         /**
-         * Agent runtime kind. Use EXTERNAL for an application hosted outside LangSmith.
+         * Agent runtime kind. Defaults to EXTERNAL for an application hosted outside LangSmith when
+         * omitted.
          *
          * @throws LangChainInvalidDataException if the JSON field has an unexpected type or is
          *   unexpectedly missing or null (e.g. if the server responded with an unexpected value).
@@ -503,7 +506,6 @@ private constructor(
              * The following fields are required:
              * ```java
              * .id()
-             * .sourceType()
              * ```
              */
             @JvmStatic fun builder() = Builder()
@@ -513,7 +515,7 @@ private constructor(
         class Builder internal constructor() {
 
             private var id: JsonField<String>? = null
-            private var sourceType: JsonField<SourceType>? = null
+            private var sourceType: JsonField<SourceType> = JsonField.of(SourceType.EXTERNAL)
             private var agentType: JsonField<AgentType> = JsonMissing.of()
             private var name: JsonField<String> = JsonMissing.of()
             private var productionOnly: JsonField<Boolean> = JsonMissing.of()
@@ -544,7 +546,10 @@ private constructor(
              */
             fun id(id: JsonField<String>) = apply { this.id = id }
 
-            /** Agent runtime kind. Use EXTERNAL for an application hosted outside LangSmith. */
+            /**
+             * Agent runtime kind. Defaults to EXTERNAL for an application hosted outside LangSmith
+             * when omitted.
+             */
             fun sourceType(sourceType: SourceType) = sourceType(JsonField.of(sourceType))
 
             /**
@@ -627,7 +632,6 @@ private constructor(
              * The following fields are required:
              * ```java
              * .id()
-             * .sourceType()
              * ```
              *
              * @throws IllegalStateException if any required field is unset.
@@ -635,7 +639,7 @@ private constructor(
             fun build(): Body =
                 Body(
                     checkRequired("id", id),
-                    checkRequired("sourceType", sourceType),
+                    sourceType,
                     agentType,
                     name,
                     productionOnly,
@@ -713,7 +717,10 @@ private constructor(
             "Body{id=$id, sourceType=$sourceType, agentType=$agentType, name=$name, productionOnly=$productionOnly, additionalProperties=$additionalProperties}"
     }
 
-    /** Agent runtime kind. Use EXTERNAL for an application hosted outside LangSmith. */
+    /**
+     * Agent runtime kind. Defaults to EXTERNAL for an application hosted outside LangSmith when
+     * omitted.
+     */
     class SourceType @JsonCreator private constructor(private val value: JsonField<String>) : Enum {
 
         /**
