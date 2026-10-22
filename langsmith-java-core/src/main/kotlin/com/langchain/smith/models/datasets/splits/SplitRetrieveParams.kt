@@ -12,7 +12,11 @@ import java.util.Objects
 import java.util.Optional
 import kotlin.jvm.optionals.getOrNull
 
-/** Get Dataset Splits */
+/**
+ * List the split names a dataset's examples belong to.
+ *
+ * An example whose split was never set counts as the base split.
+ */
 class SplitRetrieveParams
 private constructor(
     private val datasetId: String?,

@@ -22,7 +22,13 @@ import java.util.Objects
 import java.util.Optional
 import kotlin.jvm.optionals.getOrNull
 
-/** Update Dataset Splits */
+/**
+ * Add examples to a split, or remove them from it.
+ *
+ * Returns the IDs of the given examples found in the dataset. Each of them gets a new version, even
+ * when its splits do not change. An example's other splits are kept, and an example without a split
+ * counts as being in the base split. Removing an example's last split leaves it in no split.
+ */
 class SplitCreateParams
 private constructor(
     private val datasetId: String?,
@@ -34,18 +40,24 @@ private constructor(
     fun datasetId(): Optional<String> = Optional.ofNullable(datasetId)
 
     /**
+     * IDs of the examples to change. IDs of examples in other datasets are ignored.
+     *
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type or is
      *   unexpectedly missing or null (e.g. if the server responded with an unexpected value).
      */
     fun examples(): List<String> = body.examples()
 
     /**
+     * Split to add the examples to, or remove them from.
+     *
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type or is
      *   unexpectedly missing or null (e.g. if the server responded with an unexpected value).
      */
     fun splitName(): String = body.splitName()
 
     /**
+     * Remove the examples from the split instead of adding them.
+     *
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
      */
@@ -128,6 +140,7 @@ private constructor(
          */
         fun body(body: Body) = apply { this.body = body.toBuilder() }
 
+        /** IDs of the examples to change. IDs of examples in other datasets are ignored. */
         fun examples(examples: List<String>) = apply { body.examples(examples) }
 
         /**
@@ -146,6 +159,7 @@ private constructor(
          */
         fun addExample(example: String) = apply { body.addExample(example) }
 
+        /** Split to add the examples to, or remove them from. */
         fun splitName(splitName: String) = apply { body.splitName(splitName) }
 
         /**
@@ -157,6 +171,7 @@ private constructor(
          */
         fun splitName(splitName: JsonField<String>) = apply { body.splitName(splitName) }
 
+        /** Remove the examples from the split instead of adding them. */
         fun remove(remove: Boolean) = apply { body.remove(remove) }
 
         /**
@@ -339,18 +354,24 @@ private constructor(
         ) : this(examples, splitName, remove, mutableMapOf())
 
         /**
+         * IDs of the examples to change. IDs of examples in other datasets are ignored.
+         *
          * @throws LangChainInvalidDataException if the JSON field has an unexpected type or is
          *   unexpectedly missing or null (e.g. if the server responded with an unexpected value).
          */
         fun examples(): List<String> = examples.getRequired("examples")
 
         /**
+         * Split to add the examples to, or remove them from.
+         *
          * @throws LangChainInvalidDataException if the JSON field has an unexpected type or is
          *   unexpectedly missing or null (e.g. if the server responded with an unexpected value).
          */
         fun splitName(): String = splitName.getRequired("split_name")
 
         /**
+         * Remove the examples from the split instead of adding them.
+         *
          * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
          *   the server responded with an unexpected value).
          */
@@ -421,6 +442,7 @@ private constructor(
                 additionalProperties = body.additionalProperties.toMutableMap()
             }
 
+            /** IDs of the examples to change. IDs of examples in other datasets are ignored. */
             fun examples(examples: List<String>) = examples(JsonField.of(examples))
 
             /**
@@ -446,6 +468,7 @@ private constructor(
                     }
             }
 
+            /** Split to add the examples to, or remove them from. */
             fun splitName(splitName: String) = splitName(JsonField.of(splitName))
 
             /**
@@ -457,6 +480,7 @@ private constructor(
              */
             fun splitName(splitName: JsonField<String>) = apply { this.splitName = splitName }
 
+            /** Remove the examples from the split instead of adding them. */
             fun remove(remove: Boolean) = remove(JsonField.of(remove))
 
             /**

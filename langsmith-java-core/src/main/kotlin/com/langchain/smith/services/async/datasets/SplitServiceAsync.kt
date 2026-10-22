@@ -24,7 +24,14 @@ interface SplitServiceAsync {
      */
     fun withOptions(modifier: Consumer<ClientOptions.Builder>): SplitServiceAsync
 
-    /** Update Dataset Splits */
+    /**
+     * Add examples to a split, or remove them from it.
+     *
+     * Returns the IDs of the given examples found in the dataset. Each of them gets a new version,
+     * even when its splits do not change. An example's other splits are kept, and an example
+     * without a split counts as being in the base split. Removing an example's last split leaves it
+     * in no split.
+     */
     fun create(datasetId: String, params: SplitCreateParams): CompletableFuture<List<String>> =
         create(datasetId, params, RequestOptions.none())
 
@@ -46,7 +53,11 @@ interface SplitServiceAsync {
         requestOptions: RequestOptions = RequestOptions.none(),
     ): CompletableFuture<List<String>>
 
-    /** Get Dataset Splits */
+    /**
+     * List the split names a dataset's examples belong to.
+     *
+     * An example whose split was never set counts as the base split.
+     */
     fun retrieve(datasetId: String): CompletableFuture<List<String>> =
         retrieve(datasetId, SplitRetrieveParams.none())
 
