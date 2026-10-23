@@ -481,6 +481,13 @@ internal class BoxServiceAsyncTest {
                     .description("description")
                     .dockerImage("docker_image")
                     .fsCapacityBytes(0L)
+                    .imageConfig(
+                        BoxCreateSnapshotParams.ImageConfig.builder()
+                            .addCmd("string")
+                            .addEntrypoint("string")
+                            .addExposedPort(0L)
+                            .build()
+                    )
                     .addInclude(BoxCreateSnapshotParams.Include.ALL)
                     .includeMemory(true)
                     .labels(

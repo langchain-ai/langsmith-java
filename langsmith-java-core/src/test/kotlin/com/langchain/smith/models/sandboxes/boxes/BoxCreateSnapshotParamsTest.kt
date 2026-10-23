@@ -19,6 +19,13 @@ internal class BoxCreateSnapshotParamsTest {
             .description("description")
             .dockerImage("docker_image")
             .fsCapacityBytes(0L)
+            .imageConfig(
+                BoxCreateSnapshotParams.ImageConfig.builder()
+                    .addCmd("string")
+                    .addEntrypoint("string")
+                    .addExposedPort(0L)
+                    .build()
+            )
             .addInclude(BoxCreateSnapshotParams.Include.ALL)
             .includeMemory(true)
             .labels(
@@ -61,6 +68,13 @@ internal class BoxCreateSnapshotParamsTest {
                 .description("description")
                 .dockerImage("docker_image")
                 .fsCapacityBytes(0L)
+                .imageConfig(
+                    BoxCreateSnapshotParams.ImageConfig.builder()
+                        .addCmd("string")
+                        .addEntrypoint("string")
+                        .addExposedPort(0L)
+                        .build()
+                )
                 .addInclude(BoxCreateSnapshotParams.Include.ALL)
                 .includeMemory(true)
                 .labels(
@@ -90,6 +104,14 @@ internal class BoxCreateSnapshotParamsTest {
         assertThat(body.description()).contains("description")
         assertThat(body.dockerImage()).contains("docker_image")
         assertThat(body.fsCapacityBytes()).contains(0L)
+        assertThat(body.imageConfig())
+            .contains(
+                BoxCreateSnapshotParams.ImageConfig.builder()
+                    .addCmd("string")
+                    .addEntrypoint("string")
+                    .addExposedPort(0L)
+                    .build()
+            )
         assertThat(body.include().getOrNull()).containsExactly(BoxCreateSnapshotParams.Include.ALL)
         assertThat(body.includeMemory()).contains(true)
         assertThat(body.labels())

@@ -88,6 +88,17 @@ private constructor(
     fun fsCapacityBytes(): Optional<Long> = body.fsCapacityBytes()
 
     /**
+     * ImageConfig sets the command and ports the snapshot records, as a Docker image's ENTRYPOINT,
+     * CMD and EXPOSE do. By default a capture keeps those of the snapshot the sandbox was created
+     * from; each field given here replaces that one, and an empty list clears it. A function
+     * serving the snapshot runs this command and listens on its one exposed port.
+     *
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
+    fun imageConfig(): Optional<ImageConfig> = body.imageConfig()
+
+    /**
      * Sandbox settings to carry into the snapshot. Sandboxes created from it start with each
      * carried setting their create request leaves unset: "mounts" (the mount_config, with its
      * auth), "proxy_config", "env_vars", "resources" (CPU and memory), "lifecycle"
@@ -182,6 +193,13 @@ private constructor(
      * Unlike [fsCapacityBytes], this method doesn't throw if the JSON field has an unexpected type.
      */
     fun _fsCapacityBytes(): JsonField<Long> = body._fsCapacityBytes()
+
+    /**
+     * Returns the raw JSON value of [imageConfig].
+     *
+     * Unlike [imageConfig], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    fun _imageConfig(): JsonField<ImageConfig> = body._imageConfig()
 
     /**
      * Returns the raw JSON value of [include].
@@ -358,6 +376,26 @@ private constructor(
          */
         fun fsCapacityBytes(fsCapacityBytes: JsonField<Long>) = apply {
             body.fsCapacityBytes(fsCapacityBytes)
+        }
+
+        /**
+         * ImageConfig sets the command and ports the snapshot records, as a Docker image's
+         * ENTRYPOINT, CMD and EXPOSE do. By default a capture keeps those of the snapshot the
+         * sandbox was created from; each field given here replaces that one, and an empty list
+         * clears it. A function serving the snapshot runs this command and listens on its one
+         * exposed port.
+         */
+        fun imageConfig(imageConfig: ImageConfig) = apply { body.imageConfig(imageConfig) }
+
+        /**
+         * Sets [Builder.imageConfig] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.imageConfig] with a well-typed [ImageConfig] value
+         * instead. This method is primarily for setting the field to an undocumented or not yet
+         * supported value.
+         */
+        fun imageConfig(imageConfig: JsonField<ImageConfig>) = apply {
+            body.imageConfig(imageConfig)
         }
 
         /**
@@ -604,6 +642,7 @@ private constructor(
         private val description: JsonField<String>,
         private val dockerImage: JsonField<String>,
         private val fsCapacityBytes: JsonField<Long>,
+        private val imageConfig: JsonField<ImageConfig>,
         private val include: JsonField<List<Include>>,
         private val includeMemory: JsonField<Boolean>,
         private val labels: JsonField<Labels>,
@@ -630,6 +669,9 @@ private constructor(
             @JsonProperty("fs_capacity_bytes")
             @ExcludeMissing
             fsCapacityBytes: JsonField<Long> = JsonMissing.of(),
+            @JsonProperty("image_config")
+            @ExcludeMissing
+            imageConfig: JsonField<ImageConfig> = JsonMissing.of(),
             @JsonProperty("include")
             @ExcludeMissing
             include: JsonField<List<Include>> = JsonMissing.of(),
@@ -648,6 +690,7 @@ private constructor(
             description,
             dockerImage,
             fsCapacityBytes,
+            imageConfig,
             include,
             includeMemory,
             labels,
@@ -705,6 +748,18 @@ private constructor(
          *   the server responded with an unexpected value).
          */
         fun fsCapacityBytes(): Optional<Long> = fsCapacityBytes.getOptional("fs_capacity_bytes")
+
+        /**
+         * ImageConfig sets the command and ports the snapshot records, as a Docker image's
+         * ENTRYPOINT, CMD and EXPOSE do. By default a capture keeps those of the snapshot the
+         * sandbox was created from; each field given here replaces that one, and an empty list
+         * clears it. A function serving the snapshot runs this command and listens on its one
+         * exposed port.
+         *
+         * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
+         *   the server responded with an unexpected value).
+         */
+        fun imageConfig(): Optional<ImageConfig> = imageConfig.getOptional("image_config")
 
         /**
          * Sandbox settings to carry into the snapshot. Sandboxes created from it start with each
@@ -814,6 +869,15 @@ private constructor(
         fun _fsCapacityBytes(): JsonField<Long> = fsCapacityBytes
 
         /**
+         * Returns the raw JSON value of [imageConfig].
+         *
+         * Unlike [imageConfig], this method doesn't throw if the JSON field has an unexpected type.
+         */
+        @JsonProperty("image_config")
+        @ExcludeMissing
+        fun _imageConfig(): JsonField<ImageConfig> = imageConfig
+
+        /**
          * Returns the raw JSON value of [include].
          *
          * Unlike [include], this method doesn't throw if the JSON field has an unexpected type.
@@ -887,6 +951,7 @@ private constructor(
             private var description: JsonField<String> = JsonMissing.of()
             private var dockerImage: JsonField<String> = JsonMissing.of()
             private var fsCapacityBytes: JsonField<Long> = JsonMissing.of()
+            private var imageConfig: JsonField<ImageConfig> = JsonMissing.of()
             private var include: JsonField<MutableList<Include>>? = null
             private var includeMemory: JsonField<Boolean> = JsonMissing.of()
             private var labels: JsonField<Labels> = JsonMissing.of()
@@ -902,6 +967,7 @@ private constructor(
                 description = body.description
                 dockerImage = body.dockerImage
                 fsCapacityBytes = body.fsCapacityBytes
+                imageConfig = body.imageConfig
                 include = body.include.map { it.toMutableList() }
                 includeMemory = body.includeMemory
                 labels = body.labels
@@ -996,6 +1062,26 @@ private constructor(
              */
             fun fsCapacityBytes(fsCapacityBytes: JsonField<Long>) = apply {
                 this.fsCapacityBytes = fsCapacityBytes
+            }
+
+            /**
+             * ImageConfig sets the command and ports the snapshot records, as a Docker image's
+             * ENTRYPOINT, CMD and EXPOSE do. By default a capture keeps those of the snapshot the
+             * sandbox was created from; each field given here replaces that one, and an empty list
+             * clears it. A function serving the snapshot runs this command and listens on its one
+             * exposed port.
+             */
+            fun imageConfig(imageConfig: ImageConfig) = imageConfig(JsonField.of(imageConfig))
+
+            /**
+             * Sets [Builder.imageConfig] to an arbitrary JSON value.
+             *
+             * You should usually call [Builder.imageConfig] with a well-typed [ImageConfig] value
+             * instead. This method is primarily for setting the field to an undocumented or not yet
+             * supported value.
+             */
+            fun imageConfig(imageConfig: JsonField<ImageConfig>) = apply {
+                this.imageConfig = imageConfig
             }
 
             /**
@@ -1131,6 +1217,7 @@ private constructor(
                     description,
                     dockerImage,
                     fsCapacityBytes,
+                    imageConfig,
                     (include ?: JsonMissing.of()).map { it.toImmutable() },
                     includeMemory,
                     labels,
@@ -1162,6 +1249,7 @@ private constructor(
             description()
             dockerImage()
             fsCapacityBytes()
+            imageConfig().ifPresent { it.validate() }
             include().ifPresent { it.forEach { it.validate() } }
             includeMemory()
             labels().ifPresent { it.validate() }
@@ -1192,6 +1280,7 @@ private constructor(
                 (if (description.asKnown().isPresent) 1 else 0) +
                 (if (dockerImage.asKnown().isPresent) 1 else 0) +
                 (if (fsCapacityBytes.asKnown().isPresent) 1 else 0) +
+                (imageConfig.asKnown().getOrNull()?.validity() ?: 0) +
                 (include.asKnown().getOrNull()?.sumOf { it.validity().toInt() } ?: 0) +
                 (if (includeMemory.asKnown().isPresent) 1 else 0) +
                 (labels.asKnown().getOrNull()?.validity() ?: 0) +
@@ -1210,6 +1299,7 @@ private constructor(
                 description == other.description &&
                 dockerImage == other.dockerImage &&
                 fsCapacityBytes == other.fsCapacityBytes &&
+                imageConfig == other.imageConfig &&
                 include == other.include &&
                 includeMemory == other.includeMemory &&
                 labels == other.labels &&
@@ -1226,6 +1316,7 @@ private constructor(
                 description,
                 dockerImage,
                 fsCapacityBytes,
+                imageConfig,
                 include,
                 includeMemory,
                 labels,
@@ -1238,7 +1329,296 @@ private constructor(
         override fun hashCode(): Int = hashCode
 
         override fun toString() =
-            "Body{bodyName=$bodyName, checkpoint=$checkpoint, confirmAllowSnapshotSecretValues=$confirmAllowSnapshotSecretValues, description=$description, dockerImage=$dockerImage, fsCapacityBytes=$fsCapacityBytes, include=$include, includeMemory=$includeMemory, labels=$labels, runConfig=$runConfig, tag=$tag, additionalProperties=$additionalProperties}"
+            "Body{bodyName=$bodyName, checkpoint=$checkpoint, confirmAllowSnapshotSecretValues=$confirmAllowSnapshotSecretValues, description=$description, dockerImage=$dockerImage, fsCapacityBytes=$fsCapacityBytes, imageConfig=$imageConfig, include=$include, includeMemory=$includeMemory, labels=$labels, runConfig=$runConfig, tag=$tag, additionalProperties=$additionalProperties}"
+    }
+
+    /**
+     * ImageConfig sets the command and ports the snapshot records, as a Docker image's ENTRYPOINT,
+     * CMD and EXPOSE do. By default a capture keeps those of the snapshot the sandbox was created
+     * from; each field given here replaces that one, and an empty list clears it. A function
+     * serving the snapshot runs this command and listens on its one exposed port.
+     */
+    class ImageConfig
+    @JsonCreator(mode = JsonCreator.Mode.DISABLED)
+    private constructor(
+        private val cmd: JsonField<List<String>>,
+        private val entrypoint: JsonField<List<String>>,
+        private val exposedPorts: JsonField<List<Long>>,
+        private val additionalProperties: MutableMap<String, JsonValue>,
+    ) {
+
+        @JsonCreator
+        private constructor(
+            @JsonProperty("cmd") @ExcludeMissing cmd: JsonField<List<String>> = JsonMissing.of(),
+            @JsonProperty("entrypoint")
+            @ExcludeMissing
+            entrypoint: JsonField<List<String>> = JsonMissing.of(),
+            @JsonProperty("exposed_ports")
+            @ExcludeMissing
+            exposedPorts: JsonField<List<Long>> = JsonMissing.of(),
+        ) : this(cmd, entrypoint, exposedPorts, mutableMapOf())
+
+        /**
+         * Cmd follows Entrypoint, as CMD: its arguments, or the whole command when Entrypoint is
+         * empty.
+         *
+         * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
+         *   the server responded with an unexpected value).
+         */
+        fun cmd(): Optional<List<String>> = cmd.getOptional("cmd")
+
+        /**
+         * Entrypoint is the program the command starts with, as ENTRYPOINT.
+         *
+         * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
+         *   the server responded with an unexpected value).
+         */
+        fun entrypoint(): Optional<List<String>> = entrypoint.getOptional("entrypoint")
+
+        /**
+         * ExposedPorts are the TCP ports the command listens on, as EXPOSE.
+         *
+         * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
+         *   the server responded with an unexpected value).
+         */
+        fun exposedPorts(): Optional<List<Long>> = exposedPorts.getOptional("exposed_ports")
+
+        /**
+         * Returns the raw JSON value of [cmd].
+         *
+         * Unlike [cmd], this method doesn't throw if the JSON field has an unexpected type.
+         */
+        @JsonProperty("cmd") @ExcludeMissing fun _cmd(): JsonField<List<String>> = cmd
+
+        /**
+         * Returns the raw JSON value of [entrypoint].
+         *
+         * Unlike [entrypoint], this method doesn't throw if the JSON field has an unexpected type.
+         */
+        @JsonProperty("entrypoint")
+        @ExcludeMissing
+        fun _entrypoint(): JsonField<List<String>> = entrypoint
+
+        /**
+         * Returns the raw JSON value of [exposedPorts].
+         *
+         * Unlike [exposedPorts], this method doesn't throw if the JSON field has an unexpected
+         * type.
+         */
+        @JsonProperty("exposed_ports")
+        @ExcludeMissing
+        fun _exposedPorts(): JsonField<List<Long>> = exposedPorts
+
+        @JsonAnySetter
+        private fun putAdditionalProperty(key: String, value: JsonValue) {
+            additionalProperties.put(key, value)
+        }
+
+        @JsonAnyGetter
+        @ExcludeMissing
+        fun _additionalProperties(): Map<String, JsonValue> =
+            Collections.unmodifiableMap(additionalProperties)
+
+        fun toBuilder() = Builder().from(this)
+
+        companion object {
+
+            /** Returns a mutable builder for constructing an instance of [ImageConfig]. */
+            @JvmStatic fun builder() = Builder()
+        }
+
+        /** A builder for [ImageConfig]. */
+        class Builder internal constructor() {
+
+            private var cmd: JsonField<MutableList<String>>? = null
+            private var entrypoint: JsonField<MutableList<String>>? = null
+            private var exposedPorts: JsonField<MutableList<Long>>? = null
+            private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
+
+            @JvmSynthetic
+            internal fun from(imageConfig: ImageConfig) = apply {
+                cmd = imageConfig.cmd.map { it.toMutableList() }
+                entrypoint = imageConfig.entrypoint.map { it.toMutableList() }
+                exposedPorts = imageConfig.exposedPorts.map { it.toMutableList() }
+                additionalProperties = imageConfig.additionalProperties.toMutableMap()
+            }
+
+            /**
+             * Cmd follows Entrypoint, as CMD: its arguments, or the whole command when Entrypoint
+             * is empty.
+             */
+            fun cmd(cmd: List<String>) = cmd(JsonField.of(cmd))
+
+            /**
+             * Sets [Builder.cmd] to an arbitrary JSON value.
+             *
+             * You should usually call [Builder.cmd] with a well-typed `List<String>` value instead.
+             * This method is primarily for setting the field to an undocumented or not yet
+             * supported value.
+             */
+            fun cmd(cmd: JsonField<List<String>>) = apply {
+                this.cmd = cmd.map { it.toMutableList() }
+            }
+
+            /**
+             * Adds a single [String] to [Builder.cmd].
+             *
+             * @throws IllegalStateException if the field was previously set to a non-list.
+             */
+            fun addCmd(cmd: String) = apply {
+                this.cmd =
+                    (this.cmd ?: JsonField.of(mutableListOf())).also {
+                        checkKnown("cmd", it).add(cmd)
+                    }
+            }
+
+            /** Entrypoint is the program the command starts with, as ENTRYPOINT. */
+            fun entrypoint(entrypoint: List<String>) = entrypoint(JsonField.of(entrypoint))
+
+            /**
+             * Sets [Builder.entrypoint] to an arbitrary JSON value.
+             *
+             * You should usually call [Builder.entrypoint] with a well-typed `List<String>` value
+             * instead. This method is primarily for setting the field to an undocumented or not yet
+             * supported value.
+             */
+            fun entrypoint(entrypoint: JsonField<List<String>>) = apply {
+                this.entrypoint = entrypoint.map { it.toMutableList() }
+            }
+
+            /**
+             * Adds a single [String] to [Builder.entrypoint].
+             *
+             * @throws IllegalStateException if the field was previously set to a non-list.
+             */
+            fun addEntrypoint(entrypoint: String) = apply {
+                this.entrypoint =
+                    (this.entrypoint ?: JsonField.of(mutableListOf())).also {
+                        checkKnown("entrypoint", it).add(entrypoint)
+                    }
+            }
+
+            /** ExposedPorts are the TCP ports the command listens on, as EXPOSE. */
+            fun exposedPorts(exposedPorts: List<Long>) = exposedPorts(JsonField.of(exposedPorts))
+
+            /**
+             * Sets [Builder.exposedPorts] to an arbitrary JSON value.
+             *
+             * You should usually call [Builder.exposedPorts] with a well-typed `List<Long>` value
+             * instead. This method is primarily for setting the field to an undocumented or not yet
+             * supported value.
+             */
+            fun exposedPorts(exposedPorts: JsonField<List<Long>>) = apply {
+                this.exposedPorts = exposedPorts.map { it.toMutableList() }
+            }
+
+            /**
+             * Adds a single [Long] to [exposedPorts].
+             *
+             * @throws IllegalStateException if the field was previously set to a non-list.
+             */
+            fun addExposedPort(exposedPort: Long) = apply {
+                exposedPorts =
+                    (exposedPorts ?: JsonField.of(mutableListOf())).also {
+                        checkKnown("exposedPorts", it).add(exposedPort)
+                    }
+            }
+
+            fun additionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
+                this.additionalProperties.clear()
+                putAllAdditionalProperties(additionalProperties)
+            }
+
+            fun putAdditionalProperty(key: String, value: JsonValue) = apply {
+                additionalProperties.put(key, value)
+            }
+
+            fun putAllAdditionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
+                this.additionalProperties.putAll(additionalProperties)
+            }
+
+            fun removeAdditionalProperty(key: String) = apply { additionalProperties.remove(key) }
+
+            fun removeAllAdditionalProperties(keys: Set<String>) = apply {
+                keys.forEach(::removeAdditionalProperty)
+            }
+
+            /**
+             * Returns an immutable instance of [ImageConfig].
+             *
+             * Further updates to this [Builder] will not mutate the returned instance.
+             */
+            fun build(): ImageConfig =
+                ImageConfig(
+                    (cmd ?: JsonMissing.of()).map { it.toImmutable() },
+                    (entrypoint ?: JsonMissing.of()).map { it.toImmutable() },
+                    (exposedPorts ?: JsonMissing.of()).map { it.toImmutable() },
+                    additionalProperties.toMutableMap(),
+                )
+        }
+
+        private var validated: Boolean = false
+
+        /**
+         * Validates that the types of all values in this object match their expected types
+         * recursively.
+         *
+         * This method is _not_ forwards compatible with new types from the API for existing fields.
+         *
+         * @throws LangChainInvalidDataException if any value type in this object doesn't match its
+         *   expected type.
+         */
+        fun validate(): ImageConfig = apply {
+            if (validated) {
+                return@apply
+            }
+
+            cmd()
+            entrypoint()
+            exposedPorts()
+            validated = true
+        }
+
+        fun isValid(): Boolean =
+            try {
+                validate()
+                true
+            } catch (e: LangChainInvalidDataException) {
+                false
+            }
+
+        /**
+         * Returns a score indicating how many valid values are contained in this object
+         * recursively.
+         *
+         * Used for best match union deserialization.
+         */
+        @JvmSynthetic
+        internal fun validity(): Int =
+            (cmd.asKnown().getOrNull()?.size ?: 0) +
+                (entrypoint.asKnown().getOrNull()?.size ?: 0) +
+                (exposedPorts.asKnown().getOrNull()?.size ?: 0)
+
+        override fun equals(other: Any?): Boolean {
+            if (this === other) {
+                return true
+            }
+
+            return other is ImageConfig &&
+                cmd == other.cmd &&
+                entrypoint == other.entrypoint &&
+                exposedPorts == other.exposedPorts &&
+                additionalProperties == other.additionalProperties
+        }
+
+        private val hashCode: Int by lazy {
+            Objects.hash(cmd, entrypoint, exposedPorts, additionalProperties)
+        }
+
+        override fun hashCode(): Int = hashCode
+
+        override fun toString() =
+            "ImageConfig{cmd=$cmd, entrypoint=$entrypoint, exposedPorts=$exposedPorts, additionalProperties=$additionalProperties}"
     }
 
     class Include @JsonCreator private constructor(private val value: JsonField<String>) : Enum {
