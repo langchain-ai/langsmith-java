@@ -5,6 +5,7 @@ package com.langchain.smith.models.sandboxes
 import com.fasterxml.jackson.module.kotlin.jacksonTypeRef
 import com.langchain.smith.core.JsonValue
 import com.langchain.smith.core.jsonMapper
+import kotlin.jvm.optionals.getOrNull
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
@@ -245,6 +246,14 @@ internal class SandboxResponseTest {
                 .updatedAt("updated_at")
                 .updatedBy("updated_by")
                 .vcpus(0L)
+                .addVolume(
+                    SandboxResponse.Volume.builder()
+                        .mountPath("mount_path")
+                        .readOnly(true)
+                        .volumeId("volume_id")
+                        .volumeName("volume_name")
+                        .build()
+                )
                 .build()
 
         assertThat(sandboxResponse.id()).contains("id")
@@ -476,6 +485,15 @@ internal class SandboxResponseTest {
         assertThat(sandboxResponse.updatedAt()).contains("updated_at")
         assertThat(sandboxResponse.updatedBy()).contains("updated_by")
         assertThat(sandboxResponse.vcpus()).contains(0L)
+        assertThat(sandboxResponse.volumes().getOrNull())
+            .containsExactly(
+                SandboxResponse.Volume.builder()
+                    .mountPath("mount_path")
+                    .readOnly(true)
+                    .volumeId("volume_id")
+                    .volumeName("volume_name")
+                    .build()
+            )
     }
 
     @Test
@@ -714,6 +732,14 @@ internal class SandboxResponseTest {
                 .updatedAt("updated_at")
                 .updatedBy("updated_by")
                 .vcpus(0L)
+                .addVolume(
+                    SandboxResponse.Volume.builder()
+                        .mountPath("mount_path")
+                        .readOnly(true)
+                        .volumeId("volume_id")
+                        .volumeName("volume_name")
+                        .build()
+                )
                 .build()
 
         val roundtrippedSandboxResponse =

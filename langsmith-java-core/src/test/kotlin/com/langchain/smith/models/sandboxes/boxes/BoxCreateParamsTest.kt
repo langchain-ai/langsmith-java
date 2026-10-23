@@ -237,6 +237,13 @@ internal class BoxCreateParamsTest {
             .snapshotName("snapshot_name")
             .addTagValueId("string")
             .vcpus(0L)
+            .addVolume(
+                BoxCreateParams.Volume.builder()
+                    .mountPath("mount_path")
+                    .volume("volume")
+                    .readOnly(true)
+                    .build()
+            )
             .build()
     }
 
@@ -474,6 +481,13 @@ internal class BoxCreateParamsTest {
                 .snapshotName("snapshot_name")
                 .addTagValueId("string")
                 .vcpus(0L)
+                .addVolume(
+                    BoxCreateParams.Volume.builder()
+                        .mountPath("mount_path")
+                        .volume("volume")
+                        .readOnly(true)
+                        .build()
+                )
                 .build()
 
         val body = params._body()
@@ -707,6 +721,14 @@ internal class BoxCreateParamsTest {
         assertThat(body.snapshotName()).contains("snapshot_name")
         assertThat(body.tagValueIds().getOrNull()).containsExactly("string")
         assertThat(body.vcpus()).contains(0L)
+        assertThat(body.volumes().getOrNull())
+            .containsExactly(
+                BoxCreateParams.Volume.builder()
+                    .mountPath("mount_path")
+                    .volume("volume")
+                    .readOnly(true)
+                    .build()
+            )
     }
 
     @Test

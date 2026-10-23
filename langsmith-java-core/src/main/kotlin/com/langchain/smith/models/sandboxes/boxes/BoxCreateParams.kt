@@ -189,6 +189,16 @@ private constructor(
     fun vcpus(): Optional<Long> = body.vcpus()
 
     /**
+     * Volumes (beta) attaches existing volumes at mount paths inside the sandbox. At most 4;
+     * requires sandbox volumes to be enabled for your workspace. Attaching a volume requires being
+     * its creator or holding sandboxes:exec.
+     *
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
+    fun volumes(): Optional<List<Volume>> = body.volumes()
+
+    /**
      * Returns the raw JSON value of [accessDelegation].
      *
      * Unlike [accessDelegation], this method doesn't throw if the JSON field has an unexpected
@@ -323,6 +333,13 @@ private constructor(
      * Unlike [vcpus], this method doesn't throw if the JSON field has an unexpected type.
      */
     fun _vcpus(): JsonField<Long> = body._vcpus()
+
+    /**
+     * Returns the raw JSON value of [volumes].
+     *
+     * Unlike [volumes], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    fun _volumes(): JsonField<List<Volume>> = body._volumes()
 
     fun _additionalBodyProperties(): Map<String, JsonValue> = body._additionalProperties()
 
@@ -656,6 +673,29 @@ private constructor(
          */
         fun vcpus(vcpus: JsonField<Long>) = apply { body.vcpus(vcpus) }
 
+        /**
+         * Volumes (beta) attaches existing volumes at mount paths inside the sandbox. At most 4;
+         * requires sandbox volumes to be enabled for your workspace. Attaching a volume requires
+         * being its creator or holding sandboxes:exec.
+         */
+        fun volumes(volumes: List<Volume>) = apply { body.volumes(volumes) }
+
+        /**
+         * Sets [Builder.volumes] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.volumes] with a well-typed `List<Volume>` value instead.
+         * This method is primarily for setting the field to an undocumented or not yet supported
+         * value.
+         */
+        fun volumes(volumes: JsonField<List<Volume>>) = apply { body.volumes(volumes) }
+
+        /**
+         * Adds a single [Volume] to [volumes].
+         *
+         * @throws IllegalStateException if the field was previously set to a non-list.
+         */
+        fun addVolume(volume: Volume) = apply { body.addVolume(volume) }
+
         fun additionalBodyProperties(additionalBodyProperties: Map<String, JsonValue>) = apply {
             body.additionalProperties(additionalBodyProperties)
         }
@@ -810,6 +850,7 @@ private constructor(
         private val snapshotName: JsonField<String>,
         private val tagValueIds: JsonField<List<String>>,
         private val vcpus: JsonField<Long>,
+        private val volumes: JsonField<List<Volume>>,
         private val additionalProperties: MutableMap<String, JsonValue>,
     ) {
 
@@ -864,6 +905,9 @@ private constructor(
             @ExcludeMissing
             tagValueIds: JsonField<List<String>> = JsonMissing.of(),
             @JsonProperty("vcpus") @ExcludeMissing vcpus: JsonField<Long> = JsonMissing.of(),
+            @JsonProperty("volumes")
+            @ExcludeMissing
+            volumes: JsonField<List<Volume>> = JsonMissing.of(),
         ) : this(
             accessDelegation,
             cpuMillicores,
@@ -884,6 +928,7 @@ private constructor(
             snapshotName,
             tagValueIds,
             vcpus,
+            volumes,
             mutableMapOf(),
         )
 
@@ -1042,6 +1087,16 @@ private constructor(
          *   the server responded with an unexpected value).
          */
         fun vcpus(): Optional<Long> = vcpus.getOptional("vcpus")
+
+        /**
+         * Volumes (beta) attaches existing volumes at mount paths inside the sandbox. At most 4;
+         * requires sandbox volumes to be enabled for your workspace. Attaching a volume requires
+         * being its creator or holding sandboxes:exec.
+         *
+         * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
+         *   the server responded with an unexpected value).
+         */
+        fun volumes(): Optional<List<Volume>> = volumes.getOptional("volumes")
 
         /**
          * Returns the raw JSON value of [accessDelegation].
@@ -1210,6 +1265,13 @@ private constructor(
          */
         @JsonProperty("vcpus") @ExcludeMissing fun _vcpus(): JsonField<Long> = vcpus
 
+        /**
+         * Returns the raw JSON value of [volumes].
+         *
+         * Unlike [volumes], this method doesn't throw if the JSON field has an unexpected type.
+         */
+        @JsonProperty("volumes") @ExcludeMissing fun _volumes(): JsonField<List<Volume>> = volumes
+
         @JsonAnySetter
         private fun putAdditionalProperty(key: String, value: JsonValue) {
             additionalProperties.put(key, value)
@@ -1250,6 +1312,7 @@ private constructor(
             private var snapshotName: JsonField<String> = JsonMissing.of()
             private var tagValueIds: JsonField<MutableList<String>>? = null
             private var vcpus: JsonField<Long> = JsonMissing.of()
+            private var volumes: JsonField<MutableList<Volume>>? = null
             private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
 
             @JvmSynthetic
@@ -1273,6 +1336,7 @@ private constructor(
                 snapshotName = body.snapshotName
                 tagValueIds = body.tagValueIds.map { it.toMutableList() }
                 vcpus = body.vcpus
+                volumes = body.volumes.map { it.toMutableList() }
                 additionalProperties = body.additionalProperties.toMutableMap()
             }
 
@@ -1572,6 +1636,36 @@ private constructor(
              */
             fun vcpus(vcpus: JsonField<Long>) = apply { this.vcpus = vcpus }
 
+            /**
+             * Volumes (beta) attaches existing volumes at mount paths inside the sandbox. At most
+             * 4; requires sandbox volumes to be enabled for your workspace. Attaching a volume
+             * requires being its creator or holding sandboxes:exec.
+             */
+            fun volumes(volumes: List<Volume>) = volumes(JsonField.of(volumes))
+
+            /**
+             * Sets [Builder.volumes] to an arbitrary JSON value.
+             *
+             * You should usually call [Builder.volumes] with a well-typed `List<Volume>` value
+             * instead. This method is primarily for setting the field to an undocumented or not yet
+             * supported value.
+             */
+            fun volumes(volumes: JsonField<List<Volume>>) = apply {
+                this.volumes = volumes.map { it.toMutableList() }
+            }
+
+            /**
+             * Adds a single [Volume] to [volumes].
+             *
+             * @throws IllegalStateException if the field was previously set to a non-list.
+             */
+            fun addVolume(volume: Volume) = apply {
+                volumes =
+                    (volumes ?: JsonField.of(mutableListOf())).also {
+                        checkKnown("volumes", it).add(volume)
+                    }
+            }
+
             fun additionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
                 this.additionalProperties.clear()
                 putAllAdditionalProperties(additionalProperties)
@@ -1617,6 +1711,7 @@ private constructor(
                     snapshotName,
                     (tagValueIds ?: JsonMissing.of()).map { it.toImmutable() },
                     vcpus,
+                    (volumes ?: JsonMissing.of()).map { it.toImmutable() },
                     additionalProperties.toMutableMap(),
                 )
         }
@@ -1656,6 +1751,7 @@ private constructor(
             snapshotName()
             tagValueIds()
             vcpus()
+            volumes().ifPresent { it.forEach { it.validate() } }
             validated = true
         }
 
@@ -1693,7 +1789,8 @@ private constructor(
                 (if (snapshotId.asKnown().isPresent) 1 else 0) +
                 (if (snapshotName.asKnown().isPresent) 1 else 0) +
                 (tagValueIds.asKnown().getOrNull()?.size ?: 0) +
-                (if (vcpus.asKnown().isPresent) 1 else 0)
+                (if (vcpus.asKnown().isPresent) 1 else 0) +
+                (volumes.asKnown().getOrNull()?.sumOf { it.validity().toInt() } ?: 0)
 
         override fun equals(other: Any?): Boolean {
             if (this === other) {
@@ -1720,6 +1817,7 @@ private constructor(
                 snapshotName == other.snapshotName &&
                 tagValueIds == other.tagValueIds &&
                 vcpus == other.vcpus &&
+                volumes == other.volumes &&
                 additionalProperties == other.additionalProperties
         }
 
@@ -1744,6 +1842,7 @@ private constructor(
                 snapshotName,
                 tagValueIds,
                 vcpus,
+                volumes,
                 additionalProperties,
             )
         }
@@ -1751,7 +1850,7 @@ private constructor(
         override fun hashCode(): Int = hashCode
 
         override fun toString() =
-            "Body{accessDelegation=$accessDelegation, cpuMillicores=$cpuMillicores, deleteAfterStopSeconds=$deleteAfterStopSeconds, envVars=$envVars, fsCapacityBytes=$fsCapacityBytes, idleTtlSeconds=$idleTtlSeconds, labels=$labels, memBytes=$memBytes, mountConfig=$mountConfig, name=$name, preserveMemoryOnStop=$preserveMemoryOnStop, proxyConfig=$proxyConfig, restoreMemory=$restoreMemory, runConfig=$runConfig, snapshot=$snapshot, snapshotId=$snapshotId, snapshotName=$snapshotName, tagValueIds=$tagValueIds, vcpus=$vcpus, additionalProperties=$additionalProperties}"
+            "Body{accessDelegation=$accessDelegation, cpuMillicores=$cpuMillicores, deleteAfterStopSeconds=$deleteAfterStopSeconds, envVars=$envVars, fsCapacityBytes=$fsCapacityBytes, idleTtlSeconds=$idleTtlSeconds, labels=$labels, memBytes=$memBytes, mountConfig=$mountConfig, name=$name, preserveMemoryOnStop=$preserveMemoryOnStop, proxyConfig=$proxyConfig, restoreMemory=$restoreMemory, runConfig=$runConfig, snapshot=$snapshot, snapshotId=$snapshotId, snapshotName=$snapshotName, tagValueIds=$tagValueIds, vcpus=$vcpus, volumes=$volumes, additionalProperties=$additionalProperties}"
     }
 
     /**
@@ -2663,6 +2762,254 @@ private constructor(
 
         override fun toString() =
             "RunConfig{envVars=$envVars, user=$user, workDir=$workDir, additionalProperties=$additionalProperties}"
+    }
+
+    class Volume
+    @JsonCreator(mode = JsonCreator.Mode.DISABLED)
+    private constructor(
+        private val mountPath: JsonField<String>,
+        private val volume: JsonField<String>,
+        private val readOnly: JsonField<Boolean>,
+        private val additionalProperties: MutableMap<String, JsonValue>,
+    ) {
+
+        @JsonCreator
+        private constructor(
+            @JsonProperty("mount_path")
+            @ExcludeMissing
+            mountPath: JsonField<String> = JsonMissing.of(),
+            @JsonProperty("volume") @ExcludeMissing volume: JsonField<String> = JsonMissing.of(),
+            @JsonProperty("read_only")
+            @ExcludeMissing
+            readOnly: JsonField<Boolean> = JsonMissing.of(),
+        ) : this(mountPath, volume, readOnly, mutableMapOf())
+
+        /**
+         * MountPath is the absolute directory inside the sandbox where the volume appears.
+         *
+         * @throws LangChainInvalidDataException if the JSON field has an unexpected type or is
+         *   unexpectedly missing or null (e.g. if the server responded with an unexpected value).
+         */
+        fun mountPath(): String = mountPath.getRequired("mount_path")
+
+        /**
+         * Volume is the volume's ID or name.
+         *
+         * @throws LangChainInvalidDataException if the JSON field has an unexpected type or is
+         *   unexpectedly missing or null (e.g. if the server responded with an unexpected value).
+         */
+        fun volume(): String = volume.getRequired("volume")
+
+        /**
+         * ReadOnly mounts the volume read-only; many sandboxes may do so at once.
+         *
+         * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
+         *   the server responded with an unexpected value).
+         */
+        fun readOnly(): Optional<Boolean> = readOnly.getOptional("read_only")
+
+        /**
+         * Returns the raw JSON value of [mountPath].
+         *
+         * Unlike [mountPath], this method doesn't throw if the JSON field has an unexpected type.
+         */
+        @JsonProperty("mount_path") @ExcludeMissing fun _mountPath(): JsonField<String> = mountPath
+
+        /**
+         * Returns the raw JSON value of [volume].
+         *
+         * Unlike [volume], this method doesn't throw if the JSON field has an unexpected type.
+         */
+        @JsonProperty("volume") @ExcludeMissing fun _volume(): JsonField<String> = volume
+
+        /**
+         * Returns the raw JSON value of [readOnly].
+         *
+         * Unlike [readOnly], this method doesn't throw if the JSON field has an unexpected type.
+         */
+        @JsonProperty("read_only") @ExcludeMissing fun _readOnly(): JsonField<Boolean> = readOnly
+
+        @JsonAnySetter
+        private fun putAdditionalProperty(key: String, value: JsonValue) {
+            additionalProperties.put(key, value)
+        }
+
+        @JsonAnyGetter
+        @ExcludeMissing
+        fun _additionalProperties(): Map<String, JsonValue> =
+            Collections.unmodifiableMap(additionalProperties)
+
+        fun toBuilder() = Builder().from(this)
+
+        companion object {
+
+            /**
+             * Returns a mutable builder for constructing an instance of [Volume].
+             *
+             * The following fields are required:
+             * ```java
+             * .mountPath()
+             * .volume()
+             * ```
+             */
+            @JvmStatic fun builder() = Builder()
+        }
+
+        /** A builder for [Volume]. */
+        class Builder internal constructor() {
+
+            private var mountPath: JsonField<String>? = null
+            private var volume: JsonField<String>? = null
+            private var readOnly: JsonField<Boolean> = JsonMissing.of()
+            private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
+
+            @JvmSynthetic
+            internal fun from(volume: Volume) = apply {
+                mountPath = volume.mountPath
+                this.volume = volume.volume
+                readOnly = volume.readOnly
+                additionalProperties = volume.additionalProperties.toMutableMap()
+            }
+
+            /** MountPath is the absolute directory inside the sandbox where the volume appears. */
+            fun mountPath(mountPath: String) = mountPath(JsonField.of(mountPath))
+
+            /**
+             * Sets [Builder.mountPath] to an arbitrary JSON value.
+             *
+             * You should usually call [Builder.mountPath] with a well-typed [String] value instead.
+             * This method is primarily for setting the field to an undocumented or not yet
+             * supported value.
+             */
+            fun mountPath(mountPath: JsonField<String>) = apply { this.mountPath = mountPath }
+
+            /** Volume is the volume's ID or name. */
+            fun volume(volume: String) = volume(JsonField.of(volume))
+
+            /**
+             * Sets [Builder.volume] to an arbitrary JSON value.
+             *
+             * You should usually call [Builder.volume] with a well-typed [String] value instead.
+             * This method is primarily for setting the field to an undocumented or not yet
+             * supported value.
+             */
+            fun volume(volume: JsonField<String>) = apply { this.volume = volume }
+
+            /** ReadOnly mounts the volume read-only; many sandboxes may do so at once. */
+            fun readOnly(readOnly: Boolean) = readOnly(JsonField.of(readOnly))
+
+            /**
+             * Sets [Builder.readOnly] to an arbitrary JSON value.
+             *
+             * You should usually call [Builder.readOnly] with a well-typed [Boolean] value instead.
+             * This method is primarily for setting the field to an undocumented or not yet
+             * supported value.
+             */
+            fun readOnly(readOnly: JsonField<Boolean>) = apply { this.readOnly = readOnly }
+
+            fun additionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
+                this.additionalProperties.clear()
+                putAllAdditionalProperties(additionalProperties)
+            }
+
+            fun putAdditionalProperty(key: String, value: JsonValue) = apply {
+                additionalProperties.put(key, value)
+            }
+
+            fun putAllAdditionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
+                this.additionalProperties.putAll(additionalProperties)
+            }
+
+            fun removeAdditionalProperty(key: String) = apply { additionalProperties.remove(key) }
+
+            fun removeAllAdditionalProperties(keys: Set<String>) = apply {
+                keys.forEach(::removeAdditionalProperty)
+            }
+
+            /**
+             * Returns an immutable instance of [Volume].
+             *
+             * Further updates to this [Builder] will not mutate the returned instance.
+             *
+             * The following fields are required:
+             * ```java
+             * .mountPath()
+             * .volume()
+             * ```
+             *
+             * @throws IllegalStateException if any required field is unset.
+             */
+            fun build(): Volume =
+                Volume(
+                    checkRequired("mountPath", mountPath),
+                    checkRequired("volume", volume),
+                    readOnly,
+                    additionalProperties.toMutableMap(),
+                )
+        }
+
+        private var validated: Boolean = false
+
+        /**
+         * Validates that the types of all values in this object match their expected types
+         * recursively.
+         *
+         * This method is _not_ forwards compatible with new types from the API for existing fields.
+         *
+         * @throws LangChainInvalidDataException if any value type in this object doesn't match its
+         *   expected type.
+         */
+        fun validate(): Volume = apply {
+            if (validated) {
+                return@apply
+            }
+
+            mountPath()
+            volume()
+            readOnly()
+            validated = true
+        }
+
+        fun isValid(): Boolean =
+            try {
+                validate()
+                true
+            } catch (e: LangChainInvalidDataException) {
+                false
+            }
+
+        /**
+         * Returns a score indicating how many valid values are contained in this object
+         * recursively.
+         *
+         * Used for best match union deserialization.
+         */
+        @JvmSynthetic
+        internal fun validity(): Int =
+            (if (mountPath.asKnown().isPresent) 1 else 0) +
+                (if (volume.asKnown().isPresent) 1 else 0) +
+                (if (readOnly.asKnown().isPresent) 1 else 0)
+
+        override fun equals(other: Any?): Boolean {
+            if (this === other) {
+                return true
+            }
+
+            return other is Volume &&
+                mountPath == other.mountPath &&
+                volume == other.volume &&
+                readOnly == other.readOnly &&
+                additionalProperties == other.additionalProperties
+        }
+
+        private val hashCode: Int by lazy {
+            Objects.hash(mountPath, volume, readOnly, additionalProperties)
+        }
+
+        override fun hashCode(): Int = hashCode
+
+        override fun toString() =
+            "Volume{mountPath=$mountPath, volume=$volume, readOnly=$readOnly, additionalProperties=$additionalProperties}"
     }
 
     override fun equals(other: Any?): Boolean {

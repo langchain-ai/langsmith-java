@@ -279,6 +279,13 @@ internal class BoxServiceAsyncTest {
                     .snapshotName("snapshot_name")
                     .addTagValueId("string")
                     .vcpus(0L)
+                    .addVolume(
+                        BoxCreateParams.Volume.builder()
+                            .mountPath("mount_path")
+                            .volume("volume")
+                            .readOnly(true)
+                            .build()
+                    )
                     .build()
             )
 
