@@ -163,6 +163,7 @@ internal class SandboxListResponseTest {
                                 .build()
                         )
                         .name("name")
+                        .persistent(true)
                         .preserveMemoryOnStop(true)
                         .proxyConfig(
                             ProxyConfig.builder()
@@ -440,6 +441,7 @@ internal class SandboxListResponseTest {
                                 .build()
                         )
                         .name("name")
+                        .persistent(true)
                         .preserveMemoryOnStop(true)
                         .proxyConfig(
                             ProxyConfig.builder()
@@ -714,6 +716,7 @@ internal class SandboxListResponseTest {
                             .build()
                     )
                     .name("name")
+                    .persistent(true)
                     .preserveMemoryOnStop(true)
                     .proxyConfig(
                         ProxyConfig.builder()
@@ -980,6 +983,7 @@ internal class SandboxListResponseTest {
                             .build()
                     )
                     .name("name")
+                    .persistent(true)
                     .preserveMemoryOnStop(true)
                     .proxyConfig(
                         ProxyConfig.builder()
@@ -1254,6 +1258,7 @@ internal class SandboxListResponseTest {
                                 .build()
                         )
                         .name("name")
+                        .persistent(true)
                         .preserveMemoryOnStop(true)
                         .proxyConfig(
                             ProxyConfig.builder()
@@ -1531,6 +1536,7 @@ internal class SandboxListResponseTest {
                                 .build()
                         )
                         .name("name")
+                        .persistent(true)
                         .preserveMemoryOnStop(true)
                         .proxyConfig(
                             ProxyConfig.builder()

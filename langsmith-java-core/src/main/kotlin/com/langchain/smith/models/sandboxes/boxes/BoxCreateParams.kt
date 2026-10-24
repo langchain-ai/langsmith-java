@@ -112,6 +112,20 @@ private constructor(
     fun name(): Optional<String> = body.name()
 
     /**
+     * Persistent (private beta) keeps the sandbox's filesystem across stops (the default, true).
+     * Set it to false for a disposable sandbox: its writes are discarded whenever it stops, the
+     * next start boots it fresh from its snapshot, and it is never charged for storage. A sandbox
+     * that is not persistent cannot preserve memory on stop or have its filesystem captured as a
+     * snapshot (exporting a Docker image from it with docker_image still works), and some snapshots
+     * captured from other sandboxes cannot start one; such a create is rejected. Setting it to
+     * false requires the private beta to be enabled for your workspace.
+     *
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
+    fun persistent(): Optional<Boolean> = body.persistent()
+
+    /**
      * PreserveMemoryOnStop, when true, suspends the sandbox's memory on a voluntary stop (idle
      * timeout or explicit stop) so the next start resumes from where it left off. Default false
      * discards memory and keeps only the filesystem, so the next start is a cold boot. Restarts
@@ -269,6 +283,13 @@ private constructor(
      * Unlike [name], this method doesn't throw if the JSON field has an unexpected type.
      */
     fun _name(): JsonField<String> = body._name()
+
+    /**
+     * Returns the raw JSON value of [persistent].
+     *
+     * Unlike [persistent], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    fun _persistent(): JsonField<Boolean> = body._persistent()
 
     /**
      * Returns the raw JSON value of [preserveMemoryOnStop].
@@ -527,6 +548,27 @@ private constructor(
          * method is primarily for setting the field to an undocumented or not yet supported value.
          */
         fun name(name: JsonField<String>) = apply { body.name(name) }
+
+        /**
+         * Persistent (private beta) keeps the sandbox's filesystem across stops (the default,
+         * true). Set it to false for a disposable sandbox: its writes are discarded whenever it
+         * stops, the next start boots it fresh from its snapshot, and it is never charged for
+         * storage. A sandbox that is not persistent cannot preserve memory on stop or have its
+         * filesystem captured as a snapshot (exporting a Docker image from it with docker_image
+         * still works), and some snapshots captured from other sandboxes cannot start one; such a
+         * create is rejected. Setting it to false requires the private beta to be enabled for your
+         * workspace.
+         */
+        fun persistent(persistent: Boolean) = apply { body.persistent(persistent) }
+
+        /**
+         * Sets [Builder.persistent] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.persistent] with a well-typed [Boolean] value instead.
+         * This method is primarily for setting the field to an undocumented or not yet supported
+         * value.
+         */
+        fun persistent(persistent: JsonField<Boolean>) = apply { body.persistent(persistent) }
 
         /**
          * PreserveMemoryOnStop, when true, suspends the sandbox's memory on a voluntary stop (idle
@@ -841,6 +883,7 @@ private constructor(
         private val memBytes: JsonField<Long>,
         private val mountConfig: JsonField<SandboxMountConfig>,
         private val name: JsonField<String>,
+        private val persistent: JsonField<Boolean>,
         private val preserveMemoryOnStop: JsonField<Boolean>,
         private val proxyConfig: JsonField<ProxyConfig>,
         private val restoreMemory: JsonField<Boolean>,
@@ -880,6 +923,9 @@ private constructor(
             @ExcludeMissing
             mountConfig: JsonField<SandboxMountConfig> = JsonMissing.of(),
             @JsonProperty("name") @ExcludeMissing name: JsonField<String> = JsonMissing.of(),
+            @JsonProperty("persistent")
+            @ExcludeMissing
+            persistent: JsonField<Boolean> = JsonMissing.of(),
             @JsonProperty("preserve_memory_on_stop")
             @ExcludeMissing
             preserveMemoryOnStop: JsonField<Boolean> = JsonMissing.of(),
@@ -919,6 +965,7 @@ private constructor(
             memBytes,
             mountConfig,
             name,
+            persistent,
             preserveMemoryOnStop,
             proxyConfig,
             restoreMemory,
@@ -1008,6 +1055,21 @@ private constructor(
          *   the server responded with an unexpected value).
          */
         fun name(): Optional<String> = name.getOptional("name")
+
+        /**
+         * Persistent (private beta) keeps the sandbox's filesystem across stops (the default,
+         * true). Set it to false for a disposable sandbox: its writes are discarded whenever it
+         * stops, the next start boots it fresh from its snapshot, and it is never charged for
+         * storage. A sandbox that is not persistent cannot preserve memory on stop or have its
+         * filesystem captured as a snapshot (exporting a Docker image from it with docker_image
+         * still works), and some snapshots captured from other sandboxes cannot start one; such a
+         * create is rejected. Setting it to false requires the private beta to be enabled for your
+         * workspace.
+         *
+         * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
+         *   the server responded with an unexpected value).
+         */
+        fun persistent(): Optional<Boolean> = persistent.getOptional("persistent")
 
         /**
          * PreserveMemoryOnStop, when true, suspends the sandbox's memory on a voluntary stop (idle
@@ -1186,6 +1248,15 @@ private constructor(
         @JsonProperty("name") @ExcludeMissing fun _name(): JsonField<String> = name
 
         /**
+         * Returns the raw JSON value of [persistent].
+         *
+         * Unlike [persistent], this method doesn't throw if the JSON field has an unexpected type.
+         */
+        @JsonProperty("persistent")
+        @ExcludeMissing
+        fun _persistent(): JsonField<Boolean> = persistent
+
+        /**
          * Returns the raw JSON value of [preserveMemoryOnStop].
          *
          * Unlike [preserveMemoryOnStop], this method doesn't throw if the JSON field has an
@@ -1303,6 +1374,7 @@ private constructor(
             private var memBytes: JsonField<Long> = JsonMissing.of()
             private var mountConfig: JsonField<SandboxMountConfig> = JsonMissing.of()
             private var name: JsonField<String> = JsonMissing.of()
+            private var persistent: JsonField<Boolean> = JsonMissing.of()
             private var preserveMemoryOnStop: JsonField<Boolean> = JsonMissing.of()
             private var proxyConfig: JsonField<ProxyConfig> = JsonMissing.of()
             private var restoreMemory: JsonField<Boolean> = JsonMissing.of()
@@ -1327,6 +1399,7 @@ private constructor(
                 memBytes = body.memBytes
                 mountConfig = body.mountConfig
                 name = body.name
+                persistent = body.persistent
                 preserveMemoryOnStop = body.preserveMemoryOnStop
                 proxyConfig = body.proxyConfig
                 restoreMemory = body.restoreMemory
@@ -1484,6 +1557,27 @@ private constructor(
              * value.
              */
             fun name(name: JsonField<String>) = apply { this.name = name }
+
+            /**
+             * Persistent (private beta) keeps the sandbox's filesystem across stops (the default,
+             * true). Set it to false for a disposable sandbox: its writes are discarded whenever it
+             * stops, the next start boots it fresh from its snapshot, and it is never charged for
+             * storage. A sandbox that is not persistent cannot preserve memory on stop or have its
+             * filesystem captured as a snapshot (exporting a Docker image from it with docker_image
+             * still works), and some snapshots captured from other sandboxes cannot start one; such
+             * a create is rejected. Setting it to false requires the private beta to be enabled for
+             * your workspace.
+             */
+            fun persistent(persistent: Boolean) = persistent(JsonField.of(persistent))
+
+            /**
+             * Sets [Builder.persistent] to an arbitrary JSON value.
+             *
+             * You should usually call [Builder.persistent] with a well-typed [Boolean] value
+             * instead. This method is primarily for setting the field to an undocumented or not yet
+             * supported value.
+             */
+            fun persistent(persistent: JsonField<Boolean>) = apply { this.persistent = persistent }
 
             /**
              * PreserveMemoryOnStop, when true, suspends the sandbox's memory on a voluntary stop
@@ -1702,6 +1796,7 @@ private constructor(
                     memBytes,
                     mountConfig,
                     name,
+                    persistent,
                     preserveMemoryOnStop,
                     proxyConfig,
                     restoreMemory,
@@ -1742,6 +1837,7 @@ private constructor(
             memBytes()
             mountConfig().ifPresent { it.validate() }
             name()
+            persistent()
             preserveMemoryOnStop()
             proxyConfig().ifPresent { it.validate() }
             restoreMemory()
@@ -1781,6 +1877,7 @@ private constructor(
                 (if (memBytes.asKnown().isPresent) 1 else 0) +
                 (mountConfig.asKnown().getOrNull()?.validity() ?: 0) +
                 (if (name.asKnown().isPresent) 1 else 0) +
+                (if (persistent.asKnown().isPresent) 1 else 0) +
                 (if (preserveMemoryOnStop.asKnown().isPresent) 1 else 0) +
                 (proxyConfig.asKnown().getOrNull()?.validity() ?: 0) +
                 (if (restoreMemory.asKnown().isPresent) 1 else 0) +
@@ -1808,6 +1905,7 @@ private constructor(
                 memBytes == other.memBytes &&
                 mountConfig == other.mountConfig &&
                 name == other.name &&
+                persistent == other.persistent &&
                 preserveMemoryOnStop == other.preserveMemoryOnStop &&
                 proxyConfig == other.proxyConfig &&
                 restoreMemory == other.restoreMemory &&
@@ -1833,6 +1931,7 @@ private constructor(
                 memBytes,
                 mountConfig,
                 name,
+                persistent,
                 preserveMemoryOnStop,
                 proxyConfig,
                 restoreMemory,
@@ -1850,7 +1949,7 @@ private constructor(
         override fun hashCode(): Int = hashCode
 
         override fun toString() =
-            "Body{accessDelegation=$accessDelegation, cpuMillicores=$cpuMillicores, deleteAfterStopSeconds=$deleteAfterStopSeconds, envVars=$envVars, fsCapacityBytes=$fsCapacityBytes, idleTtlSeconds=$idleTtlSeconds, labels=$labels, memBytes=$memBytes, mountConfig=$mountConfig, name=$name, preserveMemoryOnStop=$preserveMemoryOnStop, proxyConfig=$proxyConfig, restoreMemory=$restoreMemory, runConfig=$runConfig, snapshot=$snapshot, snapshotId=$snapshotId, snapshotName=$snapshotName, tagValueIds=$tagValueIds, vcpus=$vcpus, volumes=$volumes, additionalProperties=$additionalProperties}"
+            "Body{accessDelegation=$accessDelegation, cpuMillicores=$cpuMillicores, deleteAfterStopSeconds=$deleteAfterStopSeconds, envVars=$envVars, fsCapacityBytes=$fsCapacityBytes, idleTtlSeconds=$idleTtlSeconds, labels=$labels, memBytes=$memBytes, mountConfig=$mountConfig, name=$name, persistent=$persistent, preserveMemoryOnStop=$preserveMemoryOnStop, proxyConfig=$proxyConfig, restoreMemory=$restoreMemory, runConfig=$runConfig, snapshot=$snapshot, snapshotId=$snapshotId, snapshotName=$snapshotName, tagValueIds=$tagValueIds, vcpus=$vcpus, volumes=$volumes, additionalProperties=$additionalProperties}"
     }
 
     /**

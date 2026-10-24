@@ -145,6 +145,7 @@ internal class SandboxResponseTest {
                         .build()
                 )
                 .name("name")
+                .persistent(true)
                 .preserveMemoryOnStop(true)
                 .proxyConfig(
                     ProxyConfig.builder()
@@ -383,6 +384,7 @@ internal class SandboxResponseTest {
                     .build()
             )
         assertThat(sandboxResponse.name()).contains("name")
+        assertThat(sandboxResponse.persistent()).contains(true)
         assertThat(sandboxResponse.preserveMemoryOnStop()).contains(true)
         assertThat(sandboxResponse.proxyConfig())
             .contains(
@@ -633,6 +635,7 @@ internal class SandboxResponseTest {
                         .build()
                 )
                 .name("name")
+                .persistent(true)
                 .preserveMemoryOnStop(true)
                 .proxyConfig(
                     ProxyConfig.builder()

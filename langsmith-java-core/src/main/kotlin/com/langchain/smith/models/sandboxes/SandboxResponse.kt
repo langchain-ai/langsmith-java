@@ -36,6 +36,7 @@ private constructor(
     private val memBytes: JsonField<Long>,
     private val mountConfig: JsonField<SandboxMountConfig>,
     private val name: JsonField<String>,
+    private val persistent: JsonField<Boolean>,
     private val preserveMemoryOnStop: JsonField<Boolean>,
     private val proxyConfig: JsonField<ProxyConfig>,
     private val runConfig: JsonField<RunConfig>,
@@ -80,6 +81,9 @@ private constructor(
         @ExcludeMissing
         mountConfig: JsonField<SandboxMountConfig> = JsonMissing.of(),
         @JsonProperty("name") @ExcludeMissing name: JsonField<String> = JsonMissing.of(),
+        @JsonProperty("persistent")
+        @ExcludeMissing
+        persistent: JsonField<Boolean> = JsonMissing.of(),
         @JsonProperty("preserve_memory_on_stop")
         @ExcludeMissing
         preserveMemoryOnStop: JsonField<Boolean> = JsonMissing.of(),
@@ -116,6 +120,7 @@ private constructor(
         memBytes,
         mountConfig,
         name,
+        persistent,
         preserveMemoryOnStop,
         proxyConfig,
         runConfig,
@@ -213,6 +218,15 @@ private constructor(
      *   server responded with an unexpected value).
      */
     fun name(): Optional<String> = name.getOptional("name")
+
+    /**
+     * Persistent (private beta) reports whether the sandbox keeps its filesystem across stops. When
+     * false, its writes are discarded whenever it stops and it is not charged for storage.
+     *
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
+    fun persistent(): Optional<Boolean> = persistent.getOptional("persistent")
 
     /**
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
@@ -401,6 +415,13 @@ private constructor(
     @JsonProperty("name") @ExcludeMissing fun _name(): JsonField<String> = name
 
     /**
+     * Returns the raw JSON value of [persistent].
+     *
+     * Unlike [persistent], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    @JsonProperty("persistent") @ExcludeMissing fun _persistent(): JsonField<Boolean> = persistent
+
+    /**
      * Returns the raw JSON value of [preserveMemoryOnStop].
      *
      * Unlike [preserveMemoryOnStop], this method doesn't throw if the JSON field has an unexpected
@@ -525,6 +546,7 @@ private constructor(
         private var memBytes: JsonField<Long> = JsonMissing.of()
         private var mountConfig: JsonField<SandboxMountConfig> = JsonMissing.of()
         private var name: JsonField<String> = JsonMissing.of()
+        private var persistent: JsonField<Boolean> = JsonMissing.of()
         private var preserveMemoryOnStop: JsonField<Boolean> = JsonMissing.of()
         private var proxyConfig: JsonField<ProxyConfig> = JsonMissing.of()
         private var runConfig: JsonField<RunConfig> = JsonMissing.of()
@@ -554,6 +576,7 @@ private constructor(
             memBytes = sandboxResponse.memBytes
             mountConfig = sandboxResponse.mountConfig
             name = sandboxResponse.name
+            persistent = sandboxResponse.persistent
             preserveMemoryOnStop = sandboxResponse.preserveMemoryOnStop
             proxyConfig = sandboxResponse.proxyConfig
             runConfig = sandboxResponse.runConfig
@@ -727,6 +750,21 @@ private constructor(
          * method is primarily for setting the field to an undocumented or not yet supported value.
          */
         fun name(name: JsonField<String>) = apply { this.name = name }
+
+        /**
+         * Persistent (private beta) reports whether the sandbox keeps its filesystem across stops.
+         * When false, its writes are discarded whenever it stops and it is not charged for storage.
+         */
+        fun persistent(persistent: Boolean) = persistent(JsonField.of(persistent))
+
+        /**
+         * Sets [Builder.persistent] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.persistent] with a well-typed [Boolean] value instead.
+         * This method is primarily for setting the field to an undocumented or not yet supported
+         * value.
+         */
+        fun persistent(persistent: JsonField<Boolean>) = apply { this.persistent = persistent }
 
         fun preserveMemoryOnStop(preserveMemoryOnStop: Boolean) =
             preserveMemoryOnStop(JsonField.of(preserveMemoryOnStop))
@@ -926,6 +964,7 @@ private constructor(
                 memBytes,
                 mountConfig,
                 name,
+                persistent,
                 preserveMemoryOnStop,
                 proxyConfig,
                 runConfig,
@@ -970,6 +1009,7 @@ private constructor(
         memBytes()
         mountConfig().ifPresent { it.validate() }
         name()
+        persistent()
         preserveMemoryOnStop()
         proxyConfig().ifPresent { it.validate() }
         runConfig().ifPresent { it.validate() }
@@ -1013,6 +1053,7 @@ private constructor(
             (if (memBytes.asKnown().isPresent) 1 else 0) +
             (mountConfig.asKnown().getOrNull()?.validity() ?: 0) +
             (if (name.asKnown().isPresent) 1 else 0) +
+            (if (persistent.asKnown().isPresent) 1 else 0) +
             (if (preserveMemoryOnStop.asKnown().isPresent) 1 else 0) +
             (proxyConfig.asKnown().getOrNull()?.validity() ?: 0) +
             (runConfig.asKnown().getOrNull()?.validity() ?: 0) +
@@ -2104,6 +2145,7 @@ private constructor(
             memBytes == other.memBytes &&
             mountConfig == other.mountConfig &&
             name == other.name &&
+            persistent == other.persistent &&
             preserveMemoryOnStop == other.preserveMemoryOnStop &&
             proxyConfig == other.proxyConfig &&
             runConfig == other.runConfig &&
@@ -2134,6 +2176,7 @@ private constructor(
             memBytes,
             mountConfig,
             name,
+            persistent,
             preserveMemoryOnStop,
             proxyConfig,
             runConfig,
@@ -2153,5 +2196,5 @@ private constructor(
     override fun hashCode(): Int = hashCode
 
     override fun toString() =
-        "SandboxResponse{id=$id, accessDelegation=$accessDelegation, cpuMillicores=$cpuMillicores, createdAt=$createdAt, createdBy=$createdBy, dataplaneUrl=$dataplaneUrl, deleteAfterStopSeconds=$deleteAfterStopSeconds, fsCapacityBytes=$fsCapacityBytes, idleTtlSeconds=$idleTtlSeconds, labels=$labels, memBytes=$memBytes, mountConfig=$mountConfig, name=$name, preserveMemoryOnStop=$preserveMemoryOnStop, proxyConfig=$proxyConfig, runConfig=$runConfig, sizeClass=$sizeClass, snapshotId=$snapshotId, status=$status, statusMessage=$statusMessage, stoppedAt=$stoppedAt, updatedAt=$updatedAt, updatedBy=$updatedBy, vcpus=$vcpus, volumes=$volumes, additionalProperties=$additionalProperties}"
+        "SandboxResponse{id=$id, accessDelegation=$accessDelegation, cpuMillicores=$cpuMillicores, createdAt=$createdAt, createdBy=$createdBy, dataplaneUrl=$dataplaneUrl, deleteAfterStopSeconds=$deleteAfterStopSeconds, fsCapacityBytes=$fsCapacityBytes, idleTtlSeconds=$idleTtlSeconds, labels=$labels, memBytes=$memBytes, mountConfig=$mountConfig, name=$name, persistent=$persistent, preserveMemoryOnStop=$preserveMemoryOnStop, proxyConfig=$proxyConfig, runConfig=$runConfig, sizeClass=$sizeClass, snapshotId=$snapshotId, status=$status, statusMessage=$statusMessage, stoppedAt=$stoppedAt, updatedAt=$updatedAt, updatedBy=$updatedBy, vcpus=$vcpus, volumes=$volumes, additionalProperties=$additionalProperties}"
 }

@@ -170,6 +170,7 @@ internal class BoxServiceTest {
                             .build()
                     )
                     .name("name")
+                    .persistent(true)
                     .preserveMemoryOnStop(true)
                     .proxyConfig(
                         ProxyConfig.builder()
