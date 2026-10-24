@@ -1362,6 +1362,7 @@ private constructor(
         private val matchHeaders: JsonField<List<String>>,
         private val matchHosts: JsonField<List<String>>,
         private val matchPaths: JsonField<List<String>>,
+        private val relayId: JsonField<String>,
         private val type: JsonField<String>,
         private val additionalProperties: MutableMap<String, JsonValue>,
     ) {
@@ -1391,6 +1392,7 @@ private constructor(
             @JsonProperty("match_paths")
             @ExcludeMissing
             matchPaths: JsonField<List<String>> = JsonMissing.of(),
+            @JsonProperty("relay_id") @ExcludeMissing relayId: JsonField<String> = JsonMissing.of(),
             @JsonProperty("type") @ExcludeMissing type: JsonField<String> = JsonMissing.of(),
         ) : this(
             name,
@@ -1404,6 +1406,7 @@ private constructor(
             matchHeaders,
             matchHosts,
             matchPaths,
+            relayId,
             type,
             mutableMapOf(),
         )
@@ -1478,8 +1481,10 @@ private constructor(
         fun matchHeaders(): Optional<List<String>> = matchHeaders.getOptional("match_headers")
 
         /**
-         * MatchHosts is only accepted for header injection rules. Provider auth rules use built-in
-         * host matching.
+         * MatchHosts is only accepted for header injection and relay rules. Provider auth rules use
+         * built-in host matching. A relay rule may also list IP addresses and CIDR blocks
+         * (10.0.0.0/8), which match connections the sandbox makes to an IP address rather than a
+         * name.
          *
          * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
          *   the server responded with an unexpected value).
@@ -1491,6 +1496,18 @@ private constructor(
          *   the server responded with an unexpected value).
          */
         fun matchPaths(): Optional<List<String>> = matchPaths.getOptional("match_paths")
+
+        /**
+         * RelayID is the ID of the LangSmith relay (a connection of kind relay) that carries
+         * connections to match_hosts when type is relay. Those connections leave from the relay's
+         * connector, and its network and IP, instead of the sandbox host. Access control still
+         * applies first, the first enabled matching relay rule wins, and a matched host never falls
+         * back to a direct connection.
+         *
+         * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
+         *   the server responded with an unexpected value).
+         */
+        fun relayId(): Optional<String> = relayId.getOptional("relay_id")
 
         /**
          * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
@@ -1585,6 +1602,13 @@ private constructor(
         fun _matchPaths(): JsonField<List<String>> = matchPaths
 
         /**
+         * Returns the raw JSON value of [relayId].
+         *
+         * Unlike [relayId], this method doesn't throw if the JSON field has an unexpected type.
+         */
+        @JsonProperty("relay_id") @ExcludeMissing fun _relayId(): JsonField<String> = relayId
+
+        /**
          * Returns the raw JSON value of [type].
          *
          * Unlike [type], this method doesn't throw if the JSON field has an unexpected type.
@@ -1630,6 +1654,7 @@ private constructor(
             private var matchHeaders: JsonField<MutableList<String>>? = null
             private var matchHosts: JsonField<MutableList<String>>? = null
             private var matchPaths: JsonField<MutableList<String>>? = null
+            private var relayId: JsonField<String> = JsonMissing.of()
             private var type: JsonField<String> = JsonMissing.of()
             private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
 
@@ -1646,6 +1671,7 @@ private constructor(
                 matchHeaders = rule.matchHeaders.map { it.toMutableList() }
                 matchHosts = rule.matchHosts.map { it.toMutableList() }
                 matchPaths = rule.matchPaths.map { it.toMutableList() }
+                relayId = rule.relayId
                 type = rule.type
                 additionalProperties = rule.additionalProperties.toMutableMap()
             }
@@ -1870,8 +1896,10 @@ private constructor(
             }
 
             /**
-             * MatchHosts is only accepted for header injection rules. Provider auth rules use
-             * built-in host matching.
+             * MatchHosts is only accepted for header injection and relay rules. Provider auth rules
+             * use built-in host matching. A relay rule may also list IP addresses and CIDR blocks
+             * (10.0.0.0/8), which match connections the sandbox makes to an IP address rather than
+             * a name.
              */
             fun matchHosts(matchHosts: List<String>) = matchHosts(JsonField.of(matchHosts))
 
@@ -1922,6 +1950,24 @@ private constructor(
                         checkKnown("matchPaths", it).add(matchPath)
                     }
             }
+
+            /**
+             * RelayID is the ID of the LangSmith relay (a connection of kind relay) that carries
+             * connections to match_hosts when type is relay. Those connections leave from the
+             * relay's connector, and its network and IP, instead of the sandbox host. Access
+             * control still applies first, the first enabled matching relay rule wins, and a
+             * matched host never falls back to a direct connection.
+             */
+            fun relayId(relayId: String) = relayId(JsonField.of(relayId))
+
+            /**
+             * Sets [Builder.relayId] to an arbitrary JSON value.
+             *
+             * You should usually call [Builder.relayId] with a well-typed [String] value instead.
+             * This method is primarily for setting the field to an undocumented or not yet
+             * supported value.
+             */
+            fun relayId(relayId: JsonField<String>) = apply { this.relayId = relayId }
 
             fun type(type: String) = type(JsonField.of(type))
 
@@ -1978,6 +2024,7 @@ private constructor(
                     (matchHeaders ?: JsonMissing.of()).map { it.toImmutable() },
                     (matchHosts ?: JsonMissing.of()).map { it.toImmutable() },
                     (matchPaths ?: JsonMissing.of()).map { it.toImmutable() },
+                    relayId,
                     type,
                     additionalProperties.toMutableMap(),
                 )
@@ -2010,6 +2057,7 @@ private constructor(
             matchHeaders()
             matchHosts()
             matchPaths()
+            relayId()
             type()
             validated = true
         }
@@ -2041,6 +2089,7 @@ private constructor(
                 (matchHeaders.asKnown().getOrNull()?.size ?: 0) +
                 (matchHosts.asKnown().getOrNull()?.size ?: 0) +
                 (matchPaths.asKnown().getOrNull()?.size ?: 0) +
+                (if (relayId.asKnown().isPresent) 1 else 0) +
                 (if (type.asKnown().isPresent) 1 else 0)
 
         @JsonDeserialize(using = Aws.Deserializer::class)
@@ -7750,6 +7799,7 @@ private constructor(
                 matchHeaders == other.matchHeaders &&
                 matchHosts == other.matchHosts &&
                 matchPaths == other.matchPaths &&
+                relayId == other.relayId &&
                 type == other.type &&
                 additionalProperties == other.additionalProperties
         }
@@ -7767,6 +7817,7 @@ private constructor(
                 matchHeaders,
                 matchHosts,
                 matchPaths,
+                relayId,
                 type,
                 additionalProperties,
             )
@@ -7775,7 +7826,7 @@ private constructor(
         override fun hashCode(): Int = hashCode
 
         override fun toString() =
-            "Rule{name=$name, aws=$aws, azure=$azure, description=$description, enabled=$enabled, envVars=$envVars, gcp=$gcp, headers=$headers, matchHeaders=$matchHeaders, matchHosts=$matchHosts, matchPaths=$matchPaths, type=$type, additionalProperties=$additionalProperties}"
+            "Rule{name=$name, aws=$aws, azure=$azure, description=$description, enabled=$enabled, envVars=$envVars, gcp=$gcp, headers=$headers, matchHeaders=$matchHeaders, matchHosts=$matchHosts, matchPaths=$matchPaths, relayId=$relayId, type=$type, additionalProperties=$additionalProperties}"
     }
 
     override fun equals(other: Any?): Boolean {
