@@ -26,6 +26,7 @@ private constructor(
     private val access: JsonField<Access>,
     private val browserUrl: JsonField<String>,
     private val embedOrigins: JsonField<List<String>>,
+    private val embedUrl: JsonField<String>,
     private val expiresAt: JsonField<String>,
     private val serviceUrl: JsonField<String>,
     private val additionalProperties: MutableMap<String, JsonValue>,
@@ -41,11 +42,21 @@ private constructor(
         @JsonProperty("embed_origins")
         @ExcludeMissing
         embedOrigins: JsonField<List<String>> = JsonMissing.of(),
+        @JsonProperty("embed_url") @ExcludeMissing embedUrl: JsonField<String> = JsonMissing.of(),
         @JsonProperty("expires_at") @ExcludeMissing expiresAt: JsonField<String> = JsonMissing.of(),
         @JsonProperty("service_url")
         @ExcludeMissing
         serviceUrl: JsonField<String> = JsonMissing.of(),
-    ) : this(token, access, browserUrl, embedOrigins, expiresAt, serviceUrl, mutableMapOf())
+    ) : this(
+        token,
+        access,
+        browserUrl,
+        embedOrigins,
+        embedUrl,
+        expiresAt,
+        serviceUrl,
+        mutableMapOf(),
+    )
 
     /**
      * Token and ExpiresAt are empty in LangSmith login mode (no token is minted).
@@ -71,13 +82,23 @@ private constructor(
     fun browserUrl(): Optional<String> = browserUrl.getOptional("browser_url")
 
     /**
-     * EmbedOrigins echoes the origins that may embed a LangSmith login URL, normalized; omitted
-     * when there are none.
+     * EmbedOrigins echoes the origins that may embed the URL, normalized; omitted when there are
+     * none.
      *
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
      */
     fun embedOrigins(): Optional<List<String>> = embedOrigins.getOptional("embed_origins")
+
+    /**
+     * EmbedURL opens the service in an iframe: the token rides the URL fragment, which no server,
+     * log or Referer header sees, and the page it loads trades it for the cookie. Append
+     * &redirect=/path to land elsewhere than /. Omitted in LangSmith login mode.
+     *
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
+    fun embedUrl(): Optional<String> = embedUrl.getOptional("embed_url")
 
     /**
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
@@ -122,6 +143,13 @@ private constructor(
     fun _embedOrigins(): JsonField<List<String>> = embedOrigins
 
     /**
+     * Returns the raw JSON value of [embedUrl].
+     *
+     * Unlike [embedUrl], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    @JsonProperty("embed_url") @ExcludeMissing fun _embedUrl(): JsonField<String> = embedUrl
+
+    /**
      * Returns the raw JSON value of [expiresAt].
      *
      * Unlike [expiresAt], this method doesn't throw if the JSON field has an unexpected type.
@@ -160,6 +188,7 @@ private constructor(
         private var access: JsonField<Access> = JsonMissing.of()
         private var browserUrl: JsonField<String> = JsonMissing.of()
         private var embedOrigins: JsonField<MutableList<String>>? = null
+        private var embedUrl: JsonField<String> = JsonMissing.of()
         private var expiresAt: JsonField<String> = JsonMissing.of()
         private var serviceUrl: JsonField<String> = JsonMissing.of()
         private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
@@ -170,6 +199,7 @@ private constructor(
             access = serviceUrlResponse.access
             browserUrl = serviceUrlResponse.browserUrl
             embedOrigins = serviceUrlResponse.embedOrigins.map { it.toMutableList() }
+            embedUrl = serviceUrlResponse.embedUrl
             expiresAt = serviceUrlResponse.expiresAt
             serviceUrl = serviceUrlResponse.serviceUrl
             additionalProperties = serviceUrlResponse.additionalProperties.toMutableMap()
@@ -212,8 +242,8 @@ private constructor(
         fun browserUrl(browserUrl: JsonField<String>) = apply { this.browserUrl = browserUrl }
 
         /**
-         * EmbedOrigins echoes the origins that may embed a LangSmith login URL, normalized; omitted
-         * when there are none.
+         * EmbedOrigins echoes the origins that may embed the URL, normalized; omitted when there
+         * are none.
          */
         fun embedOrigins(embedOrigins: List<String>) = embedOrigins(JsonField.of(embedOrigins))
 
@@ -239,6 +269,21 @@ private constructor(
                     checkKnown("embedOrigins", it).add(embedOrigin)
                 }
         }
+
+        /**
+         * EmbedURL opens the service in an iframe: the token rides the URL fragment, which no
+         * server, log or Referer header sees, and the page it loads trades it for the cookie.
+         * Append &redirect=/path to land elsewhere than /. Omitted in LangSmith login mode.
+         */
+        fun embedUrl(embedUrl: String) = embedUrl(JsonField.of(embedUrl))
+
+        /**
+         * Sets [Builder.embedUrl] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.embedUrl] with a well-typed [String] value instead. This
+         * method is primarily for setting the field to an undocumented or not yet supported value.
+         */
+        fun embedUrl(embedUrl: JsonField<String>) = apply { this.embedUrl = embedUrl }
 
         fun expiresAt(expiresAt: String) = expiresAt(JsonField.of(expiresAt))
 
@@ -292,6 +337,7 @@ private constructor(
                 access,
                 browserUrl,
                 (embedOrigins ?: JsonMissing.of()).map { it.toImmutable() },
+                embedUrl,
                 expiresAt,
                 serviceUrl,
                 additionalProperties.toMutableMap(),
@@ -317,6 +363,7 @@ private constructor(
         access().ifPresent { it.validate() }
         browserUrl()
         embedOrigins()
+        embedUrl()
         expiresAt()
         serviceUrl()
         validated = true
@@ -341,6 +388,7 @@ private constructor(
             (access.asKnown().getOrNull()?.validity() ?: 0) +
             (if (browserUrl.asKnown().isPresent) 1 else 0) +
             (embedOrigins.asKnown().getOrNull()?.size ?: 0) +
+            (if (embedUrl.asKnown().isPresent) 1 else 0) +
             (if (expiresAt.asKnown().isPresent) 1 else 0) +
             (if (serviceUrl.asKnown().isPresent) 1 else 0)
 
@@ -494,6 +542,7 @@ private constructor(
             access == other.access &&
             browserUrl == other.browserUrl &&
             embedOrigins == other.embedOrigins &&
+            embedUrl == other.embedUrl &&
             expiresAt == other.expiresAt &&
             serviceUrl == other.serviceUrl &&
             additionalProperties == other.additionalProperties
@@ -505,6 +554,7 @@ private constructor(
             access,
             browserUrl,
             embedOrigins,
+            embedUrl,
             expiresAt,
             serviceUrl,
             additionalProperties,
@@ -514,5 +564,5 @@ private constructor(
     override fun hashCode(): Int = hashCode
 
     override fun toString() =
-        "ServiceUrlResponse{token=$token, access=$access, browserUrl=$browserUrl, embedOrigins=$embedOrigins, expiresAt=$expiresAt, serviceUrl=$serviceUrl, additionalProperties=$additionalProperties}"
+        "ServiceUrlResponse{token=$token, access=$access, browserUrl=$browserUrl, embedOrigins=$embedOrigins, embedUrl=$embedUrl, expiresAt=$expiresAt, serviceUrl=$serviceUrl, additionalProperties=$additionalProperties}"
 }

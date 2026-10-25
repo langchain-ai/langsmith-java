@@ -18,6 +18,7 @@ internal class ServiceUrlResponseTest {
                 .access(ServiceUrlResponse.Access.RESTRICTED)
                 .browserUrl("browser_url")
                 .addEmbedOrigin("string")
+                .embedUrl("embed_url")
                 .expiresAt("expires_at")
                 .serviceUrl("service_url")
                 .build()
@@ -26,6 +27,7 @@ internal class ServiceUrlResponseTest {
         assertThat(serviceUrlResponse.access()).contains(ServiceUrlResponse.Access.RESTRICTED)
         assertThat(serviceUrlResponse.browserUrl()).contains("browser_url")
         assertThat(serviceUrlResponse.embedOrigins().getOrNull()).containsExactly("string")
+        assertThat(serviceUrlResponse.embedUrl()).contains("embed_url")
         assertThat(serviceUrlResponse.expiresAt()).contains("expires_at")
         assertThat(serviceUrlResponse.serviceUrl()).contains("service_url")
     }
@@ -39,6 +41,7 @@ internal class ServiceUrlResponseTest {
                 .access(ServiceUrlResponse.Access.RESTRICTED)
                 .browserUrl("browser_url")
                 .addEmbedOrigin("string")
+                .embedUrl("embed_url")
                 .expiresAt("expires_at")
                 .serviceUrl("service_url")
                 .build()
