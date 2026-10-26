@@ -6613,7 +6613,8 @@ private constructor(
         fun provider(): Provider = provider.getRequired("provider")
 
         /**
-         * ProviderWebBaseURL is the GitLab instance a GitLab fix lives on; null for GitHub.
+         * ProviderWebBaseURL is the instance the fix was opened on; null on GitHub fixes from
+         * before it was recorded.
          *
          * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
          *   the server responded with an unexpected value).
@@ -6824,7 +6825,10 @@ private constructor(
              */
             fun provider(provider: JsonField<Provider>) = apply { this.provider = provider }
 
-            /** ProviderWebBaseURL is the GitLab instance a GitLab fix lives on; null for GitHub. */
+            /**
+             * ProviderWebBaseURL is the instance the fix was opened on; null on GitHub fixes from
+             * before it was recorded.
+             */
             fun providerWebBaseUrl(providerWebBaseUrl: String?) =
                 providerWebBaseUrl(JsonField.ofNullable(providerWebBaseUrl))
 
