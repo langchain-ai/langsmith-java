@@ -328,7 +328,7 @@ class TraceConfig(
      * @see withParent
      */
     val parent: ParentConfig = ParentConfig.AUTO,
-    /** (beta) The agent address to send the trace to instead of a project. */
+    /** The agent address to send the trace to instead of a project. */
     address: Address? = null,
 ) {
     val address: AgentAddress? = ensureAgent(address)
@@ -443,7 +443,7 @@ class TraceConfig(
             this.parent = if (parent != null) ParentConfig.of(parent) else ParentConfig.NONE
         }
 
-        /** (beta) The agent address to send the trace to instead of a project. */
+        /** The agent address to send the trace to instead of a project. */
         fun address(address: Address) = apply { this.address = address }
 
         /** Builds the [TraceConfig]. */

@@ -52,10 +52,9 @@ private constructor(
         fun putHeader(name: String, value: String) = apply { headers[name] = value }
 
         /**
-         * (beta) Sends traces to an agent environment instead of a project, by setting the
+         * Sends traces to an agent environment instead of a project, by setting the
          * `Langsmith-Agent-Id` and `Langsmith-Agent-Environment` headers. It cannot be combined
-         * with a `Langsmith-Project` header: [build] throws. Agent addressing is enabled per
-         * workspace.
+         * with a `Langsmith-Project` header: [build] throws.
          */
         fun address(address: AgentAddress) = apply { this.address = address }
 

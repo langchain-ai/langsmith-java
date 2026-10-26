@@ -87,7 +87,7 @@ class RunTree(
     val parentRunId: String? = null,
     /** ISO-8601 end time. Set when the run completes. */
     var endTime: String? = null,
-    /** (beta) The agent address to send this run to instead of a project. */
+    /** The agent address to send this run to instead of a project. */
     address: Address? = null,
 ) {
     val address: AgentAddress? = ensureAgent(address)
@@ -186,12 +186,7 @@ class RunTree(
                 .runType(RunIngest.RunType.of(runType.value))
                 .startTime(startTime)
                 .apply { this@RunTree.projectName?.let { sessionName(it) } }
-                .apply {
-                    this@RunTree.address?.let {
-                        warnIsBeta()
-                        address(it.toLrn())
-                    }
-                }
+                .apply { this@RunTree.address?.let { address(it.toLrn()) } }
                 .tags(tags)
                 .extra(
                     RunIngest.Extra.builder()
@@ -365,7 +360,7 @@ class RunTree(
 
         fun endTime(endTime: String) = apply { this.endTime = endTime }
 
-        /** (beta) The agent address to send this run to instead of a project. */
+        /** The agent address to send this run to instead of a project. */
         fun address(address: Address) = apply { this.address = address }
 
         fun build(): RunTree {

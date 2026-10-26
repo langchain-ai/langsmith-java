@@ -125,7 +125,7 @@ private constructor(
         fun putHeader(name: String, value: String) = apply { headers[name] = value }
 
         /**
-         * (beta) Sends traces to an agent environment instead of a project. See
+         * Sends traces to an agent environment instead of a project. See
          * [OtelConfig.Builder.address]. It cannot be combined with [config]: [build] throws.
          */
         fun address(address: AgentAddress) = apply { this.address = address }

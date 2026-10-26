@@ -12,23 +12,26 @@ import com.langchain.smith.models.sessions.SessionResolveParams
 import com.langchain.smith.tracing.AddressEnv
 import java.util.Locale
 
-/** (beta) Names the tracing project of a feature; only an [AgentAddress] can receive traces. */
+/**
+ * Names the tracing project of a feature; only an [AgentAddress] can receive traces. Self-hosted
+ * deployments need LangSmith v0.18 or later.
+ */
 @JsonDeserialize(using = AnyAddressDeserializer::class)
 sealed interface Address {
-    /** (beta) `AGENT`, `EXPERIMENT` or `EVALUATOR`. */
+    /** `AGENT`, `EXPERIMENT` or `EVALUATOR`. */
     // Explicit @JsonProperty: the SDK mapper disables getter auto-detection.
     @get:JsonProperty("kind") val kind: String
 
-    /** (beta) Adapts the address to the generated params of `sessions().resolve`. */
+    /** Adapts the address to the generated params of `sessions().resolve`. */
     fun toApiAddress(): SessionResolveParams
 }
 
-/** (beta) The `LANGSMITH_AGENT_*` env vars cannot address a run. The message omits their values. */
+/** The `LANGSMITH_AGENT_*` env vars cannot address a run. The message omits their values. */
 class EnvAddressException internal constructor(message: String) : LangChainException(message)
 
 /**
- * (beta) The address of an agent's environment: [id] is a DNS label and [environment] one of
- * `local`, `development`, `staging` or `production` (any case, stored upper-case).
+ * The address of an agent's environment: [id] is a DNS label and [environment] one of `local`,
+ * `development`, `staging` or `production` (any case, stored upper-case).
  *
  * @throws LangChainInvalidDataException if a value is invalid. The message never echoes it.
  */
@@ -88,8 +91,8 @@ class AgentAddress(@get:JsonProperty("id") val id: String, environment: String) 
         }
 
         /**
-         * (beta) Reads the agent named by `LANGSMITH_AGENT_ID` and `LANGSMITH_AGENT_ENVIRONMENT`;
-         * null if neither is set.
+         * Reads the agent named by `LANGSMITH_AGENT_ID` and `LANGSMITH_AGENT_ENVIRONMENT`; null if
+         * neither is set.
          *
          * @throws EnvAddressException if only one is set, or a value is invalid.
          */
@@ -114,7 +117,7 @@ class AgentAddress(@get:JsonProperty("id") val id: String, environment: String) 
 }
 
 /**
- * (beta) The tracing project of an experiment: [id] is a hyphenated UUID, stored lower-case.
+ * The tracing project of an experiment: [id] is a hyphenated UUID, stored lower-case.
  *
  * @throws LangChainInvalidDataException if [id] is invalid. The message never echoes it.
  */
@@ -149,7 +152,7 @@ class ExperimentAddress(id: String) : Address {
     }
 }
 
-/** (beta) The tracing project of the workspace's evaluators. */
+/** The tracing project of the workspace's evaluators. */
 @JsonDeserialize(using = EvaluatorAddressDeserializer::class)
 class EvaluatorAddress : Address {
     override val kind: String

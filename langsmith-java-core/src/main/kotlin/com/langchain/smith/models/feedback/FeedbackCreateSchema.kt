@@ -146,13 +146,13 @@ private constructor(
     fun id(): Optional<String> = id.getOptional("id")
 
     /**
-     * Beta. Only supported in workspaces where Agent addressing is enabled; other workspaces get
-     * a 403. Addresses the tracing project through an Agent environment, as
+     * Addresses the tracing project through an Agent environment, as
      * lrn:agents/{id}/environments/{environment}, instead of session_id. The id is 1 to 63
      * lowercase ASCII letters, digits, or hyphens, starting with a letter and ending with a letter
      * or digit. The environment is local, development, staging, or production, matched
      * case-insensitively. Never combined with session_id. The Agent and the environment must
-     * already exist; sending feedback does not create them.
+     * already exist; sending feedback does not create them. Self-hosted deployments need LangSmith
+     * v0.18 or later.
      *
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
@@ -574,13 +574,13 @@ private constructor(
         fun id(id: JsonField<String>) = apply { this.id = id }
 
         /**
-         * Beta. Only supported in workspaces where Agent addressing is enabled; other workspaces
-         * get a 403. Addresses the tracing project through an Agent environment, as
+         * Addresses the tracing project through an Agent environment, as
          * lrn:agents/{id}/environments/{environment}, instead of session_id. The id is 1 to 63
          * lowercase ASCII letters, digits, or hyphens, starting with a letter and ending with a
          * letter or digit. The environment is local, development, staging, or production, matched
          * case-insensitively. Never combined with session_id. The Agent and the environment must
-         * already exist; sending feedback does not create them.
+         * already exist; sending feedback does not create them. Self-hosted deployments need
+         * LangSmith v0.18 or later.
          */
         fun address(address: String) = address(JsonField.of(address))
 

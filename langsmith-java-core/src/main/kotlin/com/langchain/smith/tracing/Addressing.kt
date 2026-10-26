@@ -6,7 +6,6 @@ import com.langchain.smith.address.EnvAddressException
 import com.langchain.smith.errors.LangChainInvalidDataException
 import java.util.Optional
 import java.util.concurrent.ConcurrentHashMap
-import java.util.concurrent.atomic.AtomicBoolean
 import org.slf4j.LoggerFactory
 
 private val logger = LoggerFactory.getLogger("com.langchain.smith.tracing.Addressing")
@@ -79,17 +78,5 @@ private val loggedUntraced = ConcurrentHashMap.newKeySet<String>()
 internal fun logUntraced(error: EnvAddressException) {
     if (loggedUntraced.add(error.message.orEmpty())) {
         logger.warn("LangSmith is not tracing this call: {}", error.message)
-    }
-}
-
-private val warnedBeta = AtomicBoolean(false)
-
-internal fun warnIsBeta() {
-    if (warnedBeta.compareAndSet(false, true)) {
-        logger.warn(
-            "Addressing runs to an agent is in beta and enabled per workspace. A workspace " +
-                "without it rejects the run, so the trace is lost instead of falling back to a " +
-                "project."
-        )
     }
 }

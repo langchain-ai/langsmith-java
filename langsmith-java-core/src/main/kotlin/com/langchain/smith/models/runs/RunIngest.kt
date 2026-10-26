@@ -121,9 +121,9 @@ private constructor(
     fun id(): Optional<String> = id.getOptional("id")
 
     /**
-     * Beta. Addresses the run to an Agent environment in place of session_id or session_name, as
-     * lrn:agents/{id}/environments/{environment}. The environment is case-insensitive. Only
-     * workspaces enabled for Agent addressing accept it; others get a 403.
+     * Addresses the run to an Agent environment in place of session_id or session_name, as
+     * lrn:agents/{id}/environments/{environment}. The environment is case-insensitive. Self-hosted
+     * deployments need LangSmith v0.18 or later.
      *
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
@@ -513,9 +513,9 @@ private constructor(
         fun id(id: JsonField<String>) = apply { this.id = id }
 
         /**
-         * Beta. Addresses the run to an Agent environment in place of session_id or session_name,
-         * as lrn:agents/{id}/environments/{environment}. The environment is case-insensitive. Only
-         * workspaces enabled for Agent addressing accept it; others get a 403.
+         * Addresses the run to an Agent environment in place of session_id or session_name, as
+         * lrn:agents/{id}/environments/{environment}. The environment is case-insensitive.
+         * Self-hosted deployments need LangSmith v0.18 or later.
          */
         fun address(address: String) = address(JsonField.of(address))
 
