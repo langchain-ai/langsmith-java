@@ -31,7 +31,10 @@ import java.util.Objects
 import java.util.Optional
 import kotlin.jvm.optionals.getOrNull
 
-/** Create a new feedback with a token. */
+/**
+ * Submit feedback for the token's run and key. The token is the credential, so anyone with it can
+ * submit feedback.
+ */
 class TokenUpdateParams
 private constructor(
     private val token: String?,
@@ -40,6 +43,7 @@ private constructor(
     private val additionalQueryParams: QueryParams,
 ) : Params {
 
+    /** Feedback ingest token. It's a credential: anyone who has it can submit feedback. */
     fun token(): Optional<String> = Optional.ofNullable(token)
 
     /**
@@ -155,6 +159,7 @@ private constructor(
             additionalQueryParams = tokenUpdateParams.additionalQueryParams.toBuilder()
         }
 
+        /** Feedback ingest token. It's a credential: anyone who has it can submit feedback. */
         fun token(token: String?) = apply { this.token = token }
 
         /** Alias for calling [Builder.token] with `token.orElse(null)`. */

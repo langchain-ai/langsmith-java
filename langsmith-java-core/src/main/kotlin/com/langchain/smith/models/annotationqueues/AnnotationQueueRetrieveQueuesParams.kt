@@ -17,6 +17,7 @@ private constructor(
     private val additionalQueryParams: QueryParams,
 ) : Params {
 
+    /** ID of the run. */
     fun runId(): Optional<String> = Optional.ofNullable(runId)
 
     /** Additional headers to send with the request. */
@@ -55,6 +56,7 @@ private constructor(
                 annotationQueueRetrieveQueuesParams.additionalQueryParams.toBuilder()
         }
 
+        /** ID of the run. */
         fun runId(runId: String?) = apply { this.runId = runId }
 
         /** Alias for calling [Builder.runId] with `runId.orElse(null)`. */

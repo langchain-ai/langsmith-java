@@ -17,6 +17,7 @@ private constructor(
     private val additionalQueryParams: QueryParams,
 ) : Params {
 
+    /** ID of the annotation queue. */
     fun queueId(): Optional<String> = Optional.ofNullable(queueId)
 
     /** Additional headers to send with the request. */
@@ -52,6 +53,7 @@ private constructor(
             additionalQueryParams = annotationQueueRetrieveParams.additionalQueryParams.toBuilder()
         }
 
+        /** ID of the annotation queue. */
         fun queueId(queueId: String?) = apply { this.queueId = queueId }
 
         /** Alias for calling [Builder.queueId] with `queueId.orElse(null)`. */

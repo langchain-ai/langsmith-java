@@ -181,7 +181,7 @@ interface ExampleServiceAsync {
         requestOptions: RequestOptions = RequestOptions.none(),
     ): CompletableFuture<ExampleDeleteAllResponse>
 
-    /** Count all examples by query params */
+    /** Count the examples that match the filters. */
     fun retrieveCount(): CompletableFuture<Long> = retrieveCount(ExampleRetrieveCountParams.none())
 
     /** @see retrieveCount */

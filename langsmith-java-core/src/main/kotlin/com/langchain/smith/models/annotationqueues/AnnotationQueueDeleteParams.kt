@@ -20,6 +20,7 @@ private constructor(
     private val additionalBodyProperties: Map<String, JsonValue>,
 ) : Params {
 
+    /** ID of the annotation queue. */
     fun queueId(): Optional<String> = Optional.ofNullable(queueId)
 
     /** Additional body properties to send with the request. */
@@ -60,6 +61,7 @@ private constructor(
                 annotationQueueDeleteParams.additionalBodyProperties.toMutableMap()
         }
 
+        /** ID of the annotation queue. */
         fun queueId(queueId: String?) = apply { this.queueId = queueId }
 
         /** Alias for calling [Builder.queueId] with `queueId.orElse(null)`. */

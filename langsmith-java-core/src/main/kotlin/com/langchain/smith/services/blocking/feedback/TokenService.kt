@@ -98,7 +98,10 @@ interface TokenService {
     fun retrieve(token: String, requestOptions: RequestOptions): TokenRetrieveResponse =
         retrieve(token, TokenRetrieveParams.none(), requestOptions)
 
-    /** Create a new feedback with a token. */
+    /**
+     * Submit feedback for the token's run and key. The token is the credential, so anyone with it
+     * can submit feedback.
+     */
     fun update(token: String): TokenUpdateResponse = update(token, TokenUpdateParams.none())
 
     /** @see update */

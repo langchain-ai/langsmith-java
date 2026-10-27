@@ -262,12 +262,16 @@ private constructor(
         )
 
         /**
+         * ID of the example to update.
+         *
          * @throws LangChainInvalidDataException if the JSON field has an unexpected type or is
          *   unexpectedly missing or null (e.g. if the server responded with an unexpected value).
          */
         fun id(): String = id.getRequired("id")
 
         /**
+         * Attachments to rename or keep.
+         *
          * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
          *   the server responded with an unexpected value).
          */
@@ -275,36 +279,48 @@ private constructor(
             attachmentsOperations.getOptional("attachments_operations")
 
         /**
+         * The example's current dataset. An example can't move to another dataset.
+         *
          * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
          *   the server responded with an unexpected value).
          */
         fun datasetId(): Optional<String> = datasetId.getOptional("dataset_id")
 
         /**
+         * New inputs. Replaces the existing inputs; omit to keep them.
+         *
          * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
          *   the server responded with an unexpected value).
          */
         fun inputs(): Optional<Inputs> = inputs.getOptional("inputs")
 
         /**
+         * New metadata. Replaces the existing metadata; omit to keep it.
+         *
          * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
          *   the server responded with an unexpected value).
          */
         fun metadata(): Optional<Metadata> = metadata.getOptional("metadata")
 
         /**
+         * New outputs. Replaces the existing outputs; omit to keep them.
+         *
          * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
          *   the server responded with an unexpected value).
          */
         fun outputs(): Optional<Outputs> = outputs.getOptional("outputs")
 
         /**
+         * Not used.
+         *
          * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
          *   the server responded with an unexpected value).
          */
         fun overwrite(): Optional<Boolean> = overwrite.getOptional("overwrite")
 
         /**
+         * Split or splits to put the example in. Replaces its current splits.
+         *
          * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
          *   the server responded with an unexpected value).
          */
@@ -420,6 +436,7 @@ private constructor(
                 additionalProperties = body.additionalProperties.toMutableMap()
             }
 
+            /** ID of the example to update. */
             fun id(id: String) = id(JsonField.of(id))
 
             /**
@@ -431,6 +448,7 @@ private constructor(
              */
             fun id(id: JsonField<String>) = apply { this.id = id }
 
+            /** Attachments to rename or keep. */
             fun attachmentsOperations(attachmentsOperations: AttachmentsOperations?) =
                 attachmentsOperations(JsonField.ofNullable(attachmentsOperations))
 
@@ -453,6 +471,7 @@ private constructor(
                     this.attachmentsOperations = attachmentsOperations
                 }
 
+            /** The example's current dataset. An example can't move to another dataset. */
             fun datasetId(datasetId: String?) = datasetId(JsonField.ofNullable(datasetId))
 
             /** Alias for calling [Builder.datasetId] with `datasetId.orElse(null)`. */
@@ -467,6 +486,7 @@ private constructor(
              */
             fun datasetId(datasetId: JsonField<String>) = apply { this.datasetId = datasetId }
 
+            /** New inputs. Replaces the existing inputs; omit to keep them. */
             fun inputs(inputs: Inputs?) = inputs(JsonField.ofNullable(inputs))
 
             /** Alias for calling [Builder.inputs] with `inputs.orElse(null)`. */
@@ -481,6 +501,7 @@ private constructor(
              */
             fun inputs(inputs: JsonField<Inputs>) = apply { this.inputs = inputs }
 
+            /** New metadata. Replaces the existing metadata; omit to keep it. */
             fun metadata(metadata: Metadata?) = metadata(JsonField.ofNullable(metadata))
 
             /** Alias for calling [Builder.metadata] with `metadata.orElse(null)`. */
@@ -495,6 +516,7 @@ private constructor(
              */
             fun metadata(metadata: JsonField<Metadata>) = apply { this.metadata = metadata }
 
+            /** New outputs. Replaces the existing outputs; omit to keep them. */
             fun outputs(outputs: Outputs?) = outputs(JsonField.ofNullable(outputs))
 
             /** Alias for calling [Builder.outputs] with `outputs.orElse(null)`. */
@@ -509,6 +531,7 @@ private constructor(
              */
             fun outputs(outputs: JsonField<Outputs>) = apply { this.outputs = outputs }
 
+            /** Not used. */
             fun overwrite(overwrite: Boolean) = overwrite(JsonField.of(overwrite))
 
             /**
@@ -520,6 +543,7 @@ private constructor(
              */
             fun overwrite(overwrite: JsonField<Boolean>) = apply { this.overwrite = overwrite }
 
+            /** Split or splits to put the example in. Replaces its current splits. */
             fun split(split: Split?) = split(JsonField.ofNullable(split))
 
             /** Alias for calling [Builder.split] with `split.orElse(null)`. */
@@ -637,6 +661,7 @@ private constructor(
                 (if (overwrite.asKnown().isPresent) 1 else 0) +
                 (split.asKnown().getOrNull()?.validity() ?: 0)
 
+        /** New inputs. Replaces the existing inputs; omit to keep them. */
         class Inputs
         @JsonCreator
         private constructor(
@@ -749,6 +774,7 @@ private constructor(
             override fun toString() = "Inputs{additionalProperties=$additionalProperties}"
         }
 
+        /** New metadata. Replaces the existing metadata; omit to keep it. */
         class Metadata
         @JsonCreator
         private constructor(
@@ -861,6 +887,7 @@ private constructor(
             override fun toString() = "Metadata{additionalProperties=$additionalProperties}"
         }
 
+        /** New outputs. Replaces the existing outputs; omit to keep them. */
         class Outputs
         @JsonCreator
         private constructor(
@@ -973,6 +1000,7 @@ private constructor(
             override fun toString() = "Outputs{additionalProperties=$additionalProperties}"
         }
 
+        /** Split or splits to put the example in. Replaces its current splits. */
         @JsonDeserialize(using = Split.Deserializer::class)
         @JsonSerialize(using = Split.Serializer::class)
         class Split

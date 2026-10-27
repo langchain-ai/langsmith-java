@@ -23,6 +23,7 @@ private constructor(
     private val additionalQueryParams: QueryParams,
 ) : Params {
 
+    /** Feedback ingest token. It's a credential: anyone who has it can submit feedback. */
     fun token(): Optional<String> = Optional.ofNullable(token)
 
     fun comment(): Optional<String> = Optional.ofNullable(comment)
@@ -75,6 +76,7 @@ private constructor(
             additionalQueryParams = tokenRetrieveParams.additionalQueryParams.toBuilder()
         }
 
+        /** Feedback ingest token. It's a credential: anyone who has it can submit feedback. */
         fun token(token: String?) = apply { this.token = token }
 
         /** Alias for calling [Builder.token] with `token.orElse(null)`. */

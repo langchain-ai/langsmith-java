@@ -43,63 +43,85 @@ private constructor(
     private val additionalQueryParams: QueryParams,
 ) : Params {
 
+    /** ID of the annotation queue. */
     fun queueId(): Optional<String> = Optional.ofNullable(queueId)
 
     /**
+     * Dataset that reviewed runs are added to by default.
+     *
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
      */
     fun defaultDataset(): Optional<String> = body.defaultDataset()
 
     /**
+     * New description.
+     *
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
      */
     fun description(): Optional<String> = body.description()
 
     /**
+     * Whether a reviewer reserves a run while reviewing it, so others skip it.
+     *
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
      */
     fun enableReservations(): Optional<EnableReservations> = body.enableReservations()
 
     /**
+     * Metadata to store on the queue. Replaces the existing metadata.
+     *
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
      */
     fun metadata(): Optional<Metadata> = body.metadata()
 
     /**
+     * New name for the queue.
+     *
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
      */
     fun name(): Optional<String> = body.name()
 
     /**
+     * How many reviewers must review each run.
+     *
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
      */
     fun numReviewersPerItem(): Optional<NumReviewersPerItem> = body.numReviewersPerItem()
 
     /**
+     * How long a reservation lasts, in minutes.
+     *
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
      */
     fun reservationMinutes(): Optional<ReservationMinutes> = body.reservationMinutes()
 
     /**
+     * Who completes a run: any (one reviewer is enough) or assigned (every assigned reviewer must
+     * submit).
+     *
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
      */
     fun reviewerAccessMode(): Optional<ReviewerAccessMode> = body.reviewerAccessMode()
 
     /**
+     * Instructions shown to reviewers.
+     *
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
      */
     fun rubricInstructions(): Optional<String> = body.rubricInstructions()
 
     /**
+     * Feedback keys reviewers fill in for each run.
+     *
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
      */
@@ -216,6 +238,7 @@ private constructor(
             additionalQueryParams = annotationQueueUpdateParams.additionalQueryParams.toBuilder()
         }
 
+        /** ID of the annotation queue. */
         fun queueId(queueId: String?) = apply { this.queueId = queueId }
 
         /** Alias for calling [Builder.queueId] with `queueId.orElse(null)`. */
@@ -235,6 +258,7 @@ private constructor(
          */
         fun body(body: Body) = apply { this.body = body.toBuilder() }
 
+        /** Dataset that reviewed runs are added to by default. */
         fun defaultDataset(defaultDataset: String?) = apply { body.defaultDataset(defaultDataset) }
 
         /** Alias for calling [Builder.defaultDataset] with `defaultDataset.orElse(null)`. */
@@ -252,6 +276,7 @@ private constructor(
             body.defaultDataset(defaultDataset)
         }
 
+        /** New description. */
         fun description(description: String?) = apply { body.description(description) }
 
         /** Alias for calling [Builder.description] with `description.orElse(null)`. */
@@ -266,6 +291,7 @@ private constructor(
          */
         fun description(description: JsonField<String>) = apply { body.description(description) }
 
+        /** Whether a reviewer reserves a run while reviewing it, so others skip it. */
         fun enableReservations(enableReservations: EnableReservations) = apply {
             body.enableReservations(enableReservations)
         }
@@ -287,6 +313,7 @@ private constructor(
         /** Alias for calling [enableReservations] with `EnableReservations.ofMissing(missing)`. */
         fun enableReservations(missing: Missing) = apply { body.enableReservations(missing) }
 
+        /** Metadata to store on the queue. Replaces the existing metadata. */
         fun metadata(metadata: Metadata?) = apply { body.metadata(metadata) }
 
         /** Alias for calling [Builder.metadata] with `metadata.orElse(null)`. */
@@ -307,6 +334,7 @@ private constructor(
         /** Alias for calling [metadata] with `Metadata.ofMissing(missing)`. */
         fun metadata(missing: Missing) = apply { body.metadata(missing) }
 
+        /** New name for the queue. */
         fun name(name: String?) = apply { body.name(name) }
 
         /** Alias for calling [Builder.name] with `name.orElse(null)`. */
@@ -320,6 +348,7 @@ private constructor(
          */
         fun name(name: JsonField<String>) = apply { body.name(name) }
 
+        /** How many reviewers must review each run. */
         fun numReviewersPerItem(numReviewersPerItem: NumReviewersPerItem?) = apply {
             body.numReviewersPerItem(numReviewersPerItem)
         }
@@ -351,6 +380,7 @@ private constructor(
          */
         fun numReviewersPerItem(missing: Missing) = apply { body.numReviewersPerItem(missing) }
 
+        /** How long a reservation lasts, in minutes. */
         fun reservationMinutes(reservationMinutes: ReservationMinutes?) = apply {
             body.reservationMinutes(reservationMinutes)
         }
@@ -378,6 +408,10 @@ private constructor(
         /** Alias for calling [reservationMinutes] with `ReservationMinutes.ofMissing(missing)`. */
         fun reservationMinutes(missing: Missing) = apply { body.reservationMinutes(missing) }
 
+        /**
+         * Who completes a run: any (one reviewer is enough) or assigned (every assigned reviewer
+         * must submit).
+         */
         fun reviewerAccessMode(reviewerAccessMode: ReviewerAccessMode?) = apply {
             body.reviewerAccessMode(reviewerAccessMode)
         }
@@ -399,6 +433,7 @@ private constructor(
             body.reviewerAccessMode(reviewerAccessMode)
         }
 
+        /** Instructions shown to reviewers. */
         fun rubricInstructions(rubricInstructions: String?) = apply {
             body.rubricInstructions(rubricInstructions)
         }
@@ -420,6 +455,7 @@ private constructor(
             body.rubricInstructions(rubricInstructions)
         }
 
+        /** Feedback keys reviewers fill in for each run. */
         fun rubricItems(rubricItems: List<AnnotationQueueRubricItemSchema>?) = apply {
             body.rubricItems(rubricItems)
         }
@@ -653,18 +689,24 @@ private constructor(
         )
 
         /**
+         * Dataset that reviewed runs are added to by default.
+         *
          * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
          *   the server responded with an unexpected value).
          */
         fun defaultDataset(): Optional<String> = defaultDataset.getOptional("default_dataset")
 
         /**
+         * New description.
+         *
          * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
          *   the server responded with an unexpected value).
          */
         fun description(): Optional<String> = description.getOptional("description")
 
         /**
+         * Whether a reviewer reserves a run while reviewing it, so others skip it.
+         *
          * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
          *   the server responded with an unexpected value).
          */
@@ -672,18 +714,24 @@ private constructor(
             enableReservations.getOptional("enable_reservations")
 
         /**
+         * Metadata to store on the queue. Replaces the existing metadata.
+         *
          * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
          *   the server responded with an unexpected value).
          */
         fun metadata(): Optional<Metadata> = metadata.getOptional("metadata")
 
         /**
+         * New name for the queue.
+         *
          * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
          *   the server responded with an unexpected value).
          */
         fun name(): Optional<String> = name.getOptional("name")
 
         /**
+         * How many reviewers must review each run.
+         *
          * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
          *   the server responded with an unexpected value).
          */
@@ -691,6 +739,8 @@ private constructor(
             numReviewersPerItem.getOptional("num_reviewers_per_item")
 
         /**
+         * How long a reservation lasts, in minutes.
+         *
          * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
          *   the server responded with an unexpected value).
          */
@@ -698,6 +748,9 @@ private constructor(
             reservationMinutes.getOptional("reservation_minutes")
 
         /**
+         * Who completes a run: any (one reviewer is enough) or assigned (every assigned reviewer
+         * must submit).
+         *
          * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
          *   the server responded with an unexpected value).
          */
@@ -705,6 +758,8 @@ private constructor(
             reviewerAccessMode.getOptional("reviewer_access_mode")
 
         /**
+         * Instructions shown to reviewers.
+         *
          * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
          *   the server responded with an unexpected value).
          */
@@ -712,6 +767,8 @@ private constructor(
             rubricInstructions.getOptional("rubric_instructions")
 
         /**
+         * Feedback keys reviewers fill in for each run.
+         *
          * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
          *   the server responded with an unexpected value).
          */
@@ -858,6 +915,7 @@ private constructor(
                 additionalProperties = body.additionalProperties.toMutableMap()
             }
 
+            /** Dataset that reviewed runs are added to by default. */
             fun defaultDataset(defaultDataset: String?) =
                 defaultDataset(JsonField.ofNullable(defaultDataset))
 
@@ -876,6 +934,7 @@ private constructor(
                 this.defaultDataset = defaultDataset
             }
 
+            /** New description. */
             fun description(description: String?) = description(JsonField.ofNullable(description))
 
             /** Alias for calling [Builder.description] with `description.orElse(null)`. */
@@ -892,6 +951,7 @@ private constructor(
                 this.description = description
             }
 
+            /** Whether a reviewer reserves a run while reviewing it, so others skip it. */
             fun enableReservations(enableReservations: EnableReservations) =
                 enableReservations(JsonField.of(enableReservations))
 
@@ -916,6 +976,7 @@ private constructor(
             fun enableReservations(missing: Missing) =
                 enableReservations(EnableReservations.ofMissing(missing))
 
+            /** Metadata to store on the queue. Replaces the existing metadata. */
             fun metadata(metadata: Metadata?) = metadata(JsonField.ofNullable(metadata))
 
             /** Alias for calling [Builder.metadata] with `metadata.orElse(null)`. */
@@ -937,6 +998,7 @@ private constructor(
             /** Alias for calling [metadata] with `Metadata.ofMissing(missing)`. */
             fun metadata(missing: Missing) = metadata(Metadata.ofMissing(missing))
 
+            /** New name for the queue. */
             fun name(name: String?) = name(JsonField.ofNullable(name))
 
             /** Alias for calling [Builder.name] with `name.orElse(null)`. */
@@ -951,6 +1013,7 @@ private constructor(
              */
             fun name(name: JsonField<String>) = apply { this.name = name }
 
+            /** How many reviewers must review each run. */
             fun numReviewersPerItem(numReviewersPerItem: NumReviewersPerItem?) =
                 numReviewersPerItem(JsonField.ofNullable(numReviewersPerItem))
 
@@ -986,6 +1049,7 @@ private constructor(
             fun numReviewersPerItem(missing: Missing) =
                 numReviewersPerItem(NumReviewersPerItem.ofMissing(missing))
 
+            /** How long a reservation lasts, in minutes. */
             fun reservationMinutes(reservationMinutes: ReservationMinutes?) =
                 reservationMinutes(JsonField.ofNullable(reservationMinutes))
 
@@ -1019,6 +1083,10 @@ private constructor(
             fun reservationMinutes(missing: Missing) =
                 reservationMinutes(ReservationMinutes.ofMissing(missing))
 
+            /**
+             * Who completes a run: any (one reviewer is enough) or assigned (every assigned
+             * reviewer must submit).
+             */
             fun reviewerAccessMode(reviewerAccessMode: ReviewerAccessMode?) =
                 reviewerAccessMode(JsonField.ofNullable(reviewerAccessMode))
 
@@ -1040,6 +1108,7 @@ private constructor(
                 this.reviewerAccessMode = reviewerAccessMode
             }
 
+            /** Instructions shown to reviewers. */
             fun rubricInstructions(rubricInstructions: String?) =
                 rubricInstructions(JsonField.ofNullable(rubricInstructions))
 
@@ -1061,6 +1130,7 @@ private constructor(
                 this.rubricInstructions = rubricInstructions
             }
 
+            /** Feedback keys reviewers fill in for each run. */
             fun rubricItems(rubricItems: List<AnnotationQueueRubricItemSchema>?) =
                 rubricItems(JsonField.ofNullable(rubricItems))
 
@@ -1228,6 +1298,7 @@ private constructor(
             "Body{defaultDataset=$defaultDataset, description=$description, enableReservations=$enableReservations, metadata=$metadata, name=$name, numReviewersPerItem=$numReviewersPerItem, reservationMinutes=$reservationMinutes, reviewerAccessMode=$reviewerAccessMode, rubricInstructions=$rubricInstructions, rubricItems=$rubricItems, additionalProperties=$additionalProperties}"
     }
 
+    /** Whether a reviewer reserves a run while reviewing it, so others skip it. */
     @JsonDeserialize(using = EnableReservations.Deserializer::class)
     @JsonSerialize(using = EnableReservations.Serializer::class)
     class EnableReservations
@@ -1439,6 +1510,7 @@ private constructor(
         }
     }
 
+    /** Metadata to store on the queue. Replaces the existing metadata. */
     @JsonDeserialize(using = Metadata.Deserializer::class)
     @JsonSerialize(using = Metadata.Serializer::class)
     class Metadata
@@ -1766,6 +1838,7 @@ private constructor(
         }
     }
 
+    /** How many reviewers must review each run. */
     @JsonDeserialize(using = NumReviewersPerItem.Deserializer::class)
     @JsonSerialize(using = NumReviewersPerItem.Serializer::class)
     class NumReviewersPerItem
@@ -1980,6 +2053,7 @@ private constructor(
         }
     }
 
+    /** How long a reservation lasts, in minutes. */
     @JsonDeserialize(using = ReservationMinutes.Deserializer::class)
     @JsonSerialize(using = ReservationMinutes.Serializer::class)
     class ReservationMinutes
@@ -2193,6 +2267,10 @@ private constructor(
         }
     }
 
+    /**
+     * Who completes a run: any (one reviewer is enough) or assigned (every assigned reviewer must
+     * submit).
+     */
     class ReviewerAccessMode
     @JsonCreator
     private constructor(private val value: JsonField<String>) : Enum {

@@ -13,7 +13,7 @@ import java.util.Objects
 import java.util.Optional
 import kotlin.jvm.optionals.getOrNull
 
-/** Count all examples by query params */
+/** Count the examples that match the filters. */
 class ExampleRetrieveCountParams
 private constructor(
     private val id: List<String>?,
@@ -27,6 +27,7 @@ private constructor(
     private val additionalQueryParams: QueryParams,
 ) : Params {
 
+    /** Only count examples with these IDs. */
     fun id(): Optional<List<String>> = Optional.ofNullable(id)
 
     /**
@@ -35,14 +36,21 @@ private constructor(
      */
     fun asOf(): Optional<AsOf> = Optional.ofNullable(asOf)
 
+    /** Only count examples in this dataset. */
     fun dataset(): Optional<String> = Optional.ofNullable(dataset)
 
+    /** Filter expression the examples must match. */
     fun filter(): Optional<String> = Optional.ofNullable(filter)
 
+    /**
+     * Only count examples whose inputs or outputs contain every one of these terms, ignoring case.
+     */
     fun fullTextContains(): Optional<List<String>> = Optional.ofNullable(fullTextContains)
 
+    /** JSON object. Only count examples whose metadata contains it. */
     fun metadata(): Optional<String> = Optional.ofNullable(metadata)
 
+    /** Only count examples in any of these splits. */
     fun splits(): Optional<List<String>> = Optional.ofNullable(splits)
 
     /** Additional headers to send with the request. */
@@ -89,6 +97,7 @@ private constructor(
             additionalQueryParams = exampleRetrieveCountParams.additionalQueryParams.toBuilder()
         }
 
+        /** Only count examples with these IDs. */
         fun id(id: List<String>?) = apply { this.id = id?.toMutableList() }
 
         /** Alias for calling [Builder.id] with `id.orElse(null)`. */
@@ -116,16 +125,22 @@ private constructor(
         /** Alias for calling [asOf] with `AsOf.ofString(string)`. */
         fun asOf(string: String) = asOf(AsOf.ofString(string))
 
+        /** Only count examples in this dataset. */
         fun dataset(dataset: String?) = apply { this.dataset = dataset }
 
         /** Alias for calling [Builder.dataset] with `dataset.orElse(null)`. */
         fun dataset(dataset: Optional<String>) = dataset(dataset.getOrNull())
 
+        /** Filter expression the examples must match. */
         fun filter(filter: String?) = apply { this.filter = filter }
 
         /** Alias for calling [Builder.filter] with `filter.orElse(null)`. */
         fun filter(filter: Optional<String>) = filter(filter.getOrNull())
 
+        /**
+         * Only count examples whose inputs or outputs contain every one of these terms, ignoring
+         * case.
+         */
         fun fullTextContains(fullTextContains: List<String>?) = apply {
             this.fullTextContains = fullTextContains?.toMutableList()
         }
@@ -143,11 +158,13 @@ private constructor(
             fullTextContains = (fullTextContains ?: mutableListOf()).apply { add(fullTextContain) }
         }
 
+        /** JSON object. Only count examples whose metadata contains it. */
         fun metadata(metadata: String?) = apply { this.metadata = metadata }
 
         /** Alias for calling [Builder.metadata] with `metadata.orElse(null)`. */
         fun metadata(metadata: Optional<String>) = metadata(metadata.getOrNull())
 
+        /** Only count examples in any of these splits. */
         fun splits(splits: List<String>?) = apply { this.splits = splits?.toMutableList() }
 
         /** Alias for calling [Builder.splits] with `splits.orElse(null)`. */

@@ -31,18 +31,24 @@ private constructor(
 ) : Params {
 
     /**
+     * ID of the annotation queue to add runs to.
+     *
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type or is
      *   unexpectedly missing or null (e.g. if the server responded with an unexpected value).
      */
     fun queueId(): String = body.queueId()
 
     /**
+     * Experiments whose runs are added to the queue. Each must be an experiment on a dataset.
+     *
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type or is
      *   unexpectedly missing or null (e.g. if the server responded with an unexpected value).
      */
     fun sessionIds(): List<String> = body.sessionIds()
 
     /**
+     * Upgrade the added traces from short-lived to extended retention.
+     *
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
      */
@@ -120,6 +126,7 @@ private constructor(
          */
         fun body(body: Body) = apply { this.body = body.toBuilder() }
 
+        /** ID of the annotation queue to add runs to. */
         fun queueId(queueId: String) = apply { body.queueId(queueId) }
 
         /**
@@ -130,6 +137,9 @@ private constructor(
          */
         fun queueId(queueId: JsonField<String>) = apply { body.queueId(queueId) }
 
+        /**
+         * Experiments whose runs are added to the queue. Each must be an experiment on a dataset.
+         */
         fun sessionIds(sessionIds: List<String>) = apply { body.sessionIds(sessionIds) }
 
         /**
@@ -148,6 +158,7 @@ private constructor(
          */
         fun addSessionId(sessionId: String) = apply { body.addSessionId(sessionId) }
 
+        /** Upgrade the added traces from short-lived to extended retention. */
         fun extendTraceRetention(extendTraceRetention: Boolean) = apply {
             body.extendTraceRetention(extendTraceRetention)
         }
@@ -328,18 +339,24 @@ private constructor(
         ) : this(queueId, sessionIds, extendTraceRetention, mutableMapOf())
 
         /**
+         * ID of the annotation queue to add runs to.
+         *
          * @throws LangChainInvalidDataException if the JSON field has an unexpected type or is
          *   unexpectedly missing or null (e.g. if the server responded with an unexpected value).
          */
         fun queueId(): String = queueId.getRequired("queue_id")
 
         /**
+         * Experiments whose runs are added to the queue. Each must be an experiment on a dataset.
+         *
          * @throws LangChainInvalidDataException if the JSON field has an unexpected type or is
          *   unexpectedly missing or null (e.g. if the server responded with an unexpected value).
          */
         fun sessionIds(): List<String> = sessionIds.getRequired("session_ids")
 
         /**
+         * Upgrade the added traces from short-lived to extended retention.
+         *
          * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
          *   the server responded with an unexpected value).
          */
@@ -414,6 +431,7 @@ private constructor(
                 additionalProperties = body.additionalProperties.toMutableMap()
             }
 
+            /** ID of the annotation queue to add runs to. */
             fun queueId(queueId: String) = queueId(JsonField.of(queueId))
 
             /**
@@ -425,6 +443,10 @@ private constructor(
              */
             fun queueId(queueId: JsonField<String>) = apply { this.queueId = queueId }
 
+            /**
+             * Experiments whose runs are added to the queue. Each must be an experiment on a
+             * dataset.
+             */
             fun sessionIds(sessionIds: List<String>) = sessionIds(JsonField.of(sessionIds))
 
             /**
@@ -450,6 +472,7 @@ private constructor(
                     }
             }
 
+            /** Upgrade the added traces from short-lived to extended retention. */
             fun extendTraceRetention(extendTraceRetention: Boolean) =
                 extendTraceRetention(JsonField.of(extendTraceRetention))
 
