@@ -14,6 +14,7 @@ import com.langchain.smith.models.threads.ThreadQueryParams
 import com.langchain.smith.models.threads.ThreadStats
 import com.langchain.smith.models.threads.ThreadStatsParams
 import com.langchain.smith.services.async.threads.ShareServiceAsync
+import com.langchain.smith.services.async.threads.StreamingServiceAsync
 import java.util.concurrent.CompletableFuture
 import java.util.function.Consumer
 
@@ -30,6 +31,8 @@ interface ThreadServiceAsync {
      * The original service is not modified.
      */
     fun withOptions(modifier: Consumer<ClientOptions.Builder>): ThreadServiceAsync
+
+    fun streaming(): StreamingServiceAsync
 
     fun share(): ShareServiceAsync
 
@@ -148,6 +151,8 @@ interface ThreadServiceAsync {
         fun withOptions(
             modifier: Consumer<ClientOptions.Builder>
         ): ThreadServiceAsync.WithRawResponse
+
+        fun streaming(): StreamingServiceAsync.WithRawResponse
 
         fun share(): ShareServiceAsync.WithRawResponse
 

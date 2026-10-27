@@ -9,6 +9,7 @@ import com.langchain.smith.models.traces.TraceListRunsParams
 import com.langchain.smith.models.traces.TraceListRunsResponse
 import com.langchain.smith.models.traces.TraceQueryPageAsync
 import com.langchain.smith.models.traces.TraceQueryParams
+import com.langchain.smith.services.async.traces.StreamingServiceAsync
 import java.util.concurrent.CompletableFuture
 import java.util.function.Consumer
 
@@ -25,6 +26,8 @@ interface TraceServiceAsync {
      * The original service is not modified.
      */
     fun withOptions(modifier: Consumer<ClientOptions.Builder>): TraceServiceAsync
+
+    fun streaming(): StreamingServiceAsync
 
     /**
      * Returns runs for a trace ID within min/max start time. Optional `filter`; repeatable
@@ -102,6 +105,8 @@ interface TraceServiceAsync {
         fun withOptions(
             modifier: Consumer<ClientOptions.Builder>
         ): TraceServiceAsync.WithRawResponse
+
+        fun streaming(): StreamingServiceAsync.WithRawResponse
 
         /**
          * Returns a raw HTTP response for `get /api/v2/traces/{trace_id}/runs`, but is otherwise

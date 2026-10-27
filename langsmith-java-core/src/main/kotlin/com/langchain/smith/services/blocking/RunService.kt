@@ -33,6 +33,7 @@ import com.langchain.smith.models.runs.RunUpdateParams
 import com.langchain.smith.models.runs.RunUpdateResponse
 import com.langchain.smith.services.blocking.runs.RuleService
 import com.langchain.smith.services.blocking.runs.ShareService
+import com.langchain.smith.services.blocking.runs.StreamingService
 import java.util.function.Consumer
 
 interface RunService {
@@ -50,6 +51,8 @@ interface RunService {
     fun withOptions(modifier: Consumer<ClientOptions.Builder>): RunService
 
     fun rules(): RuleService
+
+    fun streaming(): StreamingService
 
     fun share(): ShareService
 
@@ -411,6 +414,8 @@ interface RunService {
         fun withOptions(modifier: Consumer<ClientOptions.Builder>): RunService.WithRawResponse
 
         fun rules(): RuleService.WithRawResponse
+
+        fun streaming(): StreamingService.WithRawResponse
 
         fun share(): ShareService.WithRawResponse
 

@@ -54,6 +54,8 @@ import com.langchain.smith.services.async.runs.RuleServiceAsync
 import com.langchain.smith.services.async.runs.RuleServiceAsyncImpl
 import com.langchain.smith.services.async.runs.ShareServiceAsync
 import com.langchain.smith.services.async.runs.ShareServiceAsyncImpl
+import com.langchain.smith.services.async.runs.StreamingServiceAsync
+import com.langchain.smith.services.async.runs.StreamingServiceAsyncImpl
 import com.langchain.smith.services.isZstdCompressionEnabled
 import com.langchain.smith.services.shouldDefaultRunCompressionEnabled
 import java.util.concurrent.CompletableFuture
@@ -82,6 +84,10 @@ class RunServiceAsyncImpl internal constructor(private val clientOptions: Client
             batchSizeLimit = limits.batchSizeLimit,
             batchSizeLimitBytes = limits.batchSizeLimitBytes,
         )
+    }
+
+    private val streaming: StreamingServiceAsync by lazy {
+        StreamingServiceAsyncImpl(clientOptions)
     }
 
     private val share: ShareServiceAsync by lazy { ShareServiceAsyncImpl(clientOptions) }
@@ -173,6 +179,8 @@ class RunServiceAsyncImpl internal constructor(private val clientOptions: Client
 
     override fun withOptions(modifier: Consumer<ClientOptions.Builder>): RunServiceAsync =
         RunServiceAsyncImpl(clientOptions.toBuilder().apply(modifier::accept).build())
+
+    override fun streaming(): StreamingServiceAsync = streaming
 
     override fun share(): ShareServiceAsync = share
 
@@ -356,6 +364,10 @@ class RunServiceAsyncImpl internal constructor(private val clientOptions: Client
             RuleServiceAsyncImpl.WithRawResponseImpl(clientOptions)
         }
 
+        private val streaming: StreamingServiceAsync.WithRawResponse by lazy {
+            StreamingServiceAsyncImpl.WithRawResponseImpl(clientOptions)
+        }
+
         private val share: ShareServiceAsync.WithRawResponse by lazy {
             ShareServiceAsyncImpl.WithRawResponseImpl(clientOptions)
         }
@@ -366,6 +378,8 @@ class RunServiceAsyncImpl internal constructor(private val clientOptions: Client
             RunServiceAsyncImpl.WithRawResponseImpl(
                 clientOptions.toBuilder().apply(modifier::accept).build()
             )
+
+        override fun streaming(): StreamingServiceAsync.WithRawResponse = streaming
 
         override fun share(): ShareServiceAsync.WithRawResponse = share
 

@@ -15,6 +15,7 @@ import com.langchain.smith.models.threads.ThreadQueryParams
 import com.langchain.smith.models.threads.ThreadStats
 import com.langchain.smith.models.threads.ThreadStatsParams
 import com.langchain.smith.services.blocking.threads.ShareService
+import com.langchain.smith.services.blocking.threads.StreamingService
 import java.util.function.Consumer
 
 interface ThreadService {
@@ -30,6 +31,8 @@ interface ThreadService {
      * The original service is not modified.
      */
     fun withOptions(modifier: Consumer<ClientOptions.Builder>): ThreadService
+
+    fun streaming(): StreamingService
 
     fun share(): ShareService
 
@@ -136,6 +139,8 @@ interface ThreadService {
          * The original service is not modified.
          */
         fun withOptions(modifier: Consumer<ClientOptions.Builder>): ThreadService.WithRawResponse
+
+        fun streaming(): StreamingService.WithRawResponse
 
         fun share(): ShareService.WithRawResponse
 

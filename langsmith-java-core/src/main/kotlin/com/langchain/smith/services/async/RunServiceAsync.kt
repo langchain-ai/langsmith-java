@@ -32,6 +32,7 @@ import com.langchain.smith.models.runs.RunUpdateParams
 import com.langchain.smith.models.runs.RunUpdateResponse
 import com.langchain.smith.services.async.runs.RuleServiceAsync
 import com.langchain.smith.services.async.runs.ShareServiceAsync
+import com.langchain.smith.services.async.runs.StreamingServiceAsync
 import java.util.concurrent.CompletableFuture
 import java.util.function.Consumer
 
@@ -50,6 +51,8 @@ interface RunServiceAsync {
     fun withOptions(modifier: Consumer<ClientOptions.Builder>): RunServiceAsync
 
     fun rules(): RuleServiceAsync
+
+    fun streaming(): StreamingServiceAsync
 
     fun share(): ShareServiceAsync
 
@@ -431,6 +434,8 @@ interface RunServiceAsync {
          * The original service is not modified.
          */
         fun withOptions(modifier: Consumer<ClientOptions.Builder>): RunServiceAsync.WithRawResponse
+
+        fun streaming(): StreamingServiceAsync.WithRawResponse
 
         fun share(): ShareServiceAsync.WithRawResponse
 

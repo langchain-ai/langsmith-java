@@ -1,0 +1,1185 @@
+// File generated from our OpenAPI spec by Stainless.
+
+package com.langchain.smith.models.threads.streaming
+
+import com.fasterxml.jackson.annotation.JsonAnyGetter
+import com.fasterxml.jackson.annotation.JsonAnySetter
+import com.fasterxml.jackson.annotation.JsonCreator
+import com.fasterxml.jackson.annotation.JsonProperty
+import com.langchain.smith.core.ExcludeMissing
+import com.langchain.smith.core.JsonField
+import com.langchain.smith.core.JsonMissing
+import com.langchain.smith.core.JsonValue
+import com.langchain.smith.core.Params
+import com.langchain.smith.core.http.Headers
+import com.langchain.smith.core.http.QueryParams
+import com.langchain.smith.errors.LangChainInvalidDataException
+import java.time.OffsetDateTime
+import java.util.Collections
+import java.util.Objects
+import java.util.Optional
+import kotlin.jvm.optionals.getOrNull
+
+/**
+ * GET with body payload — no resources created. Returns the threads in a tracing project matching
+ * the query passed as the request payload. Results are filtered by the given time range and
+ * optional filters, with cursor-based pagination.
+ *
+ * When `ai_search` is set, `Accept: text/event-stream` is required; requests without it return 406.
+ * AI search is unavailable on deployments that route queries to the v1 backend and returns 501
+ * there.
+ *
+ * Self-hosted deployments require LangSmith `v0.16` or later.
+ */
+class StreamingQueryParams
+private constructor(
+    private val accept: String?,
+    private val body: Body,
+    private val additionalHeaders: Headers,
+    private val additionalQueryParams: QueryParams,
+) : Params {
+
+    fun accept(): Optional<String> = Optional.ofNullable(accept)
+
+    /**
+     * `ai_search` is a plain-language criterion evaluated against the messages from the agent
+     * trajectory scoped to the thread. AND-ed with the ordinary filters. Requires semantic
+     * filtering enabled for the deployment. Must contain nonempty text of at most 2000 UTF-8 bytes.
+     *
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
+    fun aiSearch(): Optional<String> = body.aiSearch()
+
+    /**
+     * `cursor` is the opaque string from a previous response's `next_cursor`. Omit on the first
+     * request; pass the returned cursor to fetch the next page.
+     *
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
+    fun cursor(): Optional<String> = body.cursor()
+
+    /**
+     * `filter` narrows which threads are returned, using a LangSmith filter expression evaluated
+     * against each thread's root run. For example: has(tags, "production") or eq(status, "error").
+     * See https://docs.langchain.com/langsmith/trace-query-syntax#filter-query-language for syntax.
+     *
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
+    fun filter(): Optional<String> = body.filter()
+
+    /**
+     * `max_start_time` is the exclusive upper bound on thread activity (RFC3339 date-time).
+     * Defaults to now (UTC) when omitted.
+     *
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
+    fun maxStartTime(): Optional<OffsetDateTime> = body.maxStartTime()
+
+    /**
+     * `min_start_time` is the inclusive lower bound on thread activity (RFC3339 date-time).
+     * Defaults to 1 day before now (UTC) when omitted.
+     *
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
+    fun minStartTime(): Optional<OffsetDateTime> = body.minStartTime()
+
+    /**
+     * `page_size` is the maximum number of threads to return in this response. Defaults to 20 when
+     * omitted; must be between 1 and 100 inclusive when set. The response may contain fewer threads
+     * than `page_size` even when `next_cursor` is non-null.
+     *
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
+    fun pageSize(): Optional<Long> = body.pageSize()
+
+    /**
+     * `project_id` is the tracing project UUID.
+     *
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
+    fun projectId(): Optional<String> = body.projectId()
+
+    /**
+     * `thread_filter` narrows results using a LangSmith filter expression evaluated against each
+     * complete thread summary. Self-hosted deployments require LangSmith v0.17 or later;
+     * unsupported deployments return 501. See
+     * https://docs.langchain.com/langsmith/trace-query-syntax#filter-query-language for syntax.
+     *
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
+    fun threadFilter(): Optional<String> = body.threadFilter()
+
+    /**
+     * `trace_filter` narrows results to threads containing at least one trace whose root run
+     * matches this LangSmith filter expression. Trace-level aggregate fields are evaluated using
+     * the complete trace summary. Self-hosted deployments require LangSmith v0.17 or later;
+     * unsupported deployments return 501. See
+     * https://docs.langchain.com/langsmith/trace-query-syntax#filter-query-language for syntax.
+     *
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
+    fun traceFilter(): Optional<String> = body.traceFilter()
+
+    /**
+     * `tree_filter` narrows results to threads containing at least one trace with a matching run
+     * anywhere in its run tree. Self-hosted deployments require LangSmith v0.17 or later;
+     * unsupported deployments return 501. See
+     * https://docs.langchain.com/langsmith/trace-query-syntax#filter-query-language for syntax.
+     *
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
+    fun treeFilter(): Optional<String> = body.treeFilter()
+
+    /**
+     * Returns the raw JSON value of [aiSearch].
+     *
+     * Unlike [aiSearch], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    fun _aiSearch(): JsonField<String> = body._aiSearch()
+
+    /**
+     * Returns the raw JSON value of [cursor].
+     *
+     * Unlike [cursor], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    fun _cursor(): JsonField<String> = body._cursor()
+
+    /**
+     * Returns the raw JSON value of [filter].
+     *
+     * Unlike [filter], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    fun _filter(): JsonField<String> = body._filter()
+
+    /**
+     * Returns the raw JSON value of [maxStartTime].
+     *
+     * Unlike [maxStartTime], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    fun _maxStartTime(): JsonField<OffsetDateTime> = body._maxStartTime()
+
+    /**
+     * Returns the raw JSON value of [minStartTime].
+     *
+     * Unlike [minStartTime], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    fun _minStartTime(): JsonField<OffsetDateTime> = body._minStartTime()
+
+    /**
+     * Returns the raw JSON value of [pageSize].
+     *
+     * Unlike [pageSize], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    fun _pageSize(): JsonField<Long> = body._pageSize()
+
+    /**
+     * Returns the raw JSON value of [projectId].
+     *
+     * Unlike [projectId], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    fun _projectId(): JsonField<String> = body._projectId()
+
+    /**
+     * Returns the raw JSON value of [threadFilter].
+     *
+     * Unlike [threadFilter], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    fun _threadFilter(): JsonField<String> = body._threadFilter()
+
+    /**
+     * Returns the raw JSON value of [traceFilter].
+     *
+     * Unlike [traceFilter], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    fun _traceFilter(): JsonField<String> = body._traceFilter()
+
+    /**
+     * Returns the raw JSON value of [treeFilter].
+     *
+     * Unlike [treeFilter], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    fun _treeFilter(): JsonField<String> = body._treeFilter()
+
+    fun _additionalBodyProperties(): Map<String, JsonValue> = body._additionalProperties()
+
+    /** Additional headers to send with the request. */
+    fun _additionalHeaders(): Headers = additionalHeaders
+
+    /** Additional query param to send with the request. */
+    fun _additionalQueryParams(): QueryParams = additionalQueryParams
+
+    fun toBuilder() = Builder().from(this)
+
+    companion object {
+
+        @JvmStatic fun none(): StreamingQueryParams = builder().build()
+
+        /** Returns a mutable builder for constructing an instance of [StreamingQueryParams]. */
+        @JvmStatic fun builder() = Builder()
+    }
+
+    /** A builder for [StreamingQueryParams]. */
+    class Builder internal constructor() {
+
+        private var accept: String? = null
+        private var body: Body.Builder = Body.builder()
+        private var additionalHeaders: Headers.Builder = Headers.builder()
+        private var additionalQueryParams: QueryParams.Builder = QueryParams.builder()
+
+        @JvmSynthetic
+        internal fun from(streamingQueryParams: StreamingQueryParams) = apply {
+            accept = streamingQueryParams.accept
+            body = streamingQueryParams.body.toBuilder()
+            additionalHeaders = streamingQueryParams.additionalHeaders.toBuilder()
+            additionalQueryParams = streamingQueryParams.additionalQueryParams.toBuilder()
+        }
+
+        fun accept(accept: String?) = apply { this.accept = accept }
+
+        /** Alias for calling [Builder.accept] with `accept.orElse(null)`. */
+        fun accept(accept: Optional<String>) = accept(accept.getOrNull())
+
+        /**
+         * Sets the entire request body.
+         *
+         * This is generally only useful if you are already constructing the body separately.
+         * Otherwise, it's more convenient to use the top-level setters instead:
+         * - [aiSearch]
+         * - [cursor]
+         * - [filter]
+         * - [maxStartTime]
+         * - [minStartTime]
+         * - etc.
+         */
+        fun body(body: Body) = apply { this.body = body.toBuilder() }
+
+        /**
+         * `ai_search` is a plain-language criterion evaluated against the messages from the agent
+         * trajectory scoped to the thread. AND-ed with the ordinary filters. Requires semantic
+         * filtering enabled for the deployment. Must contain nonempty text of at most 2000 UTF-8
+         * bytes.
+         */
+        fun aiSearch(aiSearch: String) = apply { body.aiSearch(aiSearch) }
+
+        /**
+         * Sets [Builder.aiSearch] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.aiSearch] with a well-typed [String] value instead. This
+         * method is primarily for setting the field to an undocumented or not yet supported value.
+         */
+        fun aiSearch(aiSearch: JsonField<String>) = apply { body.aiSearch(aiSearch) }
+
+        /**
+         * `cursor` is the opaque string from a previous response's `next_cursor`. Omit on the first
+         * request; pass the returned cursor to fetch the next page.
+         */
+        fun cursor(cursor: String) = apply { body.cursor(cursor) }
+
+        /**
+         * Sets [Builder.cursor] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.cursor] with a well-typed [String] value instead. This
+         * method is primarily for setting the field to an undocumented or not yet supported value.
+         */
+        fun cursor(cursor: JsonField<String>) = apply { body.cursor(cursor) }
+
+        /**
+         * `filter` narrows which threads are returned, using a LangSmith filter expression
+         * evaluated against each thread's root run. For example: has(tags, "production") or
+         * eq(status, "error"). See
+         * https://docs.langchain.com/langsmith/trace-query-syntax#filter-query-language for syntax.
+         */
+        fun filter(filter: String) = apply { body.filter(filter) }
+
+        /**
+         * Sets [Builder.filter] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.filter] with a well-typed [String] value instead. This
+         * method is primarily for setting the field to an undocumented or not yet supported value.
+         */
+        fun filter(filter: JsonField<String>) = apply { body.filter(filter) }
+
+        /**
+         * `max_start_time` is the exclusive upper bound on thread activity (RFC3339 date-time).
+         * Defaults to now (UTC) when omitted.
+         */
+        fun maxStartTime(maxStartTime: OffsetDateTime) = apply { body.maxStartTime(maxStartTime) }
+
+        /**
+         * Sets [Builder.maxStartTime] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.maxStartTime] with a well-typed [OffsetDateTime] value
+         * instead. This method is primarily for setting the field to an undocumented or not yet
+         * supported value.
+         */
+        fun maxStartTime(maxStartTime: JsonField<OffsetDateTime>) = apply {
+            body.maxStartTime(maxStartTime)
+        }
+
+        /**
+         * `min_start_time` is the inclusive lower bound on thread activity (RFC3339 date-time).
+         * Defaults to 1 day before now (UTC) when omitted.
+         */
+        fun minStartTime(minStartTime: OffsetDateTime) = apply { body.minStartTime(minStartTime) }
+
+        /**
+         * Sets [Builder.minStartTime] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.minStartTime] with a well-typed [OffsetDateTime] value
+         * instead. This method is primarily for setting the field to an undocumented or not yet
+         * supported value.
+         */
+        fun minStartTime(minStartTime: JsonField<OffsetDateTime>) = apply {
+            body.minStartTime(minStartTime)
+        }
+
+        /**
+         * `page_size` is the maximum number of threads to return in this response. Defaults to 20
+         * when omitted; must be between 1 and 100 inclusive when set. The response may contain
+         * fewer threads than `page_size` even when `next_cursor` is non-null.
+         */
+        fun pageSize(pageSize: Long) = apply { body.pageSize(pageSize) }
+
+        /**
+         * Sets [Builder.pageSize] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.pageSize] with a well-typed [Long] value instead. This
+         * method is primarily for setting the field to an undocumented or not yet supported value.
+         */
+        fun pageSize(pageSize: JsonField<Long>) = apply { body.pageSize(pageSize) }
+
+        /** `project_id` is the tracing project UUID. */
+        fun projectId(projectId: String) = apply { body.projectId(projectId) }
+
+        /**
+         * Sets [Builder.projectId] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.projectId] with a well-typed [String] value instead.
+         * This method is primarily for setting the field to an undocumented or not yet supported
+         * value.
+         */
+        fun projectId(projectId: JsonField<String>) = apply { body.projectId(projectId) }
+
+        /**
+         * `thread_filter` narrows results using a LangSmith filter expression evaluated against
+         * each complete thread summary. Self-hosted deployments require LangSmith v0.17 or later;
+         * unsupported deployments return 501. See
+         * https://docs.langchain.com/langsmith/trace-query-syntax#filter-query-language for syntax.
+         */
+        fun threadFilter(threadFilter: String) = apply { body.threadFilter(threadFilter) }
+
+        /**
+         * Sets [Builder.threadFilter] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.threadFilter] with a well-typed [String] value instead.
+         * This method is primarily for setting the field to an undocumented or not yet supported
+         * value.
+         */
+        fun threadFilter(threadFilter: JsonField<String>) = apply {
+            body.threadFilter(threadFilter)
+        }
+
+        /**
+         * `trace_filter` narrows results to threads containing at least one trace whose root run
+         * matches this LangSmith filter expression. Trace-level aggregate fields are evaluated
+         * using the complete trace summary. Self-hosted deployments require LangSmith v0.17 or
+         * later; unsupported deployments return 501. See
+         * https://docs.langchain.com/langsmith/trace-query-syntax#filter-query-language for syntax.
+         */
+        fun traceFilter(traceFilter: String) = apply { body.traceFilter(traceFilter) }
+
+        /**
+         * Sets [Builder.traceFilter] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.traceFilter] with a well-typed [String] value instead.
+         * This method is primarily for setting the field to an undocumented or not yet supported
+         * value.
+         */
+        fun traceFilter(traceFilter: JsonField<String>) = apply { body.traceFilter(traceFilter) }
+
+        /**
+         * `tree_filter` narrows results to threads containing at least one trace with a matching
+         * run anywhere in its run tree. Self-hosted deployments require LangSmith v0.17 or later;
+         * unsupported deployments return 501. See
+         * https://docs.langchain.com/langsmith/trace-query-syntax#filter-query-language for syntax.
+         */
+        fun treeFilter(treeFilter: String) = apply { body.treeFilter(treeFilter) }
+
+        /**
+         * Sets [Builder.treeFilter] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.treeFilter] with a well-typed [String] value instead.
+         * This method is primarily for setting the field to an undocumented or not yet supported
+         * value.
+         */
+        fun treeFilter(treeFilter: JsonField<String>) = apply { body.treeFilter(treeFilter) }
+
+        fun additionalBodyProperties(additionalBodyProperties: Map<String, JsonValue>) = apply {
+            body.additionalProperties(additionalBodyProperties)
+        }
+
+        fun putAdditionalBodyProperty(key: String, value: JsonValue) = apply {
+            body.putAdditionalProperty(key, value)
+        }
+
+        fun putAllAdditionalBodyProperties(additionalBodyProperties: Map<String, JsonValue>) =
+            apply {
+                body.putAllAdditionalProperties(additionalBodyProperties)
+            }
+
+        fun removeAdditionalBodyProperty(key: String) = apply { body.removeAdditionalProperty(key) }
+
+        fun removeAllAdditionalBodyProperties(keys: Set<String>) = apply {
+            body.removeAllAdditionalProperties(keys)
+        }
+
+        fun additionalHeaders(additionalHeaders: Headers) = apply {
+            this.additionalHeaders.clear()
+            putAllAdditionalHeaders(additionalHeaders)
+        }
+
+        fun additionalHeaders(additionalHeaders: Map<String, Iterable<String>>) = apply {
+            this.additionalHeaders.clear()
+            putAllAdditionalHeaders(additionalHeaders)
+        }
+
+        fun putAdditionalHeader(name: String, value: String) = apply {
+            additionalHeaders.put(name, value)
+        }
+
+        fun putAdditionalHeaders(name: String, values: Iterable<String>) = apply {
+            additionalHeaders.put(name, values)
+        }
+
+        fun putAllAdditionalHeaders(additionalHeaders: Headers) = apply {
+            this.additionalHeaders.putAll(additionalHeaders)
+        }
+
+        fun putAllAdditionalHeaders(additionalHeaders: Map<String, Iterable<String>>) = apply {
+            this.additionalHeaders.putAll(additionalHeaders)
+        }
+
+        fun replaceAdditionalHeaders(name: String, value: String) = apply {
+            additionalHeaders.replace(name, value)
+        }
+
+        fun replaceAdditionalHeaders(name: String, values: Iterable<String>) = apply {
+            additionalHeaders.replace(name, values)
+        }
+
+        fun replaceAllAdditionalHeaders(additionalHeaders: Headers) = apply {
+            this.additionalHeaders.replaceAll(additionalHeaders)
+        }
+
+        fun replaceAllAdditionalHeaders(additionalHeaders: Map<String, Iterable<String>>) = apply {
+            this.additionalHeaders.replaceAll(additionalHeaders)
+        }
+
+        fun removeAdditionalHeaders(name: String) = apply { additionalHeaders.remove(name) }
+
+        fun removeAllAdditionalHeaders(names: Set<String>) = apply {
+            additionalHeaders.removeAll(names)
+        }
+
+        fun additionalQueryParams(additionalQueryParams: QueryParams) = apply {
+            this.additionalQueryParams.clear()
+            putAllAdditionalQueryParams(additionalQueryParams)
+        }
+
+        fun additionalQueryParams(additionalQueryParams: Map<String, Iterable<String>>) = apply {
+            this.additionalQueryParams.clear()
+            putAllAdditionalQueryParams(additionalQueryParams)
+        }
+
+        fun putAdditionalQueryParam(key: String, value: String) = apply {
+            additionalQueryParams.put(key, value)
+        }
+
+        fun putAdditionalQueryParams(key: String, values: Iterable<String>) = apply {
+            additionalQueryParams.put(key, values)
+        }
+
+        fun putAllAdditionalQueryParams(additionalQueryParams: QueryParams) = apply {
+            this.additionalQueryParams.putAll(additionalQueryParams)
+        }
+
+        fun putAllAdditionalQueryParams(additionalQueryParams: Map<String, Iterable<String>>) =
+            apply {
+                this.additionalQueryParams.putAll(additionalQueryParams)
+            }
+
+        fun replaceAdditionalQueryParams(key: String, value: String) = apply {
+            additionalQueryParams.replace(key, value)
+        }
+
+        fun replaceAdditionalQueryParams(key: String, values: Iterable<String>) = apply {
+            additionalQueryParams.replace(key, values)
+        }
+
+        fun replaceAllAdditionalQueryParams(additionalQueryParams: QueryParams) = apply {
+            this.additionalQueryParams.replaceAll(additionalQueryParams)
+        }
+
+        fun replaceAllAdditionalQueryParams(additionalQueryParams: Map<String, Iterable<String>>) =
+            apply {
+                this.additionalQueryParams.replaceAll(additionalQueryParams)
+            }
+
+        fun removeAdditionalQueryParams(key: String) = apply { additionalQueryParams.remove(key) }
+
+        fun removeAllAdditionalQueryParams(keys: Set<String>) = apply {
+            additionalQueryParams.removeAll(keys)
+        }
+
+        /**
+         * Returns an immutable instance of [StreamingQueryParams].
+         *
+         * Further updates to this [Builder] will not mutate the returned instance.
+         */
+        fun build(): StreamingQueryParams =
+            StreamingQueryParams(
+                accept,
+                body.build(),
+                additionalHeaders.build(),
+                additionalQueryParams.build(),
+            )
+    }
+
+    fun _body(): Body = body
+
+    override fun _headers(): Headers =
+        Headers.builder()
+            .apply {
+                accept?.let { put("Accept", it) }
+                putAll(additionalHeaders)
+            }
+            .build()
+
+    override fun _queryParams(): QueryParams = additionalQueryParams
+
+    class Body
+    @JsonCreator(mode = JsonCreator.Mode.DISABLED)
+    private constructor(
+        private val aiSearch: JsonField<String>,
+        private val cursor: JsonField<String>,
+        private val filter: JsonField<String>,
+        private val maxStartTime: JsonField<OffsetDateTime>,
+        private val minStartTime: JsonField<OffsetDateTime>,
+        private val pageSize: JsonField<Long>,
+        private val projectId: JsonField<String>,
+        private val threadFilter: JsonField<String>,
+        private val traceFilter: JsonField<String>,
+        private val treeFilter: JsonField<String>,
+        private val additionalProperties: MutableMap<String, JsonValue>,
+    ) {
+
+        @JsonCreator
+        private constructor(
+            @JsonProperty("ai_search")
+            @ExcludeMissing
+            aiSearch: JsonField<String> = JsonMissing.of(),
+            @JsonProperty("cursor") @ExcludeMissing cursor: JsonField<String> = JsonMissing.of(),
+            @JsonProperty("filter") @ExcludeMissing filter: JsonField<String> = JsonMissing.of(),
+            @JsonProperty("max_start_time")
+            @ExcludeMissing
+            maxStartTime: JsonField<OffsetDateTime> = JsonMissing.of(),
+            @JsonProperty("min_start_time")
+            @ExcludeMissing
+            minStartTime: JsonField<OffsetDateTime> = JsonMissing.of(),
+            @JsonProperty("page_size") @ExcludeMissing pageSize: JsonField<Long> = JsonMissing.of(),
+            @JsonProperty("project_id")
+            @ExcludeMissing
+            projectId: JsonField<String> = JsonMissing.of(),
+            @JsonProperty("thread_filter")
+            @ExcludeMissing
+            threadFilter: JsonField<String> = JsonMissing.of(),
+            @JsonProperty("trace_filter")
+            @ExcludeMissing
+            traceFilter: JsonField<String> = JsonMissing.of(),
+            @JsonProperty("tree_filter")
+            @ExcludeMissing
+            treeFilter: JsonField<String> = JsonMissing.of(),
+        ) : this(
+            aiSearch,
+            cursor,
+            filter,
+            maxStartTime,
+            minStartTime,
+            pageSize,
+            projectId,
+            threadFilter,
+            traceFilter,
+            treeFilter,
+            mutableMapOf(),
+        )
+
+        /**
+         * `ai_search` is a plain-language criterion evaluated against the messages from the agent
+         * trajectory scoped to the thread. AND-ed with the ordinary filters. Requires semantic
+         * filtering enabled for the deployment. Must contain nonempty text of at most 2000 UTF-8
+         * bytes.
+         *
+         * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
+         *   the server responded with an unexpected value).
+         */
+        fun aiSearch(): Optional<String> = aiSearch.getOptional("ai_search")
+
+        /**
+         * `cursor` is the opaque string from a previous response's `next_cursor`. Omit on the first
+         * request; pass the returned cursor to fetch the next page.
+         *
+         * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
+         *   the server responded with an unexpected value).
+         */
+        fun cursor(): Optional<String> = cursor.getOptional("cursor")
+
+        /**
+         * `filter` narrows which threads are returned, using a LangSmith filter expression
+         * evaluated against each thread's root run. For example: has(tags, "production") or
+         * eq(status, "error"). See
+         * https://docs.langchain.com/langsmith/trace-query-syntax#filter-query-language for syntax.
+         *
+         * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
+         *   the server responded with an unexpected value).
+         */
+        fun filter(): Optional<String> = filter.getOptional("filter")
+
+        /**
+         * `max_start_time` is the exclusive upper bound on thread activity (RFC3339 date-time).
+         * Defaults to now (UTC) when omitted.
+         *
+         * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
+         *   the server responded with an unexpected value).
+         */
+        fun maxStartTime(): Optional<OffsetDateTime> = maxStartTime.getOptional("max_start_time")
+
+        /**
+         * `min_start_time` is the inclusive lower bound on thread activity (RFC3339 date-time).
+         * Defaults to 1 day before now (UTC) when omitted.
+         *
+         * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
+         *   the server responded with an unexpected value).
+         */
+        fun minStartTime(): Optional<OffsetDateTime> = minStartTime.getOptional("min_start_time")
+
+        /**
+         * `page_size` is the maximum number of threads to return in this response. Defaults to 20
+         * when omitted; must be between 1 and 100 inclusive when set. The response may contain
+         * fewer threads than `page_size` even when `next_cursor` is non-null.
+         *
+         * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
+         *   the server responded with an unexpected value).
+         */
+        fun pageSize(): Optional<Long> = pageSize.getOptional("page_size")
+
+        /**
+         * `project_id` is the tracing project UUID.
+         *
+         * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
+         *   the server responded with an unexpected value).
+         */
+        fun projectId(): Optional<String> = projectId.getOptional("project_id")
+
+        /**
+         * `thread_filter` narrows results using a LangSmith filter expression evaluated against
+         * each complete thread summary. Self-hosted deployments require LangSmith v0.17 or later;
+         * unsupported deployments return 501. See
+         * https://docs.langchain.com/langsmith/trace-query-syntax#filter-query-language for syntax.
+         *
+         * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
+         *   the server responded with an unexpected value).
+         */
+        fun threadFilter(): Optional<String> = threadFilter.getOptional("thread_filter")
+
+        /**
+         * `trace_filter` narrows results to threads containing at least one trace whose root run
+         * matches this LangSmith filter expression. Trace-level aggregate fields are evaluated
+         * using the complete trace summary. Self-hosted deployments require LangSmith v0.17 or
+         * later; unsupported deployments return 501. See
+         * https://docs.langchain.com/langsmith/trace-query-syntax#filter-query-language for syntax.
+         *
+         * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
+         *   the server responded with an unexpected value).
+         */
+        fun traceFilter(): Optional<String> = traceFilter.getOptional("trace_filter")
+
+        /**
+         * `tree_filter` narrows results to threads containing at least one trace with a matching
+         * run anywhere in its run tree. Self-hosted deployments require LangSmith v0.17 or later;
+         * unsupported deployments return 501. See
+         * https://docs.langchain.com/langsmith/trace-query-syntax#filter-query-language for syntax.
+         *
+         * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
+         *   the server responded with an unexpected value).
+         */
+        fun treeFilter(): Optional<String> = treeFilter.getOptional("tree_filter")
+
+        /**
+         * Returns the raw JSON value of [aiSearch].
+         *
+         * Unlike [aiSearch], this method doesn't throw if the JSON field has an unexpected type.
+         */
+        @JsonProperty("ai_search") @ExcludeMissing fun _aiSearch(): JsonField<String> = aiSearch
+
+        /**
+         * Returns the raw JSON value of [cursor].
+         *
+         * Unlike [cursor], this method doesn't throw if the JSON field has an unexpected type.
+         */
+        @JsonProperty("cursor") @ExcludeMissing fun _cursor(): JsonField<String> = cursor
+
+        /**
+         * Returns the raw JSON value of [filter].
+         *
+         * Unlike [filter], this method doesn't throw if the JSON field has an unexpected type.
+         */
+        @JsonProperty("filter") @ExcludeMissing fun _filter(): JsonField<String> = filter
+
+        /**
+         * Returns the raw JSON value of [maxStartTime].
+         *
+         * Unlike [maxStartTime], this method doesn't throw if the JSON field has an unexpected
+         * type.
+         */
+        @JsonProperty("max_start_time")
+        @ExcludeMissing
+        fun _maxStartTime(): JsonField<OffsetDateTime> = maxStartTime
+
+        /**
+         * Returns the raw JSON value of [minStartTime].
+         *
+         * Unlike [minStartTime], this method doesn't throw if the JSON field has an unexpected
+         * type.
+         */
+        @JsonProperty("min_start_time")
+        @ExcludeMissing
+        fun _minStartTime(): JsonField<OffsetDateTime> = minStartTime
+
+        /**
+         * Returns the raw JSON value of [pageSize].
+         *
+         * Unlike [pageSize], this method doesn't throw if the JSON field has an unexpected type.
+         */
+        @JsonProperty("page_size") @ExcludeMissing fun _pageSize(): JsonField<Long> = pageSize
+
+        /**
+         * Returns the raw JSON value of [projectId].
+         *
+         * Unlike [projectId], this method doesn't throw if the JSON field has an unexpected type.
+         */
+        @JsonProperty("project_id") @ExcludeMissing fun _projectId(): JsonField<String> = projectId
+
+        /**
+         * Returns the raw JSON value of [threadFilter].
+         *
+         * Unlike [threadFilter], this method doesn't throw if the JSON field has an unexpected
+         * type.
+         */
+        @JsonProperty("thread_filter")
+        @ExcludeMissing
+        fun _threadFilter(): JsonField<String> = threadFilter
+
+        /**
+         * Returns the raw JSON value of [traceFilter].
+         *
+         * Unlike [traceFilter], this method doesn't throw if the JSON field has an unexpected type.
+         */
+        @JsonProperty("trace_filter")
+        @ExcludeMissing
+        fun _traceFilter(): JsonField<String> = traceFilter
+
+        /**
+         * Returns the raw JSON value of [treeFilter].
+         *
+         * Unlike [treeFilter], this method doesn't throw if the JSON field has an unexpected type.
+         */
+        @JsonProperty("tree_filter")
+        @ExcludeMissing
+        fun _treeFilter(): JsonField<String> = treeFilter
+
+        @JsonAnySetter
+        private fun putAdditionalProperty(key: String, value: JsonValue) {
+            additionalProperties.put(key, value)
+        }
+
+        @JsonAnyGetter
+        @ExcludeMissing
+        fun _additionalProperties(): Map<String, JsonValue> =
+            Collections.unmodifiableMap(additionalProperties)
+
+        fun toBuilder() = Builder().from(this)
+
+        companion object {
+
+            /** Returns a mutable builder for constructing an instance of [Body]. */
+            @JvmStatic fun builder() = Builder()
+        }
+
+        /** A builder for [Body]. */
+        class Builder internal constructor() {
+
+            private var aiSearch: JsonField<String> = JsonMissing.of()
+            private var cursor: JsonField<String> = JsonMissing.of()
+            private var filter: JsonField<String> = JsonMissing.of()
+            private var maxStartTime: JsonField<OffsetDateTime> = JsonMissing.of()
+            private var minStartTime: JsonField<OffsetDateTime> = JsonMissing.of()
+            private var pageSize: JsonField<Long> = JsonMissing.of()
+            private var projectId: JsonField<String> = JsonMissing.of()
+            private var threadFilter: JsonField<String> = JsonMissing.of()
+            private var traceFilter: JsonField<String> = JsonMissing.of()
+            private var treeFilter: JsonField<String> = JsonMissing.of()
+            private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
+
+            @JvmSynthetic
+            internal fun from(body: Body) = apply {
+                aiSearch = body.aiSearch
+                cursor = body.cursor
+                filter = body.filter
+                maxStartTime = body.maxStartTime
+                minStartTime = body.minStartTime
+                pageSize = body.pageSize
+                projectId = body.projectId
+                threadFilter = body.threadFilter
+                traceFilter = body.traceFilter
+                treeFilter = body.treeFilter
+                additionalProperties = body.additionalProperties.toMutableMap()
+            }
+
+            /**
+             * `ai_search` is a plain-language criterion evaluated against the messages from the
+             * agent trajectory scoped to the thread. AND-ed with the ordinary filters. Requires
+             * semantic filtering enabled for the deployment. Must contain nonempty text of at most
+             * 2000 UTF-8 bytes.
+             */
+            fun aiSearch(aiSearch: String) = aiSearch(JsonField.of(aiSearch))
+
+            /**
+             * Sets [Builder.aiSearch] to an arbitrary JSON value.
+             *
+             * You should usually call [Builder.aiSearch] with a well-typed [String] value instead.
+             * This method is primarily for setting the field to an undocumented or not yet
+             * supported value.
+             */
+            fun aiSearch(aiSearch: JsonField<String>) = apply { this.aiSearch = aiSearch }
+
+            /**
+             * `cursor` is the opaque string from a previous response's `next_cursor`. Omit on the
+             * first request; pass the returned cursor to fetch the next page.
+             */
+            fun cursor(cursor: String) = cursor(JsonField.of(cursor))
+
+            /**
+             * Sets [Builder.cursor] to an arbitrary JSON value.
+             *
+             * You should usually call [Builder.cursor] with a well-typed [String] value instead.
+             * This method is primarily for setting the field to an undocumented or not yet
+             * supported value.
+             */
+            fun cursor(cursor: JsonField<String>) = apply { this.cursor = cursor }
+
+            /**
+             * `filter` narrows which threads are returned, using a LangSmith filter expression
+             * evaluated against each thread's root run. For example: has(tags, "production") or
+             * eq(status, "error"). See
+             * https://docs.langchain.com/langsmith/trace-query-syntax#filter-query-language for
+             * syntax.
+             */
+            fun filter(filter: String) = filter(JsonField.of(filter))
+
+            /**
+             * Sets [Builder.filter] to an arbitrary JSON value.
+             *
+             * You should usually call [Builder.filter] with a well-typed [String] value instead.
+             * This method is primarily for setting the field to an undocumented or not yet
+             * supported value.
+             */
+            fun filter(filter: JsonField<String>) = apply { this.filter = filter }
+
+            /**
+             * `max_start_time` is the exclusive upper bound on thread activity (RFC3339 date-time).
+             * Defaults to now (UTC) when omitted.
+             */
+            fun maxStartTime(maxStartTime: OffsetDateTime) =
+                maxStartTime(JsonField.of(maxStartTime))
+
+            /**
+             * Sets [Builder.maxStartTime] to an arbitrary JSON value.
+             *
+             * You should usually call [Builder.maxStartTime] with a well-typed [OffsetDateTime]
+             * value instead. This method is primarily for setting the field to an undocumented or
+             * not yet supported value.
+             */
+            fun maxStartTime(maxStartTime: JsonField<OffsetDateTime>) = apply {
+                this.maxStartTime = maxStartTime
+            }
+
+            /**
+             * `min_start_time` is the inclusive lower bound on thread activity (RFC3339 date-time).
+             * Defaults to 1 day before now (UTC) when omitted.
+             */
+            fun minStartTime(minStartTime: OffsetDateTime) =
+                minStartTime(JsonField.of(minStartTime))
+
+            /**
+             * Sets [Builder.minStartTime] to an arbitrary JSON value.
+             *
+             * You should usually call [Builder.minStartTime] with a well-typed [OffsetDateTime]
+             * value instead. This method is primarily for setting the field to an undocumented or
+             * not yet supported value.
+             */
+            fun minStartTime(minStartTime: JsonField<OffsetDateTime>) = apply {
+                this.minStartTime = minStartTime
+            }
+
+            /**
+             * `page_size` is the maximum number of threads to return in this response. Defaults to
+             * 20 when omitted; must be between 1 and 100 inclusive when set. The response may
+             * contain fewer threads than `page_size` even when `next_cursor` is non-null.
+             */
+            fun pageSize(pageSize: Long) = pageSize(JsonField.of(pageSize))
+
+            /**
+             * Sets [Builder.pageSize] to an arbitrary JSON value.
+             *
+             * You should usually call [Builder.pageSize] with a well-typed [Long] value instead.
+             * This method is primarily for setting the field to an undocumented or not yet
+             * supported value.
+             */
+            fun pageSize(pageSize: JsonField<Long>) = apply { this.pageSize = pageSize }
+
+            /** `project_id` is the tracing project UUID. */
+            fun projectId(projectId: String) = projectId(JsonField.of(projectId))
+
+            /**
+             * Sets [Builder.projectId] to an arbitrary JSON value.
+             *
+             * You should usually call [Builder.projectId] with a well-typed [String] value instead.
+             * This method is primarily for setting the field to an undocumented or not yet
+             * supported value.
+             */
+            fun projectId(projectId: JsonField<String>) = apply { this.projectId = projectId }
+
+            /**
+             * `thread_filter` narrows results using a LangSmith filter expression evaluated against
+             * each complete thread summary. Self-hosted deployments require LangSmith v0.17 or
+             * later; unsupported deployments return 501. See
+             * https://docs.langchain.com/langsmith/trace-query-syntax#filter-query-language for
+             * syntax.
+             */
+            fun threadFilter(threadFilter: String) = threadFilter(JsonField.of(threadFilter))
+
+            /**
+             * Sets [Builder.threadFilter] to an arbitrary JSON value.
+             *
+             * You should usually call [Builder.threadFilter] with a well-typed [String] value
+             * instead. This method is primarily for setting the field to an undocumented or not yet
+             * supported value.
+             */
+            fun threadFilter(threadFilter: JsonField<String>) = apply {
+                this.threadFilter = threadFilter
+            }
+
+            /**
+             * `trace_filter` narrows results to threads containing at least one trace whose root
+             * run matches this LangSmith filter expression. Trace-level aggregate fields are
+             * evaluated using the complete trace summary. Self-hosted deployments require LangSmith
+             * v0.17 or later; unsupported deployments return 501. See
+             * https://docs.langchain.com/langsmith/trace-query-syntax#filter-query-language for
+             * syntax.
+             */
+            fun traceFilter(traceFilter: String) = traceFilter(JsonField.of(traceFilter))
+
+            /**
+             * Sets [Builder.traceFilter] to an arbitrary JSON value.
+             *
+             * You should usually call [Builder.traceFilter] with a well-typed [String] value
+             * instead. This method is primarily for setting the field to an undocumented or not yet
+             * supported value.
+             */
+            fun traceFilter(traceFilter: JsonField<String>) = apply {
+                this.traceFilter = traceFilter
+            }
+
+            /**
+             * `tree_filter` narrows results to threads containing at least one trace with a
+             * matching run anywhere in its run tree. Self-hosted deployments require LangSmith
+             * v0.17 or later; unsupported deployments return 501. See
+             * https://docs.langchain.com/langsmith/trace-query-syntax#filter-query-language for
+             * syntax.
+             */
+            fun treeFilter(treeFilter: String) = treeFilter(JsonField.of(treeFilter))
+
+            /**
+             * Sets [Builder.treeFilter] to an arbitrary JSON value.
+             *
+             * You should usually call [Builder.treeFilter] with a well-typed [String] value
+             * instead. This method is primarily for setting the field to an undocumented or not yet
+             * supported value.
+             */
+            fun treeFilter(treeFilter: JsonField<String>) = apply { this.treeFilter = treeFilter }
+
+            fun additionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
+                this.additionalProperties.clear()
+                putAllAdditionalProperties(additionalProperties)
+            }
+
+            fun putAdditionalProperty(key: String, value: JsonValue) = apply {
+                additionalProperties.put(key, value)
+            }
+
+            fun putAllAdditionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
+                this.additionalProperties.putAll(additionalProperties)
+            }
+
+            fun removeAdditionalProperty(key: String) = apply { additionalProperties.remove(key) }
+
+            fun removeAllAdditionalProperties(keys: Set<String>) = apply {
+                keys.forEach(::removeAdditionalProperty)
+            }
+
+            /**
+             * Returns an immutable instance of [Body].
+             *
+             * Further updates to this [Builder] will not mutate the returned instance.
+             */
+            fun build(): Body =
+                Body(
+                    aiSearch,
+                    cursor,
+                    filter,
+                    maxStartTime,
+                    minStartTime,
+                    pageSize,
+                    projectId,
+                    threadFilter,
+                    traceFilter,
+                    treeFilter,
+                    additionalProperties.toMutableMap(),
+                )
+        }
+
+        private var validated: Boolean = false
+
+        /**
+         * Validates that the types of all values in this object match their expected types
+         * recursively.
+         *
+         * This method is _not_ forwards compatible with new types from the API for existing fields.
+         *
+         * @throws LangChainInvalidDataException if any value type in this object doesn't match its
+         *   expected type.
+         */
+        fun validate(): Body = apply {
+            if (validated) {
+                return@apply
+            }
+
+            aiSearch()
+            cursor()
+            filter()
+            maxStartTime()
+            minStartTime()
+            pageSize()
+            projectId()
+            threadFilter()
+            traceFilter()
+            treeFilter()
+            validated = true
+        }
+
+        fun isValid(): Boolean =
+            try {
+                validate()
+                true
+            } catch (e: LangChainInvalidDataException) {
+                false
+            }
+
+        /**
+         * Returns a score indicating how many valid values are contained in this object
+         * recursively.
+         *
+         * Used for best match union deserialization.
+         */
+        @JvmSynthetic
+        internal fun validity(): Int =
+            (if (aiSearch.asKnown().isPresent) 1 else 0) +
+                (if (cursor.asKnown().isPresent) 1 else 0) +
+                (if (filter.asKnown().isPresent) 1 else 0) +
+                (if (maxStartTime.asKnown().isPresent) 1 else 0) +
+                (if (minStartTime.asKnown().isPresent) 1 else 0) +
+                (if (pageSize.asKnown().isPresent) 1 else 0) +
+                (if (projectId.asKnown().isPresent) 1 else 0) +
+                (if (threadFilter.asKnown().isPresent) 1 else 0) +
+                (if (traceFilter.asKnown().isPresent) 1 else 0) +
+                (if (treeFilter.asKnown().isPresent) 1 else 0)
+
+        override fun equals(other: Any?): Boolean {
+            if (this === other) {
+                return true
+            }
+
+            return other is Body &&
+                aiSearch == other.aiSearch &&
+                cursor == other.cursor &&
+                filter == other.filter &&
+                maxStartTime == other.maxStartTime &&
+                minStartTime == other.minStartTime &&
+                pageSize == other.pageSize &&
+                projectId == other.projectId &&
+                threadFilter == other.threadFilter &&
+                traceFilter == other.traceFilter &&
+                treeFilter == other.treeFilter &&
+                additionalProperties == other.additionalProperties
+        }
+
+        private val hashCode: Int by lazy {
+            Objects.hash(
+                aiSearch,
+                cursor,
+                filter,
+                maxStartTime,
+                minStartTime,
+                pageSize,
+                projectId,
+                threadFilter,
+                traceFilter,
+                treeFilter,
+                additionalProperties,
+            )
+        }
+
+        override fun hashCode(): Int = hashCode
+
+        override fun toString() =
+            "Body{aiSearch=$aiSearch, cursor=$cursor, filter=$filter, maxStartTime=$maxStartTime, minStartTime=$minStartTime, pageSize=$pageSize, projectId=$projectId, threadFilter=$threadFilter, traceFilter=$traceFilter, treeFilter=$treeFilter, additionalProperties=$additionalProperties}"
+    }
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) {
+            return true
+        }
+
+        return other is StreamingQueryParams &&
+            accept == other.accept &&
+            body == other.body &&
+            additionalHeaders == other.additionalHeaders &&
+            additionalQueryParams == other.additionalQueryParams
+    }
+
+    override fun hashCode(): Int =
+        Objects.hash(accept, body, additionalHeaders, additionalQueryParams)
+
+    override fun toString() =
+        "StreamingQueryParams{accept=$accept, body=$body, additionalHeaders=$additionalHeaders, additionalQueryParams=$additionalQueryParams}"
+}

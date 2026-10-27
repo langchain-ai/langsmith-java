@@ -28,6 +28,8 @@ import com.langchain.smith.models.threads.ThreadStats
 import com.langchain.smith.models.threads.ThreadStatsParams
 import com.langchain.smith.services.blocking.threads.ShareService
 import com.langchain.smith.services.blocking.threads.ShareServiceImpl
+import com.langchain.smith.services.blocking.threads.StreamingService
+import com.langchain.smith.services.blocking.threads.StreamingServiceImpl
 import java.util.function.Consumer
 import kotlin.jvm.optionals.getOrNull
 
@@ -38,12 +40,16 @@ class ThreadServiceImpl internal constructor(private val clientOptions: ClientOp
         WithRawResponseImpl(clientOptions)
     }
 
+    private val streaming: StreamingService by lazy { StreamingServiceImpl(clientOptions) }
+
     private val share: ShareService by lazy { ShareServiceImpl(clientOptions) }
 
     override fun withRawResponse(): ThreadService.WithRawResponse = withRawResponse
 
     override fun withOptions(modifier: Consumer<ClientOptions.Builder>): ThreadService =
         ThreadServiceImpl(clientOptions.toBuilder().apply(modifier::accept).build())
+
+    override fun streaming(): StreamingService = streaming
 
     override fun share(): ShareService = share
 
@@ -75,6 +81,10 @@ class ThreadServiceImpl internal constructor(private val clientOptions: ClientOp
         private val errorHandler: Handler<HttpResponse> =
             errorHandler(errorBodyHandler(clientOptions.jsonMapper))
 
+        private val streaming: StreamingService.WithRawResponse by lazy {
+            StreamingServiceImpl.WithRawResponseImpl(clientOptions)
+        }
+
         private val share: ShareService.WithRawResponse by lazy {
             ShareServiceImpl.WithRawResponseImpl(clientOptions)
         }
@@ -85,6 +95,8 @@ class ThreadServiceImpl internal constructor(private val clientOptions: ClientOp
             ThreadServiceImpl.WithRawResponseImpl(
                 clientOptions.toBuilder().apply(modifier::accept).build()
             )
+
+        override fun streaming(): StreamingService.WithRawResponse = streaming
 
         override fun share(): ShareService.WithRawResponse = share
 

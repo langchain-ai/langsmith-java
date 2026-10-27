@@ -28,6 +28,8 @@ import com.langchain.smith.models.threads.ThreadStats
 import com.langchain.smith.models.threads.ThreadStatsParams
 import com.langchain.smith.services.async.threads.ShareServiceAsync
 import com.langchain.smith.services.async.threads.ShareServiceAsyncImpl
+import com.langchain.smith.services.async.threads.StreamingServiceAsync
+import com.langchain.smith.services.async.threads.StreamingServiceAsyncImpl
 import java.util.concurrent.CompletableFuture
 import java.util.function.Consumer
 import kotlin.jvm.optionals.getOrNull
@@ -39,12 +41,18 @@ class ThreadServiceAsyncImpl internal constructor(private val clientOptions: Cli
         WithRawResponseImpl(clientOptions)
     }
 
+    private val streaming: StreamingServiceAsync by lazy {
+        StreamingServiceAsyncImpl(clientOptions)
+    }
+
     private val share: ShareServiceAsync by lazy { ShareServiceAsyncImpl(clientOptions) }
 
     override fun withRawResponse(): ThreadServiceAsync.WithRawResponse = withRawResponse
 
     override fun withOptions(modifier: Consumer<ClientOptions.Builder>): ThreadServiceAsync =
         ThreadServiceAsyncImpl(clientOptions.toBuilder().apply(modifier::accept).build())
+
+    override fun streaming(): StreamingServiceAsync = streaming
 
     override fun share(): ShareServiceAsync = share
 
@@ -82,6 +90,10 @@ class ThreadServiceAsyncImpl internal constructor(private val clientOptions: Cli
         private val errorHandler: Handler<HttpResponse> =
             errorHandler(errorBodyHandler(clientOptions.jsonMapper))
 
+        private val streaming: StreamingServiceAsync.WithRawResponse by lazy {
+            StreamingServiceAsyncImpl.WithRawResponseImpl(clientOptions)
+        }
+
         private val share: ShareServiceAsync.WithRawResponse by lazy {
             ShareServiceAsyncImpl.WithRawResponseImpl(clientOptions)
         }
@@ -92,6 +104,8 @@ class ThreadServiceAsyncImpl internal constructor(private val clientOptions: Cli
             ThreadServiceAsyncImpl.WithRawResponseImpl(
                 clientOptions.toBuilder().apply(modifier::accept).build()
             )
+
+        override fun streaming(): StreamingServiceAsync.WithRawResponse = streaming
 
         override fun share(): ShareServiceAsync.WithRawResponse = share
 

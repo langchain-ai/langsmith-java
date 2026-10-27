@@ -21,6 +21,8 @@ import com.langchain.smith.models.traces.TraceListRunsResponse
 import com.langchain.smith.models.traces.TraceQueryPage
 import com.langchain.smith.models.traces.TraceQueryPageResponse
 import com.langchain.smith.models.traces.TraceQueryParams
+import com.langchain.smith.services.blocking.traces.StreamingService
+import com.langchain.smith.services.blocking.traces.StreamingServiceImpl
 import java.util.function.Consumer
 import kotlin.jvm.optionals.getOrNull
 
@@ -31,10 +33,14 @@ class TraceServiceImpl internal constructor(private val clientOptions: ClientOpt
         WithRawResponseImpl(clientOptions)
     }
 
+    private val streaming: StreamingService by lazy { StreamingServiceImpl(clientOptions) }
+
     override fun withRawResponse(): TraceService.WithRawResponse = withRawResponse
 
     override fun withOptions(modifier: Consumer<ClientOptions.Builder>): TraceService =
         TraceServiceImpl(clientOptions.toBuilder().apply(modifier::accept).build())
+
+    override fun streaming(): StreamingService = streaming
 
     override fun listRuns(
         params: TraceListRunsParams,
@@ -53,12 +59,18 @@ class TraceServiceImpl internal constructor(private val clientOptions: ClientOpt
         private val errorHandler: Handler<HttpResponse> =
             errorHandler(errorBodyHandler(clientOptions.jsonMapper))
 
+        private val streaming: StreamingService.WithRawResponse by lazy {
+            StreamingServiceImpl.WithRawResponseImpl(clientOptions)
+        }
+
         override fun withOptions(
             modifier: Consumer<ClientOptions.Builder>
         ): TraceService.WithRawResponse =
             TraceServiceImpl.WithRawResponseImpl(
                 clientOptions.toBuilder().apply(modifier::accept).build()
             )
+
+        override fun streaming(): StreamingService.WithRawResponse = streaming
 
         private val listRunsHandler: Handler<TraceListRunsResponse> =
             jsonHandler<TraceListRunsResponse>(clientOptions.jsonMapper)

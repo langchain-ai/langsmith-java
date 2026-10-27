@@ -21,6 +21,8 @@ import com.langchain.smith.models.traces.TraceListRunsResponse
 import com.langchain.smith.models.traces.TraceQueryPageAsync
 import com.langchain.smith.models.traces.TraceQueryPageResponse
 import com.langchain.smith.models.traces.TraceQueryParams
+import com.langchain.smith.services.async.traces.StreamingServiceAsync
+import com.langchain.smith.services.async.traces.StreamingServiceAsyncImpl
 import java.util.concurrent.CompletableFuture
 import java.util.function.Consumer
 import kotlin.jvm.optionals.getOrNull
@@ -32,10 +34,16 @@ class TraceServiceAsyncImpl internal constructor(private val clientOptions: Clie
         WithRawResponseImpl(clientOptions)
     }
 
+    private val streaming: StreamingServiceAsync by lazy {
+        StreamingServiceAsyncImpl(clientOptions)
+    }
+
     override fun withRawResponse(): TraceServiceAsync.WithRawResponse = withRawResponse
 
     override fun withOptions(modifier: Consumer<ClientOptions.Builder>): TraceServiceAsync =
         TraceServiceAsyncImpl(clientOptions.toBuilder().apply(modifier::accept).build())
+
+    override fun streaming(): StreamingServiceAsync = streaming
 
     override fun listRuns(
         params: TraceListRunsParams,
@@ -57,12 +65,18 @@ class TraceServiceAsyncImpl internal constructor(private val clientOptions: Clie
         private val errorHandler: Handler<HttpResponse> =
             errorHandler(errorBodyHandler(clientOptions.jsonMapper))
 
+        private val streaming: StreamingServiceAsync.WithRawResponse by lazy {
+            StreamingServiceAsyncImpl.WithRawResponseImpl(clientOptions)
+        }
+
         override fun withOptions(
             modifier: Consumer<ClientOptions.Builder>
         ): TraceServiceAsync.WithRawResponse =
             TraceServiceAsyncImpl.WithRawResponseImpl(
                 clientOptions.toBuilder().apply(modifier::accept).build()
             )
+
+        override fun streaming(): StreamingServiceAsync.WithRawResponse = streaming
 
         private val listRunsHandler: Handler<TraceListRunsResponse> =
             jsonHandler<TraceListRunsResponse>(clientOptions.jsonMapper)
