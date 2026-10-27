@@ -22,6 +22,7 @@ internal class RunQueryV2ParamsTest {
             .hasError(false)
             .addId("018e4c7e-a9fb-7ef0-a5b6-6ea3a82e9327")
             .addId("f47ac10b-58cc-4372-a567-0e02b2c3d479")
+            .includeSubtreeUsage(true)
             .isRoot(true)
             .maxFeedbackModifiedAt(OffsetDateTime.parse("2024-12-31T23:59:59Z"))
             .maxStartTime(OffsetDateTime.parse("2024-12-31T23:59:59Z"))
@@ -63,6 +64,7 @@ internal class RunQueryV2ParamsTest {
                 .hasError(false)
                 .addId("018e4c7e-a9fb-7ef0-a5b6-6ea3a82e9327")
                 .addId("f47ac10b-58cc-4372-a567-0e02b2c3d479")
+                .includeSubtreeUsage(true)
                 .isRoot(true)
                 .maxFeedbackModifiedAt(OffsetDateTime.parse("2024-12-31T23:59:59Z"))
                 .maxStartTime(OffsetDateTime.parse("2024-12-31T23:59:59Z"))
@@ -117,6 +119,7 @@ internal class RunQueryV2ParamsTest {
                 .hasError(false)
                 .addId("018e4c7e-a9fb-7ef0-a5b6-6ea3a82e9327")
                 .addId("f47ac10b-58cc-4372-a567-0e02b2c3d479")
+                .includeSubtreeUsage(true)
                 .isRoot(true)
                 .maxFeedbackModifiedAt(OffsetDateTime.parse("2024-12-31T23:59:59Z"))
                 .maxStartTime(OffsetDateTime.parse("2024-12-31T23:59:59Z"))
@@ -158,6 +161,7 @@ internal class RunQueryV2ParamsTest {
                 "018e4c7e-a9fb-7ef0-a5b6-6ea3a82e9327",
                 "f47ac10b-58cc-4372-a567-0e02b2c3d479",
             )
+        assertThat(body.includeSubtreeUsage()).contains(true)
         assertThat(body.isRoot()).contains(true)
         assertThat(body.maxFeedbackModifiedAt())
             .contains(OffsetDateTime.parse("2024-12-31T23:59:59Z"))

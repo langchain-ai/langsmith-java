@@ -90,6 +90,17 @@ private constructor(
     fun ids(): Optional<List<String>> = body.ids()
 
     /**
+     * `include_subtree_usage` enriches selected token and cost fields on root and intermediate runs
+     * with subtree totals, and selected `first_token_time` with the earliest observed subtree
+     * timestamp. Descendants contribute regardless of this request's filters or time bounds. Runs
+     * without observed descendants retain their original values. Defaults to false.
+     *
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
+    fun includeSubtreeUsage(): Optional<Boolean> = body.includeSubtreeUsage()
+
+    /**
      * `is_root` returns only root runs (true) or only non-root runs (false).
      *
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
@@ -254,6 +265,14 @@ private constructor(
      * Unlike [ids], this method doesn't throw if the JSON field has an unexpected type.
      */
     fun _ids(): JsonField<List<String>> = body._ids()
+
+    /**
+     * Returns the raw JSON value of [includeSubtreeUsage].
+     *
+     * Unlike [includeSubtreeUsage], this method doesn't throw if the JSON field has an unexpected
+     * type.
+     */
+    fun _includeSubtreeUsage(): JsonField<Boolean> = body._includeSubtreeUsage()
 
     /**
      * Returns the raw JSON value of [isRoot].
@@ -486,6 +505,28 @@ private constructor(
          * @throws IllegalStateException if the field was previously set to a non-list.
          */
         fun addId(id: String) = apply { body.addId(id) }
+
+        /**
+         * `include_subtree_usage` enriches selected token and cost fields on root and intermediate
+         * runs with subtree totals, and selected `first_token_time` with the earliest observed
+         * subtree timestamp. Descendants contribute regardless of this request's filters or time
+         * bounds. Runs without observed descendants retain their original values. Defaults to
+         * false.
+         */
+        fun includeSubtreeUsage(includeSubtreeUsage: Boolean) = apply {
+            body.includeSubtreeUsage(includeSubtreeUsage)
+        }
+
+        /**
+         * Sets [Builder.includeSubtreeUsage] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.includeSubtreeUsage] with a well-typed [Boolean] value
+         * instead. This method is primarily for setting the field to an undocumented or not yet
+         * supported value.
+         */
+        fun includeSubtreeUsage(includeSubtreeUsage: JsonField<Boolean>) = apply {
+            body.includeSubtreeUsage(includeSubtreeUsage)
+        }
 
         /** `is_root` returns only root runs (true) or only non-root runs (false). */
         fun isRoot(isRoot: Boolean) = apply { body.isRoot(isRoot) }
@@ -884,6 +925,7 @@ private constructor(
         private val filter: JsonField<String>,
         private val hasError: JsonField<Boolean>,
         private val ids: JsonField<List<String>>,
+        private val includeSubtreeUsage: JsonField<Boolean>,
         private val isRoot: JsonField<Boolean>,
         private val maxFeedbackModifiedAt: JsonField<OffsetDateTime>,
         private val maxStartTime: JsonField<OffsetDateTime>,
@@ -912,6 +954,9 @@ private constructor(
             @ExcludeMissing
             hasError: JsonField<Boolean> = JsonMissing.of(),
             @JsonProperty("ids") @ExcludeMissing ids: JsonField<List<String>> = JsonMissing.of(),
+            @JsonProperty("include_subtree_usage")
+            @ExcludeMissing
+            includeSubtreeUsage: JsonField<Boolean> = JsonMissing.of(),
             @JsonProperty("is_root") @ExcludeMissing isRoot: JsonField<Boolean> = JsonMissing.of(),
             @JsonProperty("max_feedback_modified_at")
             @ExcludeMissing
@@ -954,6 +999,7 @@ private constructor(
             filter,
             hasError,
             ids,
+            includeSubtreeUsage,
             isRoot,
             maxFeedbackModifiedAt,
             maxStartTime,
@@ -1017,6 +1063,19 @@ private constructor(
          *   the server responded with an unexpected value).
          */
         fun ids(): Optional<List<String>> = ids.getOptional("ids")
+
+        /**
+         * `include_subtree_usage` enriches selected token and cost fields on root and intermediate
+         * runs with subtree totals, and selected `first_token_time` with the earliest observed
+         * subtree timestamp. Descendants contribute regardless of this request's filters or time
+         * bounds. Runs without observed descendants retain their original values. Defaults to
+         * false.
+         *
+         * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
+         *   the server responded with an unexpected value).
+         */
+        fun includeSubtreeUsage(): Optional<Boolean> =
+            includeSubtreeUsage.getOptional("include_subtree_usage")
 
         /**
          * `is_root` returns only root runs (true) or only non-root runs (false).
@@ -1191,6 +1250,16 @@ private constructor(
         @JsonProperty("ids") @ExcludeMissing fun _ids(): JsonField<List<String>> = ids
 
         /**
+         * Returns the raw JSON value of [includeSubtreeUsage].
+         *
+         * Unlike [includeSubtreeUsage], this method doesn't throw if the JSON field has an
+         * unexpected type.
+         */
+        @JsonProperty("include_subtree_usage")
+        @ExcludeMissing
+        fun _includeSubtreeUsage(): JsonField<Boolean> = includeSubtreeUsage
+
+        /**
          * Returns the raw JSON value of [isRoot].
          *
          * Unlike [isRoot], this method doesn't throw if the JSON field has an unexpected type.
@@ -1340,6 +1409,7 @@ private constructor(
             private var filter: JsonField<String> = JsonMissing.of()
             private var hasError: JsonField<Boolean> = JsonMissing.of()
             private var ids: JsonField<MutableList<String>>? = null
+            private var includeSubtreeUsage: JsonField<Boolean> = JsonMissing.of()
             private var isRoot: JsonField<Boolean> = JsonMissing.of()
             private var maxFeedbackModifiedAt: JsonField<OffsetDateTime> = JsonMissing.of()
             private var maxStartTime: JsonField<OffsetDateTime> = JsonMissing.of()
@@ -1363,6 +1433,7 @@ private constructor(
                 filter = body.filter
                 hasError = body.hasError
                 ids = body.ids.map { it.toMutableList() }
+                includeSubtreeUsage = body.includeSubtreeUsage
                 isRoot = body.isRoot
                 maxFeedbackModifiedAt = body.maxFeedbackModifiedAt
                 maxStartTime = body.maxStartTime
@@ -1465,6 +1536,27 @@ private constructor(
              */
             fun addId(id: String) = apply {
                 ids = (ids ?: JsonField.of(mutableListOf())).also { checkKnown("ids", it).add(id) }
+            }
+
+            /**
+             * `include_subtree_usage` enriches selected token and cost fields on root and
+             * intermediate runs with subtree totals, and selected `first_token_time` with the
+             * earliest observed subtree timestamp. Descendants contribute regardless of this
+             * request's filters or time bounds. Runs without observed descendants retain their
+             * original values. Defaults to false.
+             */
+            fun includeSubtreeUsage(includeSubtreeUsage: Boolean) =
+                includeSubtreeUsage(JsonField.of(includeSubtreeUsage))
+
+            /**
+             * Sets [Builder.includeSubtreeUsage] to an arbitrary JSON value.
+             *
+             * You should usually call [Builder.includeSubtreeUsage] with a well-typed [Boolean]
+             * value instead. This method is primarily for setting the field to an undocumented or
+             * not yet supported value.
+             */
+            fun includeSubtreeUsage(includeSubtreeUsage: JsonField<Boolean>) = apply {
+                this.includeSubtreeUsage = includeSubtreeUsage
             }
 
             /** `is_root` returns only root runs (true) or only non-root runs (false). */
@@ -1773,6 +1865,7 @@ private constructor(
                     filter,
                     hasError,
                     (ids ?: JsonMissing.of()).map { it.toImmutable() },
+                    includeSubtreeUsage,
                     isRoot,
                     maxFeedbackModifiedAt,
                     maxStartTime,
@@ -1812,6 +1905,7 @@ private constructor(
             filter()
             hasError()
             ids()
+            includeSubtreeUsage()
             isRoot()
             maxFeedbackModifiedAt()
             maxStartTime()
@@ -1850,6 +1944,7 @@ private constructor(
                 (if (filter.asKnown().isPresent) 1 else 0) +
                 (if (hasError.asKnown().isPresent) 1 else 0) +
                 (ids.asKnown().getOrNull()?.size ?: 0) +
+                (if (includeSubtreeUsage.asKnown().isPresent) 1 else 0) +
                 (if (isRoot.asKnown().isPresent) 1 else 0) +
                 (if (maxFeedbackModifiedAt.asKnown().isPresent) 1 else 0) +
                 (if (maxStartTime.asKnown().isPresent) 1 else 0) +
@@ -1876,6 +1971,7 @@ private constructor(
                 filter == other.filter &&
                 hasError == other.hasError &&
                 ids == other.ids &&
+                includeSubtreeUsage == other.includeSubtreeUsage &&
                 isRoot == other.isRoot &&
                 maxFeedbackModifiedAt == other.maxFeedbackModifiedAt &&
                 maxStartTime == other.maxStartTime &&
@@ -1900,6 +1996,7 @@ private constructor(
                 filter,
                 hasError,
                 ids,
+                includeSubtreeUsage,
                 isRoot,
                 maxFeedbackModifiedAt,
                 maxStartTime,
@@ -1921,7 +2018,7 @@ private constructor(
         override fun hashCode(): Int = hashCode
 
         override fun toString() =
-            "Body{aiSearch=$aiSearch, cursor=$cursor, filter=$filter, hasError=$hasError, ids=$ids, isRoot=$isRoot, maxFeedbackModifiedAt=$maxFeedbackModifiedAt, maxStartTime=$maxStartTime, minFeedbackModifiedAt=$minFeedbackModifiedAt, minStartTime=$minStartTime, pageSize=$pageSize, projectIds=$projectIds, referenceDatasetId=$referenceDatasetId, referenceExamples=$referenceExamples, runType=$runType, selects=$selects, traceFilter=$traceFilter, traceId=$traceId, treeFilter=$treeFilter, additionalProperties=$additionalProperties}"
+            "Body{aiSearch=$aiSearch, cursor=$cursor, filter=$filter, hasError=$hasError, ids=$ids, includeSubtreeUsage=$includeSubtreeUsage, isRoot=$isRoot, maxFeedbackModifiedAt=$maxFeedbackModifiedAt, maxStartTime=$maxStartTime, minFeedbackModifiedAt=$minFeedbackModifiedAt, minStartTime=$minStartTime, pageSize=$pageSize, projectIds=$projectIds, referenceDatasetId=$referenceDatasetId, referenceExamples=$referenceExamples, runType=$runType, selects=$selects, traceFilter=$traceFilter, traceId=$traceId, treeFilter=$treeFilter, additionalProperties=$additionalProperties}"
     }
 
     override fun equals(other: Any?): Boolean {
