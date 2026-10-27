@@ -20,7 +20,8 @@ import java.util.Objects
 import java.util.Optional
 import kotlin.jvm.optionals.getOrNull
 
-/** TracerSession schema. */
+/** Legacy session response model. Use TracerSession for new integrations. */
+@Deprecated("deprecated")
 class TracerSessionWithoutVirtualFields
 @JsonCreator(mode = JsonCreator.Mode.DISABLED)
 private constructor(
