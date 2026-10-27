@@ -17,7 +17,7 @@ Both repositories take contributions on `main`; there is no long-lived developme
 
 ## Release process
 
-Releases are cut by LangChain engineers from staging `main`. See [Releasing the SDKs](https://github.com/langchain-ai/langchainplus/tree/main/smith-sdks#releasing-the-sdks) in the internal `langchainplus` repository.
+Releases are cut by LangChain engineers from staging `main`. See [Releasing the SDKs](https://github.com/langchain-ai/langchainplus/tree/main/sdks/tooling#releasing-the-sdks) in the internal `langchainplus` repository.
 
 ## Development setup
 
