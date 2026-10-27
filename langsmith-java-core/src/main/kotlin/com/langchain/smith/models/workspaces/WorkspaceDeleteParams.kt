@@ -11,7 +11,12 @@ import java.util.Objects
 import java.util.Optional
 import kotlin.jvm.optionals.getOrNull
 
-/** Delete Workspace */
+/**
+ * Delete a workspace and its data.
+ *
+ * Only the workspace the request is scoped to (the X-Tenant-Id header, or the API key's workspace)
+ * can be deleted; any other ID returns 403. Requires the workspace delete permission.
+ */
 class WorkspaceDeleteParams
 private constructor(
     private val workspaceId: String?,

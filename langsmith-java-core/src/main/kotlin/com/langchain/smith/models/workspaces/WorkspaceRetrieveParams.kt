@@ -21,8 +21,10 @@ private constructor(
 
     fun workspaceId(): Optional<String> = Optional.ofNullable(workspaceId)
 
+    /** Accepted only from a data plane service; other callers get 403. */
     fun dataPlaneId(): Optional<String> = Optional.ofNullable(dataPlaneId)
 
+    /** Also return the workspace if it has been deleted. */
     fun includeDeleted(): Optional<Boolean> = Optional.ofNullable(includeDeleted)
 
     /** Additional headers to send with the request. */
@@ -64,11 +66,13 @@ private constructor(
         /** Alias for calling [Builder.workspaceId] with `workspaceId.orElse(null)`. */
         fun workspaceId(workspaceId: Optional<String>) = workspaceId(workspaceId.getOrNull())
 
+        /** Accepted only from a data plane service; other callers get 403. */
         fun dataPlaneId(dataPlaneId: String?) = apply { this.dataPlaneId = dataPlaneId }
 
         /** Alias for calling [Builder.dataPlaneId] with `dataPlaneId.orElse(null)`. */
         fun dataPlaneId(dataPlaneId: Optional<String>) = dataPlaneId(dataPlaneId.getOrNull())
 
+        /** Also return the workspace if it has been deleted. */
         fun includeDeleted(includeDeleted: Boolean?) = apply {
             this.includeDeleted = includeDeleted
         }

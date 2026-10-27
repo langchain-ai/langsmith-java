@@ -78,7 +78,11 @@ interface WorkspaceServiceAsync {
     ): CompletableFuture<WorkspaceRetrieveResponse> =
         retrieve(workspaceId, WorkspaceRetrieveParams.none(), requestOptions)
 
-    /** Update a workspace. */
+    /**
+     * Rename a workspace in the current organization.
+     *
+     * Requires the workspace settings manage permission. A name that is already taken returns 409.
+     */
     fun update(
         workspaceId: String,
         params: WorkspaceUpdateParams,
@@ -124,7 +128,13 @@ interface WorkspaceServiceAsync {
     fun list(requestOptions: RequestOptions): CompletableFuture<List<WorkspaceListResponse>> =
         list(WorkspaceListParams.none(), requestOptions)
 
-    /** Delete Workspace */
+    /**
+     * Delete a workspace and its data.
+     *
+     * Only the workspace the request is scoped to (the X-Tenant-Id header, or the API key's
+     * workspace) can be deleted; any other ID returns 403. Requires the workspace delete
+     * permission.
+     */
     fun delete(workspaceId: String): CompletableFuture<WorkspaceDeleteResponse> =
         delete(workspaceId, WorkspaceDeleteParams.none())
 

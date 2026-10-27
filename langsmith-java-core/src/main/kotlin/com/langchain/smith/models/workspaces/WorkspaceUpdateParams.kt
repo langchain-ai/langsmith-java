@@ -20,7 +20,11 @@ import java.util.Objects
 import java.util.Optional
 import kotlin.jvm.optionals.getOrNull
 
-/** Update a workspace. */
+/**
+ * Rename a workspace in the current organization.
+ *
+ * Requires the workspace settings manage permission. A name that is already taken returns 409.
+ */
 class WorkspaceUpdateParams
 private constructor(
     private val workspaceId: String?,
@@ -32,6 +36,8 @@ private constructor(
     fun workspaceId(): Optional<String> = Optional.ofNullable(workspaceId)
 
     /**
+     * New workspace name. Letters, digits, spaces and - _ ' @ ( ) only.
+     *
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type or is
      *   unexpectedly missing or null (e.g. if the server responded with an unexpected value).
      */
@@ -97,6 +103,7 @@ private constructor(
          */
         fun body(body: Body) = apply { this.body = body.toBuilder() }
 
+        /** New workspace name. Letters, digits, spaces and - _ ' @ ( ) only. */
         fun displayName(displayName: String) = apply { body.displayName(displayName) }
 
         /**
@@ -274,6 +281,8 @@ private constructor(
         ) : this(displayName, mutableMapOf())
 
         /**
+         * New workspace name. Letters, digits, spaces and - _ ' @ ( ) only.
+         *
          * @throws LangChainInvalidDataException if the JSON field has an unexpected type or is
          *   unexpectedly missing or null (e.g. if the server responded with an unexpected value).
          */
@@ -325,6 +334,7 @@ private constructor(
                 additionalProperties = body.additionalProperties.toMutableMap()
             }
 
+            /** New workspace name. Letters, digits, spaces and - _ ' @ ( ) only. */
             fun displayName(displayName: String) = displayName(JsonField.of(displayName))
 
             /**
