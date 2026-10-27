@@ -30,6 +30,7 @@ private constructor(
     private val environments: JsonField<List<Environment>>,
     private val name: JsonField<String>,
     private val sourceType: JsonField<SourceType>,
+    private val avatarUrl: JsonField<String>,
     private val owner: JsonField<String>,
     private val ownerId: JsonField<String>,
     private val tagKeyId: JsonField<String>,
@@ -53,6 +54,7 @@ private constructor(
         @JsonProperty("source_type")
         @ExcludeMissing
         sourceType: JsonField<SourceType> = JsonMissing.of(),
+        @JsonProperty("avatar_url") @ExcludeMissing avatarUrl: JsonField<String> = JsonMissing.of(),
         @JsonProperty("owner") @ExcludeMissing owner: JsonField<String> = JsonMissing.of(),
         @JsonProperty("owner_id") @ExcludeMissing ownerId: JsonField<String> = JsonMissing.of(),
         @JsonProperty("tag_key_id") @ExcludeMissing tagKeyId: JsonField<String> = JsonMissing.of(),
@@ -66,6 +68,7 @@ private constructor(
         environments,
         name,
         sourceType,
+        avatarUrl,
         owner,
         ownerId,
         tagKeyId,
@@ -108,6 +111,14 @@ private constructor(
      *   unexpectedly missing or null (e.g. if the server responded with an unexpected value).
      */
     fun sourceType(): SourceType = sourceType.getRequired("source_type")
+
+    /**
+     * AvatarURL is a short-lived URL for the agent avatar, when present.
+     *
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
+    fun avatarUrl(): Optional<String> = avatarUrl.getOptional("avatar_url")
 
     /**
      * Owner is the owner's full name, falling back to email when available.
@@ -184,6 +195,13 @@ private constructor(
     fun _sourceType(): JsonField<SourceType> = sourceType
 
     /**
+     * Returns the raw JSON value of [avatarUrl].
+     *
+     * Unlike [avatarUrl], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    @JsonProperty("avatar_url") @ExcludeMissing fun _avatarUrl(): JsonField<String> = avatarUrl
+
+    /**
      * Returns the raw JSON value of [owner].
      *
      * Unlike [owner], this method doesn't throw if the JSON field has an unexpected type.
@@ -250,6 +268,7 @@ private constructor(
         private var environments: JsonField<MutableList<Environment>>? = null
         private var name: JsonField<String>? = null
         private var sourceType: JsonField<SourceType>? = null
+        private var avatarUrl: JsonField<String> = JsonMissing.of()
         private var owner: JsonField<String> = JsonMissing.of()
         private var ownerId: JsonField<String> = JsonMissing.of()
         private var tagKeyId: JsonField<String> = JsonMissing.of()
@@ -264,6 +283,7 @@ private constructor(
             environments = agent.environments.map { it.toMutableList() }
             name = agent.name
             sourceType = agent.sourceType
+            avatarUrl = agent.avatarUrl
             owner = agent.owner
             ownerId = agent.ownerId
             tagKeyId = agent.tagKeyId
@@ -348,6 +368,21 @@ private constructor(
          * supported value.
          */
         fun sourceType(sourceType: JsonField<SourceType>) = apply { this.sourceType = sourceType }
+
+        /** AvatarURL is a short-lived URL for the agent avatar, when present. */
+        fun avatarUrl(avatarUrl: String?) = avatarUrl(JsonField.ofNullable(avatarUrl))
+
+        /** Alias for calling [Builder.avatarUrl] with `avatarUrl.orElse(null)`. */
+        fun avatarUrl(avatarUrl: Optional<String>) = avatarUrl(avatarUrl.getOrNull())
+
+        /**
+         * Sets [Builder.avatarUrl] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.avatarUrl] with a well-typed [String] value instead.
+         * This method is primarily for setting the field to an undocumented or not yet supported
+         * value.
+         */
+        fun avatarUrl(avatarUrl: JsonField<String>) = apply { this.avatarUrl = avatarUrl }
 
         /** Owner is the owner's full name, falling back to email when available. */
         fun owner(owner: String) = owner(JsonField.of(owner))
@@ -444,6 +479,7 @@ private constructor(
                 checkRequired("environments", environments).map { it.toImmutable() },
                 checkRequired("name", name),
                 checkRequired("sourceType", sourceType),
+                avatarUrl,
                 owner,
                 ownerId,
                 tagKeyId,
@@ -473,6 +509,7 @@ private constructor(
         environments().forEach { it.validate() }
         name()
         sourceType().validate()
+        avatarUrl()
         owner()
         ownerId()
         tagKeyId()
@@ -501,6 +538,7 @@ private constructor(
             (environments.asKnown().getOrNull()?.sumOf { it.validity().toInt() } ?: 0) +
             (if (name.asKnown().isPresent) 1 else 0) +
             (sourceType.asKnown().getOrNull()?.validity() ?: 0) +
+            (if (avatarUrl.asKnown().isPresent) 1 else 0) +
             (if (owner.asKnown().isPresent) 1 else 0) +
             (if (ownerId.asKnown().isPresent) 1 else 0) +
             (if (tagKeyId.asKnown().isPresent) 1 else 0) +
@@ -1613,6 +1651,7 @@ private constructor(
             environments == other.environments &&
             name == other.name &&
             sourceType == other.sourceType &&
+            avatarUrl == other.avatarUrl &&
             owner == other.owner &&
             ownerId == other.ownerId &&
             tagKeyId == other.tagKeyId &&
@@ -1628,6 +1667,7 @@ private constructor(
             environments,
             name,
             sourceType,
+            avatarUrl,
             owner,
             ownerId,
             tagKeyId,
@@ -1639,5 +1679,5 @@ private constructor(
     override fun hashCode(): Int = hashCode
 
     override fun toString() =
-        "Agent{id=$id, agentType=$agentType, createdAt=$createdAt, environments=$environments, name=$name, sourceType=$sourceType, owner=$owner, ownerId=$ownerId, tagKeyId=$tagKeyId, tagValueId=$tagValueId, additionalProperties=$additionalProperties}"
+        "Agent{id=$id, agentType=$agentType, createdAt=$createdAt, environments=$environments, name=$name, sourceType=$sourceType, avatarUrl=$avatarUrl, owner=$owner, ownerId=$ownerId, tagKeyId=$tagKeyId, tagValueId=$tagValueId, additionalProperties=$additionalProperties}"
 }
