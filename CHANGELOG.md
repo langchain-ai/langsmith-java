@@ -1,5 +1,61 @@
 # Changelog
 
+## [0.1.0-beta.28](https://github.com/langchain-ai/langsmith-java/compare/v0.1.0-beta.27...v0.1.0-beta.28) (2026-10-27)
+
+
+### ⚠ BREAKING CHANGES
+
+* **sandboxes:** add sandbox volumes
+
+### Features
+
+* add agent owner API support ([415e006](https://github.com/langchain-ai/langsmith-java/commit/415e006cb2291bf50f63029de075a071c66bb2ea))
+* **agents:** add agent registry CRUD to SDKs and CLI ([5c64566](https://github.com/langchain-ai/langsmith-java/commit/5c645660a1c96d5dcf8449b5bb091a2611134432))
+* allow listing examples without default fields ([9150a75](https://github.com/langchain-ai/langsmith-java/commit/9150a7546e31fc0ecdb1487cafed1f5fce36d36a))
+* **backend:** add support for uploading custom avatars for agents ([f8ee663](https://github.com/langchain-ai/langsmith-java/commit/f8ee6633668bc125e7ebeda43c827ff35fad7b98))
+* **cli:** expose datasets clone to the CLI ([7735519](https://github.com/langchain-ai/langsmith-java/commit/7735519e1688ea70f68693eb336f006b23531234))
+* **cli:** expose datasets share to the CLI ([5a9527b](https://github.com/langchain-ai/langsmith-java/commit/5a9527ba04a6f5933b618feac7a41d429ec75ef3))
+* **cli:** expose datasets splits to the CLI ([0ad4163](https://github.com/langchain-ai/langsmith-java/commit/0ad41636d6a824f4584b8f44d2840a901662642b))
+* **cli:** expose datasets update to the CLI ([bef4f31](https://github.com/langchain-ai/langsmith-java/commit/bef4f315af1bce800afe881575a02ebd5c2ed741))
+* **cli:** expose datasets update-tags to the CLI ([4139a6b](https://github.com/langchain-ai/langsmith-java/commit/4139a6bf6cc266a2348f0436a59687a79295965f))
+* **cli:** expose runs share and get-url to the CLI ([b1dc0d9](https://github.com/langchain-ai/langsmith-java/commit/b1dc0d9b38f51431e7ce4a56cff377faeaa36b3c))
+* **cli:** expose workspaces retrieve, update and delete to the CLI ([4eff68c](https://github.com/langchain-ai/langsmith-java/commit/4eff68c48d85b44a4ab6cab7022cfa2d2f07e589))
+* **engine:** scan and fix GitLab projects through a workspace service account ([3881fda](https://github.com/langchain-ai/langsmith-java/commit/3881fda57181ce5859b4bad0e82cf36468e4049b))
+* **engine:** scope GitHub fixes to the instance they were opened on ([d2e792c](https://github.com/langchain-ai/langsmith-java/commit/d2e792c8f0747200b3120410e7a5dc13417cfb1d))
+* **evaluators:** save decision-model evaluators with the decision_model type ([8219df3](https://github.com/langchain-ai/langsmith-java/commit/8219df3e04f44b7079fde6d55aa487c634765cc9))
+* include subtree usage in frontend runs queries ([23d7369](https://github.com/langchain-ai/langsmith-java/commit/23d7369917d03ca9e8a10eea1fc63c727f173964))
+* **sandboxes:** add sandbox volumes ([f710df1](https://github.com/langchain-ai/langsmith-java/commit/f710df1d691762269c4daf2212400eaaba51d860))
+* **sandboxes:** create non-persistent sandboxes with `persistent: false` (private beta), never billed for storage ([736f97c](https://github.com/langchain-ai/langsmith-java/commit/736f97c048244cdae11d0489a2456e487e4c2039))
+* **sandboxes:** embed token-mode service URLs and browser windows with the token kept out of server-visible URLs ([efad02f](https://github.com/langchain-ai/langsmith-java/commit/efad02fc7364e17f69a1a438b292df33224f86f7))
+* **sandboxes:** let LangSmith login service URLs be embedded by named origins ([ecb6ee3](https://github.com/langchain-ai/langsmith-java/commit/ecb6ee375223f607a881cb55bbca2ccc63e4ad72))
+* **sandboxes:** relay sandbox egress through a customer's network ([472e1b2](https://github.com/langchain-ai/langsmith-java/commit/472e1b24f627e5199e32fb084a59e313f0ec2e5f))
+* **sandboxes:** sandbox functions ([b10dfe7](https://github.com/langchain-ai/langsmith-java/commit/b10dfe770d7663266dc1a7d70e38a2f360eda41d))
+* **sdks:** stream v2 run, trace and thread queries ([7a5f41a](https://github.com/langchain-ai/langsmith-java/commit/7a5f41ab66073ca39cdd362a595dad6e8b8d46d4))
+
+
+### Bug Fixes
+
+* align v1 session write responses (LSO-4121, LSO-4130) ([11cffae](https://github.com/langchain-ai/langsmith-java/commit/11cffae52ede1fc630038593f113ef45920ccaf7))
+* **sandboxes:** add cursor pagination to registry listing ([764f4f2](https://github.com/langchain-ai/langsmith-java/commit/764f4f24e3cb818d71ab33028088c10b29809127))
+* **sdk:** default Java agent creation to EXTERNAL ([b7d9150](https://github.com/langchain-ai/langsmith-java/commit/b7d9150010edda8f9fa6208bc44237f210879761))
+* update reference outputs ([15dbb8f](https://github.com/langchain-ai/langsmith-java/commit/15dbb8fad5bde1ce0a36f39d9c9343ea2172d3cd))
+
+
+### Chores
+
+* remove langsmith-sdk and staging repo leftovers, update SDK docs ([330693e](https://github.com/langchain-ai/langsmith-java/commit/330693ef2416458484e82f57cdea2e2421c2e00d))
+
+
+### Documentation
+
+* remove the beta label from agent addressing ([15e02e0](https://github.com/langchain-ai/langsmith-java/commit/15e02e0939dade15e7412cf77c0406c3cba11c9e))
+* **threads:** bring POST /api/v2/threads/query into API standards compliance ([0084c36](https://github.com/langchain-ai/langsmith-java/commit/0084c36d333cae52fb4f618615706f00267a229c))
+
+
+### Refactors
+
+* consolidate SDK tooling under sdks ([6779ec4](https://github.com/langchain-ai/langsmith-java/commit/6779ec436ea64e4a165a0adfbd62fdc1904f0559))
+
 ## [0.1.0-beta.27](https://github.com/langchain-ai/langsmith-java/compare/v0.1.0-beta.26...v0.1.0-beta.27) (2026-10-20)
 
 
