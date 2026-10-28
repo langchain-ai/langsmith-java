@@ -43,8 +43,10 @@ private constructor(
     private val isAssertion: JsonField<Boolean>,
     private val isRequired: JsonField<Boolean>,
     private val regexValidator: JsonField<RegexValidator>,
+    private val requiredIf: JsonField<RequiredIf>,
     private val scoreDescriptions: JsonField<ScoreDescriptions>,
     private val valueDescriptions: JsonField<ValueDescriptions>,
+    private val visibleIf: JsonField<VisibleIf>,
     private val additionalProperties: MutableMap<String, JsonValue>,
 ) {
 
@@ -71,12 +73,18 @@ private constructor(
         @JsonProperty("regex_validator")
         @ExcludeMissing
         regexValidator: JsonField<RegexValidator> = JsonMissing.of(),
+        @JsonProperty("required_if")
+        @ExcludeMissing
+        requiredIf: JsonField<RequiredIf> = JsonMissing.of(),
         @JsonProperty("score_descriptions")
         @ExcludeMissing
         scoreDescriptions: JsonField<ScoreDescriptions> = JsonMissing.of(),
         @JsonProperty("value_descriptions")
         @ExcludeMissing
         valueDescriptions: JsonField<ValueDescriptions> = JsonMissing.of(),
+        @JsonProperty("visible_if")
+        @ExcludeMissing
+        visibleIf: JsonField<VisibleIf> = JsonMissing.of(),
     ) : this(
         feedbackKey,
         description,
@@ -85,8 +93,10 @@ private constructor(
         isAssertion,
         isRequired,
         regexValidator,
+        requiredIf,
         scoreDescriptions,
         valueDescriptions,
+        visibleIf,
         mutableMapOf(),
     )
 
@@ -136,6 +146,12 @@ private constructor(
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
      */
+    fun requiredIf(): Optional<RequiredIf> = requiredIf.getOptional("required_if")
+
+    /**
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
     fun scoreDescriptions(): Optional<ScoreDescriptions> =
         scoreDescriptions.getOptional("score_descriptions")
 
@@ -145,6 +161,12 @@ private constructor(
      */
     fun valueDescriptions(): Optional<ValueDescriptions> =
         valueDescriptions.getOptional("value_descriptions")
+
+    /**
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
+    fun visibleIf(): Optional<VisibleIf> = visibleIf.getOptional("visible_if")
 
     /**
      * Returns the raw JSON value of [feedbackKey].
@@ -207,6 +229,15 @@ private constructor(
     fun _regexValidator(): JsonField<RegexValidator> = regexValidator
 
     /**
+     * Returns the raw JSON value of [requiredIf].
+     *
+     * Unlike [requiredIf], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    @JsonProperty("required_if")
+    @ExcludeMissing
+    fun _requiredIf(): JsonField<RequiredIf> = requiredIf
+
+    /**
      * Returns the raw JSON value of [scoreDescriptions].
      *
      * Unlike [scoreDescriptions], this method doesn't throw if the JSON field has an unexpected
@@ -225,6 +256,13 @@ private constructor(
     @JsonProperty("value_descriptions")
     @ExcludeMissing
     fun _valueDescriptions(): JsonField<ValueDescriptions> = valueDescriptions
+
+    /**
+     * Returns the raw JSON value of [visibleIf].
+     *
+     * Unlike [visibleIf], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    @JsonProperty("visible_if") @ExcludeMissing fun _visibleIf(): JsonField<VisibleIf> = visibleIf
 
     @JsonAnySetter
     private fun putAdditionalProperty(key: String, value: JsonValue) {
@@ -262,8 +300,10 @@ private constructor(
         private var isAssertion: JsonField<Boolean> = JsonMissing.of()
         private var isRequired: JsonField<Boolean> = JsonMissing.of()
         private var regexValidator: JsonField<RegexValidator> = JsonMissing.of()
+        private var requiredIf: JsonField<RequiredIf> = JsonMissing.of()
         private var scoreDescriptions: JsonField<ScoreDescriptions> = JsonMissing.of()
         private var valueDescriptions: JsonField<ValueDescriptions> = JsonMissing.of()
+        private var visibleIf: JsonField<VisibleIf> = JsonMissing.of()
         private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
 
         @JvmSynthetic
@@ -276,8 +316,10 @@ private constructor(
                 isAssertion = annotationQueueRubricItemSchema.isAssertion
                 isRequired = annotationQueueRubricItemSchema.isRequired
                 regexValidator = annotationQueueRubricItemSchema.regexValidator
+                requiredIf = annotationQueueRubricItemSchema.requiredIf
                 scoreDescriptions = annotationQueueRubricItemSchema.scoreDescriptions
                 valueDescriptions = annotationQueueRubricItemSchema.valueDescriptions
+                visibleIf = annotationQueueRubricItemSchema.visibleIf
                 additionalProperties =
                     annotationQueueRubricItemSchema.additionalProperties.toMutableMap()
             }
@@ -409,6 +451,20 @@ private constructor(
         /** Alias for calling [regexValidator] with `RegexValidator.ofMissing(missing)`. */
         fun regexValidator(missing: Missing) = regexValidator(RegexValidator.ofMissing(missing))
 
+        fun requiredIf(requiredIf: RequiredIf?) = requiredIf(JsonField.ofNullable(requiredIf))
+
+        /** Alias for calling [Builder.requiredIf] with `requiredIf.orElse(null)`. */
+        fun requiredIf(requiredIf: Optional<RequiredIf>) = requiredIf(requiredIf.getOrNull())
+
+        /**
+         * Sets [Builder.requiredIf] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.requiredIf] with a well-typed [RequiredIf] value
+         * instead. This method is primarily for setting the field to an undocumented or not yet
+         * supported value.
+         */
+        fun requiredIf(requiredIf: JsonField<RequiredIf>) = apply { this.requiredIf = requiredIf }
+
         fun scoreDescriptions(scoreDescriptions: ScoreDescriptions?) =
             scoreDescriptions(JsonField.ofNullable(scoreDescriptions))
 
@@ -444,6 +500,20 @@ private constructor(
         fun valueDescriptions(valueDescriptions: JsonField<ValueDescriptions>) = apply {
             this.valueDescriptions = valueDescriptions
         }
+
+        fun visibleIf(visibleIf: VisibleIf?) = visibleIf(JsonField.ofNullable(visibleIf))
+
+        /** Alias for calling [Builder.visibleIf] with `visibleIf.orElse(null)`. */
+        fun visibleIf(visibleIf: Optional<VisibleIf>) = visibleIf(visibleIf.getOrNull())
+
+        /**
+         * Sets [Builder.visibleIf] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.visibleIf] with a well-typed [VisibleIf] value instead.
+         * This method is primarily for setting the field to an undocumented or not yet supported
+         * value.
+         */
+        fun visibleIf(visibleIf: JsonField<VisibleIf>) = apply { this.visibleIf = visibleIf }
 
         fun additionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
             this.additionalProperties.clear()
@@ -485,8 +555,10 @@ private constructor(
                 isAssertion,
                 isRequired,
                 regexValidator,
+                requiredIf,
                 scoreDescriptions,
                 valueDescriptions,
+                visibleIf,
                 additionalProperties.toMutableMap(),
             )
     }
@@ -513,8 +585,10 @@ private constructor(
         isAssertion()
         isRequired()
         regexValidator().ifPresent { it.validate() }
+        requiredIf().ifPresent { it.validate() }
         scoreDescriptions().ifPresent { it.validate() }
         valueDescriptions().ifPresent { it.validate() }
+        visibleIf().ifPresent { it.validate() }
         validated = true
     }
 
@@ -540,8 +614,10 @@ private constructor(
             (if (isAssertion.asKnown().isPresent) 1 else 0) +
             (if (isRequired.asKnown().isPresent) 1 else 0) +
             (regexValidator.asKnown().getOrNull()?.validity() ?: 0) +
+            (requiredIf.asKnown().getOrNull()?.validity() ?: 0) +
             (scoreDescriptions.asKnown().getOrNull()?.validity() ?: 0) +
-            (valueDescriptions.asKnown().getOrNull()?.validity() ?: 0)
+            (valueDescriptions.asKnown().getOrNull()?.validity() ?: 0) +
+            (visibleIf.asKnown().getOrNull()?.validity() ?: 0)
 
     class FeedbackConfig
     @JsonCreator(mode = JsonCreator.Mode.DISABLED)
@@ -1942,6 +2018,766 @@ private constructor(
         }
     }
 
+    class RequiredIf
+    @JsonCreator(mode = JsonCreator.Mode.DISABLED)
+    private constructor(
+        private val join: JsonField<Join>,
+        private val rules: JsonField<List<Rule>>,
+        private val additionalProperties: MutableMap<String, JsonValue>,
+    ) {
+
+        @JsonCreator
+        private constructor(
+            @JsonProperty("join") @ExcludeMissing join: JsonField<Join> = JsonMissing.of(),
+            @JsonProperty("rules") @ExcludeMissing rules: JsonField<List<Rule>> = JsonMissing.of(),
+        ) : this(join, rules, mutableMapOf())
+
+        /**
+         * @throws LangChainInvalidDataException if the JSON field has an unexpected type or is
+         *   unexpectedly missing or null (e.g. if the server responded with an unexpected value).
+         */
+        fun join(): Join = join.getRequired("join")
+
+        /**
+         * @throws LangChainInvalidDataException if the JSON field has an unexpected type or is
+         *   unexpectedly missing or null (e.g. if the server responded with an unexpected value).
+         */
+        fun rules(): List<Rule> = rules.getRequired("rules")
+
+        /**
+         * Returns the raw JSON value of [join].
+         *
+         * Unlike [join], this method doesn't throw if the JSON field has an unexpected type.
+         */
+        @JsonProperty("join") @ExcludeMissing fun _join(): JsonField<Join> = join
+
+        /**
+         * Returns the raw JSON value of [rules].
+         *
+         * Unlike [rules], this method doesn't throw if the JSON field has an unexpected type.
+         */
+        @JsonProperty("rules") @ExcludeMissing fun _rules(): JsonField<List<Rule>> = rules
+
+        @JsonAnySetter
+        private fun putAdditionalProperty(key: String, value: JsonValue) {
+            additionalProperties.put(key, value)
+        }
+
+        @JsonAnyGetter
+        @ExcludeMissing
+        fun _additionalProperties(): Map<String, JsonValue> =
+            Collections.unmodifiableMap(additionalProperties)
+
+        fun toBuilder() = Builder().from(this)
+
+        companion object {
+
+            /**
+             * Returns a mutable builder for constructing an instance of [RequiredIf].
+             *
+             * The following fields are required:
+             * ```java
+             * .join()
+             * .rules()
+             * ```
+             */
+            @JvmStatic fun builder() = Builder()
+        }
+
+        /** A builder for [RequiredIf]. */
+        class Builder internal constructor() {
+
+            private var join: JsonField<Join>? = null
+            private var rules: JsonField<MutableList<Rule>>? = null
+            private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
+
+            @JvmSynthetic
+            internal fun from(requiredIf: RequiredIf) = apply {
+                join = requiredIf.join
+                rules = requiredIf.rules.map { it.toMutableList() }
+                additionalProperties = requiredIf.additionalProperties.toMutableMap()
+            }
+
+            fun join(join: Join) = join(JsonField.of(join))
+
+            /**
+             * Sets [Builder.join] to an arbitrary JSON value.
+             *
+             * You should usually call [Builder.join] with a well-typed [Join] value instead. This
+             * method is primarily for setting the field to an undocumented or not yet supported
+             * value.
+             */
+            fun join(join: JsonField<Join>) = apply { this.join = join }
+
+            fun rules(rules: List<Rule>) = rules(JsonField.of(rules))
+
+            /**
+             * Sets [Builder.rules] to an arbitrary JSON value.
+             *
+             * You should usually call [Builder.rules] with a well-typed `List<Rule>` value instead.
+             * This method is primarily for setting the field to an undocumented or not yet
+             * supported value.
+             */
+            fun rules(rules: JsonField<List<Rule>>) = apply {
+                this.rules = rules.map { it.toMutableList() }
+            }
+
+            /**
+             * Adds a single [Rule] to [rules].
+             *
+             * @throws IllegalStateException if the field was previously set to a non-list.
+             */
+            fun addRule(rule: Rule) = apply {
+                rules =
+                    (rules ?: JsonField.of(mutableListOf())).also {
+                        checkKnown("rules", it).add(rule)
+                    }
+            }
+
+            fun additionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
+                this.additionalProperties.clear()
+                putAllAdditionalProperties(additionalProperties)
+            }
+
+            fun putAdditionalProperty(key: String, value: JsonValue) = apply {
+                additionalProperties.put(key, value)
+            }
+
+            fun putAllAdditionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
+                this.additionalProperties.putAll(additionalProperties)
+            }
+
+            fun removeAdditionalProperty(key: String) = apply { additionalProperties.remove(key) }
+
+            fun removeAllAdditionalProperties(keys: Set<String>) = apply {
+                keys.forEach(::removeAdditionalProperty)
+            }
+
+            /**
+             * Returns an immutable instance of [RequiredIf].
+             *
+             * Further updates to this [Builder] will not mutate the returned instance.
+             *
+             * The following fields are required:
+             * ```java
+             * .join()
+             * .rules()
+             * ```
+             *
+             * @throws IllegalStateException if any required field is unset.
+             */
+            fun build(): RequiredIf =
+                RequiredIf(
+                    checkRequired("join", join),
+                    checkRequired("rules", rules).map { it.toImmutable() },
+                    additionalProperties.toMutableMap(),
+                )
+        }
+
+        private var validated: Boolean = false
+
+        /**
+         * Validates that the types of all values in this object match their expected types
+         * recursively.
+         *
+         * This method is _not_ forwards compatible with new types from the API for existing fields.
+         *
+         * @throws LangChainInvalidDataException if any value type in this object doesn't match its
+         *   expected type.
+         */
+        fun validate(): RequiredIf = apply {
+            if (validated) {
+                return@apply
+            }
+
+            join().validate()
+            rules().forEach { it.validate() }
+            validated = true
+        }
+
+        fun isValid(): Boolean =
+            try {
+                validate()
+                true
+            } catch (e: LangChainInvalidDataException) {
+                false
+            }
+
+        /**
+         * Returns a score indicating how many valid values are contained in this object
+         * recursively.
+         *
+         * Used for best match union deserialization.
+         */
+        @JvmSynthetic
+        internal fun validity(): Int =
+            (join.asKnown().getOrNull()?.validity() ?: 0) +
+                (rules.asKnown().getOrNull()?.sumOf { it.validity().toInt() } ?: 0)
+
+        class Join @JsonCreator private constructor(private val value: JsonField<String>) : Enum {
+
+            /**
+             * Returns this class instance's raw value.
+             *
+             * This is usually only useful if this instance was deserialized from data that doesn't
+             * match any known member, and you want to know that value. For example, if the SDK is
+             * on an older version than the API, then the API may respond with new members that the
+             * SDK is unaware of.
+             */
+            @com.fasterxml.jackson.annotation.JsonValue fun _value(): JsonField<String> = value
+
+            companion object {
+
+                @JvmField val ALL = of("all")
+
+                @JvmField val ANY = of("any")
+
+                @JvmStatic fun of(value: String) = Join(JsonField.of(value))
+            }
+
+            /** An enum containing [Join]'s known values. */
+            enum class Known {
+                ALL,
+                ANY,
+            }
+
+            /**
+             * An enum containing [Join]'s known values, as well as an [_UNKNOWN] member.
+             *
+             * An instance of [Join] can contain an unknown value in a couple of cases:
+             * - It was deserialized from data that doesn't match any known member. For example, if
+             *   the SDK is on an older version than the API, then the API may respond with new
+             *   members that the SDK is unaware of.
+             * - It was constructed with an arbitrary value using the [of] method.
+             */
+            enum class Value {
+                ALL,
+                ANY,
+                /** An enum member indicating that [Join] was instantiated with an unknown value. */
+                _UNKNOWN,
+            }
+
+            /**
+             * Returns an enum member corresponding to this class instance's value, or
+             * [Value._UNKNOWN] if the class was instantiated with an unknown value.
+             *
+             * Use the [known] method instead if you're certain the value is always known or if you
+             * want to throw for the unknown case.
+             */
+            fun value(): Value =
+                when (this) {
+                    ALL -> Value.ALL
+                    ANY -> Value.ANY
+                    else -> Value._UNKNOWN
+                }
+
+            /**
+             * Returns an enum member corresponding to this class instance's value.
+             *
+             * Use the [value] method instead if you're uncertain the value is always known and
+             * don't want to throw for the unknown case.
+             *
+             * @throws LangChainInvalidDataException if this class instance's value is a not a known
+             *   member.
+             */
+            fun known(): Known =
+                when (this) {
+                    ALL -> Known.ALL
+                    ANY -> Known.ANY
+                    else -> throw LangChainInvalidDataException("Unknown Join: $value")
+                }
+
+            /**
+             * Returns this class instance's primitive wire representation.
+             *
+             * This differs from the [toString] method because that method is primarily for
+             * debugging and generally doesn't throw.
+             *
+             * @throws LangChainInvalidDataException if this class instance's value does not have
+             *   the expected primitive type.
+             */
+            fun asString(): String =
+                _value().asString().orElseThrow {
+                    LangChainInvalidDataException("Value is not a String")
+                }
+
+            private var validated: Boolean = false
+
+            /**
+             * Validates that the types of all values in this object match their expected types
+             * recursively.
+             *
+             * This method is _not_ forwards compatible with new types from the API for existing
+             * fields.
+             *
+             * @throws LangChainInvalidDataException if any value type in this object doesn't match
+             *   its expected type.
+             */
+            fun validate(): Join = apply {
+                if (validated) {
+                    return@apply
+                }
+
+                known()
+                validated = true
+            }
+
+            fun isValid(): Boolean =
+                try {
+                    validate()
+                    true
+                } catch (e: LangChainInvalidDataException) {
+                    false
+                }
+
+            /**
+             * Returns a score indicating how many valid values are contained in this object
+             * recursively.
+             *
+             * Used for best match union deserialization.
+             */
+            @JvmSynthetic internal fun validity(): Int = if (value() == Value._UNKNOWN) 0 else 1
+
+            override fun equals(other: Any?): Boolean {
+                if (this === other) {
+                    return true
+                }
+
+                return other is Join && value == other.value
+            }
+
+            override fun hashCode() = value.hashCode()
+
+            override fun toString() = value.toString()
+        }
+
+        class Rule
+        @JsonCreator(mode = JsonCreator.Mode.DISABLED)
+        private constructor(
+            private val key: JsonField<String>,
+            private val op: JsonField<Op>,
+            private val values: JsonField<List<Double>>,
+            private val additionalProperties: MutableMap<String, JsonValue>,
+        ) {
+
+            @JsonCreator
+            private constructor(
+                @JsonProperty("key") @ExcludeMissing key: JsonField<String> = JsonMissing.of(),
+                @JsonProperty("op") @ExcludeMissing op: JsonField<Op> = JsonMissing.of(),
+                @JsonProperty("values")
+                @ExcludeMissing
+                values: JsonField<List<Double>> = JsonMissing.of(),
+            ) : this(key, op, values, mutableMapOf())
+
+            /**
+             * @throws LangChainInvalidDataException if the JSON field has an unexpected type or is
+             *   unexpectedly missing or null (e.g. if the server responded with an unexpected
+             *   value).
+             */
+            fun key(): String = key.getRequired("key")
+
+            /**
+             * @throws LangChainInvalidDataException if the JSON field has an unexpected type or is
+             *   unexpectedly missing or null (e.g. if the server responded with an unexpected
+             *   value).
+             */
+            fun op(): Op = op.getRequired("op")
+
+            /**
+             * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g.
+             *   if the server responded with an unexpected value).
+             */
+            fun values(): Optional<List<Double>> = values.getOptional("values")
+
+            /**
+             * Returns the raw JSON value of [key].
+             *
+             * Unlike [key], this method doesn't throw if the JSON field has an unexpected type.
+             */
+            @JsonProperty("key") @ExcludeMissing fun _key(): JsonField<String> = key
+
+            /**
+             * Returns the raw JSON value of [op].
+             *
+             * Unlike [op], this method doesn't throw if the JSON field has an unexpected type.
+             */
+            @JsonProperty("op") @ExcludeMissing fun _op(): JsonField<Op> = op
+
+            /**
+             * Returns the raw JSON value of [values].
+             *
+             * Unlike [values], this method doesn't throw if the JSON field has an unexpected type.
+             */
+            @JsonProperty("values") @ExcludeMissing fun _values(): JsonField<List<Double>> = values
+
+            @JsonAnySetter
+            private fun putAdditionalProperty(key: String, value: JsonValue) {
+                additionalProperties.put(key, value)
+            }
+
+            @JsonAnyGetter
+            @ExcludeMissing
+            fun _additionalProperties(): Map<String, JsonValue> =
+                Collections.unmodifiableMap(additionalProperties)
+
+            fun toBuilder() = Builder().from(this)
+
+            companion object {
+
+                /**
+                 * Returns a mutable builder for constructing an instance of [Rule].
+                 *
+                 * The following fields are required:
+                 * ```java
+                 * .key()
+                 * .op()
+                 * ```
+                 */
+                @JvmStatic fun builder() = Builder()
+            }
+
+            /** A builder for [Rule]. */
+            class Builder internal constructor() {
+
+                private var key: JsonField<String>? = null
+                private var op: JsonField<Op>? = null
+                private var values: JsonField<MutableList<Double>>? = null
+                private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
+
+                @JvmSynthetic
+                internal fun from(rule: Rule) = apply {
+                    key = rule.key
+                    op = rule.op
+                    values = rule.values.map { it.toMutableList() }
+                    additionalProperties = rule.additionalProperties.toMutableMap()
+                }
+
+                fun key(key: String) = key(JsonField.of(key))
+
+                /**
+                 * Sets [Builder.key] to an arbitrary JSON value.
+                 *
+                 * You should usually call [Builder.key] with a well-typed [String] value instead.
+                 * This method is primarily for setting the field to an undocumented or not yet
+                 * supported value.
+                 */
+                fun key(key: JsonField<String>) = apply { this.key = key }
+
+                fun op(op: Op) = op(JsonField.of(op))
+
+                /**
+                 * Sets [Builder.op] to an arbitrary JSON value.
+                 *
+                 * You should usually call [Builder.op] with a well-typed [Op] value instead. This
+                 * method is primarily for setting the field to an undocumented or not yet supported
+                 * value.
+                 */
+                fun op(op: JsonField<Op>) = apply { this.op = op }
+
+                fun values(values: List<Double>) = values(JsonField.of(values))
+
+                /**
+                 * Sets [Builder.values] to an arbitrary JSON value.
+                 *
+                 * You should usually call [Builder.values] with a well-typed `List<Double>` value
+                 * instead. This method is primarily for setting the field to an undocumented or not
+                 * yet supported value.
+                 */
+                fun values(values: JsonField<List<Double>>) = apply {
+                    this.values = values.map { it.toMutableList() }
+                }
+
+                /**
+                 * Adds a single [Double] to [values].
+                 *
+                 * @throws IllegalStateException if the field was previously set to a non-list.
+                 */
+                fun addValue(value: Double) = apply {
+                    values =
+                        (values ?: JsonField.of(mutableListOf())).also {
+                            checkKnown("values", it).add(value)
+                        }
+                }
+
+                fun additionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
+                    this.additionalProperties.clear()
+                    putAllAdditionalProperties(additionalProperties)
+                }
+
+                fun putAdditionalProperty(key: String, value: JsonValue) = apply {
+                    additionalProperties.put(key, value)
+                }
+
+                fun putAllAdditionalProperties(additionalProperties: Map<String, JsonValue>) =
+                    apply {
+                        this.additionalProperties.putAll(additionalProperties)
+                    }
+
+                fun removeAdditionalProperty(key: String) = apply {
+                    additionalProperties.remove(key)
+                }
+
+                fun removeAllAdditionalProperties(keys: Set<String>) = apply {
+                    keys.forEach(::removeAdditionalProperty)
+                }
+
+                /**
+                 * Returns an immutable instance of [Rule].
+                 *
+                 * Further updates to this [Builder] will not mutate the returned instance.
+                 *
+                 * The following fields are required:
+                 * ```java
+                 * .key()
+                 * .op()
+                 * ```
+                 *
+                 * @throws IllegalStateException if any required field is unset.
+                 */
+                fun build(): Rule =
+                    Rule(
+                        checkRequired("key", key),
+                        checkRequired("op", op),
+                        (values ?: JsonMissing.of()).map { it.toImmutable() },
+                        additionalProperties.toMutableMap(),
+                    )
+            }
+
+            private var validated: Boolean = false
+
+            /**
+             * Validates that the types of all values in this object match their expected types
+             * recursively.
+             *
+             * This method is _not_ forwards compatible with new types from the API for existing
+             * fields.
+             *
+             * @throws LangChainInvalidDataException if any value type in this object doesn't match
+             *   its expected type.
+             */
+            fun validate(): Rule = apply {
+                if (validated) {
+                    return@apply
+                }
+
+                key()
+                op().validate()
+                values()
+                validated = true
+            }
+
+            fun isValid(): Boolean =
+                try {
+                    validate()
+                    true
+                } catch (e: LangChainInvalidDataException) {
+                    false
+                }
+
+            /**
+             * Returns a score indicating how many valid values are contained in this object
+             * recursively.
+             *
+             * Used for best match union deserialization.
+             */
+            @JvmSynthetic
+            internal fun validity(): Int =
+                (if (key.asKnown().isPresent) 1 else 0) +
+                    (op.asKnown().getOrNull()?.validity() ?: 0) +
+                    (values.asKnown().getOrNull()?.size ?: 0)
+
+            class Op @JsonCreator private constructor(private val value: JsonField<String>) : Enum {
+
+                /**
+                 * Returns this class instance's raw value.
+                 *
+                 * This is usually only useful if this instance was deserialized from data that
+                 * doesn't match any known member, and you want to know that value. For example, if
+                 * the SDK is on an older version than the API, then the API may respond with new
+                 * members that the SDK is unaware of.
+                 */
+                @com.fasterxml.jackson.annotation.JsonValue fun _value(): JsonField<String> = value
+
+                companion object {
+
+                    @JvmField val IS = of("is")
+
+                    @JvmField val IS_ONE_OF = of("is_one_of")
+
+                    @JvmField val IS_EMPTY = of("is_empty")
+
+                    @JvmField val IS_NOT_EMPTY = of("is_not_empty")
+
+                    @JvmStatic fun of(value: String) = Op(JsonField.of(value))
+                }
+
+                /** An enum containing [Op]'s known values. */
+                enum class Known {
+                    IS,
+                    IS_ONE_OF,
+                    IS_EMPTY,
+                    IS_NOT_EMPTY,
+                }
+
+                /**
+                 * An enum containing [Op]'s known values, as well as an [_UNKNOWN] member.
+                 *
+                 * An instance of [Op] can contain an unknown value in a couple of cases:
+                 * - It was deserialized from data that doesn't match any known member. For example,
+                 *   if the SDK is on an older version than the API, then the API may respond with
+                 *   new members that the SDK is unaware of.
+                 * - It was constructed with an arbitrary value using the [of] method.
+                 */
+                enum class Value {
+                    IS,
+                    IS_ONE_OF,
+                    IS_EMPTY,
+                    IS_NOT_EMPTY,
+                    /**
+                     * An enum member indicating that [Op] was instantiated with an unknown value.
+                     */
+                    _UNKNOWN,
+                }
+
+                /**
+                 * Returns an enum member corresponding to this class instance's value, or
+                 * [Value._UNKNOWN] if the class was instantiated with an unknown value.
+                 *
+                 * Use the [known] method instead if you're certain the value is always known or if
+                 * you want to throw for the unknown case.
+                 */
+                fun value(): Value =
+                    when (this) {
+                        IS -> Value.IS
+                        IS_ONE_OF -> Value.IS_ONE_OF
+                        IS_EMPTY -> Value.IS_EMPTY
+                        IS_NOT_EMPTY -> Value.IS_NOT_EMPTY
+                        else -> Value._UNKNOWN
+                    }
+
+                /**
+                 * Returns an enum member corresponding to this class instance's value.
+                 *
+                 * Use the [value] method instead if you're uncertain the value is always known and
+                 * don't want to throw for the unknown case.
+                 *
+                 * @throws LangChainInvalidDataException if this class instance's value is a not a
+                 *   known member.
+                 */
+                fun known(): Known =
+                    when (this) {
+                        IS -> Known.IS
+                        IS_ONE_OF -> Known.IS_ONE_OF
+                        IS_EMPTY -> Known.IS_EMPTY
+                        IS_NOT_EMPTY -> Known.IS_NOT_EMPTY
+                        else -> throw LangChainInvalidDataException("Unknown Op: $value")
+                    }
+
+                /**
+                 * Returns this class instance's primitive wire representation.
+                 *
+                 * This differs from the [toString] method because that method is primarily for
+                 * debugging and generally doesn't throw.
+                 *
+                 * @throws LangChainInvalidDataException if this class instance's value does not
+                 *   have the expected primitive type.
+                 */
+                fun asString(): String =
+                    _value().asString().orElseThrow {
+                        LangChainInvalidDataException("Value is not a String")
+                    }
+
+                private var validated: Boolean = false
+
+                /**
+                 * Validates that the types of all values in this object match their expected types
+                 * recursively.
+                 *
+                 * This method is _not_ forwards compatible with new types from the API for existing
+                 * fields.
+                 *
+                 * @throws LangChainInvalidDataException if any value type in this object doesn't
+                 *   match its expected type.
+                 */
+                fun validate(): Op = apply {
+                    if (validated) {
+                        return@apply
+                    }
+
+                    known()
+                    validated = true
+                }
+
+                fun isValid(): Boolean =
+                    try {
+                        validate()
+                        true
+                    } catch (e: LangChainInvalidDataException) {
+                        false
+                    }
+
+                /**
+                 * Returns a score indicating how many valid values are contained in this object
+                 * recursively.
+                 *
+                 * Used for best match union deserialization.
+                 */
+                @JvmSynthetic internal fun validity(): Int = if (value() == Value._UNKNOWN) 0 else 1
+
+                override fun equals(other: Any?): Boolean {
+                    if (this === other) {
+                        return true
+                    }
+
+                    return other is Op && value == other.value
+                }
+
+                override fun hashCode() = value.hashCode()
+
+                override fun toString() = value.toString()
+            }
+
+            override fun equals(other: Any?): Boolean {
+                if (this === other) {
+                    return true
+                }
+
+                return other is Rule &&
+                    key == other.key &&
+                    op == other.op &&
+                    values == other.values &&
+                    additionalProperties == other.additionalProperties
+            }
+
+            private val hashCode: Int by lazy {
+                Objects.hash(key, op, values, additionalProperties)
+            }
+
+            override fun hashCode(): Int = hashCode
+
+            override fun toString() =
+                "Rule{key=$key, op=$op, values=$values, additionalProperties=$additionalProperties}"
+        }
+
+        override fun equals(other: Any?): Boolean {
+            if (this === other) {
+                return true
+            }
+
+            return other is RequiredIf &&
+                join == other.join &&
+                rules == other.rules &&
+                additionalProperties == other.additionalProperties
+        }
+
+        private val hashCode: Int by lazy { Objects.hash(join, rules, additionalProperties) }
+
+        override fun hashCode(): Int = hashCode
+
+        override fun toString() =
+            "RequiredIf{join=$join, rules=$rules, additionalProperties=$additionalProperties}"
+    }
+
     class ScoreDescriptions
     @JsonCreator
     private constructor(
@@ -2158,6 +2994,766 @@ private constructor(
         override fun toString() = "ValueDescriptions{additionalProperties=$additionalProperties}"
     }
 
+    class VisibleIf
+    @JsonCreator(mode = JsonCreator.Mode.DISABLED)
+    private constructor(
+        private val join: JsonField<Join>,
+        private val rules: JsonField<List<Rule>>,
+        private val additionalProperties: MutableMap<String, JsonValue>,
+    ) {
+
+        @JsonCreator
+        private constructor(
+            @JsonProperty("join") @ExcludeMissing join: JsonField<Join> = JsonMissing.of(),
+            @JsonProperty("rules") @ExcludeMissing rules: JsonField<List<Rule>> = JsonMissing.of(),
+        ) : this(join, rules, mutableMapOf())
+
+        /**
+         * @throws LangChainInvalidDataException if the JSON field has an unexpected type or is
+         *   unexpectedly missing or null (e.g. if the server responded with an unexpected value).
+         */
+        fun join(): Join = join.getRequired("join")
+
+        /**
+         * @throws LangChainInvalidDataException if the JSON field has an unexpected type or is
+         *   unexpectedly missing or null (e.g. if the server responded with an unexpected value).
+         */
+        fun rules(): List<Rule> = rules.getRequired("rules")
+
+        /**
+         * Returns the raw JSON value of [join].
+         *
+         * Unlike [join], this method doesn't throw if the JSON field has an unexpected type.
+         */
+        @JsonProperty("join") @ExcludeMissing fun _join(): JsonField<Join> = join
+
+        /**
+         * Returns the raw JSON value of [rules].
+         *
+         * Unlike [rules], this method doesn't throw if the JSON field has an unexpected type.
+         */
+        @JsonProperty("rules") @ExcludeMissing fun _rules(): JsonField<List<Rule>> = rules
+
+        @JsonAnySetter
+        private fun putAdditionalProperty(key: String, value: JsonValue) {
+            additionalProperties.put(key, value)
+        }
+
+        @JsonAnyGetter
+        @ExcludeMissing
+        fun _additionalProperties(): Map<String, JsonValue> =
+            Collections.unmodifiableMap(additionalProperties)
+
+        fun toBuilder() = Builder().from(this)
+
+        companion object {
+
+            /**
+             * Returns a mutable builder for constructing an instance of [VisibleIf].
+             *
+             * The following fields are required:
+             * ```java
+             * .join()
+             * .rules()
+             * ```
+             */
+            @JvmStatic fun builder() = Builder()
+        }
+
+        /** A builder for [VisibleIf]. */
+        class Builder internal constructor() {
+
+            private var join: JsonField<Join>? = null
+            private var rules: JsonField<MutableList<Rule>>? = null
+            private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
+
+            @JvmSynthetic
+            internal fun from(visibleIf: VisibleIf) = apply {
+                join = visibleIf.join
+                rules = visibleIf.rules.map { it.toMutableList() }
+                additionalProperties = visibleIf.additionalProperties.toMutableMap()
+            }
+
+            fun join(join: Join) = join(JsonField.of(join))
+
+            /**
+             * Sets [Builder.join] to an arbitrary JSON value.
+             *
+             * You should usually call [Builder.join] with a well-typed [Join] value instead. This
+             * method is primarily for setting the field to an undocumented or not yet supported
+             * value.
+             */
+            fun join(join: JsonField<Join>) = apply { this.join = join }
+
+            fun rules(rules: List<Rule>) = rules(JsonField.of(rules))
+
+            /**
+             * Sets [Builder.rules] to an arbitrary JSON value.
+             *
+             * You should usually call [Builder.rules] with a well-typed `List<Rule>` value instead.
+             * This method is primarily for setting the field to an undocumented or not yet
+             * supported value.
+             */
+            fun rules(rules: JsonField<List<Rule>>) = apply {
+                this.rules = rules.map { it.toMutableList() }
+            }
+
+            /**
+             * Adds a single [Rule] to [rules].
+             *
+             * @throws IllegalStateException if the field was previously set to a non-list.
+             */
+            fun addRule(rule: Rule) = apply {
+                rules =
+                    (rules ?: JsonField.of(mutableListOf())).also {
+                        checkKnown("rules", it).add(rule)
+                    }
+            }
+
+            fun additionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
+                this.additionalProperties.clear()
+                putAllAdditionalProperties(additionalProperties)
+            }
+
+            fun putAdditionalProperty(key: String, value: JsonValue) = apply {
+                additionalProperties.put(key, value)
+            }
+
+            fun putAllAdditionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
+                this.additionalProperties.putAll(additionalProperties)
+            }
+
+            fun removeAdditionalProperty(key: String) = apply { additionalProperties.remove(key) }
+
+            fun removeAllAdditionalProperties(keys: Set<String>) = apply {
+                keys.forEach(::removeAdditionalProperty)
+            }
+
+            /**
+             * Returns an immutable instance of [VisibleIf].
+             *
+             * Further updates to this [Builder] will not mutate the returned instance.
+             *
+             * The following fields are required:
+             * ```java
+             * .join()
+             * .rules()
+             * ```
+             *
+             * @throws IllegalStateException if any required field is unset.
+             */
+            fun build(): VisibleIf =
+                VisibleIf(
+                    checkRequired("join", join),
+                    checkRequired("rules", rules).map { it.toImmutable() },
+                    additionalProperties.toMutableMap(),
+                )
+        }
+
+        private var validated: Boolean = false
+
+        /**
+         * Validates that the types of all values in this object match their expected types
+         * recursively.
+         *
+         * This method is _not_ forwards compatible with new types from the API for existing fields.
+         *
+         * @throws LangChainInvalidDataException if any value type in this object doesn't match its
+         *   expected type.
+         */
+        fun validate(): VisibleIf = apply {
+            if (validated) {
+                return@apply
+            }
+
+            join().validate()
+            rules().forEach { it.validate() }
+            validated = true
+        }
+
+        fun isValid(): Boolean =
+            try {
+                validate()
+                true
+            } catch (e: LangChainInvalidDataException) {
+                false
+            }
+
+        /**
+         * Returns a score indicating how many valid values are contained in this object
+         * recursively.
+         *
+         * Used for best match union deserialization.
+         */
+        @JvmSynthetic
+        internal fun validity(): Int =
+            (join.asKnown().getOrNull()?.validity() ?: 0) +
+                (rules.asKnown().getOrNull()?.sumOf { it.validity().toInt() } ?: 0)
+
+        class Join @JsonCreator private constructor(private val value: JsonField<String>) : Enum {
+
+            /**
+             * Returns this class instance's raw value.
+             *
+             * This is usually only useful if this instance was deserialized from data that doesn't
+             * match any known member, and you want to know that value. For example, if the SDK is
+             * on an older version than the API, then the API may respond with new members that the
+             * SDK is unaware of.
+             */
+            @com.fasterxml.jackson.annotation.JsonValue fun _value(): JsonField<String> = value
+
+            companion object {
+
+                @JvmField val ALL = of("all")
+
+                @JvmField val ANY = of("any")
+
+                @JvmStatic fun of(value: String) = Join(JsonField.of(value))
+            }
+
+            /** An enum containing [Join]'s known values. */
+            enum class Known {
+                ALL,
+                ANY,
+            }
+
+            /**
+             * An enum containing [Join]'s known values, as well as an [_UNKNOWN] member.
+             *
+             * An instance of [Join] can contain an unknown value in a couple of cases:
+             * - It was deserialized from data that doesn't match any known member. For example, if
+             *   the SDK is on an older version than the API, then the API may respond with new
+             *   members that the SDK is unaware of.
+             * - It was constructed with an arbitrary value using the [of] method.
+             */
+            enum class Value {
+                ALL,
+                ANY,
+                /** An enum member indicating that [Join] was instantiated with an unknown value. */
+                _UNKNOWN,
+            }
+
+            /**
+             * Returns an enum member corresponding to this class instance's value, or
+             * [Value._UNKNOWN] if the class was instantiated with an unknown value.
+             *
+             * Use the [known] method instead if you're certain the value is always known or if you
+             * want to throw for the unknown case.
+             */
+            fun value(): Value =
+                when (this) {
+                    ALL -> Value.ALL
+                    ANY -> Value.ANY
+                    else -> Value._UNKNOWN
+                }
+
+            /**
+             * Returns an enum member corresponding to this class instance's value.
+             *
+             * Use the [value] method instead if you're uncertain the value is always known and
+             * don't want to throw for the unknown case.
+             *
+             * @throws LangChainInvalidDataException if this class instance's value is a not a known
+             *   member.
+             */
+            fun known(): Known =
+                when (this) {
+                    ALL -> Known.ALL
+                    ANY -> Known.ANY
+                    else -> throw LangChainInvalidDataException("Unknown Join: $value")
+                }
+
+            /**
+             * Returns this class instance's primitive wire representation.
+             *
+             * This differs from the [toString] method because that method is primarily for
+             * debugging and generally doesn't throw.
+             *
+             * @throws LangChainInvalidDataException if this class instance's value does not have
+             *   the expected primitive type.
+             */
+            fun asString(): String =
+                _value().asString().orElseThrow {
+                    LangChainInvalidDataException("Value is not a String")
+                }
+
+            private var validated: Boolean = false
+
+            /**
+             * Validates that the types of all values in this object match their expected types
+             * recursively.
+             *
+             * This method is _not_ forwards compatible with new types from the API for existing
+             * fields.
+             *
+             * @throws LangChainInvalidDataException if any value type in this object doesn't match
+             *   its expected type.
+             */
+            fun validate(): Join = apply {
+                if (validated) {
+                    return@apply
+                }
+
+                known()
+                validated = true
+            }
+
+            fun isValid(): Boolean =
+                try {
+                    validate()
+                    true
+                } catch (e: LangChainInvalidDataException) {
+                    false
+                }
+
+            /**
+             * Returns a score indicating how many valid values are contained in this object
+             * recursively.
+             *
+             * Used for best match union deserialization.
+             */
+            @JvmSynthetic internal fun validity(): Int = if (value() == Value._UNKNOWN) 0 else 1
+
+            override fun equals(other: Any?): Boolean {
+                if (this === other) {
+                    return true
+                }
+
+                return other is Join && value == other.value
+            }
+
+            override fun hashCode() = value.hashCode()
+
+            override fun toString() = value.toString()
+        }
+
+        class Rule
+        @JsonCreator(mode = JsonCreator.Mode.DISABLED)
+        private constructor(
+            private val key: JsonField<String>,
+            private val op: JsonField<Op>,
+            private val values: JsonField<List<Double>>,
+            private val additionalProperties: MutableMap<String, JsonValue>,
+        ) {
+
+            @JsonCreator
+            private constructor(
+                @JsonProperty("key") @ExcludeMissing key: JsonField<String> = JsonMissing.of(),
+                @JsonProperty("op") @ExcludeMissing op: JsonField<Op> = JsonMissing.of(),
+                @JsonProperty("values")
+                @ExcludeMissing
+                values: JsonField<List<Double>> = JsonMissing.of(),
+            ) : this(key, op, values, mutableMapOf())
+
+            /**
+             * @throws LangChainInvalidDataException if the JSON field has an unexpected type or is
+             *   unexpectedly missing or null (e.g. if the server responded with an unexpected
+             *   value).
+             */
+            fun key(): String = key.getRequired("key")
+
+            /**
+             * @throws LangChainInvalidDataException if the JSON field has an unexpected type or is
+             *   unexpectedly missing or null (e.g. if the server responded with an unexpected
+             *   value).
+             */
+            fun op(): Op = op.getRequired("op")
+
+            /**
+             * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g.
+             *   if the server responded with an unexpected value).
+             */
+            fun values(): Optional<List<Double>> = values.getOptional("values")
+
+            /**
+             * Returns the raw JSON value of [key].
+             *
+             * Unlike [key], this method doesn't throw if the JSON field has an unexpected type.
+             */
+            @JsonProperty("key") @ExcludeMissing fun _key(): JsonField<String> = key
+
+            /**
+             * Returns the raw JSON value of [op].
+             *
+             * Unlike [op], this method doesn't throw if the JSON field has an unexpected type.
+             */
+            @JsonProperty("op") @ExcludeMissing fun _op(): JsonField<Op> = op
+
+            /**
+             * Returns the raw JSON value of [values].
+             *
+             * Unlike [values], this method doesn't throw if the JSON field has an unexpected type.
+             */
+            @JsonProperty("values") @ExcludeMissing fun _values(): JsonField<List<Double>> = values
+
+            @JsonAnySetter
+            private fun putAdditionalProperty(key: String, value: JsonValue) {
+                additionalProperties.put(key, value)
+            }
+
+            @JsonAnyGetter
+            @ExcludeMissing
+            fun _additionalProperties(): Map<String, JsonValue> =
+                Collections.unmodifiableMap(additionalProperties)
+
+            fun toBuilder() = Builder().from(this)
+
+            companion object {
+
+                /**
+                 * Returns a mutable builder for constructing an instance of [Rule].
+                 *
+                 * The following fields are required:
+                 * ```java
+                 * .key()
+                 * .op()
+                 * ```
+                 */
+                @JvmStatic fun builder() = Builder()
+            }
+
+            /** A builder for [Rule]. */
+            class Builder internal constructor() {
+
+                private var key: JsonField<String>? = null
+                private var op: JsonField<Op>? = null
+                private var values: JsonField<MutableList<Double>>? = null
+                private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
+
+                @JvmSynthetic
+                internal fun from(rule: Rule) = apply {
+                    key = rule.key
+                    op = rule.op
+                    values = rule.values.map { it.toMutableList() }
+                    additionalProperties = rule.additionalProperties.toMutableMap()
+                }
+
+                fun key(key: String) = key(JsonField.of(key))
+
+                /**
+                 * Sets [Builder.key] to an arbitrary JSON value.
+                 *
+                 * You should usually call [Builder.key] with a well-typed [String] value instead.
+                 * This method is primarily for setting the field to an undocumented or not yet
+                 * supported value.
+                 */
+                fun key(key: JsonField<String>) = apply { this.key = key }
+
+                fun op(op: Op) = op(JsonField.of(op))
+
+                /**
+                 * Sets [Builder.op] to an arbitrary JSON value.
+                 *
+                 * You should usually call [Builder.op] with a well-typed [Op] value instead. This
+                 * method is primarily for setting the field to an undocumented or not yet supported
+                 * value.
+                 */
+                fun op(op: JsonField<Op>) = apply { this.op = op }
+
+                fun values(values: List<Double>) = values(JsonField.of(values))
+
+                /**
+                 * Sets [Builder.values] to an arbitrary JSON value.
+                 *
+                 * You should usually call [Builder.values] with a well-typed `List<Double>` value
+                 * instead. This method is primarily for setting the field to an undocumented or not
+                 * yet supported value.
+                 */
+                fun values(values: JsonField<List<Double>>) = apply {
+                    this.values = values.map { it.toMutableList() }
+                }
+
+                /**
+                 * Adds a single [Double] to [values].
+                 *
+                 * @throws IllegalStateException if the field was previously set to a non-list.
+                 */
+                fun addValue(value: Double) = apply {
+                    values =
+                        (values ?: JsonField.of(mutableListOf())).also {
+                            checkKnown("values", it).add(value)
+                        }
+                }
+
+                fun additionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
+                    this.additionalProperties.clear()
+                    putAllAdditionalProperties(additionalProperties)
+                }
+
+                fun putAdditionalProperty(key: String, value: JsonValue) = apply {
+                    additionalProperties.put(key, value)
+                }
+
+                fun putAllAdditionalProperties(additionalProperties: Map<String, JsonValue>) =
+                    apply {
+                        this.additionalProperties.putAll(additionalProperties)
+                    }
+
+                fun removeAdditionalProperty(key: String) = apply {
+                    additionalProperties.remove(key)
+                }
+
+                fun removeAllAdditionalProperties(keys: Set<String>) = apply {
+                    keys.forEach(::removeAdditionalProperty)
+                }
+
+                /**
+                 * Returns an immutable instance of [Rule].
+                 *
+                 * Further updates to this [Builder] will not mutate the returned instance.
+                 *
+                 * The following fields are required:
+                 * ```java
+                 * .key()
+                 * .op()
+                 * ```
+                 *
+                 * @throws IllegalStateException if any required field is unset.
+                 */
+                fun build(): Rule =
+                    Rule(
+                        checkRequired("key", key),
+                        checkRequired("op", op),
+                        (values ?: JsonMissing.of()).map { it.toImmutable() },
+                        additionalProperties.toMutableMap(),
+                    )
+            }
+
+            private var validated: Boolean = false
+
+            /**
+             * Validates that the types of all values in this object match their expected types
+             * recursively.
+             *
+             * This method is _not_ forwards compatible with new types from the API for existing
+             * fields.
+             *
+             * @throws LangChainInvalidDataException if any value type in this object doesn't match
+             *   its expected type.
+             */
+            fun validate(): Rule = apply {
+                if (validated) {
+                    return@apply
+                }
+
+                key()
+                op().validate()
+                values()
+                validated = true
+            }
+
+            fun isValid(): Boolean =
+                try {
+                    validate()
+                    true
+                } catch (e: LangChainInvalidDataException) {
+                    false
+                }
+
+            /**
+             * Returns a score indicating how many valid values are contained in this object
+             * recursively.
+             *
+             * Used for best match union deserialization.
+             */
+            @JvmSynthetic
+            internal fun validity(): Int =
+                (if (key.asKnown().isPresent) 1 else 0) +
+                    (op.asKnown().getOrNull()?.validity() ?: 0) +
+                    (values.asKnown().getOrNull()?.size ?: 0)
+
+            class Op @JsonCreator private constructor(private val value: JsonField<String>) : Enum {
+
+                /**
+                 * Returns this class instance's raw value.
+                 *
+                 * This is usually only useful if this instance was deserialized from data that
+                 * doesn't match any known member, and you want to know that value. For example, if
+                 * the SDK is on an older version than the API, then the API may respond with new
+                 * members that the SDK is unaware of.
+                 */
+                @com.fasterxml.jackson.annotation.JsonValue fun _value(): JsonField<String> = value
+
+                companion object {
+
+                    @JvmField val IS = of("is")
+
+                    @JvmField val IS_ONE_OF = of("is_one_of")
+
+                    @JvmField val IS_EMPTY = of("is_empty")
+
+                    @JvmField val IS_NOT_EMPTY = of("is_not_empty")
+
+                    @JvmStatic fun of(value: String) = Op(JsonField.of(value))
+                }
+
+                /** An enum containing [Op]'s known values. */
+                enum class Known {
+                    IS,
+                    IS_ONE_OF,
+                    IS_EMPTY,
+                    IS_NOT_EMPTY,
+                }
+
+                /**
+                 * An enum containing [Op]'s known values, as well as an [_UNKNOWN] member.
+                 *
+                 * An instance of [Op] can contain an unknown value in a couple of cases:
+                 * - It was deserialized from data that doesn't match any known member. For example,
+                 *   if the SDK is on an older version than the API, then the API may respond with
+                 *   new members that the SDK is unaware of.
+                 * - It was constructed with an arbitrary value using the [of] method.
+                 */
+                enum class Value {
+                    IS,
+                    IS_ONE_OF,
+                    IS_EMPTY,
+                    IS_NOT_EMPTY,
+                    /**
+                     * An enum member indicating that [Op] was instantiated with an unknown value.
+                     */
+                    _UNKNOWN,
+                }
+
+                /**
+                 * Returns an enum member corresponding to this class instance's value, or
+                 * [Value._UNKNOWN] if the class was instantiated with an unknown value.
+                 *
+                 * Use the [known] method instead if you're certain the value is always known or if
+                 * you want to throw for the unknown case.
+                 */
+                fun value(): Value =
+                    when (this) {
+                        IS -> Value.IS
+                        IS_ONE_OF -> Value.IS_ONE_OF
+                        IS_EMPTY -> Value.IS_EMPTY
+                        IS_NOT_EMPTY -> Value.IS_NOT_EMPTY
+                        else -> Value._UNKNOWN
+                    }
+
+                /**
+                 * Returns an enum member corresponding to this class instance's value.
+                 *
+                 * Use the [value] method instead if you're uncertain the value is always known and
+                 * don't want to throw for the unknown case.
+                 *
+                 * @throws LangChainInvalidDataException if this class instance's value is a not a
+                 *   known member.
+                 */
+                fun known(): Known =
+                    when (this) {
+                        IS -> Known.IS
+                        IS_ONE_OF -> Known.IS_ONE_OF
+                        IS_EMPTY -> Known.IS_EMPTY
+                        IS_NOT_EMPTY -> Known.IS_NOT_EMPTY
+                        else -> throw LangChainInvalidDataException("Unknown Op: $value")
+                    }
+
+                /**
+                 * Returns this class instance's primitive wire representation.
+                 *
+                 * This differs from the [toString] method because that method is primarily for
+                 * debugging and generally doesn't throw.
+                 *
+                 * @throws LangChainInvalidDataException if this class instance's value does not
+                 *   have the expected primitive type.
+                 */
+                fun asString(): String =
+                    _value().asString().orElseThrow {
+                        LangChainInvalidDataException("Value is not a String")
+                    }
+
+                private var validated: Boolean = false
+
+                /**
+                 * Validates that the types of all values in this object match their expected types
+                 * recursively.
+                 *
+                 * This method is _not_ forwards compatible with new types from the API for existing
+                 * fields.
+                 *
+                 * @throws LangChainInvalidDataException if any value type in this object doesn't
+                 *   match its expected type.
+                 */
+                fun validate(): Op = apply {
+                    if (validated) {
+                        return@apply
+                    }
+
+                    known()
+                    validated = true
+                }
+
+                fun isValid(): Boolean =
+                    try {
+                        validate()
+                        true
+                    } catch (e: LangChainInvalidDataException) {
+                        false
+                    }
+
+                /**
+                 * Returns a score indicating how many valid values are contained in this object
+                 * recursively.
+                 *
+                 * Used for best match union deserialization.
+                 */
+                @JvmSynthetic internal fun validity(): Int = if (value() == Value._UNKNOWN) 0 else 1
+
+                override fun equals(other: Any?): Boolean {
+                    if (this === other) {
+                        return true
+                    }
+
+                    return other is Op && value == other.value
+                }
+
+                override fun hashCode() = value.hashCode()
+
+                override fun toString() = value.toString()
+            }
+
+            override fun equals(other: Any?): Boolean {
+                if (this === other) {
+                    return true
+                }
+
+                return other is Rule &&
+                    key == other.key &&
+                    op == other.op &&
+                    values == other.values &&
+                    additionalProperties == other.additionalProperties
+            }
+
+            private val hashCode: Int by lazy {
+                Objects.hash(key, op, values, additionalProperties)
+            }
+
+            override fun hashCode(): Int = hashCode
+
+            override fun toString() =
+                "Rule{key=$key, op=$op, values=$values, additionalProperties=$additionalProperties}"
+        }
+
+        override fun equals(other: Any?): Boolean {
+            if (this === other) {
+                return true
+            }
+
+            return other is VisibleIf &&
+                join == other.join &&
+                rules == other.rules &&
+                additionalProperties == other.additionalProperties
+        }
+
+        private val hashCode: Int by lazy { Objects.hash(join, rules, additionalProperties) }
+
+        override fun hashCode(): Int = hashCode
+
+        override fun toString() =
+            "VisibleIf{join=$join, rules=$rules, additionalProperties=$additionalProperties}"
+    }
+
     override fun equals(other: Any?): Boolean {
         if (this === other) {
             return true
@@ -2171,8 +3767,10 @@ private constructor(
             isAssertion == other.isAssertion &&
             isRequired == other.isRequired &&
             regexValidator == other.regexValidator &&
+            requiredIf == other.requiredIf &&
             scoreDescriptions == other.scoreDescriptions &&
             valueDescriptions == other.valueDescriptions &&
+            visibleIf == other.visibleIf &&
             additionalProperties == other.additionalProperties
     }
 
@@ -2185,8 +3783,10 @@ private constructor(
             isAssertion,
             isRequired,
             regexValidator,
+            requiredIf,
             scoreDescriptions,
             valueDescriptions,
+            visibleIf,
             additionalProperties,
         )
     }
@@ -2194,5 +3794,5 @@ private constructor(
     override fun hashCode(): Int = hashCode
 
     override fun toString() =
-        "AnnotationQueueRubricItemSchema{feedbackKey=$feedbackKey, description=$description, feedbackConfig=$feedbackConfig, feedbackConfigId=$feedbackConfigId, isAssertion=$isAssertion, isRequired=$isRequired, regexValidator=$regexValidator, scoreDescriptions=$scoreDescriptions, valueDescriptions=$valueDescriptions, additionalProperties=$additionalProperties}"
+        "AnnotationQueueRubricItemSchema{feedbackKey=$feedbackKey, description=$description, feedbackConfig=$feedbackConfig, feedbackConfigId=$feedbackConfigId, isAssertion=$isAssertion, isRequired=$isRequired, regexValidator=$regexValidator, requiredIf=$requiredIf, scoreDescriptions=$scoreDescriptions, valueDescriptions=$valueDescriptions, visibleIf=$visibleIf, additionalProperties=$additionalProperties}"
 }

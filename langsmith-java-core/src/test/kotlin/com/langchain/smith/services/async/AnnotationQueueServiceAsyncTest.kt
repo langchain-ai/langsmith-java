@@ -106,6 +106,21 @@ internal class AnnotationQueueServiceAsyncTest {
                             .isAssertion(true)
                             .isRequired(true)
                             .regexValidator("string")
+                            .requiredIf(
+                                AnnotationQueueRubricItemSchema.RequiredIf.builder()
+                                    .join(AnnotationQueueRubricItemSchema.RequiredIf.Join.ALL)
+                                    .addRule(
+                                        AnnotationQueueRubricItemSchema.RequiredIf.Rule.builder()
+                                            .key("key")
+                                            .op(
+                                                AnnotationQueueRubricItemSchema.RequiredIf.Rule.Op
+                                                    .IS
+                                            )
+                                            .addValue(0.0)
+                                            .build()
+                                    )
+                                    .build()
+                            )
                             .scoreDescriptions(
                                 AnnotationQueueRubricItemSchema.ScoreDescriptions.builder()
                                     .putAdditionalProperty("foo", JsonValue.from("string"))
@@ -114,6 +129,20 @@ internal class AnnotationQueueServiceAsyncTest {
                             .valueDescriptions(
                                 AnnotationQueueRubricItemSchema.ValueDescriptions.builder()
                                     .putAdditionalProperty("foo", JsonValue.from("string"))
+                                    .build()
+                            )
+                            .visibleIf(
+                                AnnotationQueueRubricItemSchema.VisibleIf.builder()
+                                    .join(AnnotationQueueRubricItemSchema.VisibleIf.Join.ALL)
+                                    .addRule(
+                                        AnnotationQueueRubricItemSchema.VisibleIf.Rule.builder()
+                                            .key("key")
+                                            .op(
+                                                AnnotationQueueRubricItemSchema.VisibleIf.Rule.Op.IS
+                                            )
+                                            .addValue(0.0)
+                                            .build()
+                                    )
                                     .build()
                             )
                             .build()
@@ -213,6 +242,21 @@ internal class AnnotationQueueServiceAsyncTest {
                             .isAssertion(true)
                             .isRequired(true)
                             .regexValidator("string")
+                            .requiredIf(
+                                AnnotationQueueRubricItemSchema.RequiredIf.builder()
+                                    .join(AnnotationQueueRubricItemSchema.RequiredIf.Join.ALL)
+                                    .addRule(
+                                        AnnotationQueueRubricItemSchema.RequiredIf.Rule.builder()
+                                            .key("key")
+                                            .op(
+                                                AnnotationQueueRubricItemSchema.RequiredIf.Rule.Op
+                                                    .IS
+                                            )
+                                            .addValue(0.0)
+                                            .build()
+                                    )
+                                    .build()
+                            )
                             .scoreDescriptions(
                                 AnnotationQueueRubricItemSchema.ScoreDescriptions.builder()
                                     .putAdditionalProperty("foo", JsonValue.from("string"))
@@ -221,6 +265,20 @@ internal class AnnotationQueueServiceAsyncTest {
                             .valueDescriptions(
                                 AnnotationQueueRubricItemSchema.ValueDescriptions.builder()
                                     .putAdditionalProperty("foo", JsonValue.from("string"))
+                                    .build()
+                            )
+                            .visibleIf(
+                                AnnotationQueueRubricItemSchema.VisibleIf.builder()
+                                    .join(AnnotationQueueRubricItemSchema.VisibleIf.Join.ALL)
+                                    .addRule(
+                                        AnnotationQueueRubricItemSchema.VisibleIf.Rule.builder()
+                                            .key("key")
+                                            .op(
+                                                AnnotationQueueRubricItemSchema.VisibleIf.Rule.Op.IS
+                                            )
+                                            .addValue(0.0)
+                                            .build()
+                                    )
                                     .build()
                             )
                             .build()
