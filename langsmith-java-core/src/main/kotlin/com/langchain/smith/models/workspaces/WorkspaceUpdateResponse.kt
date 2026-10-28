@@ -27,6 +27,8 @@ private constructor(
     private val displayName: JsonField<String>,
     private val isDeleted: JsonField<Boolean>,
     private val isPersonal: JsonField<Boolean>,
+    private val dataPlaneName: JsonField<String>,
+    private val dataPlaneRegion: JsonField<String>,
     private val dataPlaneUrl: JsonField<String>,
     private val organizationId: JsonField<String>,
     private val tenantHandle: JsonField<String>,
@@ -48,6 +50,12 @@ private constructor(
         @JsonProperty("is_personal")
         @ExcludeMissing
         isPersonal: JsonField<Boolean> = JsonMissing.of(),
+        @JsonProperty("data_plane_name")
+        @ExcludeMissing
+        dataPlaneName: JsonField<String> = JsonMissing.of(),
+        @JsonProperty("data_plane_region")
+        @ExcludeMissing
+        dataPlaneRegion: JsonField<String> = JsonMissing.of(),
         @JsonProperty("data_plane_url")
         @ExcludeMissing
         dataPlaneUrl: JsonField<String> = JsonMissing.of(),
@@ -63,6 +71,8 @@ private constructor(
         displayName,
         isDeleted,
         isPersonal,
+        dataPlaneName,
+        dataPlaneRegion,
         dataPlaneUrl,
         organizationId,
         tenantHandle,
@@ -98,6 +108,18 @@ private constructor(
      *   unexpectedly missing or null (e.g. if the server responded with an unexpected value).
      */
     fun isPersonal(): Boolean = isPersonal.getRequired("is_personal")
+
+    /**
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
+    fun dataPlaneName(): Optional<String> = dataPlaneName.getOptional("data_plane_name")
+
+    /**
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
+    fun dataPlaneRegion(): Optional<String> = dataPlaneRegion.getOptional("data_plane_region")
 
     /**
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
@@ -155,6 +177,24 @@ private constructor(
      * Unlike [isPersonal], this method doesn't throw if the JSON field has an unexpected type.
      */
     @JsonProperty("is_personal") @ExcludeMissing fun _isPersonal(): JsonField<Boolean> = isPersonal
+
+    /**
+     * Returns the raw JSON value of [dataPlaneName].
+     *
+     * Unlike [dataPlaneName], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    @JsonProperty("data_plane_name")
+    @ExcludeMissing
+    fun _dataPlaneName(): JsonField<String> = dataPlaneName
+
+    /**
+     * Returns the raw JSON value of [dataPlaneRegion].
+     *
+     * Unlike [dataPlaneRegion], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    @JsonProperty("data_plane_region")
+    @ExcludeMissing
+    fun _dataPlaneRegion(): JsonField<String> = dataPlaneRegion
 
     /**
      * Returns the raw JSON value of [dataPlaneUrl].
@@ -220,6 +260,8 @@ private constructor(
         private var displayName: JsonField<String>? = null
         private var isDeleted: JsonField<Boolean>? = null
         private var isPersonal: JsonField<Boolean>? = null
+        private var dataPlaneName: JsonField<String> = JsonMissing.of()
+        private var dataPlaneRegion: JsonField<String> = JsonMissing.of()
         private var dataPlaneUrl: JsonField<String> = JsonMissing.of()
         private var organizationId: JsonField<String> = JsonMissing.of()
         private var tenantHandle: JsonField<String> = JsonMissing.of()
@@ -232,6 +274,8 @@ private constructor(
             displayName = workspaceUpdateResponse.displayName
             isDeleted = workspaceUpdateResponse.isDeleted
             isPersonal = workspaceUpdateResponse.isPersonal
+            dataPlaneName = workspaceUpdateResponse.dataPlaneName
+            dataPlaneRegion = workspaceUpdateResponse.dataPlaneRegion
             dataPlaneUrl = workspaceUpdateResponse.dataPlaneUrl
             organizationId = workspaceUpdateResponse.organizationId
             tenantHandle = workspaceUpdateResponse.tenantHandle
@@ -291,6 +335,42 @@ private constructor(
          * value.
          */
         fun isPersonal(isPersonal: JsonField<Boolean>) = apply { this.isPersonal = isPersonal }
+
+        fun dataPlaneName(dataPlaneName: String?) =
+            dataPlaneName(JsonField.ofNullable(dataPlaneName))
+
+        /** Alias for calling [Builder.dataPlaneName] with `dataPlaneName.orElse(null)`. */
+        fun dataPlaneName(dataPlaneName: Optional<String>) =
+            dataPlaneName(dataPlaneName.getOrNull())
+
+        /**
+         * Sets [Builder.dataPlaneName] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.dataPlaneName] with a well-typed [String] value instead.
+         * This method is primarily for setting the field to an undocumented or not yet supported
+         * value.
+         */
+        fun dataPlaneName(dataPlaneName: JsonField<String>) = apply {
+            this.dataPlaneName = dataPlaneName
+        }
+
+        fun dataPlaneRegion(dataPlaneRegion: String?) =
+            dataPlaneRegion(JsonField.ofNullable(dataPlaneRegion))
+
+        /** Alias for calling [Builder.dataPlaneRegion] with `dataPlaneRegion.orElse(null)`. */
+        fun dataPlaneRegion(dataPlaneRegion: Optional<String>) =
+            dataPlaneRegion(dataPlaneRegion.getOrNull())
+
+        /**
+         * Sets [Builder.dataPlaneRegion] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.dataPlaneRegion] with a well-typed [String] value
+         * instead. This method is primarily for setting the field to an undocumented or not yet
+         * supported value.
+         */
+        fun dataPlaneRegion(dataPlaneRegion: JsonField<String>) = apply {
+            this.dataPlaneRegion = dataPlaneRegion
+        }
 
         fun dataPlaneUrl(dataPlaneUrl: String?) = dataPlaneUrl(JsonField.ofNullable(dataPlaneUrl))
 
@@ -384,6 +464,8 @@ private constructor(
                 checkRequired("displayName", displayName),
                 checkRequired("isDeleted", isDeleted),
                 checkRequired("isPersonal", isPersonal),
+                dataPlaneName,
+                dataPlaneRegion,
                 dataPlaneUrl,
                 organizationId,
                 tenantHandle,
@@ -411,6 +493,8 @@ private constructor(
         displayName()
         isDeleted()
         isPersonal()
+        dataPlaneName()
+        dataPlaneRegion()
         dataPlaneUrl()
         organizationId()
         tenantHandle()
@@ -437,6 +521,8 @@ private constructor(
             (if (displayName.asKnown().isPresent) 1 else 0) +
             (if (isDeleted.asKnown().isPresent) 1 else 0) +
             (if (isPersonal.asKnown().isPresent) 1 else 0) +
+            (if (dataPlaneName.asKnown().isPresent) 1 else 0) +
+            (if (dataPlaneRegion.asKnown().isPresent) 1 else 0) +
             (if (dataPlaneUrl.asKnown().isPresent) 1 else 0) +
             (if (organizationId.asKnown().isPresent) 1 else 0) +
             (if (tenantHandle.asKnown().isPresent) 1 else 0)
@@ -452,6 +538,8 @@ private constructor(
             displayName == other.displayName &&
             isDeleted == other.isDeleted &&
             isPersonal == other.isPersonal &&
+            dataPlaneName == other.dataPlaneName &&
+            dataPlaneRegion == other.dataPlaneRegion &&
             dataPlaneUrl == other.dataPlaneUrl &&
             organizationId == other.organizationId &&
             tenantHandle == other.tenantHandle &&
@@ -465,6 +553,8 @@ private constructor(
             displayName,
             isDeleted,
             isPersonal,
+            dataPlaneName,
+            dataPlaneRegion,
             dataPlaneUrl,
             organizationId,
             tenantHandle,
@@ -475,5 +565,5 @@ private constructor(
     override fun hashCode(): Int = hashCode
 
     override fun toString() =
-        "WorkspaceUpdateResponse{id=$id, createdAt=$createdAt, displayName=$displayName, isDeleted=$isDeleted, isPersonal=$isPersonal, dataPlaneUrl=$dataPlaneUrl, organizationId=$organizationId, tenantHandle=$tenantHandle, additionalProperties=$additionalProperties}"
+        "WorkspaceUpdateResponse{id=$id, createdAt=$createdAt, displayName=$displayName, isDeleted=$isDeleted, isPersonal=$isPersonal, dataPlaneName=$dataPlaneName, dataPlaneRegion=$dataPlaneRegion, dataPlaneUrl=$dataPlaneUrl, organizationId=$organizationId, tenantHandle=$tenantHandle, additionalProperties=$additionalProperties}"
 }
