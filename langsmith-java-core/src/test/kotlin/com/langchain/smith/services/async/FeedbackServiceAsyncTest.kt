@@ -48,6 +48,7 @@ internal class FeedbackServiceAsyncTest {
                     .feedbackConfig(
                         FeedbackCreateSchema.FeedbackConfig.builder()
                             .type(FeedbackCreateSchema.FeedbackConfig.Type.CONTINUOUS)
+                            .allowsMultipleCategories(true)
                             .addCategory(
                                 FeedbackCreateSchema.FeedbackConfig.Category.builder()
                                     .value(0.0)
@@ -130,6 +131,7 @@ internal class FeedbackServiceAsyncTest {
                     .feedbackConfig(
                         FeedbackUpdateParams.FeedbackConfig.builder()
                             .type(FeedbackUpdateParams.FeedbackConfig.Type.CONTINUOUS)
+                            .allowsMultipleCategories(true)
                             .addCategory(
                                 FeedbackUpdateParams.FeedbackConfig.Category.builder()
                                     .value(0.0)

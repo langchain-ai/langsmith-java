@@ -80,6 +80,7 @@ internal class AnnotationQueueServiceAsyncTest {
                                                     .Type
                                                     .CONTINUOUS
                                             )
+                                            .allowsMultipleCategories(true)
                                             .addCategory(
                                                 AnnotationQueueRubricItemSchema.FeedbackConfig
                                                     .InnerFeedbackConfig
@@ -216,6 +217,7 @@ internal class AnnotationQueueServiceAsyncTest {
                                                     .Type
                                                     .CONTINUOUS
                                             )
+                                            .allowsMultipleCategories(true)
                                             .addCategory(
                                                 AnnotationQueueRubricItemSchema.FeedbackConfig
                                                     .InnerFeedbackConfig

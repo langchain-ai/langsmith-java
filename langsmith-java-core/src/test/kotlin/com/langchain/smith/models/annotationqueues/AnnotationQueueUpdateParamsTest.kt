@@ -43,6 +43,7 @@ internal class AnnotationQueueUpdateParamsTest {
                                             .Type
                                             .CONTINUOUS
                                     )
+                                    .allowsMultipleCategories(true)
                                     .addCategory(
                                         AnnotationQueueRubricItemSchema.FeedbackConfig
                                             .InnerFeedbackConfig
@@ -155,6 +156,7 @@ internal class AnnotationQueueUpdateParamsTest {
                                                 .Type
                                                 .CONTINUOUS
                                         )
+                                        .allowsMultipleCategories(true)
                                         .addCategory(
                                             AnnotationQueueRubricItemSchema.FeedbackConfig
                                                 .InnerFeedbackConfig
@@ -258,6 +260,7 @@ internal class AnnotationQueueUpdateParamsTest {
                                             .Type
                                             .CONTINUOUS
                                     )
+                                    .allowsMultipleCategories(true)
                                     .addCategory(
                                         AnnotationQueueRubricItemSchema.FeedbackConfig
                                             .InnerFeedbackConfig

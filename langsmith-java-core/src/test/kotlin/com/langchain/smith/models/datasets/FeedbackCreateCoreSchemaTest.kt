@@ -34,6 +34,7 @@ internal class FeedbackCreateCoreSchemaTest {
                 .feedbackConfig(
                     FeedbackCreateCoreSchema.FeedbackConfig.builder()
                         .type(FeedbackCreateCoreSchema.FeedbackConfig.Type.CONTINUOUS)
+                        .allowsMultipleCategories(true)
                         .addCategory(
                             FeedbackCreateCoreSchema.FeedbackConfig.Category.builder()
                                 .value(0.0)
@@ -85,6 +86,7 @@ internal class FeedbackCreateCoreSchemaTest {
             .contains(
                 FeedbackCreateCoreSchema.FeedbackConfig.builder()
                     .type(FeedbackCreateCoreSchema.FeedbackConfig.Type.CONTINUOUS)
+                    .allowsMultipleCategories(true)
                     .addCategory(
                         FeedbackCreateCoreSchema.FeedbackConfig.Category.builder()
                             .value(0.0)
@@ -141,6 +143,7 @@ internal class FeedbackCreateCoreSchemaTest {
                 .feedbackConfig(
                     FeedbackCreateCoreSchema.FeedbackConfig.builder()
                         .type(FeedbackCreateCoreSchema.FeedbackConfig.Type.CONTINUOUS)
+                        .allowsMultipleCategories(true)
                         .addCategory(
                             FeedbackCreateCoreSchema.FeedbackConfig.Category.builder()
                                 .value(0.0)

@@ -32,6 +32,7 @@ internal class TokenServiceTest {
                     .feedbackConfig(
                         FeedbackIngestTokenCreateSchema.FeedbackConfig.builder()
                             .type(FeedbackIngestTokenCreateSchema.FeedbackConfig.Type.CONTINUOUS)
+                            .allowsMultipleCategories(true)
                             .addCategory(
                                 FeedbackIngestTokenCreateSchema.FeedbackConfig.Category.builder()
                                     .value(0.0)

@@ -21,6 +21,7 @@ internal class TokenCreateParamsTest {
                     .feedbackConfig(
                         FeedbackIngestTokenCreateSchema.FeedbackConfig.builder()
                             .type(FeedbackIngestTokenCreateSchema.FeedbackConfig.Type.CONTINUOUS)
+                            .allowsMultipleCategories(true)
                             .addCategory(
                                 FeedbackIngestTokenCreateSchema.FeedbackConfig.Category.builder()
                                     .value(0.0)
@@ -51,6 +52,7 @@ internal class TokenCreateParamsTest {
                                 .type(
                                     FeedbackIngestTokenCreateSchema.FeedbackConfig.Type.CONTINUOUS
                                 )
+                                .allowsMultipleCategories(true)
                                 .addCategory(
                                     FeedbackIngestTokenCreateSchema.FeedbackConfig.Category
                                         .builder()
@@ -81,6 +83,7 @@ internal class TokenCreateParamsTest {
                                 .type(
                                     FeedbackIngestTokenCreateSchema.FeedbackConfig.Type.CONTINUOUS
                                 )
+                                .allowsMultipleCategories(true)
                                 .addCategory(
                                     FeedbackIngestTokenCreateSchema.FeedbackConfig.Category
                                         .builder()

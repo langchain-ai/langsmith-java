@@ -1523,6 +1523,7 @@ private constructor(
     @JsonCreator(mode = JsonCreator.Mode.DISABLED)
     private constructor(
         private val type: JsonField<Type>,
+        private val allowsMultipleCategories: JsonField<Boolean>,
         private val categories: JsonField<List<Category>>,
         private val max: JsonField<Double>,
         private val min: JsonField<Double>,
@@ -1532,12 +1533,15 @@ private constructor(
         @JsonCreator
         private constructor(
             @JsonProperty("type") @ExcludeMissing type: JsonField<Type> = JsonMissing.of(),
+            @JsonProperty("allows_multiple_categories")
+            @ExcludeMissing
+            allowsMultipleCategories: JsonField<Boolean> = JsonMissing.of(),
             @JsonProperty("categories")
             @ExcludeMissing
             categories: JsonField<List<Category>> = JsonMissing.of(),
             @JsonProperty("max") @ExcludeMissing max: JsonField<Double> = JsonMissing.of(),
             @JsonProperty("min") @ExcludeMissing min: JsonField<Double> = JsonMissing.of(),
-        ) : this(type, categories, max, min, mutableMapOf())
+        ) : this(type, allowsMultipleCategories, categories, max, min, mutableMapOf())
 
         /**
          * Enum for feedback types.
@@ -1546,6 +1550,15 @@ private constructor(
          *   unexpectedly missing or null (e.g. if the server responded with an unexpected value).
          */
         fun type(): Type = type.getRequired("type")
+
+        /**
+         * Whether a reviewer can pick several categories. Categorical feedback only.
+         *
+         * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
+         *   the server responded with an unexpected value).
+         */
+        fun allowsMultipleCategories(): Optional<Boolean> =
+            allowsMultipleCategories.getOptional("allows_multiple_categories")
 
         /**
          * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
@@ -1571,6 +1584,16 @@ private constructor(
          * Unlike [type], this method doesn't throw if the JSON field has an unexpected type.
          */
         @JsonProperty("type") @ExcludeMissing fun _type(): JsonField<Type> = type
+
+        /**
+         * Returns the raw JSON value of [allowsMultipleCategories].
+         *
+         * Unlike [allowsMultipleCategories], this method doesn't throw if the JSON field has an
+         * unexpected type.
+         */
+        @JsonProperty("allows_multiple_categories")
+        @ExcludeMissing
+        fun _allowsMultipleCategories(): JsonField<Boolean> = allowsMultipleCategories
 
         /**
          * Returns the raw JSON value of [categories].
@@ -1624,6 +1647,7 @@ private constructor(
         class Builder internal constructor() {
 
             private var type: JsonField<Type>? = null
+            private var allowsMultipleCategories: JsonField<Boolean> = JsonMissing.of()
             private var categories: JsonField<MutableList<Category>>? = null
             private var max: JsonField<Double> = JsonMissing.of()
             private var min: JsonField<Double> = JsonMissing.of()
@@ -1632,6 +1656,7 @@ private constructor(
             @JvmSynthetic
             internal fun from(feedbackConfig: FeedbackConfig) = apply {
                 type = feedbackConfig.type
+                allowsMultipleCategories = feedbackConfig.allowsMultipleCategories
                 categories = feedbackConfig.categories.map { it.toMutableList() }
                 max = feedbackConfig.max
                 min = feedbackConfig.min
@@ -1649,6 +1674,21 @@ private constructor(
              * value.
              */
             fun type(type: JsonField<Type>) = apply { this.type = type }
+
+            /** Whether a reviewer can pick several categories. Categorical feedback only. */
+            fun allowsMultipleCategories(allowsMultipleCategories: Boolean) =
+                allowsMultipleCategories(JsonField.of(allowsMultipleCategories))
+
+            /**
+             * Sets [Builder.allowsMultipleCategories] to an arbitrary JSON value.
+             *
+             * You should usually call [Builder.allowsMultipleCategories] with a well-typed
+             * [Boolean] value instead. This method is primarily for setting the field to an
+             * undocumented or not yet supported value.
+             */
+            fun allowsMultipleCategories(allowsMultipleCategories: JsonField<Boolean>) = apply {
+                this.allowsMultipleCategories = allowsMultipleCategories
+            }
 
             fun categories(categories: List<Category>?) =
                 categories(JsonField.ofNullable(categories))
@@ -1756,6 +1796,7 @@ private constructor(
             fun build(): FeedbackConfig =
                 FeedbackConfig(
                     checkRequired("type", type),
+                    allowsMultipleCategories,
                     (categories ?: JsonMissing.of()).map { it.toImmutable() },
                     max,
                     min,
@@ -1780,6 +1821,7 @@ private constructor(
             }
 
             type().validate()
+            allowsMultipleCategories()
             categories().ifPresent { it.forEach { it.validate() } }
             max()
             min()
@@ -1803,6 +1845,7 @@ private constructor(
         @JvmSynthetic
         internal fun validity(): Int =
             (type.asKnown().getOrNull()?.validity() ?: 0) +
+                (if (allowsMultipleCategories.asKnown().isPresent) 1 else 0) +
                 (categories.asKnown().getOrNull()?.sumOf { it.validity().toInt() } ?: 0) +
                 (if (max.asKnown().isPresent) 1 else 0) +
                 (if (min.asKnown().isPresent) 1 else 0)
@@ -2166,6 +2209,7 @@ private constructor(
 
             return other is FeedbackConfig &&
                 type == other.type &&
+                allowsMultipleCategories == other.allowsMultipleCategories &&
                 categories == other.categories &&
                 max == other.max &&
                 min == other.min &&
@@ -2173,13 +2217,13 @@ private constructor(
         }
 
         private val hashCode: Int by lazy {
-            Objects.hash(type, categories, max, min, additionalProperties)
+            Objects.hash(type, allowsMultipleCategories, categories, max, min, additionalProperties)
         }
 
         override fun hashCode(): Int = hashCode
 
         override fun toString() =
-            "FeedbackConfig{type=$type, categories=$categories, max=$max, min=$min, additionalProperties=$additionalProperties}"
+            "FeedbackConfig{type=$type, allowsMultipleCategories=$allowsMultipleCategories, categories=$categories, max=$max, min=$min, additionalProperties=$additionalProperties}"
     }
 
     /** Feedback from the LangChainPlus App. */

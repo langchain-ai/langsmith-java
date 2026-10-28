@@ -35,6 +35,7 @@ internal class FeedbackCreateParamsTest {
                     .feedbackConfig(
                         FeedbackCreateSchema.FeedbackConfig.builder()
                             .type(FeedbackCreateSchema.FeedbackConfig.Type.CONTINUOUS)
+                            .allowsMultipleCategories(true)
                             .addCategory(
                                 FeedbackCreateSchema.FeedbackConfig.Category.builder()
                                     .value(0.0)
@@ -97,6 +98,7 @@ internal class FeedbackCreateParamsTest {
                         .feedbackConfig(
                             FeedbackCreateSchema.FeedbackConfig.builder()
                                 .type(FeedbackCreateSchema.FeedbackConfig.Type.CONTINUOUS)
+                                .allowsMultipleCategories(true)
                                 .addCategory(
                                     FeedbackCreateSchema.FeedbackConfig.Category.builder()
                                         .value(0.0)
@@ -157,6 +159,7 @@ internal class FeedbackCreateParamsTest {
                     .feedbackConfig(
                         FeedbackCreateSchema.FeedbackConfig.builder()
                             .type(FeedbackCreateSchema.FeedbackConfig.Type.CONTINUOUS)
+                            .allowsMultipleCategories(true)
                             .addCategory(
                                 FeedbackCreateSchema.FeedbackConfig.Category.builder()
                                     .value(0.0)

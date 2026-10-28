@@ -57,6 +57,7 @@ internal class AnnotationQueueRetrieveResponseTest {
                                                 .Type
                                                 .CONTINUOUS
                                         )
+                                        .allowsMultipleCategories(true)
                                         .addCategory(
                                             AnnotationQueueRubricItemSchema.FeedbackConfig
                                                 .InnerFeedbackConfig
@@ -174,6 +175,7 @@ internal class AnnotationQueueRetrieveResponseTest {
                                             .Type
                                             .CONTINUOUS
                                     )
+                                    .allowsMultipleCategories(true)
                                     .addCategory(
                                         AnnotationQueueRubricItemSchema.FeedbackConfig
                                             .InnerFeedbackConfig
@@ -290,6 +292,7 @@ internal class AnnotationQueueRetrieveResponseTest {
                                                 .Type
                                                 .CONTINUOUS
                                         )
+                                        .allowsMultipleCategories(true)
                                         .addCategory(
                                             AnnotationQueueRubricItemSchema.FeedbackConfig
                                                 .InnerFeedbackConfig
