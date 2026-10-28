@@ -20,7 +20,10 @@ internal class SandboxListUsageCostsResponseTest {
                 .resourceId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                 .resourceType(SandboxListUsageCostsResponse.ResourceType.SANDBOX)
                 .computeStandardUnits("compute_standard_units")
+                .memoryGibHours("memory_gib_hours")
+                .storageGibHours("storage_gib_hours")
                 .storageStandardUnits("storage_standard_units")
+                .vcpuHours("vcpu_hours")
                 .build()
 
         assertThat(sandboxListUsageCostsResponse.lcu()).isEqualTo("1.234567")
@@ -33,8 +36,11 @@ internal class SandboxListUsageCostsResponseTest {
             .isEqualTo(SandboxListUsageCostsResponse.ResourceType.SANDBOX)
         assertThat(sandboxListUsageCostsResponse.computeStandardUnits())
             .contains("compute_standard_units")
+        assertThat(sandboxListUsageCostsResponse.memoryGibHours()).contains("memory_gib_hours")
+        assertThat(sandboxListUsageCostsResponse.storageGibHours()).contains("storage_gib_hours")
         assertThat(sandboxListUsageCostsResponse.storageStandardUnits())
             .contains("storage_standard_units")
+        assertThat(sandboxListUsageCostsResponse.vcpuHours()).contains("vcpu_hours")
     }
 
     @Test
@@ -48,7 +54,10 @@ internal class SandboxListUsageCostsResponseTest {
                 .resourceId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                 .resourceType(SandboxListUsageCostsResponse.ResourceType.SANDBOX)
                 .computeStandardUnits("compute_standard_units")
+                .memoryGibHours("memory_gib_hours")
+                .storageGibHours("storage_gib_hours")
                 .storageStandardUnits("storage_standard_units")
+                .vcpuHours("vcpu_hours")
                 .build()
 
         val roundtrippedSandboxListUsageCostsResponse =

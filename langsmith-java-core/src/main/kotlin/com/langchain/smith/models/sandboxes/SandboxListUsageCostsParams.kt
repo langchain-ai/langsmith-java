@@ -31,6 +31,7 @@ private constructor(
     private val startTime: OffsetDateTime,
     private val cursor: String?,
     private val granularity: Granularity?,
+    private val includeDaily: Boolean?,
     private val includeTotals: Boolean?,
     private val pageSize: Long?,
     private val resourceIds: List<String>?,
@@ -55,8 +56,16 @@ private constructor(
     fun granularity(): Optional<Granularity> = Optional.ofNullable(granularity)
 
     /**
+     * Include bounded daily physical usage for the top 10 resources per metric and Other. Requires
+     * RESOURCE and include_totals. Omitted when unrestricted access or service support is
+     * unavailable. CLI: use --format raw to show this summary.
+     */
+    fun includeDaily(): Optional<Boolean> = Optional.ofNullable(includeDaily)
+
+    /**
      * Include usage totals across the filtered interval (RESOURCE only). Omitted when unrestricted
-     * resource access cannot be verified or the service does not support totals.
+     * resource access cannot be verified or the service does not support totals. CLI: use --format
+     * raw to show this summary.
      */
     fun includeTotals(): Optional<Boolean> = Optional.ofNullable(includeTotals)
 
@@ -98,6 +107,7 @@ private constructor(
         private var startTime: OffsetDateTime? = null
         private var cursor: String? = null
         private var granularity: Granularity? = null
+        private var includeDaily: Boolean? = null
         private var includeTotals: Boolean? = null
         private var pageSize: Long? = null
         private var resourceIds: MutableList<String>? = null
@@ -111,6 +121,7 @@ private constructor(
             startTime = sandboxListUsageCostsParams.startTime
             cursor = sandboxListUsageCostsParams.cursor
             granularity = sandboxListUsageCostsParams.granularity
+            includeDaily = sandboxListUsageCostsParams.includeDaily
             includeTotals = sandboxListUsageCostsParams.includeTotals
             pageSize = sandboxListUsageCostsParams.pageSize
             resourceIds = sandboxListUsageCostsParams.resourceIds?.toMutableList()
@@ -141,8 +152,26 @@ private constructor(
         fun granularity(granularity: Optional<Granularity>) = granularity(granularity.getOrNull())
 
         /**
+         * Include bounded daily physical usage for the top 10 resources per metric and Other.
+         * Requires RESOURCE and include_totals. Omitted when unrestricted access or service support
+         * is unavailable. CLI: use --format raw to show this summary.
+         */
+        fun includeDaily(includeDaily: Boolean?) = apply { this.includeDaily = includeDaily }
+
+        /**
+         * Alias for [Builder.includeDaily].
+         *
+         * This unboxed primitive overload exists for backwards compatibility.
+         */
+        fun includeDaily(includeDaily: Boolean) = includeDaily(includeDaily as Boolean?)
+
+        /** Alias for calling [Builder.includeDaily] with `includeDaily.orElse(null)`. */
+        fun includeDaily(includeDaily: Optional<Boolean>) = includeDaily(includeDaily.getOrNull())
+
+        /**
          * Include usage totals across the filtered interval (RESOURCE only). Omitted when
          * unrestricted resource access cannot be verified or the service does not support totals.
+         * CLI: use --format raw to show this summary.
          */
         fun includeTotals(includeTotals: Boolean?) = apply { this.includeTotals = includeTotals }
 
@@ -311,6 +340,7 @@ private constructor(
                 checkRequired("startTime", startTime),
                 cursor,
                 granularity,
+                includeDaily,
                 includeTotals,
                 pageSize,
                 resourceIds?.toImmutable(),
@@ -329,6 +359,7 @@ private constructor(
                 put("start_time", DateTimeFormatter.ISO_OFFSET_DATE_TIME.format(startTime))
                 cursor?.let { put("cursor", it) }
                 granularity?.let { put("granularity", it.toString()) }
+                includeDaily?.let { put("include_daily", it.toString()) }
                 includeTotals?.let { put("include_totals", it.toString()) }
                 pageSize?.let { put("page_size", it.toString()) }
                 resourceIds?.forEach { put("resource_ids", it) }
@@ -630,6 +661,7 @@ private constructor(
             startTime == other.startTime &&
             cursor == other.cursor &&
             granularity == other.granularity &&
+            includeDaily == other.includeDaily &&
             includeTotals == other.includeTotals &&
             pageSize == other.pageSize &&
             resourceIds == other.resourceIds &&
@@ -644,6 +676,7 @@ private constructor(
             startTime,
             cursor,
             granularity,
+            includeDaily,
             includeTotals,
             pageSize,
             resourceIds,
@@ -653,5 +686,5 @@ private constructor(
         )
 
     override fun toString() =
-        "SandboxListUsageCostsParams{endTime=$endTime, startTime=$startTime, cursor=$cursor, granularity=$granularity, includeTotals=$includeTotals, pageSize=$pageSize, resourceIds=$resourceIds, resourceType=$resourceType, additionalHeaders=$additionalHeaders, additionalQueryParams=$additionalQueryParams}"
+        "SandboxListUsageCostsParams{endTime=$endTime, startTime=$startTime, cursor=$cursor, granularity=$granularity, includeDaily=$includeDaily, includeTotals=$includeTotals, pageSize=$pageSize, resourceIds=$resourceIds, resourceType=$resourceType, additionalHeaders=$additionalHeaders, additionalQueryParams=$additionalQueryParams}"
 }

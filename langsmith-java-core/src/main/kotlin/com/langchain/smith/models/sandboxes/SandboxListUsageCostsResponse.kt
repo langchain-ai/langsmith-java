@@ -28,7 +28,10 @@ private constructor(
     private val resourceId: JsonField<String>,
     private val resourceType: JsonField<ResourceType>,
     private val computeStandardUnits: JsonField<String>,
+    private val memoryGibHours: JsonField<String>,
+    private val storageGibHours: JsonField<String>,
     private val storageStandardUnits: JsonField<String>,
+    private val vcpuHours: JsonField<String>,
     private val additionalProperties: MutableMap<String, JsonValue>,
 ) {
 
@@ -48,9 +51,16 @@ private constructor(
         @JsonProperty("compute_standard_units")
         @ExcludeMissing
         computeStandardUnits: JsonField<String> = JsonMissing.of(),
+        @JsonProperty("memory_gib_hours")
+        @ExcludeMissing
+        memoryGibHours: JsonField<String> = JsonMissing.of(),
+        @JsonProperty("storage_gib_hours")
+        @ExcludeMissing
+        storageGibHours: JsonField<String> = JsonMissing.of(),
         @JsonProperty("storage_standard_units")
         @ExcludeMissing
         storageStandardUnits: JsonField<String> = JsonMissing.of(),
+        @JsonProperty("vcpu_hours") @ExcludeMissing vcpuHours: JsonField<String> = JsonMissing.of(),
     ) : this(
         lcu,
         lsu,
@@ -58,7 +68,10 @@ private constructor(
         resourceId,
         resourceType,
         computeStandardUnits,
+        memoryGibHours,
+        storageGibHours,
         storageStandardUnits,
+        vcpuHours,
         mutableMapOf(),
     )
 
@@ -109,6 +122,24 @@ private constructor(
         computeStandardUnits.getOptional("compute_standard_units")
 
     /**
+     * Memory usage in GiB-hours, as a decimal string. Available with RESOURCE granularity; null
+     * means complete usage is unavailable.
+     *
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
+    fun memoryGibHours(): Optional<String> = memoryGibHours.getOptional("memory_gib_hours")
+
+    /**
+     * Storage usage in GiB-hours from hourly attributed-byte samples, including checkpoints.
+     * Available with RESOURCE granularity; null means complete usage is unavailable.
+     *
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
+    fun storageGibHours(): Optional<String> = storageGibHours.getOptional("storage_gib_hours")
+
+    /**
      * Allocated storage usage in Standard Units, as a decimal string, separate from LSU. Null means
      * complete Standard storage usage is unavailable; "0" means known zero usage.
      *
@@ -117,6 +148,15 @@ private constructor(
      */
     fun storageStandardUnits(): Optional<String> =
         storageStandardUnits.getOptional("storage_standard_units")
+
+    /**
+     * CPU usage in vCPU-hours, as a decimal string. Available with RESOURCE granularity; null means
+     * complete usage is unavailable.
+     *
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
+    fun vcpuHours(): Optional<String> = vcpuHours.getOptional("vcpu_hours")
 
     /**
      * Returns the raw JSON value of [lcu].
@@ -168,6 +208,24 @@ private constructor(
     fun _computeStandardUnits(): JsonField<String> = computeStandardUnits
 
     /**
+     * Returns the raw JSON value of [memoryGibHours].
+     *
+     * Unlike [memoryGibHours], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    @JsonProperty("memory_gib_hours")
+    @ExcludeMissing
+    fun _memoryGibHours(): JsonField<String> = memoryGibHours
+
+    /**
+     * Returns the raw JSON value of [storageGibHours].
+     *
+     * Unlike [storageGibHours], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    @JsonProperty("storage_gib_hours")
+    @ExcludeMissing
+    fun _storageGibHours(): JsonField<String> = storageGibHours
+
+    /**
      * Returns the raw JSON value of [storageStandardUnits].
      *
      * Unlike [storageStandardUnits], this method doesn't throw if the JSON field has an unexpected
@@ -176,6 +234,13 @@ private constructor(
     @JsonProperty("storage_standard_units")
     @ExcludeMissing
     fun _storageStandardUnits(): JsonField<String> = storageStandardUnits
+
+    /**
+     * Returns the raw JSON value of [vcpuHours].
+     *
+     * Unlike [vcpuHours], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    @JsonProperty("vcpu_hours") @ExcludeMissing fun _vcpuHours(): JsonField<String> = vcpuHours
 
     @JsonAnySetter
     private fun putAdditionalProperty(key: String, value: JsonValue) {
@@ -216,7 +281,10 @@ private constructor(
         private var resourceId: JsonField<String>? = null
         private var resourceType: JsonField<ResourceType>? = null
         private var computeStandardUnits: JsonField<String> = JsonMissing.of()
+        private var memoryGibHours: JsonField<String> = JsonMissing.of()
+        private var storageGibHours: JsonField<String> = JsonMissing.of()
         private var storageStandardUnits: JsonField<String> = JsonMissing.of()
+        private var vcpuHours: JsonField<String> = JsonMissing.of()
         private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
 
         @JvmSynthetic
@@ -227,7 +295,10 @@ private constructor(
             resourceId = sandboxListUsageCostsResponse.resourceId
             resourceType = sandboxListUsageCostsResponse.resourceType
             computeStandardUnits = sandboxListUsageCostsResponse.computeStandardUnits
+            memoryGibHours = sandboxListUsageCostsResponse.memoryGibHours
+            storageGibHours = sandboxListUsageCostsResponse.storageGibHours
             storageStandardUnits = sandboxListUsageCostsResponse.storageStandardUnits
+            vcpuHours = sandboxListUsageCostsResponse.vcpuHours
             additionalProperties = sandboxListUsageCostsResponse.additionalProperties.toMutableMap()
         }
 
@@ -322,6 +393,50 @@ private constructor(
         }
 
         /**
+         * Memory usage in GiB-hours, as a decimal string. Available with RESOURCE granularity; null
+         * means complete usage is unavailable.
+         */
+        fun memoryGibHours(memoryGibHours: String?) =
+            memoryGibHours(JsonField.ofNullable(memoryGibHours))
+
+        /** Alias for calling [Builder.memoryGibHours] with `memoryGibHours.orElse(null)`. */
+        fun memoryGibHours(memoryGibHours: Optional<String>) =
+            memoryGibHours(memoryGibHours.getOrNull())
+
+        /**
+         * Sets [Builder.memoryGibHours] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.memoryGibHours] with a well-typed [String] value
+         * instead. This method is primarily for setting the field to an undocumented or not yet
+         * supported value.
+         */
+        fun memoryGibHours(memoryGibHours: JsonField<String>) = apply {
+            this.memoryGibHours = memoryGibHours
+        }
+
+        /**
+         * Storage usage in GiB-hours from hourly attributed-byte samples, including checkpoints.
+         * Available with RESOURCE granularity; null means complete usage is unavailable.
+         */
+        fun storageGibHours(storageGibHours: String?) =
+            storageGibHours(JsonField.ofNullable(storageGibHours))
+
+        /** Alias for calling [Builder.storageGibHours] with `storageGibHours.orElse(null)`. */
+        fun storageGibHours(storageGibHours: Optional<String>) =
+            storageGibHours(storageGibHours.getOrNull())
+
+        /**
+         * Sets [Builder.storageGibHours] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.storageGibHours] with a well-typed [String] value
+         * instead. This method is primarily for setting the field to an undocumented or not yet
+         * supported value.
+         */
+        fun storageGibHours(storageGibHours: JsonField<String>) = apply {
+            this.storageGibHours = storageGibHours
+        }
+
+        /**
          * Allocated storage usage in Standard Units, as a decimal string, separate from LSU. Null
          * means complete Standard storage usage is unavailable; "0" means known zero usage.
          */
@@ -345,6 +460,24 @@ private constructor(
         fun storageStandardUnits(storageStandardUnits: JsonField<String>) = apply {
             this.storageStandardUnits = storageStandardUnits
         }
+
+        /**
+         * CPU usage in vCPU-hours, as a decimal string. Available with RESOURCE granularity; null
+         * means complete usage is unavailable.
+         */
+        fun vcpuHours(vcpuHours: String?) = vcpuHours(JsonField.ofNullable(vcpuHours))
+
+        /** Alias for calling [Builder.vcpuHours] with `vcpuHours.orElse(null)`. */
+        fun vcpuHours(vcpuHours: Optional<String>) = vcpuHours(vcpuHours.getOrNull())
+
+        /**
+         * Sets [Builder.vcpuHours] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.vcpuHours] with a well-typed [String] value instead.
+         * This method is primarily for setting the field to an undocumented or not yet supported
+         * value.
+         */
+        fun vcpuHours(vcpuHours: JsonField<String>) = apply { this.vcpuHours = vcpuHours }
 
         fun additionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
             this.additionalProperties.clear()
@@ -389,7 +522,10 @@ private constructor(
                 checkRequired("resourceId", resourceId),
                 checkRequired("resourceType", resourceType),
                 computeStandardUnits,
+                memoryGibHours,
+                storageGibHours,
                 storageStandardUnits,
+                vcpuHours,
                 additionalProperties.toMutableMap(),
             )
     }
@@ -415,7 +551,10 @@ private constructor(
         resourceId()
         resourceType().validate()
         computeStandardUnits()
+        memoryGibHours()
+        storageGibHours()
         storageStandardUnits()
+        vcpuHours()
         validated = true
     }
 
@@ -440,7 +579,10 @@ private constructor(
             (if (resourceId.asKnown().isPresent) 1 else 0) +
             (resourceType.asKnown().getOrNull()?.validity() ?: 0) +
             (if (computeStandardUnits.asKnown().isPresent) 1 else 0) +
-            (if (storageStandardUnits.asKnown().isPresent) 1 else 0)
+            (if (memoryGibHours.asKnown().isPresent) 1 else 0) +
+            (if (storageGibHours.asKnown().isPresent) 1 else 0) +
+            (if (storageStandardUnits.asKnown().isPresent) 1 else 0) +
+            (if (vcpuHours.asKnown().isPresent) 1 else 0)
 
     class ResourceType @JsonCreator private constructor(private val value: JsonField<String>) :
         Enum {
@@ -593,7 +735,10 @@ private constructor(
             resourceId == other.resourceId &&
             resourceType == other.resourceType &&
             computeStandardUnits == other.computeStandardUnits &&
+            memoryGibHours == other.memoryGibHours &&
+            storageGibHours == other.storageGibHours &&
             storageStandardUnits == other.storageStandardUnits &&
+            vcpuHours == other.vcpuHours &&
             additionalProperties == other.additionalProperties
     }
 
@@ -605,7 +750,10 @@ private constructor(
             resourceId,
             resourceType,
             computeStandardUnits,
+            memoryGibHours,
+            storageGibHours,
             storageStandardUnits,
+            vcpuHours,
             additionalProperties,
         )
     }
@@ -613,5 +761,5 @@ private constructor(
     override fun hashCode(): Int = hashCode
 
     override fun toString() =
-        "SandboxListUsageCostsResponse{lcu=$lcu, lsu=$lsu, periodStart=$periodStart, resourceId=$resourceId, resourceType=$resourceType, computeStandardUnits=$computeStandardUnits, storageStandardUnits=$storageStandardUnits, additionalProperties=$additionalProperties}"
+        "SandboxListUsageCostsResponse{lcu=$lcu, lsu=$lsu, periodStart=$periodStart, resourceId=$resourceId, resourceType=$resourceType, computeStandardUnits=$computeStandardUnits, memoryGibHours=$memoryGibHours, storageGibHours=$storageGibHours, storageStandardUnits=$storageStandardUnits, vcpuHours=$vcpuHours, additionalProperties=$additionalProperties}"
 }
