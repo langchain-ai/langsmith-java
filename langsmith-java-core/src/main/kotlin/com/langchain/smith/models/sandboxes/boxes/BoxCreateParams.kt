@@ -68,6 +68,10 @@ private constructor(
     fun envVars(): Optional<EnvVars> = body.envVars()
 
     /**
+     * Disk for the sandbox, in bytes; defaults to the snapshot's and cannot be smaller. A sandbox
+     * with persistent=false gets at most 16 GiB of disk per vCPU, so at most 256 GiB: omit CPU and
+     * it is derived from the disk, set it and a larger disk is rejected.
+     *
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
      */
@@ -470,6 +474,11 @@ private constructor(
          */
         fun envVars(envVars: JsonField<EnvVars>) = apply { body.envVars(envVars) }
 
+        /**
+         * Disk for the sandbox, in bytes; defaults to the snapshot's and cannot be smaller. A
+         * sandbox with persistent=false gets at most 16 GiB of disk per vCPU, so at most 256 GiB:
+         * omit CPU and it is derived from the disk, set it and a larger disk is rejected.
+         */
         fun fsCapacityBytes(fsCapacityBytes: Long) = apply { body.fsCapacityBytes(fsCapacityBytes) }
 
         /**
@@ -1013,6 +1022,10 @@ private constructor(
         fun envVars(): Optional<EnvVars> = envVars.getOptional("env_vars")
 
         /**
+         * Disk for the sandbox, in bytes; defaults to the snapshot's and cannot be smaller. A
+         * sandbox with persistent=false gets at most 16 GiB of disk per vCPU, so at most 256 GiB:
+         * omit CPU and it is derived from the disk, set it and a larger disk is rejected.
+         *
          * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
          *   the server responded with an unexpected value).
          */
@@ -1474,6 +1487,11 @@ private constructor(
              */
             fun envVars(envVars: JsonField<EnvVars>) = apply { this.envVars = envVars }
 
+            /**
+             * Disk for the sandbox, in bytes; defaults to the snapshot's and cannot be smaller. A
+             * sandbox with persistent=false gets at most 16 GiB of disk per vCPU, so at most 256
+             * GiB: omit CPU and it is derived from the disk, set it and a larger disk is rejected.
+             */
             fun fsCapacityBytes(fsCapacityBytes: Long) =
                 fsCapacityBytes(JsonField.of(fsCapacityBytes))
 
