@@ -220,8 +220,8 @@ private constructor(
     fun name(): Optional<String> = name.getOptional("name")
 
     /**
-     * Persistent (private beta) reports whether the sandbox keeps its filesystem across stops. When
-     * false, its writes are discarded whenever it stops and it is not charged for storage.
+     * Persistent reports whether the sandbox keeps its filesystem across stops. When false, its
+     * writes are discarded whenever it stops and it is not charged for storage.
      *
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
@@ -752,8 +752,8 @@ private constructor(
         fun name(name: JsonField<String>) = apply { this.name = name }
 
         /**
-         * Persistent (private beta) reports whether the sandbox keeps its filesystem across stops.
-         * When false, its writes are discarded whenever it stops and it is not charged for storage.
+         * Persistent reports whether the sandbox keeps its filesystem across stops. When false, its
+         * writes are discarded whenever it stops and it is not charged for storage.
          */
         fun persistent(persistent: Boolean) = persistent(JsonField.of(persistent))
 
