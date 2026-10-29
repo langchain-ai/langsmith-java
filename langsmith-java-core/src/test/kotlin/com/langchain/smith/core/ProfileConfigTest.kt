@@ -5,6 +5,7 @@ import com.langchain.smith.core.http.HttpClient
 import com.langchain.smith.core.http.HttpMethod
 import com.langchain.smith.core.http.HttpRequest
 import com.langchain.smith.core.http.HttpResponse
+import com.langchain.smith.errors.LangChainException
 import com.sun.net.httpserver.HttpServer
 import java.io.ByteArrayInputStream
 import java.io.InputStream
@@ -16,7 +17,9 @@ import java.time.Clock
 import java.time.Instant
 import java.time.ZoneOffset
 import java.util.concurrent.CompletableFuture
+import java.util.concurrent.ExecutionException
 import org.assertj.core.api.Assertions.assertThat
+import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
 
@@ -90,6 +93,107 @@ internal class ProfileConfigTest {
 
         assertThat(config?.oauthAccessToken).isEqualTo("profile-access-token")
         assertThat(config?.apiKey).isEqualTo("profile-key")
+    }
+
+    @Test
+    fun profileAuthReadsApiKeyFromApiKeyEnv() {
+        val configPath =
+            writeConfig(
+                """
+                {
+                  "current_profile": "prod",
+                  "profiles": {
+                    "prod": { "api_key_env": "MY_LANGSMITH_KEY", "api_key_cmd": "never-run" }
+                  }
+                }
+                """
+                    .trimIndent()
+            )
+
+        val config =
+            loadProfileClientConfig(
+                jsonMapper = jsonMapper(),
+                clock = clock,
+                configPathOverride = configPath,
+                getenv = mapOf("MY_LANGSMITH_KEY" to "  env-ref-key\n")::get,
+            )
+
+        assertThat(config?.apiKey).isNull()
+        assertThat(config?.profileAuth?.authHeader()).isEqualTo("X-API-Key" to "env-ref-key")
+    }
+
+    @Test
+    fun profileApiKeyWinsOverApiKeyEnv() {
+        val configPath =
+            writeConfig(
+                """
+                {
+                  "profiles": {
+                    "default": { "api_key": "profile-key", "api_key_env": "MY_LANGSMITH_KEY" }
+                  }
+                }
+                """
+                    .trimIndent()
+            )
+
+        val config =
+            loadProfileClientConfig(
+                jsonMapper = jsonMapper(),
+                clock = clock,
+                configPathOverride = configPath,
+                getenv = { null },
+            )
+
+        assertThat(config?.apiKey).isEqualTo("profile-key")
+        assertThat(config?.profileAuth).isNull()
+    }
+
+    @Test
+    fun profileAuthFailsRequestsWhenApiKeyRefCannotBeResolved() {
+        val cases =
+            mapOf(
+                """{ "api_key_env": "MY_UNSET_LANGSMITH_KEY" }""" to
+                    "LangSmith profile \"prod\" reads its API key from \$MY_UNSET_LANGSMITH_KEY, which is not set",
+                """{ "api_key_cmd": "op read op://vault/langsmith/key" }""" to
+                    "LangSmith profile \"prod\" gets its API key from a command (api_key_cmd), " +
+                        "which the Java SDK does not support yet",
+            )
+        for ((profile, message) in cases) {
+            val configPath =
+                writeConfig("""{ "current_profile": "prod", "profiles": { "prod": $profile } }""")
+            val config =
+                loadProfileClientConfig(
+                    jsonMapper = jsonMapper(),
+                    clock = clock,
+                    configPathOverride = configPath,
+                    getenv = { null },
+                )
+            val profileAuth = config!!.profileAuth!!
+            assertThat(profileAuth.currentAuthHeader()).isNull()
+
+            val sentRequests = mutableListOf<HttpRequest>()
+            val profileHttpClient =
+                ProfileAuthHttpClient(recordingHttpClient(sentRequests), profileAuth)
+            val request =
+                HttpRequest.builder()
+                    .method(HttpMethod.GET)
+                    .baseUrl("https://api.smith.langchain.com/")
+                    .build()
+
+            assertThatThrownBy { profileHttpClient.execute(request) }
+                .isInstanceOf(LangChainException::class.java)
+                .hasMessageContaining(message)
+            assertThatThrownBy { profileHttpClient.executeAsync(request).get() }
+                .isInstanceOf(ExecutionException::class.java)
+                .hasCauseInstanceOf(LangChainException::class.java)
+            assertThat(sentRequests).isEmpty()
+
+            // An explicit API key still takes precedence over the reference.
+            profileHttpClient
+                .execute(request.toBuilder().replaceHeaders("X-API-Key", "explicit-key").build())
+                .close()
+            assertThat(sentRequests).hasSize(1)
+        }
     }
 
     @Test
@@ -200,6 +304,25 @@ internal class ProfileConfigTest {
             server.stop(0)
         }
     }
+
+    private fun recordingHttpClient(sentRequests: MutableList<HttpRequest>): HttpClient =
+        object : HttpClient {
+            override fun execute(
+                request: HttpRequest,
+                requestOptions: RequestOptions,
+            ): HttpResponse {
+                sentRequests.add(request)
+                return emptyResponse()
+            }
+
+            override fun executeAsync(
+                request: HttpRequest,
+                requestOptions: RequestOptions,
+            ): CompletableFuture<HttpResponse> =
+                CompletableFuture.completedFuture(execute(request, requestOptions))
+
+            override fun close() {}
+        }
 
     private fun emptyResponse(): HttpResponse =
         object : HttpResponse {

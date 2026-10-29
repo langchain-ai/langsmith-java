@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode
 import com.langchain.smith.core.http.HttpClient
 import com.langchain.smith.core.http.HttpRequest
 import com.langchain.smith.core.http.HttpResponse
+import com.langchain.smith.errors.LangChainException
 import java.io.OutputStreamWriter
 import java.net.HttpURLConnection
 import java.net.URL
@@ -37,6 +38,7 @@ internal fun loadProfileClientConfig(
     clock: Clock,
     configPathOverride: Path? = null,
     profileNameOverride: String? = null,
+    getenv: (String) -> String? = System::getenv,
 ): ProfileClientConfig? {
     val configPath = configPathOverride ?: profileConfigPath()
     if (!Files.isRegularFile(configPath)) {
@@ -56,15 +58,29 @@ internal fun loadProfileClientConfig(
     val oauth = profile["oauth"]
     val oauthAccessToken = text(oauth?.get("access_token"))
     val oauthRefreshToken = text(oauth?.get("refresh_token"))
+    val apiKey = text(profile["api_key"])
+    val hasApiKeyRef = text(profile["api_key_env"]) != null || text(profile["api_key_cmd"]) != null
 
     return ProfileClientConfig(
         baseUrl = text(profile["api_url"]),
-        apiKey = text(profile["api_key"]),
+        apiKey = apiKey,
         tenantId = text(profile["workspace_id"]),
         oauthAccessToken = oauthAccessToken,
         profileAuth =
-            if (oauthAccessToken != null || oauthRefreshToken != null) {
-                ProfileAuth(jsonMapper, clock, configPath, config, profile)
+            if (
+                oauthAccessToken != null ||
+                    oauthRefreshToken != null ||
+                    (apiKey == null && hasApiKeyRef)
+            ) {
+                ProfileAuth(
+                    jsonMapper = jsonMapper,
+                    clock = clock,
+                    configPath = configPath,
+                    config = config,
+                    profile = profile,
+                    profileName = profileName,
+                    getenv = getenv,
+                )
             } else {
                 null
             },
@@ -159,22 +175,71 @@ private fun expiresAt(node: JsonNode?): Instant? =
 
 private fun String.trimQuotes(): String = trim().trim('"', '\'')
 
+/**
+ * Returns the profile's API key. Instead of storing the key, a profile can name where it lives:
+ * `api_key_env` is an environment variable, and `api_key_cmd` is a shell command that prints the
+ * key. `api_key` wins over `api_key_env`, which wins over `api_key_cmd`. The CLI and Go SDK run
+ * `api_key_cmd`; this SDK reports it as unsupported instead of sending unauthenticated requests.
+ *
+ * @throws LangChainException if the named environment variable is not set, or the profile uses
+ *   `api_key_cmd`.
+ */
+private fun profileApiKey(
+    profileName: String,
+    profile: ObjectNode,
+    getenv: (String) -> String?,
+): String? {
+    text(profile["api_key"])?.let {
+        return it
+    }
+    text(profile["api_key_env"])?.let { apiKeyEnv ->
+        getenv(apiKeyEnv)
+            ?.trim()
+            ?.takeIf { it.isNotEmpty() }
+            ?.let {
+                return it
+            }
+        throw LangChainException(
+            "LangSmith profile \"$profileName\" reads its API key from \$$apiKeyEnv, which is not set"
+        )
+    }
+    if (text(profile["api_key_cmd"]) != null) {
+        throw LangChainException(
+            "LangSmith profile \"$profileName\" gets its API key from a command (api_key_cmd), " +
+                "which the Java SDK does not support yet. Set api_key_env in the profile, " +
+                "or set LANGSMITH_API_KEY."
+        )
+    }
+    return null
+}
+
 internal class ProfileAuth(
     private val jsonMapper: JsonMapper,
     private val clock: Clock,
     private val configPath: Path,
     private val config: ObjectNode,
     private val profile: ObjectNode,
+    private val profileName: String,
+    private val getenv: (String) -> String?,
 ) {
     private val managedAuthorizationValues = mutableSetOf<String>()
 
     init {
-        rememberProfileAuthHeader(authHeaderFromProfile())
+        currentAuthHeader()
     }
 
+    /**
+     * The auth header to snapshot into default headers. A profile API key that cannot be resolved
+     * yields none here; [authHeader] reports it when a request needs it.
+     */
     @Synchronized
     fun currentAuthHeader(): Pair<String, String>? =
-        authHeaderFromProfile().also { rememberProfileAuthHeader(it) }
+        try {
+                authHeaderFromProfile()
+            } catch (e: LangChainException) {
+                null
+            }
+            .also { rememberProfileAuthHeader(it) }
 
     @Synchronized
     fun isProfileAuthorizationHeader(value: String): Boolean =
@@ -209,7 +274,7 @@ internal class ProfileAuth(
         text(oauth?.get("access_token"))?.let {
             return "Authorization" to "Bearer $it"
         }
-        text(profile["api_key"])?.let {
+        profileApiKey(profileName, profile, getenv)?.let {
             return "X-API-Key" to it
         }
         return null
@@ -239,8 +304,15 @@ internal class ProfileAuthHttpClient(
     override fun executeAsync(
         request: HttpRequest,
         requestOptions: RequestOptions,
-    ): CompletableFuture<HttpResponse> =
-        delegate.executeAsync(prepareProfileAuthRequest(request), requestOptions)
+    ): CompletableFuture<HttpResponse> {
+        val profileRequest =
+            try {
+                prepareProfileAuthRequest(request)
+            } catch (e: LangChainException) {
+                return CompletableFuture<HttpResponse>().apply { completeExceptionally(e) }
+            }
+        return delegate.executeAsync(profileRequest, requestOptions)
+    }
 
     override fun close() = delegate.close()
 
