@@ -35,6 +35,8 @@ private constructor(
 ) : Params {
 
     /**
+     * The evaluator's name.
+     *
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type or is
      *   unexpectedly missing or null (e.g. if the server responded with an unexpected value).
      */
@@ -332,6 +334,7 @@ private constructor(
          */
         fun body(body: Body) = apply { this.body = body.toBuilder() }
 
+        /** The evaluator's name. */
         fun displayName(displayName: String) = apply { body.displayName(displayName) }
 
         /**
@@ -842,6 +845,8 @@ private constructor(
         )
 
         /**
+         * The evaluator's name.
+         *
          * @throws LangChainInvalidDataException if the JSON field has an unexpected type or is
          *   unexpectedly missing or null (e.g. if the server responded with an unexpected value).
          */
@@ -1178,6 +1183,7 @@ private constructor(
                 additionalProperties = body.additionalProperties.toMutableMap()
             }
 
+            /** The evaluator's name. */
             fun displayName(displayName: String) = displayName(JsonField.of(displayName))
 
             /**
