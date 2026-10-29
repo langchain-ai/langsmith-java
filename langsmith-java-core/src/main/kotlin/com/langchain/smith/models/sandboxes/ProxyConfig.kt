@@ -1363,6 +1363,7 @@ private constructor(
         private val matchHosts: JsonField<List<String>>,
         private val matchPaths: JsonField<List<String>>,
         private val relayId: JsonField<String>,
+        private val rewrite: JsonField<Rewrite>,
         private val type: JsonField<String>,
         private val additionalProperties: MutableMap<String, JsonValue>,
     ) {
@@ -1393,6 +1394,7 @@ private constructor(
             @ExcludeMissing
             matchPaths: JsonField<List<String>> = JsonMissing.of(),
             @JsonProperty("relay_id") @ExcludeMissing relayId: JsonField<String> = JsonMissing.of(),
+            @JsonProperty("rewrite") @ExcludeMissing rewrite: JsonField<Rewrite> = JsonMissing.of(),
             @JsonProperty("type") @ExcludeMissing type: JsonField<String> = JsonMissing.of(),
         ) : this(
             name,
@@ -1407,6 +1409,7 @@ private constructor(
             matchHosts,
             matchPaths,
             relayId,
+            rewrite,
             type,
             mutableMapOf(),
         )
@@ -1469,11 +1472,11 @@ private constructor(
         fun headers(): Optional<List<Header>> = headers.getOptional("headers")
 
         /**
-         * MatchHeaders restricts a header injection rule to requests carrying every listed header,
-         * each written "name: value" with a lowercase name and an exact value. Pair with headers of
-         * the same name to swap a placeholder the sandbox sends (e.g. "authorization: Bearer
-         * account-b") for a real credential, so one host can serve several accounts. Rules are
-         * evaluated in order and the first match wins.
+         * MatchHeaders restricts a header injection or rewrite rule to requests carrying every
+         * listed header, each written "name: value" with a lowercase name and an exact value. Pair
+         * with headers of the same name to swap a placeholder the sandbox sends (e.g.
+         * "authorization: Bearer account-b") for a real credential, so one host can serve several
+         * accounts. Rules are evaluated in order and the first match wins.
          *
          * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
          *   the server responded with an unexpected value).
@@ -1481,8 +1484,8 @@ private constructor(
         fun matchHeaders(): Optional<List<String>> = matchHeaders.getOptional("match_headers")
 
         /**
-         * MatchHosts is only accepted for header injection and relay rules. Provider auth rules use
-         * built-in host matching. A relay rule may also list IP addresses and CIDR blocks
+         * MatchHosts is only accepted for header injection, rewrite, and relay rules. Provider auth
+         * rules use built-in host matching. A relay rule may also list IP addresses and CIDR blocks
          * (10.0.0.0/8), which match connections the sandbox makes to an IP address rather than a
          * name.
          *
@@ -1508,6 +1511,12 @@ private constructor(
          *   the server responded with an unexpected value).
          */
         fun relayId(): Optional<String> = relayId.getOptional("relay_id")
+
+        /**
+         * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
+         *   the server responded with an unexpected value).
+         */
+        fun rewrite(): Optional<Rewrite> = rewrite.getOptional("rewrite")
 
         /**
          * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
@@ -1609,6 +1618,13 @@ private constructor(
         @JsonProperty("relay_id") @ExcludeMissing fun _relayId(): JsonField<String> = relayId
 
         /**
+         * Returns the raw JSON value of [rewrite].
+         *
+         * Unlike [rewrite], this method doesn't throw if the JSON field has an unexpected type.
+         */
+        @JsonProperty("rewrite") @ExcludeMissing fun _rewrite(): JsonField<Rewrite> = rewrite
+
+        /**
          * Returns the raw JSON value of [type].
          *
          * Unlike [type], this method doesn't throw if the JSON field has an unexpected type.
@@ -1655,6 +1671,7 @@ private constructor(
             private var matchHosts: JsonField<MutableList<String>>? = null
             private var matchPaths: JsonField<MutableList<String>>? = null
             private var relayId: JsonField<String> = JsonMissing.of()
+            private var rewrite: JsonField<Rewrite> = JsonMissing.of()
             private var type: JsonField<String> = JsonMissing.of()
             private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
 
@@ -1672,6 +1689,7 @@ private constructor(
                 matchHosts = rule.matchHosts.map { it.toMutableList() }
                 matchPaths = rule.matchPaths.map { it.toMutableList() }
                 relayId = rule.relayId
+                rewrite = rule.rewrite
                 type = rule.type
                 additionalProperties = rule.additionalProperties.toMutableMap()
             }
@@ -1864,9 +1882,9 @@ private constructor(
             }
 
             /**
-             * MatchHeaders restricts a header injection rule to requests carrying every listed
-             * header, each written "name: value" with a lowercase name and an exact value. Pair
-             * with headers of the same name to swap a placeholder the sandbox sends (e.g.
+             * MatchHeaders restricts a header injection or rewrite rule to requests carrying every
+             * listed header, each written "name: value" with a lowercase name and an exact value.
+             * Pair with headers of the same name to swap a placeholder the sandbox sends (e.g.
              * "authorization: Bearer account-b") for a real credential, so one host can serve
              * several accounts. Rules are evaluated in order and the first match wins.
              */
@@ -1896,10 +1914,10 @@ private constructor(
             }
 
             /**
-             * MatchHosts is only accepted for header injection and relay rules. Provider auth rules
-             * use built-in host matching. A relay rule may also list IP addresses and CIDR blocks
-             * (10.0.0.0/8), which match connections the sandbox makes to an IP address rather than
-             * a name.
+             * MatchHosts is only accepted for header injection, rewrite, and relay rules. Provider
+             * auth rules use built-in host matching. A relay rule may also list IP addresses and
+             * CIDR blocks (10.0.0.0/8), which match connections the sandbox makes to an IP address
+             * rather than a name.
              */
             fun matchHosts(matchHosts: List<String>) = matchHosts(JsonField.of(matchHosts))
 
@@ -1969,6 +1987,17 @@ private constructor(
              */
             fun relayId(relayId: JsonField<String>) = apply { this.relayId = relayId }
 
+            fun rewrite(rewrite: Rewrite) = rewrite(JsonField.of(rewrite))
+
+            /**
+             * Sets [Builder.rewrite] to an arbitrary JSON value.
+             *
+             * You should usually call [Builder.rewrite] with a well-typed [Rewrite] value instead.
+             * This method is primarily for setting the field to an undocumented or not yet
+             * supported value.
+             */
+            fun rewrite(rewrite: JsonField<Rewrite>) = apply { this.rewrite = rewrite }
+
             fun type(type: String) = type(JsonField.of(type))
 
             /**
@@ -2025,6 +2054,7 @@ private constructor(
                     (matchHosts ?: JsonMissing.of()).map { it.toImmutable() },
                     (matchPaths ?: JsonMissing.of()).map { it.toImmutable() },
                     relayId,
+                    rewrite,
                     type,
                     additionalProperties.toMutableMap(),
                 )
@@ -2058,6 +2088,7 @@ private constructor(
             matchHosts()
             matchPaths()
             relayId()
+            rewrite().ifPresent { it.validate() }
             type()
             validated = true
         }
@@ -2090,6 +2121,7 @@ private constructor(
                 (matchHosts.asKnown().getOrNull()?.size ?: 0) +
                 (matchPaths.asKnown().getOrNull()?.size ?: 0) +
                 (if (relayId.asKnown().isPresent) 1 else 0) +
+                (rewrite.asKnown().getOrNull()?.validity() ?: 0) +
                 (if (type.asKnown().isPresent) 1 else 0)
 
         @JsonDeserialize(using = Aws.Deserializer::class)
@@ -7782,6 +7814,462 @@ private constructor(
                 "Header{name=$name, type=$type, isSet=$isSet, value=$value, additionalProperties=$additionalProperties}"
         }
 
+        class Rewrite
+        @JsonCreator(mode = JsonCreator.Mode.DISABLED)
+        private constructor(
+            private val port: JsonField<Long>,
+            private val credentials: JsonField<Credentials>,
+            private val host: JsonField<String>,
+            private val sandbox: JsonField<String>,
+            private val additionalProperties: MutableMap<String, JsonValue>,
+        ) {
+
+            @JsonCreator
+            private constructor(
+                @JsonProperty("port") @ExcludeMissing port: JsonField<Long> = JsonMissing.of(),
+                @JsonProperty("credentials")
+                @ExcludeMissing
+                credentials: JsonField<Credentials> = JsonMissing.of(),
+                @JsonProperty("host") @ExcludeMissing host: JsonField<String> = JsonMissing.of(),
+                @JsonProperty("sandbox")
+                @ExcludeMissing
+                sandbox: JsonField<String> = JsonMissing.of(),
+            ) : this(port, credentials, host, sandbox, mutableMapOf())
+
+            /**
+             * @throws LangChainInvalidDataException if the JSON field has an unexpected type or is
+             *   unexpectedly missing or null (e.g. if the server responded with an unexpected
+             *   value).
+             */
+            fun port(): Long = port.getRequired("port")
+
+            /**
+             * Credentials is what happens to credential headers the sandbox sent, such as
+             * Authorization and Cookie: "strip" (the default) removes them, "redact" keeps each
+             * with its value replaced by "redacted" (after an auth scheme such as "Bearer "), and
+             * "keep" forwards them unchanged.
+             *
+             * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g.
+             *   if the server responded with an unexpected value).
+             */
+            fun credentials(): Optional<Credentials> = credentials.getOptional("credentials")
+
+            /**
+             * Host is an HTTPS destination. Exactly one of host and sandbox is set.
+             *
+             * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g.
+             *   if the server responded with an unexpected value).
+             */
+            fun host(): Optional<String> = host.getOptional("host")
+
+            /**
+             * Sandbox is the name or ID of a sandbox to send requests to, over plain HTTP. A
+             * sandbox link from this sandbox to that sandbox's port must exist. Exactly one of host
+             * and sandbox is set.
+             *
+             * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g.
+             *   if the server responded with an unexpected value).
+             */
+            fun sandbox(): Optional<String> = sandbox.getOptional("sandbox")
+
+            /**
+             * Returns the raw JSON value of [port].
+             *
+             * Unlike [port], this method doesn't throw if the JSON field has an unexpected type.
+             */
+            @JsonProperty("port") @ExcludeMissing fun _port(): JsonField<Long> = port
+
+            /**
+             * Returns the raw JSON value of [credentials].
+             *
+             * Unlike [credentials], this method doesn't throw if the JSON field has an unexpected
+             * type.
+             */
+            @JsonProperty("credentials")
+            @ExcludeMissing
+            fun _credentials(): JsonField<Credentials> = credentials
+
+            /**
+             * Returns the raw JSON value of [host].
+             *
+             * Unlike [host], this method doesn't throw if the JSON field has an unexpected type.
+             */
+            @JsonProperty("host") @ExcludeMissing fun _host(): JsonField<String> = host
+
+            /**
+             * Returns the raw JSON value of [sandbox].
+             *
+             * Unlike [sandbox], this method doesn't throw if the JSON field has an unexpected type.
+             */
+            @JsonProperty("sandbox") @ExcludeMissing fun _sandbox(): JsonField<String> = sandbox
+
+            @JsonAnySetter
+            private fun putAdditionalProperty(key: String, value: JsonValue) {
+                additionalProperties.put(key, value)
+            }
+
+            @JsonAnyGetter
+            @ExcludeMissing
+            fun _additionalProperties(): Map<String, JsonValue> =
+                Collections.unmodifiableMap(additionalProperties)
+
+            fun toBuilder() = Builder().from(this)
+
+            companion object {
+
+                /**
+                 * Returns a mutable builder for constructing an instance of [Rewrite].
+                 *
+                 * The following fields are required:
+                 * ```java
+                 * .port()
+                 * ```
+                 */
+                @JvmStatic fun builder() = Builder()
+            }
+
+            /** A builder for [Rewrite]. */
+            class Builder internal constructor() {
+
+                private var port: JsonField<Long>? = null
+                private var credentials: JsonField<Credentials> = JsonMissing.of()
+                private var host: JsonField<String> = JsonMissing.of()
+                private var sandbox: JsonField<String> = JsonMissing.of()
+                private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
+
+                @JvmSynthetic
+                internal fun from(rewrite: Rewrite) = apply {
+                    port = rewrite.port
+                    credentials = rewrite.credentials
+                    host = rewrite.host
+                    sandbox = rewrite.sandbox
+                    additionalProperties = rewrite.additionalProperties.toMutableMap()
+                }
+
+                fun port(port: Long) = port(JsonField.of(port))
+
+                /**
+                 * Sets [Builder.port] to an arbitrary JSON value.
+                 *
+                 * You should usually call [Builder.port] with a well-typed [Long] value instead.
+                 * This method is primarily for setting the field to an undocumented or not yet
+                 * supported value.
+                 */
+                fun port(port: JsonField<Long>) = apply { this.port = port }
+
+                /**
+                 * Credentials is what happens to credential headers the sandbox sent, such as
+                 * Authorization and Cookie: "strip" (the default) removes them, "redact" keeps each
+                 * with its value replaced by "redacted" (after an auth scheme such as "Bearer "),
+                 * and "keep" forwards them unchanged.
+                 */
+                fun credentials(credentials: Credentials) = credentials(JsonField.of(credentials))
+
+                /**
+                 * Sets [Builder.credentials] to an arbitrary JSON value.
+                 *
+                 * You should usually call [Builder.credentials] with a well-typed [Credentials]
+                 * value instead. This method is primarily for setting the field to an undocumented
+                 * or not yet supported value.
+                 */
+                fun credentials(credentials: JsonField<Credentials>) = apply {
+                    this.credentials = credentials
+                }
+
+                /** Host is an HTTPS destination. Exactly one of host and sandbox is set. */
+                fun host(host: String) = host(JsonField.of(host))
+
+                /**
+                 * Sets [Builder.host] to an arbitrary JSON value.
+                 *
+                 * You should usually call [Builder.host] with a well-typed [String] value instead.
+                 * This method is primarily for setting the field to an undocumented or not yet
+                 * supported value.
+                 */
+                fun host(host: JsonField<String>) = apply { this.host = host }
+
+                /**
+                 * Sandbox is the name or ID of a sandbox to send requests to, over plain HTTP. A
+                 * sandbox link from this sandbox to that sandbox's port must exist. Exactly one of
+                 * host and sandbox is set.
+                 */
+                fun sandbox(sandbox: String) = sandbox(JsonField.of(sandbox))
+
+                /**
+                 * Sets [Builder.sandbox] to an arbitrary JSON value.
+                 *
+                 * You should usually call [Builder.sandbox] with a well-typed [String] value
+                 * instead. This method is primarily for setting the field to an undocumented or not
+                 * yet supported value.
+                 */
+                fun sandbox(sandbox: JsonField<String>) = apply { this.sandbox = sandbox }
+
+                fun additionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
+                    this.additionalProperties.clear()
+                    putAllAdditionalProperties(additionalProperties)
+                }
+
+                fun putAdditionalProperty(key: String, value: JsonValue) = apply {
+                    additionalProperties.put(key, value)
+                }
+
+                fun putAllAdditionalProperties(additionalProperties: Map<String, JsonValue>) =
+                    apply {
+                        this.additionalProperties.putAll(additionalProperties)
+                    }
+
+                fun removeAdditionalProperty(key: String) = apply {
+                    additionalProperties.remove(key)
+                }
+
+                fun removeAllAdditionalProperties(keys: Set<String>) = apply {
+                    keys.forEach(::removeAdditionalProperty)
+                }
+
+                /**
+                 * Returns an immutable instance of [Rewrite].
+                 *
+                 * Further updates to this [Builder] will not mutate the returned instance.
+                 *
+                 * The following fields are required:
+                 * ```java
+                 * .port()
+                 * ```
+                 *
+                 * @throws IllegalStateException if any required field is unset.
+                 */
+                fun build(): Rewrite =
+                    Rewrite(
+                        checkRequired("port", port),
+                        credentials,
+                        host,
+                        sandbox,
+                        additionalProperties.toMutableMap(),
+                    )
+            }
+
+            private var validated: Boolean = false
+
+            /**
+             * Validates that the types of all values in this object match their expected types
+             * recursively.
+             *
+             * This method is _not_ forwards compatible with new types from the API for existing
+             * fields.
+             *
+             * @throws LangChainInvalidDataException if any value type in this object doesn't match
+             *   its expected type.
+             */
+            fun validate(): Rewrite = apply {
+                if (validated) {
+                    return@apply
+                }
+
+                port()
+                credentials().ifPresent { it.validate() }
+                host()
+                sandbox()
+                validated = true
+            }
+
+            fun isValid(): Boolean =
+                try {
+                    validate()
+                    true
+                } catch (e: LangChainInvalidDataException) {
+                    false
+                }
+
+            /**
+             * Returns a score indicating how many valid values are contained in this object
+             * recursively.
+             *
+             * Used for best match union deserialization.
+             */
+            @JvmSynthetic
+            internal fun validity(): Int =
+                (if (port.asKnown().isPresent) 1 else 0) +
+                    (credentials.asKnown().getOrNull()?.validity() ?: 0) +
+                    (if (host.asKnown().isPresent) 1 else 0) +
+                    (if (sandbox.asKnown().isPresent) 1 else 0)
+
+            /**
+             * Credentials is what happens to credential headers the sandbox sent, such as
+             * Authorization and Cookie: "strip" (the default) removes them, "redact" keeps each
+             * with its value replaced by "redacted" (after an auth scheme such as "Bearer "), and
+             * "keep" forwards them unchanged.
+             */
+            class Credentials
+            @JsonCreator
+            private constructor(private val value: JsonField<String>) : Enum {
+
+                /**
+                 * Returns this class instance's raw value.
+                 *
+                 * This is usually only useful if this instance was deserialized from data that
+                 * doesn't match any known member, and you want to know that value. For example, if
+                 * the SDK is on an older version than the API, then the API may respond with new
+                 * members that the SDK is unaware of.
+                 */
+                @com.fasterxml.jackson.annotation.JsonValue fun _value(): JsonField<String> = value
+
+                companion object {
+
+                    @JvmField val STRIP = of("strip")
+
+                    @JvmField val REDACT = of("redact")
+
+                    @JvmField val KEEP = of("keep")
+
+                    @JvmStatic fun of(value: String) = Credentials(JsonField.of(value))
+                }
+
+                /** An enum containing [Credentials]'s known values. */
+                enum class Known {
+                    STRIP,
+                    REDACT,
+                    KEEP,
+                }
+
+                /**
+                 * An enum containing [Credentials]'s known values, as well as an [_UNKNOWN] member.
+                 *
+                 * An instance of [Credentials] can contain an unknown value in a couple of cases:
+                 * - It was deserialized from data that doesn't match any known member. For example,
+                 *   if the SDK is on an older version than the API, then the API may respond with
+                 *   new members that the SDK is unaware of.
+                 * - It was constructed with an arbitrary value using the [of] method.
+                 */
+                enum class Value {
+                    STRIP,
+                    REDACT,
+                    KEEP,
+                    /**
+                     * An enum member indicating that [Credentials] was instantiated with an unknown
+                     * value.
+                     */
+                    _UNKNOWN,
+                }
+
+                /**
+                 * Returns an enum member corresponding to this class instance's value, or
+                 * [Value._UNKNOWN] if the class was instantiated with an unknown value.
+                 *
+                 * Use the [known] method instead if you're certain the value is always known or if
+                 * you want to throw for the unknown case.
+                 */
+                fun value(): Value =
+                    when (this) {
+                        STRIP -> Value.STRIP
+                        REDACT -> Value.REDACT
+                        KEEP -> Value.KEEP
+                        else -> Value._UNKNOWN
+                    }
+
+                /**
+                 * Returns an enum member corresponding to this class instance's value.
+                 *
+                 * Use the [value] method instead if you're uncertain the value is always known and
+                 * don't want to throw for the unknown case.
+                 *
+                 * @throws LangChainInvalidDataException if this class instance's value is a not a
+                 *   known member.
+                 */
+                fun known(): Known =
+                    when (this) {
+                        STRIP -> Known.STRIP
+                        REDACT -> Known.REDACT
+                        KEEP -> Known.KEEP
+                        else -> throw LangChainInvalidDataException("Unknown Credentials: $value")
+                    }
+
+                /**
+                 * Returns this class instance's primitive wire representation.
+                 *
+                 * This differs from the [toString] method because that method is primarily for
+                 * debugging and generally doesn't throw.
+                 *
+                 * @throws LangChainInvalidDataException if this class instance's value does not
+                 *   have the expected primitive type.
+                 */
+                fun asString(): String =
+                    _value().asString().orElseThrow {
+                        LangChainInvalidDataException("Value is not a String")
+                    }
+
+                private var validated: Boolean = false
+
+                /**
+                 * Validates that the types of all values in this object match their expected types
+                 * recursively.
+                 *
+                 * This method is _not_ forwards compatible with new types from the API for existing
+                 * fields.
+                 *
+                 * @throws LangChainInvalidDataException if any value type in this object doesn't
+                 *   match its expected type.
+                 */
+                fun validate(): Credentials = apply {
+                    if (validated) {
+                        return@apply
+                    }
+
+                    known()
+                    validated = true
+                }
+
+                fun isValid(): Boolean =
+                    try {
+                        validate()
+                        true
+                    } catch (e: LangChainInvalidDataException) {
+                        false
+                    }
+
+                /**
+                 * Returns a score indicating how many valid values are contained in this object
+                 * recursively.
+                 *
+                 * Used for best match union deserialization.
+                 */
+                @JvmSynthetic internal fun validity(): Int = if (value() == Value._UNKNOWN) 0 else 1
+
+                override fun equals(other: Any?): Boolean {
+                    if (this === other) {
+                        return true
+                    }
+
+                    return other is Credentials && value == other.value
+                }
+
+                override fun hashCode() = value.hashCode()
+
+                override fun toString() = value.toString()
+            }
+
+            override fun equals(other: Any?): Boolean {
+                if (this === other) {
+                    return true
+                }
+
+                return other is Rewrite &&
+                    port == other.port &&
+                    credentials == other.credentials &&
+                    host == other.host &&
+                    sandbox == other.sandbox &&
+                    additionalProperties == other.additionalProperties
+            }
+
+            private val hashCode: Int by lazy {
+                Objects.hash(port, credentials, host, sandbox, additionalProperties)
+            }
+
+            override fun hashCode(): Int = hashCode
+
+            override fun toString() =
+                "Rewrite{port=$port, credentials=$credentials, host=$host, sandbox=$sandbox, additionalProperties=$additionalProperties}"
+        }
+
         override fun equals(other: Any?): Boolean {
             if (this === other) {
                 return true
@@ -7800,6 +8288,7 @@ private constructor(
                 matchHosts == other.matchHosts &&
                 matchPaths == other.matchPaths &&
                 relayId == other.relayId &&
+                rewrite == other.rewrite &&
                 type == other.type &&
                 additionalProperties == other.additionalProperties
         }
@@ -7818,6 +8307,7 @@ private constructor(
                 matchHosts,
                 matchPaths,
                 relayId,
+                rewrite,
                 type,
                 additionalProperties,
             )
@@ -7826,7 +8316,7 @@ private constructor(
         override fun hashCode(): Int = hashCode
 
         override fun toString() =
-            "Rule{name=$name, aws=$aws, azure=$azure, description=$description, enabled=$enabled, envVars=$envVars, gcp=$gcp, headers=$headers, matchHeaders=$matchHeaders, matchHosts=$matchHosts, matchPaths=$matchPaths, relayId=$relayId, type=$type, additionalProperties=$additionalProperties}"
+            "Rule{name=$name, aws=$aws, azure=$azure, description=$description, enabled=$enabled, envVars=$envVars, gcp=$gcp, headers=$headers, matchHeaders=$matchHeaders, matchHosts=$matchHosts, matchPaths=$matchPaths, relayId=$relayId, rewrite=$rewrite, type=$type, additionalProperties=$additionalProperties}"
     }
 
     override fun equals(other: Any?): Boolean {

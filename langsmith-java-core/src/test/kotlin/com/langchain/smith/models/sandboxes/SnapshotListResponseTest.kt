@@ -250,6 +250,16 @@ internal class SnapshotListResponseTest {
                                         .addMatchHost("string")
                                         .addMatchPath("string")
                                         .relayId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                                        .rewrite(
+                                            ProxyConfig.Rule.Rewrite.builder()
+                                                .port(1L)
+                                                .credentials(
+                                                    ProxyConfig.Rule.Rewrite.Credentials.STRIP
+                                                )
+                                                .host("host")
+                                                .sandbox("sandbox")
+                                                .build()
+                                        )
                                         .type("type")
                                         .build()
                                 )
@@ -511,6 +521,16 @@ internal class SnapshotListResponseTest {
                                         .addMatchHost("string")
                                         .addMatchPath("string")
                                         .relayId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                                        .rewrite(
+                                            ProxyConfig.Rule.Rewrite.builder()
+                                                .port(1L)
+                                                .credentials(
+                                                    ProxyConfig.Rule.Rewrite.Credentials.STRIP
+                                                )
+                                                .host("host")
+                                                .sandbox("sandbox")
+                                                .build()
+                                        )
                                         .type("type")
                                         .build()
                                 )
@@ -761,6 +781,14 @@ internal class SnapshotListResponseTest {
                                     .addMatchHost("string")
                                     .addMatchPath("string")
                                     .relayId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                                    .rewrite(
+                                        ProxyConfig.Rule.Rewrite.builder()
+                                            .port(1L)
+                                            .credentials(ProxyConfig.Rule.Rewrite.Credentials.STRIP)
+                                            .host("host")
+                                            .sandbox("sandbox")
+                                            .build()
+                                    )
                                     .type("type")
                                     .build()
                             )
@@ -1011,6 +1039,14 @@ internal class SnapshotListResponseTest {
                                     .addMatchHost("string")
                                     .addMatchPath("string")
                                     .relayId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                                    .rewrite(
+                                        ProxyConfig.Rule.Rewrite.builder()
+                                            .port(1L)
+                                            .credentials(ProxyConfig.Rule.Rewrite.Credentials.STRIP)
+                                            .host("host")
+                                            .sandbox("sandbox")
+                                            .build()
+                                    )
                                     .type("type")
                                     .build()
                             )
@@ -1277,6 +1313,16 @@ internal class SnapshotListResponseTest {
                                         .addMatchHost("string")
                                         .addMatchPath("string")
                                         .relayId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                                        .rewrite(
+                                            ProxyConfig.Rule.Rewrite.builder()
+                                                .port(1L)
+                                                .credentials(
+                                                    ProxyConfig.Rule.Rewrite.Credentials.STRIP
+                                                )
+                                                .host("host")
+                                                .sandbox("sandbox")
+                                                .build()
+                                        )
                                         .type("type")
                                         .build()
                                 )
@@ -1538,6 +1584,16 @@ internal class SnapshotListResponseTest {
                                         .addMatchHost("string")
                                         .addMatchPath("string")
                                         .relayId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                                        .rewrite(
+                                            ProxyConfig.Rule.Rewrite.builder()
+                                                .port(1L)
+                                                .credentials(
+                                                    ProxyConfig.Rule.Rewrite.Credentials.STRIP
+                                                )
+                                                .host("host")
+                                                .sandbox("sandbox")
+                                                .build()
+                                        )
                                         .type("type")
                                         .build()
                                 )
