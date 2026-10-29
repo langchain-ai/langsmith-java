@@ -553,8 +553,8 @@ private constructor(
             fun resourceType(): Optional<ResourceType> = resourceType.getOptional("resource_type")
 
             /**
-             * Storage usage in GiB-hours from hourly attributed-byte samples. Null means complete
-             * usage is unavailable.
+             * Recorded storage usage in GiB-hours from hourly samples. Missing intervals are
+             * excluded; null means no usable measurements are available.
              *
              * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g.
              *   if the server responded with an unexpected value).
@@ -769,8 +769,8 @@ private constructor(
                 }
 
                 /**
-                 * Storage usage in GiB-hours from hourly attributed-byte samples. Null means
-                 * complete usage is unavailable.
+                 * Recorded storage usage in GiB-hours from hourly samples. Missing intervals are
+                 * excluded; null means no usable measurements are available.
                  */
                 fun storageGibHours(storageGibHours: String?) =
                     storageGibHours(JsonField.ofNullable(storageGibHours))
@@ -1184,8 +1184,8 @@ private constructor(
         fun memoryGibHours(): Optional<String> = memoryGibHours.getOptional("memory_gib_hours")
 
         /**
-         * Storage usage in GiB-hours from hourly attributed-byte samples, including checkpoints.
-         * Null means complete usage is unavailable.
+         * Recorded storage usage in GiB-hours from hourly samples, including checkpoints. Missing
+         * intervals are excluded; null means no usable measurements are available.
          *
          * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
          *   the server responded with an unexpected value).
@@ -1393,8 +1393,8 @@ private constructor(
             }
 
             /**
-             * Storage usage in GiB-hours from hourly attributed-byte samples, including
-             * checkpoints. Null means complete usage is unavailable.
+             * Recorded storage usage in GiB-hours from hourly samples, including checkpoints.
+             * Missing intervals are excluded; null means no usable measurements are available.
              */
             fun storageGibHours(storageGibHours: String?) =
                 storageGibHours(JsonField.ofNullable(storageGibHours))

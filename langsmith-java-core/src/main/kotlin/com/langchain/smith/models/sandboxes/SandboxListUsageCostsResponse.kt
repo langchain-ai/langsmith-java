@@ -131,8 +131,9 @@ private constructor(
     fun memoryGibHours(): Optional<String> = memoryGibHours.getOptional("memory_gib_hours")
 
     /**
-     * Storage usage in GiB-hours from hourly attributed-byte samples, including checkpoints.
-     * Available with RESOURCE granularity; null means complete usage is unavailable.
+     * Recorded storage usage in GiB-hours from hourly samples, including checkpoints. Available
+     * with RESOURCE granularity. Missing intervals are excluded; null means no usable measurements
+     * are available.
      *
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
@@ -415,8 +416,9 @@ private constructor(
         }
 
         /**
-         * Storage usage in GiB-hours from hourly attributed-byte samples, including checkpoints.
-         * Available with RESOURCE granularity; null means complete usage is unavailable.
+         * Recorded storage usage in GiB-hours from hourly samples, including checkpoints. Available
+         * with RESOURCE granularity. Missing intervals are excluded; null means no usable
+         * measurements are available.
          */
         fun storageGibHours(storageGibHours: String?) =
             storageGibHours(JsonField.ofNullable(storageGibHours))
