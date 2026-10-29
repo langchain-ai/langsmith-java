@@ -6,6 +6,7 @@ import com.langchain.smith.core.ClientOptions
 import com.langchain.smith.core.RequestOptions
 import com.langchain.smith.core.http.HttpResponseFor
 import com.langchain.smith.models.evaluators.Evaluator
+import com.langchain.smith.models.evaluators.EvaluatorCreateDecisionModelParams
 import com.langchain.smith.models.evaluators.EvaluatorListParams
 import java.util.concurrent.CompletableFuture
 import java.util.function.Consumer
@@ -41,6 +42,20 @@ interface EvaluatorServiceAsync {
     /** @see list */
     fun list(requestOptions: RequestOptions): CompletableFuture<List<Evaluator>> =
         list(EvaluatorListParams.none(), requestOptions)
+
+    /**
+     * Create a decision-model evaluator (Jev, SemIf or OpenAI Decisions) from its prompt and
+     * questions, and attach it to a project or dataset. Each question's key becomes a feedback key.
+     */
+    fun createDecisionModel(
+        params: EvaluatorCreateDecisionModelParams
+    ): CompletableFuture<Evaluator> = createDecisionModel(params, RequestOptions.none())
+
+    /** @see createDecisionModel */
+    fun createDecisionModel(
+        params: EvaluatorCreateDecisionModelParams,
+        requestOptions: RequestOptions = RequestOptions.none(),
+    ): CompletableFuture<Evaluator>
 
     /**
      * A view of [EvaluatorServiceAsync] that provides access to raw HTTP responses for each method.
@@ -79,5 +94,20 @@ interface EvaluatorServiceAsync {
             requestOptions: RequestOptions
         ): CompletableFuture<HttpResponseFor<List<Evaluator>>> =
             list(EvaluatorListParams.none(), requestOptions)
+
+        /**
+         * Returns a raw HTTP response for `post /api/v1/runs/rules/decision-models`, but is
+         * otherwise the same as [EvaluatorServiceAsync.createDecisionModel].
+         */
+        fun createDecisionModel(
+            params: EvaluatorCreateDecisionModelParams
+        ): CompletableFuture<HttpResponseFor<Evaluator>> =
+            createDecisionModel(params, RequestOptions.none())
+
+        /** @see createDecisionModel */
+        fun createDecisionModel(
+            params: EvaluatorCreateDecisionModelParams,
+            requestOptions: RequestOptions = RequestOptions.none(),
+        ): CompletableFuture<HttpResponseFor<Evaluator>>
     }
 }

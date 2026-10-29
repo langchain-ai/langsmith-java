@@ -7,6 +7,7 @@ import com.langchain.smith.core.ClientOptions
 import com.langchain.smith.core.RequestOptions
 import com.langchain.smith.core.http.HttpResponseFor
 import com.langchain.smith.models.evaluators.Evaluator
+import com.langchain.smith.models.evaluators.EvaluatorCreateDecisionModelParams
 import com.langchain.smith.models.evaluators.EvaluatorListParams
 import java.util.function.Consumer
 
@@ -40,6 +41,19 @@ interface EvaluatorService {
     /** @see list */
     fun list(requestOptions: RequestOptions): List<Evaluator> =
         list(EvaluatorListParams.none(), requestOptions)
+
+    /**
+     * Create a decision-model evaluator (Jev, SemIf or OpenAI Decisions) from its prompt and
+     * questions, and attach it to a project or dataset. Each question's key becomes a feedback key.
+     */
+    fun createDecisionModel(params: EvaluatorCreateDecisionModelParams): Evaluator =
+        createDecisionModel(params, RequestOptions.none())
+
+    /** @see createDecisionModel */
+    fun createDecisionModel(
+        params: EvaluatorCreateDecisionModelParams,
+        requestOptions: RequestOptions = RequestOptions.none(),
+    ): Evaluator
 
     /** A view of [EvaluatorService] that provides access to raw HTTP responses for each method. */
     interface WithRawResponse {
@@ -75,5 +89,21 @@ interface EvaluatorService {
         @MustBeClosed
         fun list(requestOptions: RequestOptions): HttpResponseFor<List<Evaluator>> =
             list(EvaluatorListParams.none(), requestOptions)
+
+        /**
+         * Returns a raw HTTP response for `post /api/v1/runs/rules/decision-models`, but is
+         * otherwise the same as [EvaluatorService.createDecisionModel].
+         */
+        @MustBeClosed
+        fun createDecisionModel(
+            params: EvaluatorCreateDecisionModelParams
+        ): HttpResponseFor<Evaluator> = createDecisionModel(params, RequestOptions.none())
+
+        /** @see createDecisionModel */
+        @MustBeClosed
+        fun createDecisionModel(
+            params: EvaluatorCreateDecisionModelParams,
+            requestOptions: RequestOptions = RequestOptions.none(),
+        ): HttpResponseFor<Evaluator>
     }
 }

@@ -12,9 +12,11 @@ import com.langchain.smith.core.http.HttpRequest
 import com.langchain.smith.core.http.HttpResponse
 import com.langchain.smith.core.http.HttpResponse.Handler
 import com.langchain.smith.core.http.HttpResponseFor
+import com.langchain.smith.core.http.json
 import com.langchain.smith.core.http.parseable
 import com.langchain.smith.core.prepareAsync
 import com.langchain.smith.models.evaluators.Evaluator
+import com.langchain.smith.models.evaluators.EvaluatorCreateDecisionModelParams
 import com.langchain.smith.models.evaluators.EvaluatorListParams
 import java.util.concurrent.CompletableFuture
 import java.util.function.Consumer
@@ -37,6 +39,13 @@ class EvaluatorServiceAsyncImpl internal constructor(private val clientOptions: 
     ): CompletableFuture<List<Evaluator>> =
         // get /api/v1/runs/rules
         withRawResponse().list(params, requestOptions).thenApply { it.parse() }
+
+    override fun createDecisionModel(
+        params: EvaluatorCreateDecisionModelParams,
+        requestOptions: RequestOptions,
+    ): CompletableFuture<Evaluator> =
+        // post /api/v1/runs/rules/decision-models
+        withRawResponse().createDecisionModel(params, requestOptions).thenApply { it.parse() }
 
     class WithRawResponseImpl internal constructor(private val clientOptions: ClientOptions) :
         EvaluatorServiceAsync.WithRawResponse {
@@ -75,6 +84,37 @@ class EvaluatorServiceAsyncImpl internal constructor(private val clientOptions: 
                             .also {
                                 if (requestOptions.responseValidation!!) {
                                     it.forEach { it.validate() }
+                                }
+                            }
+                    }
+                }
+        }
+
+        private val createDecisionModelHandler: Handler<Evaluator> =
+            jsonHandler<Evaluator>(clientOptions.jsonMapper)
+
+        override fun createDecisionModel(
+            params: EvaluatorCreateDecisionModelParams,
+            requestOptions: RequestOptions,
+        ): CompletableFuture<HttpResponseFor<Evaluator>> {
+            val request =
+                HttpRequest.builder()
+                    .method(HttpMethod.POST)
+                    .baseUrl(clientOptions.baseUrl())
+                    .addPathSegments("api", "v1", "runs", "rules", "decision-models")
+                    .body(json(clientOptions.jsonMapper, params._body()))
+                    .build()
+                    .prepareAsync(clientOptions, params)
+            val requestOptions = requestOptions.applyDefaults(RequestOptions.from(clientOptions))
+            return request
+                .thenComposeAsync { clientOptions.httpClient.executeAsync(it, requestOptions) }
+                .thenApply { response ->
+                    errorHandler.handle(response).parseable {
+                        response
+                            .use { createDecisionModelHandler.handle(it) }
+                            .also {
+                                if (requestOptions.responseValidation!!) {
+                                    it.validate()
                                 }
                             }
                     }
