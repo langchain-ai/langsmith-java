@@ -2394,6 +2394,7 @@ private constructor(
             @JsonCreator(mode = JsonCreator.Mode.DISABLED)
             private constructor(
                 private val roleArn: JsonField<String>,
+                private val sessionTags: JsonField<SessionTags>,
                 private val subjectScope: JsonField<String>,
                 private val additionalProperties: MutableMap<String, JsonValue>,
             ) {
@@ -2403,10 +2404,13 @@ private constructor(
                     @JsonProperty("role_arn")
                     @ExcludeMissing
                     roleArn: JsonField<String> = JsonMissing.of(),
+                    @JsonProperty("session_tags")
+                    @ExcludeMissing
+                    sessionTags: JsonField<SessionTags> = JsonMissing.of(),
                     @JsonProperty("subject_scope")
                     @ExcludeMissing
                     subjectScope: JsonField<String> = JsonMissing.of(),
-                ) : this(roleArn, subjectScope, mutableMapOf())
+                ) : this(roleArn, sessionTags, subjectScope, mutableMapOf())
 
                 /**
                  * IAM role to assume with AssumeRoleWithWebIdentity, using a short-lived OIDC token
@@ -2420,6 +2424,19 @@ private constructor(
                  *   unexpected value).
                  */
                 fun roleArn(): String = roleArn.getRequired("role_arn")
+
+                /**
+                 * SessionTags are AWS session tags on the role session, for role policies that
+                 * scope access with ${aws:PrincipalTag/<key>}. The role's trust policy must allow
+                 * sts:TagSession. At most 50; keys are 1-128 and values 1-256 letters, numbers,
+                 * spaces or _.:=+-@ (keys may also contain /); keys starting with aws: or
+                 * langsmith: are reserved. Only valid with role_arn, and cannot be changed after
+                 * creation.
+                 *
+                 * @throws LangChainInvalidDataException if the JSON field has an unexpected type
+                 *   (e.g. if the server responded with an unexpected value).
+                 */
+                fun sessionTags(): Optional<SessionTags> = sessionTags.getOptional("session_tags")
 
                 /**
                  * SubjectScope picks the token subject the role trusts: "workspace" (the default)
@@ -2440,6 +2457,16 @@ private constructor(
                 @JsonProperty("role_arn")
                 @ExcludeMissing
                 fun _roleArn(): JsonField<String> = roleArn
+
+                /**
+                 * Returns the raw JSON value of [sessionTags].
+                 *
+                 * Unlike [sessionTags], this method doesn't throw if the JSON field has an
+                 * unexpected type.
+                 */
+                @JsonProperty("session_tags")
+                @ExcludeMissing
+                fun _sessionTags(): JsonField<SessionTags> = sessionTags
 
                 /**
                  * Returns the raw JSON value of [subjectScope].
@@ -2481,6 +2508,7 @@ private constructor(
                 class Builder internal constructor() {
 
                     private var roleArn: JsonField<String>? = null
+                    private var sessionTags: JsonField<SessionTags> = JsonMissing.of()
                     private var subjectScope: JsonField<String> = JsonMissing.of()
                     private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
 
@@ -2488,6 +2516,7 @@ private constructor(
                     internal fun from(sandboxesProxyAwsRoleConfig: SandboxesProxyAwsRoleConfig) =
                         apply {
                             roleArn = sandboxesProxyAwsRoleConfig.roleArn
+                            sessionTags = sandboxesProxyAwsRoleConfig.sessionTags
                             subjectScope = sandboxesProxyAwsRoleConfig.subjectScope
                             additionalProperties =
                                 sandboxesProxyAwsRoleConfig.additionalProperties.toMutableMap()
@@ -2510,6 +2539,28 @@ private constructor(
                      * not yet supported value.
                      */
                     fun roleArn(roleArn: JsonField<String>) = apply { this.roleArn = roleArn }
+
+                    /**
+                     * SessionTags are AWS session tags on the role session, for role policies that
+                     * scope access with ${aws:PrincipalTag/<key>}. The role's trust policy must
+                     * allow sts:TagSession. At most 50; keys are 1-128 and values 1-256 letters,
+                     * numbers, spaces or _.:=+-@ (keys may also contain /); keys starting with aws:
+                     * or langsmith: are reserved. Only valid with role_arn, and cannot be changed
+                     * after creation.
+                     */
+                    fun sessionTags(sessionTags: SessionTags) =
+                        sessionTags(JsonField.of(sessionTags))
+
+                    /**
+                     * Sets [Builder.sessionTags] to an arbitrary JSON value.
+                     *
+                     * You should usually call [Builder.sessionTags] with a well-typed [SessionTags]
+                     * value instead. This method is primarily for setting the field to an
+                     * undocumented or not yet supported value.
+                     */
+                    fun sessionTags(sessionTags: JsonField<SessionTags>) = apply {
+                        this.sessionTags = sessionTags
+                    }
 
                     /**
                      * SubjectScope picks the token subject the role trusts: "workspace" (the
@@ -2567,6 +2618,7 @@ private constructor(
                     fun build(): SandboxesProxyAwsRoleConfig =
                         SandboxesProxyAwsRoleConfig(
                             checkRequired("roleArn", roleArn),
+                            sessionTags,
                             subjectScope,
                             additionalProperties.toMutableMap(),
                         )
@@ -2590,6 +2642,7 @@ private constructor(
                     }
 
                     roleArn()
+                    sessionTags().ifPresent { it.validate() }
                     subjectScope()
                     validated = true
                 }
@@ -2611,7 +2664,135 @@ private constructor(
                 @JvmSynthetic
                 internal fun validity(): Int =
                     (if (roleArn.asKnown().isPresent) 1 else 0) +
+                        (sessionTags.asKnown().getOrNull()?.validity() ?: 0) +
                         (if (subjectScope.asKnown().isPresent) 1 else 0)
+
+                /**
+                 * SessionTags are AWS session tags on the role session, for role policies that
+                 * scope access with ${aws:PrincipalTag/<key>}. The role's trust policy must allow
+                 * sts:TagSession. At most 50; keys are 1-128 and values 1-256 letters, numbers,
+                 * spaces or _.:=+-@ (keys may also contain /); keys starting with aws: or
+                 * langsmith: are reserved. Only valid with role_arn, and cannot be changed after
+                 * creation.
+                 */
+                class SessionTags
+                @JsonCreator
+                private constructor(
+                    @com.fasterxml.jackson.annotation.JsonValue
+                    private val additionalProperties: Map<String, JsonValue>
+                ) {
+
+                    @JsonAnyGetter
+                    @ExcludeMissing
+                    fun _additionalProperties(): Map<String, JsonValue> = additionalProperties
+
+                    fun toBuilder() = Builder().from(this)
+
+                    companion object {
+
+                        /**
+                         * Returns a mutable builder for constructing an instance of [SessionTags].
+                         */
+                        @JvmStatic fun builder() = Builder()
+                    }
+
+                    /** A builder for [SessionTags]. */
+                    class Builder internal constructor() {
+
+                        private var additionalProperties: MutableMap<String, JsonValue> =
+                            mutableMapOf()
+
+                        @JvmSynthetic
+                        internal fun from(sessionTags: SessionTags) = apply {
+                            additionalProperties = sessionTags.additionalProperties.toMutableMap()
+                        }
+
+                        fun additionalProperties(additionalProperties: Map<String, JsonValue>) =
+                            apply {
+                                this.additionalProperties.clear()
+                                putAllAdditionalProperties(additionalProperties)
+                            }
+
+                        fun putAdditionalProperty(key: String, value: JsonValue) = apply {
+                            additionalProperties.put(key, value)
+                        }
+
+                        fun putAllAdditionalProperties(
+                            additionalProperties: Map<String, JsonValue>
+                        ) = apply { this.additionalProperties.putAll(additionalProperties) }
+
+                        fun removeAdditionalProperty(key: String) = apply {
+                            additionalProperties.remove(key)
+                        }
+
+                        fun removeAllAdditionalProperties(keys: Set<String>) = apply {
+                            keys.forEach(::removeAdditionalProperty)
+                        }
+
+                        /**
+                         * Returns an immutable instance of [SessionTags].
+                         *
+                         * Further updates to this [Builder] will not mutate the returned instance.
+                         */
+                        fun build(): SessionTags = SessionTags(additionalProperties.toImmutable())
+                    }
+
+                    private var validated: Boolean = false
+
+                    /**
+                     * Validates that the types of all values in this object match their expected
+                     * types recursively.
+                     *
+                     * This method is _not_ forwards compatible with new types from the API for
+                     * existing fields.
+                     *
+                     * @throws LangChainInvalidDataException if any value type in this object
+                     *   doesn't match its expected type.
+                     */
+                    fun validate(): SessionTags = apply {
+                        if (validated) {
+                            return@apply
+                        }
+
+                        validated = true
+                    }
+
+                    fun isValid(): Boolean =
+                        try {
+                            validate()
+                            true
+                        } catch (e: LangChainInvalidDataException) {
+                            false
+                        }
+
+                    /**
+                     * Returns a score indicating how many valid values are contained in this object
+                     * recursively.
+                     *
+                     * Used for best match union deserialization.
+                     */
+                    @JvmSynthetic
+                    internal fun validity(): Int =
+                        additionalProperties.count { (_, value) ->
+                            !value.isNull() && !value.isMissing()
+                        }
+
+                    override fun equals(other: Any?): Boolean {
+                        if (this === other) {
+                            return true
+                        }
+
+                        return other is SessionTags &&
+                            additionalProperties == other.additionalProperties
+                    }
+
+                    private val hashCode: Int by lazy { Objects.hash(additionalProperties) }
+
+                    override fun hashCode(): Int = hashCode
+
+                    override fun toString() =
+                        "SessionTags{additionalProperties=$additionalProperties}"
+                }
 
                 override fun equals(other: Any?): Boolean {
                     if (this === other) {
@@ -2620,18 +2801,19 @@ private constructor(
 
                     return other is SandboxesProxyAwsRoleConfig &&
                         roleArn == other.roleArn &&
+                        sessionTags == other.sessionTags &&
                         subjectScope == other.subjectScope &&
                         additionalProperties == other.additionalProperties
                 }
 
                 private val hashCode: Int by lazy {
-                    Objects.hash(roleArn, subjectScope, additionalProperties)
+                    Objects.hash(roleArn, sessionTags, subjectScope, additionalProperties)
                 }
 
                 override fun hashCode(): Int = hashCode
 
                 override fun toString() =
-                    "SandboxesProxyAwsRoleConfig{roleArn=$roleArn, subjectScope=$subjectScope, additionalProperties=$additionalProperties}"
+                    "SandboxesProxyAwsRoleConfig{roleArn=$roleArn, sessionTags=$sessionTags, subjectScope=$subjectScope, additionalProperties=$additionalProperties}"
             }
 
             class SandboxesProxyAwsStaticConfig

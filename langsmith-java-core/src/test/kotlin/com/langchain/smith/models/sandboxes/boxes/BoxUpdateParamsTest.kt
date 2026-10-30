@@ -52,6 +52,12 @@ internal class BoxUpdateParamsTest {
                             .aws(
                                 ProxyConfig.Rule.Aws.SandboxesProxyAwsRoleConfig.builder()
                                     .roleArn("x")
+                                    .sessionTags(
+                                        ProxyConfig.Rule.Aws.SandboxesProxyAwsRoleConfig.SessionTags
+                                            .builder()
+                                            .putAdditionalProperty("foo", JsonValue.from("string"))
+                                            .build()
+                                    )
                                     .subjectScope("tag:2fdcD1Dc-bbDb-2BBD-0Afa-1A3C33cFaADc")
                                     .build()
                             )
@@ -178,6 +184,16 @@ internal class BoxUpdateParamsTest {
                                 .aws(
                                     ProxyConfig.Rule.Aws.SandboxesProxyAwsRoleConfig.builder()
                                         .roleArn("x")
+                                        .sessionTags(
+                                            ProxyConfig.Rule.Aws.SandboxesProxyAwsRoleConfig
+                                                .SessionTags
+                                                .builder()
+                                                .putAdditionalProperty(
+                                                    "foo",
+                                                    JsonValue.from("string"),
+                                                )
+                                                .build()
+                                        )
                                         .subjectScope("tag:2fdcD1Dc-bbDb-2BBD-0Afa-1A3C33cFaADc")
                                         .build()
                                 )
@@ -292,6 +308,12 @@ internal class BoxUpdateParamsTest {
                             .aws(
                                 ProxyConfig.Rule.Aws.SandboxesProxyAwsRoleConfig.builder()
                                     .roleArn("x")
+                                    .sessionTags(
+                                        ProxyConfig.Rule.Aws.SandboxesProxyAwsRoleConfig.SessionTags
+                                            .builder()
+                                            .putAdditionalProperty("foo", JsonValue.from("string"))
+                                            .build()
+                                    )
                                     .subjectScope("tag:2fdcD1Dc-bbDb-2BBD-0Afa-1A3C33cFaADc")
                                     .build()
                             )
