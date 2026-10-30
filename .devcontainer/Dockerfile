@@ -1,5 +1,6 @@
 # syntax=docker/dockerfile:1
 FROM debian:trixie-slim
+RUN apt-get update --error-on=any && apt-get install -y --no-install-recommends ca-certificates && rm -rf /var/lib/apt/lists/*
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
   libxkbcommon0 \
