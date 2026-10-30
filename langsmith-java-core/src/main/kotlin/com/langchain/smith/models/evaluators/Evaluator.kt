@@ -50,6 +50,7 @@ private constructor(
     private val correctionsDatasetId: JsonField<String>,
     private val datasetId: JsonField<String>,
     private val datasetName: JsonField<String>,
+    private val effectiveSpendLimit: JsonField<EffectiveSpendLimit>,
     private val evaluatorId: JsonField<String>,
     private val evaluatorName: JsonField<String>,
     private val evaluatorType: JsonField<String>,
@@ -149,6 +150,9 @@ private constructor(
         @JsonProperty("dataset_name")
         @ExcludeMissing
         datasetName: JsonField<String> = JsonMissing.of(),
+        @JsonProperty("effective_spend_limit")
+        @ExcludeMissing
+        effectiveSpendLimit: JsonField<EffectiveSpendLimit> = JsonMissing.of(),
         @JsonProperty("evaluator_id")
         @ExcludeMissing
         evaluatorId: JsonField<String> = JsonMissing.of(),
@@ -240,6 +244,7 @@ private constructor(
         correctionsDatasetId,
         datasetId,
         datasetName,
+        effectiveSpendLimit,
         evaluatorId,
         evaluatorName,
         evaluatorType,
@@ -424,6 +429,16 @@ private constructor(
      *   server responded with an unexpected value).
      */
     fun datasetName(): Optional<String> = datasetName.getOptional("dataset_name")
+
+    /**
+     * spend_limit if set; otherwise the organization's default evaluator spend limit, once the rule
+     * has made its first evaluator call.
+     *
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
+    fun effectiveSpendLimit(): Optional<EffectiveSpendLimit> =
+        effectiveSpendLimit.getOptional("effective_spend_limit")
 
     /**
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
@@ -811,6 +826,16 @@ private constructor(
     fun _datasetName(): JsonField<String> = datasetName
 
     /**
+     * Returns the raw JSON value of [effectiveSpendLimit].
+     *
+     * Unlike [effectiveSpendLimit], this method doesn't throw if the JSON field has an unexpected
+     * type.
+     */
+    @JsonProperty("effective_spend_limit")
+    @ExcludeMissing
+    fun _effectiveSpendLimit(): JsonField<EffectiveSpendLimit> = effectiveSpendLimit
+
+    /**
      * Returns the raw JSON value of [evaluatorId].
      *
      * Unlike [evaluatorId], this method doesn't throw if the JSON field has an unexpected type.
@@ -1087,6 +1112,7 @@ private constructor(
         private var correctionsDatasetId: JsonField<String> = JsonMissing.of()
         private var datasetId: JsonField<String> = JsonMissing.of()
         private var datasetName: JsonField<String> = JsonMissing.of()
+        private var effectiveSpendLimit: JsonField<EffectiveSpendLimit> = JsonMissing.of()
         private var evaluatorId: JsonField<String> = JsonMissing.of()
         private var evaluatorName: JsonField<String> = JsonMissing.of()
         private var evaluatorType: JsonField<String> = JsonMissing.of()
@@ -1141,6 +1167,7 @@ private constructor(
             correctionsDatasetId = evaluator.correctionsDatasetId
             datasetId = evaluator.datasetId
             datasetName = evaluator.datasetName
+            effectiveSpendLimit = evaluator.effectiveSpendLimit
             evaluatorId = evaluator.evaluatorId
             evaluatorName = evaluator.evaluatorName
             evaluatorType = evaluator.evaluatorType
@@ -1610,6 +1637,30 @@ private constructor(
          * value.
          */
         fun datasetName(datasetName: JsonField<String>) = apply { this.datasetName = datasetName }
+
+        /**
+         * spend_limit if set; otherwise the organization's default evaluator spend limit, once the
+         * rule has made its first evaluator call.
+         */
+        fun effectiveSpendLimit(effectiveSpendLimit: EffectiveSpendLimit?) =
+            effectiveSpendLimit(JsonField.ofNullable(effectiveSpendLimit))
+
+        /**
+         * Alias for calling [Builder.effectiveSpendLimit] with `effectiveSpendLimit.orElse(null)`.
+         */
+        fun effectiveSpendLimit(effectiveSpendLimit: Optional<EffectiveSpendLimit>) =
+            effectiveSpendLimit(effectiveSpendLimit.getOrNull())
+
+        /**
+         * Sets [Builder.effectiveSpendLimit] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.effectiveSpendLimit] with a well-typed
+         * [EffectiveSpendLimit] value instead. This method is primarily for setting the field to an
+         * undocumented or not yet supported value.
+         */
+        fun effectiveSpendLimit(effectiveSpendLimit: JsonField<EffectiveSpendLimit>) = apply {
+            this.effectiveSpendLimit = effectiveSpendLimit
+        }
 
         fun evaluatorId(evaluatorId: String?) = evaluatorId(JsonField.ofNullable(evaluatorId))
 
@@ -2129,6 +2180,7 @@ private constructor(
                 correctionsDatasetId,
                 datasetId,
                 datasetName,
+                effectiveSpendLimit,
                 evaluatorId,
                 evaluatorName,
                 evaluatorType,
@@ -2198,6 +2250,7 @@ private constructor(
         correctionsDatasetId()
         datasetId()
         datasetName()
+        effectiveSpendLimit().ifPresent { it.validate() }
         evaluatorId()
         evaluatorName()
         evaluatorType()
@@ -2266,6 +2319,7 @@ private constructor(
             (if (correctionsDatasetId.asKnown().isPresent) 1 else 0) +
             (if (datasetId.asKnown().isPresent) 1 else 0) +
             (if (datasetName.asKnown().isPresent) 1 else 0) +
+            (effectiveSpendLimit.asKnown().getOrNull()?.validity() ?: 0) +
             (if (evaluatorId.asKnown().isPresent) 1 else 0) +
             (if (evaluatorName.asKnown().isPresent) 1 else 0) +
             (if (evaluatorType.asKnown().isPresent) 1 else 0) +
@@ -2291,6 +2345,346 @@ private constructor(
             (if (isTransient.asKnown().isPresent) 1 else 0) +
             (if (treeFilter.asKnown().isPresent) 1 else 0) +
             (if (useCorrectionsDataset.asKnown().isPresent) 1 else 0)
+
+    /**
+     * spend_limit if set; otherwise the organization's default evaluator spend limit, once the rule
+     * has made its first evaluator call.
+     */
+    class EffectiveSpendLimit
+    @JsonCreator(mode = JsonCreator.Mode.DISABLED)
+    private constructor(
+        private val limitUsd: JsonField<String>,
+        private val window: JsonField<Window>,
+        private val additionalProperties: MutableMap<String, JsonValue>,
+    ) {
+
+        @JsonCreator
+        private constructor(
+            @JsonProperty("limit_usd")
+            @ExcludeMissing
+            limitUsd: JsonField<String> = JsonMissing.of(),
+            @JsonProperty("window") @ExcludeMissing window: JsonField<Window> = JsonMissing.of(),
+        ) : this(limitUsd, window, mutableMapOf())
+
+        /**
+         * @throws LangChainInvalidDataException if the JSON field has an unexpected type or is
+         *   unexpectedly missing or null (e.g. if the server responded with an unexpected value).
+         */
+        fun limitUsd(): String = limitUsd.getRequired("limit_usd")
+
+        /**
+         * @throws LangChainInvalidDataException if the JSON field has an unexpected type or is
+         *   unexpectedly missing or null (e.g. if the server responded with an unexpected value).
+         */
+        fun window(): Window = window.getRequired("window")
+
+        /**
+         * Returns the raw JSON value of [limitUsd].
+         *
+         * Unlike [limitUsd], this method doesn't throw if the JSON field has an unexpected type.
+         */
+        @JsonProperty("limit_usd") @ExcludeMissing fun _limitUsd(): JsonField<String> = limitUsd
+
+        /**
+         * Returns the raw JSON value of [window].
+         *
+         * Unlike [window], this method doesn't throw if the JSON field has an unexpected type.
+         */
+        @JsonProperty("window") @ExcludeMissing fun _window(): JsonField<Window> = window
+
+        @JsonAnySetter
+        private fun putAdditionalProperty(key: String, value: JsonValue) {
+            additionalProperties.put(key, value)
+        }
+
+        @JsonAnyGetter
+        @ExcludeMissing
+        fun _additionalProperties(): Map<String, JsonValue> =
+            Collections.unmodifiableMap(additionalProperties)
+
+        fun toBuilder() = Builder().from(this)
+
+        companion object {
+
+            /**
+             * Returns a mutable builder for constructing an instance of [EffectiveSpendLimit].
+             *
+             * The following fields are required:
+             * ```java
+             * .limitUsd()
+             * .window()
+             * ```
+             */
+            @JvmStatic fun builder() = Builder()
+        }
+
+        /** A builder for [EffectiveSpendLimit]. */
+        class Builder internal constructor() {
+
+            private var limitUsd: JsonField<String>? = null
+            private var window: JsonField<Window>? = null
+            private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
+
+            @JvmSynthetic
+            internal fun from(effectiveSpendLimit: EffectiveSpendLimit) = apply {
+                limitUsd = effectiveSpendLimit.limitUsd
+                window = effectiveSpendLimit.window
+                additionalProperties = effectiveSpendLimit.additionalProperties.toMutableMap()
+            }
+
+            fun limitUsd(limitUsd: String) = limitUsd(JsonField.of(limitUsd))
+
+            /**
+             * Sets [Builder.limitUsd] to an arbitrary JSON value.
+             *
+             * You should usually call [Builder.limitUsd] with a well-typed [String] value instead.
+             * This method is primarily for setting the field to an undocumented or not yet
+             * supported value.
+             */
+            fun limitUsd(limitUsd: JsonField<String>) = apply { this.limitUsd = limitUsd }
+
+            fun window(window: Window) = window(JsonField.of(window))
+
+            /**
+             * Sets [Builder.window] to an arbitrary JSON value.
+             *
+             * You should usually call [Builder.window] with a well-typed [Window] value instead.
+             * This method is primarily for setting the field to an undocumented or not yet
+             * supported value.
+             */
+            fun window(window: JsonField<Window>) = apply { this.window = window }
+
+            fun additionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
+                this.additionalProperties.clear()
+                putAllAdditionalProperties(additionalProperties)
+            }
+
+            fun putAdditionalProperty(key: String, value: JsonValue) = apply {
+                additionalProperties.put(key, value)
+            }
+
+            fun putAllAdditionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
+                this.additionalProperties.putAll(additionalProperties)
+            }
+
+            fun removeAdditionalProperty(key: String) = apply { additionalProperties.remove(key) }
+
+            fun removeAllAdditionalProperties(keys: Set<String>) = apply {
+                keys.forEach(::removeAdditionalProperty)
+            }
+
+            /**
+             * Returns an immutable instance of [EffectiveSpendLimit].
+             *
+             * Further updates to this [Builder] will not mutate the returned instance.
+             *
+             * The following fields are required:
+             * ```java
+             * .limitUsd()
+             * .window()
+             * ```
+             *
+             * @throws IllegalStateException if any required field is unset.
+             */
+            fun build(): EffectiveSpendLimit =
+                EffectiveSpendLimit(
+                    checkRequired("limitUsd", limitUsd),
+                    checkRequired("window", window),
+                    additionalProperties.toMutableMap(),
+                )
+        }
+
+        private var validated: Boolean = false
+
+        /**
+         * Validates that the types of all values in this object match their expected types
+         * recursively.
+         *
+         * This method is _not_ forwards compatible with new types from the API for existing fields.
+         *
+         * @throws LangChainInvalidDataException if any value type in this object doesn't match its
+         *   expected type.
+         */
+        fun validate(): EffectiveSpendLimit = apply {
+            if (validated) {
+                return@apply
+            }
+
+            limitUsd()
+            window().validate()
+            validated = true
+        }
+
+        fun isValid(): Boolean =
+            try {
+                validate()
+                true
+            } catch (e: LangChainInvalidDataException) {
+                false
+            }
+
+        /**
+         * Returns a score indicating how many valid values are contained in this object
+         * recursively.
+         *
+         * Used for best match union deserialization.
+         */
+        @JvmSynthetic
+        internal fun validity(): Int =
+            (if (limitUsd.asKnown().isPresent) 1 else 0) +
+                (window.asKnown().getOrNull()?.validity() ?: 0)
+
+        class Window @JsonCreator private constructor(private val value: JsonField<String>) : Enum {
+
+            /**
+             * Returns this class instance's raw value.
+             *
+             * This is usually only useful if this instance was deserialized from data that doesn't
+             * match any known member, and you want to know that value. For example, if the SDK is
+             * on an older version than the API, then the API may respond with new members that the
+             * SDK is unaware of.
+             */
+            @com.fasterxml.jackson.annotation.JsonValue fun _value(): JsonField<String> = value
+
+            companion object {
+
+                @JvmField val WEEKLY = of("weekly")
+
+                @JvmStatic fun of(value: String) = Window(JsonField.of(value))
+            }
+
+            /** An enum containing [Window]'s known values. */
+            enum class Known {
+                WEEKLY
+            }
+
+            /**
+             * An enum containing [Window]'s known values, as well as an [_UNKNOWN] member.
+             *
+             * An instance of [Window] can contain an unknown value in a couple of cases:
+             * - It was deserialized from data that doesn't match any known member. For example, if
+             *   the SDK is on an older version than the API, then the API may respond with new
+             *   members that the SDK is unaware of.
+             * - It was constructed with an arbitrary value using the [of] method.
+             */
+            enum class Value {
+                WEEKLY,
+                /**
+                 * An enum member indicating that [Window] was instantiated with an unknown value.
+                 */
+                _UNKNOWN,
+            }
+
+            /**
+             * Returns an enum member corresponding to this class instance's value, or
+             * [Value._UNKNOWN] if the class was instantiated with an unknown value.
+             *
+             * Use the [known] method instead if you're certain the value is always known or if you
+             * want to throw for the unknown case.
+             */
+            fun value(): Value =
+                when (this) {
+                    WEEKLY -> Value.WEEKLY
+                    else -> Value._UNKNOWN
+                }
+
+            /**
+             * Returns an enum member corresponding to this class instance's value.
+             *
+             * Use the [value] method instead if you're uncertain the value is always known and
+             * don't want to throw for the unknown case.
+             *
+             * @throws LangChainInvalidDataException if this class instance's value is a not a known
+             *   member.
+             */
+            fun known(): Known =
+                when (this) {
+                    WEEKLY -> Known.WEEKLY
+                    else -> throw LangChainInvalidDataException("Unknown Window: $value")
+                }
+
+            /**
+             * Returns this class instance's primitive wire representation.
+             *
+             * This differs from the [toString] method because that method is primarily for
+             * debugging and generally doesn't throw.
+             *
+             * @throws LangChainInvalidDataException if this class instance's value does not have
+             *   the expected primitive type.
+             */
+            fun asString(): String =
+                _value().asString().orElseThrow {
+                    LangChainInvalidDataException("Value is not a String")
+                }
+
+            private var validated: Boolean = false
+
+            /**
+             * Validates that the types of all values in this object match their expected types
+             * recursively.
+             *
+             * This method is _not_ forwards compatible with new types from the API for existing
+             * fields.
+             *
+             * @throws LangChainInvalidDataException if any value type in this object doesn't match
+             *   its expected type.
+             */
+            fun validate(): Window = apply {
+                if (validated) {
+                    return@apply
+                }
+
+                known()
+                validated = true
+            }
+
+            fun isValid(): Boolean =
+                try {
+                    validate()
+                    true
+                } catch (e: LangChainInvalidDataException) {
+                    false
+                }
+
+            /**
+             * Returns a score indicating how many valid values are contained in this object
+             * recursively.
+             *
+             * Used for best match union deserialization.
+             */
+            @JvmSynthetic internal fun validity(): Int = if (value() == Value._UNKNOWN) 0 else 1
+
+            override fun equals(other: Any?): Boolean {
+                if (this === other) {
+                    return true
+                }
+
+                return other is Window && value == other.value
+            }
+
+            override fun hashCode() = value.hashCode()
+
+            override fun toString() = value.toString()
+        }
+
+        override fun equals(other: Any?): Boolean {
+            if (this === other) {
+                return true
+            }
+
+            return other is EffectiveSpendLimit &&
+                limitUsd == other.limitUsd &&
+                window == other.window &&
+                additionalProperties == other.additionalProperties
+        }
+
+        private val hashCode: Int by lazy { Objects.hash(limitUsd, window, additionalProperties) }
+
+        override fun hashCode(): Int = hashCode
+
+        override fun toString() =
+            "EffectiveSpendLimit{limitUsd=$limitUsd, window=$window, additionalProperties=$additionalProperties}"
+    }
 
     class GroupBy @JsonCreator private constructor(private val value: JsonField<String>) : Enum {
 
@@ -2795,6 +3189,7 @@ private constructor(
             correctionsDatasetId == other.correctionsDatasetId &&
             datasetId == other.datasetId &&
             datasetName == other.datasetName &&
+            effectiveSpendLimit == other.effectiveSpendLimit &&
             evaluatorId == other.evaluatorId &&
             evaluatorName == other.evaluatorName &&
             evaluatorType == other.evaluatorType &&
@@ -2850,6 +3245,7 @@ private constructor(
             correctionsDatasetId,
             datasetId,
             datasetName,
+            effectiveSpendLimit,
             evaluatorId,
             evaluatorName,
             evaluatorType,
@@ -2882,5 +3278,5 @@ private constructor(
     override fun hashCode(): Int = hashCode
 
     override fun toString() =
-        "Evaluator{id=$id, createdAt=$createdAt, displayName=$displayName, evaluatorVersion=$evaluatorVersion, samplingRate=$samplingRate, tenantId=$tenantId, updatedAt=$updatedAt, webhooks=$webhooks, addToAnnotationQueueId=$addToAnnotationQueueId, addToAnnotationQueueName=$addToAnnotationQueueName, addToDatasetId=$addToDatasetId, addToDatasetName=$addToDatasetName, addToDatasetPreferCorrection=$addToDatasetPreferCorrection, alerts=$alerts, alignmentAnnotationQueueId=$alignmentAnnotationQueueId, backfillCompletedAt=$backfillCompletedAt, backfillError=$backfillError, backfillFrom=$backfillFrom, backfillId=$backfillId, backfillProgress=$backfillProgress, backfillStatus=$backfillStatus, codeEvaluators=$codeEvaluators, correctionsDatasetId=$correctionsDatasetId, datasetId=$datasetId, datasetName=$datasetName, evaluatorId=$evaluatorId, evaluatorName=$evaluatorName, evaluatorType=$evaluatorType, evaluators=$evaluators, extendAnnotationQueueTraceRetention=$extendAnnotationQueueTraceRetention, extendDatasetTraceRetention=$extendDatasetTraceRetention, extendEvaluatorTraceRetention=$extendEvaluatorTraceRetention, extendOnly=$extendOnly, extendWebhookTraceRetention=$extendWebhookTraceRetention, filter=$filter, groupBy=$groupBy, includeExtendedStats=$includeExtendedStats, isEnabled=$isEnabled, isManagedEvaluator=$isManagedEvaluator, isTracingDisabled=$isTracingDisabled, numFewShotExamples=$numFewShotExamples, sessionId=$sessionId, sessionName=$sessionName, spendLimit=$spendLimit, spendUsd=$spendUsd, traceCount=$traceCount, traceFilter=$traceFilter, isTransient=$isTransient, treeFilter=$treeFilter, useCorrectionsDataset=$useCorrectionsDataset, additionalProperties=$additionalProperties}"
+        "Evaluator{id=$id, createdAt=$createdAt, displayName=$displayName, evaluatorVersion=$evaluatorVersion, samplingRate=$samplingRate, tenantId=$tenantId, updatedAt=$updatedAt, webhooks=$webhooks, addToAnnotationQueueId=$addToAnnotationQueueId, addToAnnotationQueueName=$addToAnnotationQueueName, addToDatasetId=$addToDatasetId, addToDatasetName=$addToDatasetName, addToDatasetPreferCorrection=$addToDatasetPreferCorrection, alerts=$alerts, alignmentAnnotationQueueId=$alignmentAnnotationQueueId, backfillCompletedAt=$backfillCompletedAt, backfillError=$backfillError, backfillFrom=$backfillFrom, backfillId=$backfillId, backfillProgress=$backfillProgress, backfillStatus=$backfillStatus, codeEvaluators=$codeEvaluators, correctionsDatasetId=$correctionsDatasetId, datasetId=$datasetId, datasetName=$datasetName, effectiveSpendLimit=$effectiveSpendLimit, evaluatorId=$evaluatorId, evaluatorName=$evaluatorName, evaluatorType=$evaluatorType, evaluators=$evaluators, extendAnnotationQueueTraceRetention=$extendAnnotationQueueTraceRetention, extendDatasetTraceRetention=$extendDatasetTraceRetention, extendEvaluatorTraceRetention=$extendEvaluatorTraceRetention, extendOnly=$extendOnly, extendWebhookTraceRetention=$extendWebhookTraceRetention, filter=$filter, groupBy=$groupBy, includeExtendedStats=$includeExtendedStats, isEnabled=$isEnabled, isManagedEvaluator=$isManagedEvaluator, isTracingDisabled=$isTracingDisabled, numFewShotExamples=$numFewShotExamples, sessionId=$sessionId, sessionName=$sessionName, spendLimit=$spendLimit, spendUsd=$spendUsd, traceCount=$traceCount, traceFilter=$traceFilter, isTransient=$isTransient, treeFilter=$treeFilter, useCorrectionsDataset=$useCorrectionsDataset, additionalProperties=$additionalProperties}"
 }
