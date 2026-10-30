@@ -22,6 +22,7 @@ class CommitListPageResponse
 @JsonCreator(mode = JsonCreator.Mode.DISABLED)
 private constructor(
     private val commits: JsonField<List<CommitWithLookups>>,
+    private val nextCursor: JsonField<String>,
     private val total: JsonField<Long>,
     private val additionalProperties: MutableMap<String, JsonValue>,
 ) {
@@ -31,8 +32,11 @@ private constructor(
         @JsonProperty("commits")
         @ExcludeMissing
         commits: JsonField<List<CommitWithLookups>> = JsonMissing.of(),
+        @JsonProperty("next_cursor")
+        @ExcludeMissing
+        nextCursor: JsonField<String> = JsonMissing.of(),
         @JsonProperty("total") @ExcludeMissing total: JsonField<Long> = JsonMissing.of(),
-    ) : this(commits, total, mutableMapOf())
+    ) : this(commits, nextCursor, total, mutableMapOf())
 
     /**
      * List of commits with lookup information
@@ -41,6 +45,14 @@ private constructor(
      *   server responded with an unexpected value).
      */
     fun commits(): Optional<List<CommitWithLookups>> = commits.getOptional("commits")
+
+    /**
+     * NextCursor is the cursor for the next page, or null when there are no more commits.
+     *
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
+    fun nextCursor(): Optional<String> = nextCursor.getOptional("next_cursor")
 
     /**
      * Total number of commits
@@ -58,6 +70,13 @@ private constructor(
     @JsonProperty("commits")
     @ExcludeMissing
     fun _commits(): JsonField<List<CommitWithLookups>> = commits
+
+    /**
+     * Returns the raw JSON value of [nextCursor].
+     *
+     * Unlike [nextCursor], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    @JsonProperty("next_cursor") @ExcludeMissing fun _nextCursor(): JsonField<String> = nextCursor
 
     /**
      * Returns the raw JSON value of [total].
@@ -88,12 +107,14 @@ private constructor(
     class Builder internal constructor() {
 
         private var commits: JsonField<MutableList<CommitWithLookups>>? = null
+        private var nextCursor: JsonField<String> = JsonMissing.of()
         private var total: JsonField<Long> = JsonMissing.of()
         private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
 
         @JvmSynthetic
         internal fun from(commitListPageResponse: CommitListPageResponse) = apply {
             commits = commitListPageResponse.commits.map { it.toMutableList() }
+            nextCursor = commitListPageResponse.nextCursor
             total = commitListPageResponse.total
             additionalProperties = commitListPageResponse.additionalProperties.toMutableMap()
         }
@@ -123,6 +144,21 @@ private constructor(
                     checkKnown("commits", it).add(commit)
                 }
         }
+
+        /** NextCursor is the cursor for the next page, or null when there are no more commits. */
+        fun nextCursor(nextCursor: String?) = nextCursor(JsonField.ofNullable(nextCursor))
+
+        /** Alias for calling [Builder.nextCursor] with `nextCursor.orElse(null)`. */
+        fun nextCursor(nextCursor: Optional<String>) = nextCursor(nextCursor.getOrNull())
+
+        /**
+         * Sets [Builder.nextCursor] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.nextCursor] with a well-typed [String] value instead.
+         * This method is primarily for setting the field to an undocumented or not yet supported
+         * value.
+         */
+        fun nextCursor(nextCursor: JsonField<String>) = apply { this.nextCursor = nextCursor }
 
         /** Total number of commits */
         fun total(total: Long) = total(JsonField.of(total))
@@ -162,6 +198,7 @@ private constructor(
         fun build(): CommitListPageResponse =
             CommitListPageResponse(
                 (commits ?: JsonMissing.of()).map { it.toImmutable() },
+                nextCursor,
                 total,
                 additionalProperties.toMutableMap(),
             )
@@ -183,6 +220,7 @@ private constructor(
         }
 
         commits().ifPresent { it.forEach { it.validate() } }
+        nextCursor()
         total()
         validated = true
     }
@@ -203,6 +241,7 @@ private constructor(
     @JvmSynthetic
     internal fun validity(): Int =
         (commits.asKnown().getOrNull()?.sumOf { it.validity().toInt() } ?: 0) +
+            (if (nextCursor.asKnown().isPresent) 1 else 0) +
             (if (total.asKnown().isPresent) 1 else 0)
 
     override fun equals(other: Any?): Boolean {
@@ -212,14 +251,17 @@ private constructor(
 
         return other is CommitListPageResponse &&
             commits == other.commits &&
+            nextCursor == other.nextCursor &&
             total == other.total &&
             additionalProperties == other.additionalProperties
     }
 
-    private val hashCode: Int by lazy { Objects.hash(commits, total, additionalProperties) }
+    private val hashCode: Int by lazy {
+        Objects.hash(commits, nextCursor, total, additionalProperties)
+    }
 
     override fun hashCode(): Int = hashCode
 
     override fun toString() =
-        "CommitListPageResponse{commits=$commits, total=$total, additionalProperties=$additionalProperties}"
+        "CommitListPageResponse{commits=$commits, nextCursor=$nextCursor, total=$total, additionalProperties=$additionalProperties}"
 }

@@ -82,8 +82,8 @@ interface CommitService {
     ): CommitRetrieveResponse
 
     /**
-     * List commits for a repository, with pagination support. This endpoint supports both
-     * authenticated and unauthenticated access. Authenticated users can access private
+     * List commits for a repository, newest first, with pagination support. This endpoint supports
+     * both authenticated and unauthenticated access. Authenticated users can access private
      * repositories; unauthenticated users can only access public repositories. The include_stats
      * parameter controls whether download and view statistics are computed (defaults to true).
      */

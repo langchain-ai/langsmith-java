@@ -11,10 +11,10 @@ import java.util.Optional
 import kotlin.jvm.optionals.getOrNull
 
 /**
- * List commits for a repository, with pagination support. This endpoint supports both authenticated
- * and unauthenticated access. Authenticated users can access private repositories; unauthenticated
- * users can only access public repositories. The include_stats parameter controls whether download
- * and view statistics are computed (defaults to true).
+ * List commits for a repository, newest first, with pagination support. This endpoint supports both
+ * authenticated and unauthenticated access. Authenticated users can access private repositories;
+ * unauthenticated users can only access public repositories. The include_stats parameter controls
+ * whether download and view statistics are computed (defaults to true).
  */
 class CommitListParams
 private constructor(
@@ -35,10 +35,10 @@ private constructor(
     /** IncludeStats determines whether to compute num_downloads and num_views */
     fun includeStats(): Optional<Boolean> = Optional.ofNullable(includeStats)
 
-    /** Limit is the pagination limit */
+    /** Limit is the pagination limit. */
     fun limit(): Optional<Long> = Optional.ofNullable(limit)
 
-    /** Offset is the pagination offset */
+    /** Offset is the pagination offset. */
     fun offset(): Optional<Long> = Optional.ofNullable(offset)
 
     /** Tag filters commits to only those with a specific tag (e.g. "production", "staging") */
@@ -109,7 +109,7 @@ private constructor(
         /** Alias for calling [Builder.includeStats] with `includeStats.orElse(null)`. */
         fun includeStats(includeStats: Optional<Boolean>) = includeStats(includeStats.getOrNull())
 
-        /** Limit is the pagination limit */
+        /** Limit is the pagination limit. */
         fun limit(limit: Long?) = apply { this.limit = limit }
 
         /**
@@ -122,7 +122,7 @@ private constructor(
         /** Alias for calling [Builder.limit] with `limit.orElse(null)`. */
         fun limit(limit: Optional<Long>) = limit(limit.getOrNull())
 
-        /** Offset is the pagination offset */
+        /** Offset is the pagination offset. */
         fun offset(offset: Long?) = apply { this.offset = offset }
 
         /**

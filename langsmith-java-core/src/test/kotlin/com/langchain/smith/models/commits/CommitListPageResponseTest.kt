@@ -34,6 +34,7 @@ internal class CommitListPageResponseTest {
                         .updatedAt(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
                         .build()
                 )
+                .nextCursor("next_cursor")
                 .total(0L)
                 .build()
 
@@ -56,6 +57,7 @@ internal class CommitListPageResponseTest {
                     .updatedAt(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
                     .build()
             )
+        assertThat(commitListPageResponse.nextCursor()).contains("next_cursor")
         assertThat(commitListPageResponse.total()).contains(0L)
     }
 
@@ -82,6 +84,7 @@ internal class CommitListPageResponseTest {
                         .updatedAt(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
                         .build()
                 )
+                .nextCursor("next_cursor")
                 .total(0L)
                 .build()
 
