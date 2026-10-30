@@ -16,6 +16,7 @@ import com.langchain.smith.core.toImmutable
 import com.langchain.smith.errors.LangChainInvalidDataException
 import java.util.Collections
 import java.util.Objects
+import java.util.Optional
 import kotlin.jvm.optionals.getOrNull
 
 class RepoListPageResponse
@@ -23,6 +24,7 @@ class RepoListPageResponse
 private constructor(
     private val repos: JsonField<List<RepoWithLookups>>,
     private val total: JsonField<Long>,
+    private val nextCursor: JsonField<String>,
     private val additionalProperties: MutableMap<String, JsonValue>,
 ) {
 
@@ -32,7 +34,10 @@ private constructor(
         @ExcludeMissing
         repos: JsonField<List<RepoWithLookups>> = JsonMissing.of(),
         @JsonProperty("total") @ExcludeMissing total: JsonField<Long> = JsonMissing.of(),
-    ) : this(repos, total, mutableMapOf())
+        @JsonProperty("next_cursor")
+        @ExcludeMissing
+        nextCursor: JsonField<String> = JsonMissing.of(),
+    ) : this(repos, total, nextCursor, mutableMapOf())
 
     /**
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type or is
@@ -47,6 +52,14 @@ private constructor(
     fun total(): Long = total.getRequired("total")
 
     /**
+     * Cursor for the next page, or null when no pages remain.
+     *
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
+    fun nextCursor(): Optional<String> = nextCursor.getOptional("next_cursor")
+
+    /**
      * Returns the raw JSON value of [repos].
      *
      * Unlike [repos], this method doesn't throw if the JSON field has an unexpected type.
@@ -59,6 +72,13 @@ private constructor(
      * Unlike [total], this method doesn't throw if the JSON field has an unexpected type.
      */
     @JsonProperty("total") @ExcludeMissing fun _total(): JsonField<Long> = total
+
+    /**
+     * Returns the raw JSON value of [nextCursor].
+     *
+     * Unlike [nextCursor], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    @JsonProperty("next_cursor") @ExcludeMissing fun _nextCursor(): JsonField<String> = nextCursor
 
     @JsonAnySetter
     private fun putAdditionalProperty(key: String, value: JsonValue) {
@@ -91,12 +111,14 @@ private constructor(
 
         private var repos: JsonField<MutableList<RepoWithLookups>>? = null
         private var total: JsonField<Long>? = null
+        private var nextCursor: JsonField<String> = JsonMissing.of()
         private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
 
         @JvmSynthetic
         internal fun from(repoListPageResponse: RepoListPageResponse) = apply {
             repos = repoListPageResponse.repos.map { it.toMutableList() }
             total = repoListPageResponse.total
+            nextCursor = repoListPageResponse.nextCursor
             additionalProperties = repoListPageResponse.additionalProperties.toMutableMap()
         }
 
@@ -132,6 +154,21 @@ private constructor(
          * method is primarily for setting the field to an undocumented or not yet supported value.
          */
         fun total(total: JsonField<Long>) = apply { this.total = total }
+
+        /** Cursor for the next page, or null when no pages remain. */
+        fun nextCursor(nextCursor: String?) = nextCursor(JsonField.ofNullable(nextCursor))
+
+        /** Alias for calling [Builder.nextCursor] with `nextCursor.orElse(null)`. */
+        fun nextCursor(nextCursor: Optional<String>) = nextCursor(nextCursor.getOrNull())
+
+        /**
+         * Sets [Builder.nextCursor] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.nextCursor] with a well-typed [String] value instead.
+         * This method is primarily for setting the field to an undocumented or not yet supported
+         * value.
+         */
+        fun nextCursor(nextCursor: JsonField<String>) = apply { this.nextCursor = nextCursor }
 
         fun additionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
             this.additionalProperties.clear()
@@ -169,6 +206,7 @@ private constructor(
             RepoListPageResponse(
                 checkRequired("repos", repos).map { it.toImmutable() },
                 checkRequired("total", total),
+                nextCursor,
                 additionalProperties.toMutableMap(),
             )
     }
@@ -190,6 +228,7 @@ private constructor(
 
         repos().forEach { it.validate() }
         total()
+        nextCursor()
         validated = true
     }
 
@@ -209,7 +248,8 @@ private constructor(
     @JvmSynthetic
     internal fun validity(): Int =
         (repos.asKnown().getOrNull()?.sumOf { it.validity().toInt() } ?: 0) +
-            (if (total.asKnown().isPresent) 1 else 0)
+            (if (total.asKnown().isPresent) 1 else 0) +
+            (if (nextCursor.asKnown().isPresent) 1 else 0)
 
     override fun equals(other: Any?): Boolean {
         if (this === other) {
@@ -219,13 +259,16 @@ private constructor(
         return other is RepoListPageResponse &&
             repos == other.repos &&
             total == other.total &&
+            nextCursor == other.nextCursor &&
             additionalProperties == other.additionalProperties
     }
 
-    private val hashCode: Int by lazy { Objects.hash(repos, total, additionalProperties) }
+    private val hashCode: Int by lazy {
+        Objects.hash(repos, total, nextCursor, additionalProperties)
+    }
 
     override fun hashCode(): Int = hashCode
 
     override fun toString() =
-        "RepoListPageResponse{repos=$repos, total=$total, additionalProperties=$additionalProperties}"
+        "RepoListPageResponse{repos=$repos, total=$total, nextCursor=$nextCursor, additionalProperties=$additionalProperties}"
 }

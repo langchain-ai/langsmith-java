@@ -84,6 +84,7 @@ internal class RepoListPageResponseTest {
                         .build()
                 )
                 .total(0L)
+                .nextCursor("next_cursor")
                 .build()
 
         assertThat(repoListPageResponse.repos())
@@ -155,6 +156,7 @@ internal class RepoListPageResponseTest {
                     .build()
             )
         assertThat(repoListPageResponse.total()).isEqualTo(0L)
+        assertThat(repoListPageResponse.nextCursor()).contains("next_cursor")
     }
 
     @Test
@@ -230,6 +232,7 @@ internal class RepoListPageResponseTest {
                         .build()
                 )
                 .total(0L)
+                .nextCursor("next_cursor")
                 .build()
 
         val roundtrippedRepoListPageResponse =
