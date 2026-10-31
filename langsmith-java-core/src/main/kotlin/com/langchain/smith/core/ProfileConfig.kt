@@ -7,19 +7,36 @@ import com.langchain.smith.core.http.HttpClient
 import com.langchain.smith.core.http.HttpRequest
 import com.langchain.smith.core.http.HttpResponse
 import com.langchain.smith.errors.LangChainException
+import java.io.IOException
+import java.io.InterruptedIOException
 import java.io.OutputStreamWriter
 import java.net.HttpURLConnection
+import java.net.SocketTimeoutException
 import java.net.URL
 import java.net.URLEncoder
 import java.nio.charset.StandardCharsets
+import java.nio.file.FileAlreadyExistsException
 import java.nio.file.Files
+import java.nio.file.NoSuchFileException
 import java.nio.file.Path
 import java.nio.file.Paths
+import java.nio.file.StandardCopyOption.ATOMIC_MOVE
+import java.nio.file.StandardCopyOption.REPLACE_EXISTING
+import java.nio.file.StandardOpenOption.WRITE
+import java.nio.file.attribute.PosixFilePermissions
 import java.time.Clock
 import java.time.Duration
 import java.time.Instant
 import java.time.OffsetDateTime
+import java.util.UUID
 import java.util.concurrent.CompletableFuture
+import java.util.concurrent.TimeUnit
+import java.util.concurrent.TimeoutException
+import java.util.concurrent.atomic.AtomicReference
+import java.util.concurrent.locks.ReentrantLock
+import kotlin.concurrent.thread
+import kotlin.concurrent.withLock
+import kotlin.math.min
 
 internal data class ProfileClientConfig(
     val baseUrl: String?,
@@ -33,6 +50,13 @@ private const val OAUTH_CLIENT_ID = "langsmith-cli"
 private val TOKEN_REFRESH_LEEWAY: Duration = Duration.ofMinutes(1)
 private val TOKEN_REFRESH_TIMEOUT: Duration = Duration.ofSeconds(10)
 
+/**
+ * A refresh lock older than this is treated as abandoned (its holder crashed) and taken over.
+ * Holders bound their whole refresh to [TOKEN_REFRESH_TIMEOUT], so a live holder is never evicted.
+ * Shared with the Python, JS and Go SDKs.
+ */
+internal val OAUTH_REFRESH_LOCK_STALE_AFTER: Duration = Duration.ofSeconds(15)
+
 internal fun loadProfileClientConfig(
     jsonMapper: JsonMapper,
     clock: Clock,
@@ -40,7 +64,8 @@ internal fun loadProfileClientConfig(
     profileNameOverride: String? = null,
     getenv: (String) -> String? = System::getenv,
 ): ProfileClientConfig? {
-    val configPath = configPathOverride ?: profileConfigPath()
+    val configPath =
+        canonicalProfileConfigPath(configPathOverride ?: profileConfigPath()) ?: return null
     if (!Files.isRegularFile(configPath)) {
         return null
     }
@@ -76,7 +101,6 @@ internal fun loadProfileClientConfig(
                     jsonMapper = jsonMapper,
                     clock = clock,
                     configPath = configPath,
-                    config = config,
                     profile = profile,
                     profileName = profileName,
                     getenv = getenv,
@@ -92,12 +116,165 @@ internal fun profileConfigPath(): Path {
         System.getProperty("langchain.langsmithConfigFile")
             ?: System.getenv("LANGSMITH_CONFIG_FILE")
     return configuredPath?.takeIf { it.isNotBlank() }?.let(Paths::get)
-        ?: Paths.get(System.getProperty("user.home"), ".langsmith", "config.json")
+        ?: profileHomeDirectory().resolve(".langsmith").resolve("config.json")
 }
+
+private fun profileHomeDirectory(): Path =
+    Paths.get(
+        System.getenv(
+                if (System.getProperty("os.name").startsWith("Windows")) "USERPROFILE" else "HOME"
+            )
+            ?.takeIf { it.isNotEmpty() } ?: System.getProperty("user.home")
+    )
 
 internal fun profileName(): String? =
     (System.getProperty("langchain.langsmithProfile") ?: System.getenv("LANGSMITH_PROFILE"))
         ?.takeIf { it.isNotBlank() }
+
+private fun canonicalProfileConfigPath(path: Path): Path? =
+    runCatching {
+            val value = path.toString()
+            val expanded =
+                if (value == "~" || value.startsWith("~/") || value.startsWith("~\\")) {
+                    profileHomeDirectory().resolve(value.drop(1).trimStart('/', '\\'))
+                } else {
+                    path
+                }
+            expanded.toAbsolutePath().normalize().toRealPath()
+        }
+        .getOrNull()
+
+internal fun <T> withProfileRefreshLock(
+    configPath: Path,
+    timeout: Duration = TOKEN_REFRESH_TIMEOUT,
+    action: () -> T,
+): T {
+    val lockPath = configPath.resolveSibling("${configPath.fileName}.oauth.lock.lock")
+    val deadline = System.nanoTime() + timeout.toNanos()
+    val owner = UUID.randomUUID().toString()
+    val directoryAttributes =
+        if (Files.getFileStore(configPath.parent).supportsFileAttributeView("posix")) {
+            arrayOf(
+                PosixFilePermissions.asFileAttribute(PosixFilePermissions.fromString("rwx------"))
+            )
+        } else {
+            emptyArray()
+        }
+    while (true) {
+        if (System.nanoTime() >= deadline) {
+            throw SocketTimeoutException("Timed out acquiring OAuth refresh lock")
+        }
+        try {
+            Files.createDirectory(lockPath, *directoryAttributes)
+            break
+        } catch (e: FileAlreadyExistsException) {
+            if (removeStaleProfileRefreshLock(lockPath)) {
+                continue
+            }
+            val remaining = deadline - System.nanoTime()
+            if (remaining <= 0)
+                throw SocketTimeoutException("Timed out acquiring OAuth refresh lock")
+            try {
+                TimeUnit.NANOSECONDS.sleep(min(remaining, TimeUnit.MILLISECONDS.toNanos(10)))
+            } catch (e: InterruptedException) {
+                Thread.currentThread().interrupt()
+                throw InterruptedIOException("Interrupted acquiring OAuth refresh lock")
+            }
+        }
+    }
+    val metadata = lockPath.resolve("created_at")
+    try {
+        val metadataAttributes =
+            if (Files.getFileStore(configPath.parent).supportsFileAttributeView("posix")) {
+                arrayOf(
+                    PosixFilePermissions.asFileAttribute(
+                        PosixFilePermissions.fromString("rw-------")
+                    )
+                )
+            } else {
+                emptyArray()
+            }
+        Files.createFile(metadata, *metadataAttributes)
+        Files.write(
+            metadata,
+            "${Instant.now()}\n$owner\n".toByteArray(StandardCharsets.UTF_8),
+            WRITE,
+        )
+    } catch (e: IOException) {
+        deleteProfileRefreshLockDir(lockPath)
+        throw e
+    }
+    try {
+        return action()
+    } finally {
+        val currentOwner =
+            runCatching { Files.readAllLines(metadata, StandardCharsets.UTF_8).getOrNull(1) }
+                .getOrNull()
+        if (currentOwner == owner) {
+            // On failure the lock is left for the stale takeover rather than masking the result.
+            deleteProfileRefreshLockDir(lockPath)
+        }
+    }
+}
+
+/**
+ * Removes the lock directory if it is older than [OAUTH_REFRESH_LOCK_STALE_AFTER]. Its age comes
+ * from the `created_at` metadata, falling back to the directory's mtime when the metadata is
+ * missing or malformed (e.g. the holder crashed between creating the directory and writing it).
+ */
+private fun removeStaleProfileRefreshLock(lockPath: Path): Boolean {
+    val createdAt =
+        runCatching {
+                Instant.parse(
+                    Files.readAllLines(lockPath.resolve("created_at"), StandardCharsets.UTF_8)
+                        .first()
+                        .trim()
+                )
+            }
+            .recoverCatching { Files.getLastModifiedTime(lockPath).toInstant() }
+            .getOrNull() ?: return false
+    if (!Instant.now().isAfter(createdAt.plus(OAUTH_REFRESH_LOCK_STALE_AFTER))) {
+        return false
+    }
+    return deleteProfileRefreshLockDir(lockPath)
+}
+
+private const val OAUTH_REFRESH_LOCK_REMOVE_ATTEMPTS = 10
+
+/**
+ * Removes the lock directory and its metadata files (another SDK may leave a temp file behind).
+ *
+ * On Windows a file cannot be deleted while another process has it open without delete sharing (the
+ * Python and Go SDKs open files that way), so removal fails if a waiter is reading `created_at` at
+ * that moment. Reads take microseconds; a few short retries absorb the overlap.
+ */
+internal fun deleteProfileRefreshLockDir(
+    lockPath: Path,
+    deleteIfExists: (Path) -> Unit = { Files.deleteIfExists(it) },
+): Boolean {
+    for (attempt in 0 until OAUTH_REFRESH_LOCK_REMOVE_ATTEMPTS) {
+        if (attempt > 0) {
+            try {
+                TimeUnit.MILLISECONDS.sleep(10)
+            } catch (e: InterruptedException) {
+                Thread.currentThread().interrupt()
+                return false
+            }
+        }
+        try {
+            Files.list(lockPath)
+                .use { entries -> entries.iterator().asSequence().toList() }
+                .forEach(deleteIfExists)
+            deleteIfExists(lockPath)
+            return true
+        } catch (e: NoSuchFileException) {
+            return true
+        } catch (e: IOException) {
+            // Retry.
+        }
+    }
+    return false
+}
 
 private fun shouldRefreshProfileToken(oauth: ObjectNode, clock: Clock): Boolean {
     if (text(oauth["refresh_token"]) == null) {
@@ -110,10 +287,63 @@ private fun shouldRefreshProfileToken(oauth: ObjectNode, clock: Clock): Boolean 
     return !expiresAt.isAfter(clock.instant().plus(TOKEN_REFRESH_LEEWAY))
 }
 
+/** Whether the cached access token can still authenticate a request. */
+private fun accessTokenUsable(oauth: ObjectNode, clock: Clock): Boolean {
+    if (text(oauth["access_token"]) == null) {
+        return false
+    }
+    val expiresAt = expiresAt(oauth["expires_at"]) ?: return true
+    return expiresAt.isAfter(clock.instant())
+}
+
+/**
+ * Runs the token refresh, giving up once [deadlineNanos] ([System.nanoTime]) passes.
+ * HttpURLConnection timeouts apply per connect/read, not to the whole exchange, so without this the
+ * refresh could hold the cross-process lock past [OAUTH_REFRESH_LOCK_STALE_AFTER]. The request runs
+ * on a daemon thread; a late result is discarded and the connection is closed.
+ */
+private fun refreshProfileOAuthTokenBefore(
+    jsonMapper: JsonMapper,
+    baseUrl: String,
+    refreshToken: String,
+    deadlineNanos: Long,
+): OAuthTokenResponse? {
+    val remaining = deadlineNanos - System.nanoTime()
+    if (remaining <= 0) {
+        return null
+    }
+    val timeoutMillis = TimeUnit.NANOSECONDS.toMillis(remaining).coerceIn(1, Int.MAX_VALUE.toLong())
+    val connection = AtomicReference<HttpURLConnection?>()
+    val result = CompletableFuture<OAuthTokenResponse?>()
+    thread(isDaemon = true, name = "langsmith-oauth-refresh") {
+        result.complete(
+            refreshProfileOAuthToken(
+                jsonMapper,
+                baseUrl,
+                refreshToken,
+                timeoutMillis.toInt(),
+                connection,
+            )
+        )
+    }
+    return try {
+        result.get(remaining, TimeUnit.NANOSECONDS)
+    } catch (e: TimeoutException) {
+        connection.get()?.disconnect()
+        null
+    } catch (e: InterruptedException) {
+        Thread.currentThread().interrupt()
+        connection.get()?.disconnect()
+        null
+    }
+}
+
 private fun refreshProfileOAuthToken(
     jsonMapper: JsonMapper,
     baseUrl: String,
     refreshToken: String,
+    timeoutMillis: Int,
+    connectionRef: AtomicReference<HttpURLConnection?>,
 ): OAuthTokenResponse? {
     return runCatching {
             val connection =
@@ -121,11 +351,12 @@ private fun refreshProfileOAuthToken(
                         as HttpURLConnection)
                     .apply {
                         requestMethod = "POST"
-                        connectTimeout = TOKEN_REFRESH_TIMEOUT.toMillis().toInt()
-                        readTimeout = TOKEN_REFRESH_TIMEOUT.toMillis().toInt()
+                        connectTimeout = timeoutMillis
+                        readTimeout = timeoutMillis
                         doOutput = true
                         setRequestProperty("Content-Type", "application/x-www-form-urlencoded")
                     }
+            connectionRef.set(connection)
             val body =
                 formEncode(
                     mapOf(
@@ -217,11 +448,11 @@ internal class ProfileAuth(
     private val jsonMapper: JsonMapper,
     private val clock: Clock,
     private val configPath: Path,
-    private val config: ObjectNode,
-    private val profile: ObjectNode,
+    private var profile: ObjectNode,
     private val profileName: String,
     private val getenv: (String) -> String?,
 ) {
+    private val authLock = ReentrantLock()
     private val managedAuthorizationValues = mutableSetOf<String>()
 
     init {
@@ -232,41 +463,77 @@ internal class ProfileAuth(
      * The auth header to snapshot into default headers. A profile API key that cannot be resolved
      * yields none here; [authHeader] reports it when a request needs it.
      */
-    @Synchronized
     fun currentAuthHeader(): Pair<String, String>? =
-        try {
-                authHeaderFromProfile()
-            } catch (e: LangChainException) {
-                null
-            }
-            .also { rememberProfileAuthHeader(it) }
+        authLock.withLock {
+            try {
+                    authHeaderFromProfile()
+                } catch (e: LangChainException) {
+                    null
+                }
+                .also { rememberProfileAuthHeader(it) }
+        }
 
-    @Synchronized
     fun isProfileAuthorizationHeader(value: String): Boolean =
-        managedAuthorizationValues.contains(value)
+        authLock.withLock { managedAuthorizationValues.contains(value) }
 
-    @Synchronized
-    fun authHeader(): Pair<String, String>? {
-        val oauth = profile["oauth"] as? ObjectNode
-        if (oauth != null && shouldRefreshProfileToken(oauth, clock)) {
-            val refreshToken = text(oauth["refresh_token"])
-            if (refreshToken != null) {
-                val tokenEndpointBaseUrl = text(profile["api_url"]) ?: ClientOptions.PRODUCTION_URL
-                val tokenResponse =
-                    refreshProfileOAuthToken(jsonMapper, tokenEndpointBaseUrl, refreshToken)
-                if (tokenResponse != null) {
-                    oauth.put("access_token", tokenResponse.accessToken)
-                    tokenResponse.refreshToken?.let { oauth.put("refresh_token", it) }
-                    tokenResponse.expiresInSeconds?.let {
-                        oauth.put("expires_at", clock.instant().plusSeconds(it).toString())
+    fun authHeader(): Pair<String, String>? =
+        authLock.withLock {
+            val oauth = profile["oauth"] as? ObjectNode
+            if (oauth != null && shouldRefreshProfileToken(oauth, clock)) {
+                var acquired = false
+                // One budget covers waiting for the lock and the refresh itself.
+                val deadline = System.nanoTime() + TOKEN_REFRESH_TIMEOUT.toNanos()
+                try {
+                    withProfileRefreshLock(configPath) {
+                        acquired = true
+                        refreshFromLatestConfig(deadline)
                     }
-                    oauth.remove("token_type")
-                    oauth.remove("bearer_token")
-                    saveConfig()
+                } catch (e: IOException) {
+                    // Without the lock the cached refresh token must not be used. An unexpired
+                    // access token still works; an expired one would only produce opaque 401s,
+                    // so report why the refresh could not run.
+                    if (!acquired && !accessTokenUsable(oauth, clock)) {
+                        throw LangChainException(
+                            "Could not refresh the expired OAuth token for LangSmith profile " +
+                                "\"$profileName\": failed to acquire the refresh lock next to " +
+                                "$configPath (${e.message ?: e.javaClass.simpleName}). Another " +
+                                "process may be refreshing it, or the config directory may not be " +
+                                "writable; OAuth profiles need a writable config. Use an API key " +
+                                "for read-only configs. A lock left by a crashed process is " +
+                                "released automatically after " +
+                                "${OAUTH_REFRESH_LOCK_STALE_AFTER.seconds} seconds.",
+                            e,
+                        )
+                    }
+                    return@withLock authHeaderFromProfile().also { rememberProfileAuthHeader(it) }
                 }
             }
+            authHeaderFromProfile().also { rememberProfileAuthHeader(it) }
         }
-        return authHeaderFromProfile().also { rememberProfileAuthHeader(it) }
+
+    private fun refreshFromLatestConfig(deadlineNanos: Long) {
+        val config = jsonMapper.readTree(configPath.toFile()) as? ObjectNode ?: return
+        val fresh = config["profiles"]?.get(profileName) as? ObjectNode ?: return
+        profile = fresh
+        val oauth = fresh["oauth"] as? ObjectNode ?: return
+        if (!shouldRefreshProfileToken(oauth, clock)) return
+        val refreshToken = text(oauth["refresh_token"]) ?: return
+        val tokenEndpointBaseUrl = text(fresh["api_url"]) ?: ClientOptions.PRODUCTION_URL
+        val tokenResponse =
+            refreshProfileOAuthTokenBefore(
+                jsonMapper,
+                tokenEndpointBaseUrl,
+                refreshToken,
+                deadlineNanos,
+            ) ?: return
+        oauth.put("access_token", tokenResponse.accessToken)
+        tokenResponse.refreshToken?.let { oauth.put("refresh_token", it) }
+        tokenResponse.expiresInSeconds?.let {
+            oauth.put("expires_at", clock.instant().plusSeconds(it).toString())
+        }
+        oauth.remove("token_type")
+        oauth.remove("bearer_token")
+        saveConfig(config)
     }
 
     private fun authHeaderFromProfile(): Pair<String, String>? {
@@ -286,10 +553,24 @@ internal class ProfileAuth(
         }
     }
 
-    private fun saveConfig() {
-        runCatching {
-            configPath.parent?.let { Files.createDirectories(it) }
-            jsonMapper.writerWithDefaultPrettyPrinter().writeValue(configPath.toFile(), config)
+    private fun saveConfig(config: ObjectNode) {
+        val attributes =
+            if (Files.getFileStore(configPath.parent).supportsFileAttributeView("posix")) {
+                arrayOf(
+                    PosixFilePermissions.asFileAttribute(
+                        PosixFilePermissions.fromString("rw-------")
+                    )
+                )
+            } else {
+                emptyArray()
+            }
+        val temporary =
+            Files.createTempFile(configPath.parent, "${configPath.fileName}.", ".tmp", *attributes)
+        try {
+            jsonMapper.writerWithDefaultPrettyPrinter().writeValue(temporary.toFile(), config)
+            Files.move(temporary, configPath, ATOMIC_MOVE, REPLACE_EXISTING)
+        } finally {
+            Files.deleteIfExists(temporary)
         }
     }
 }
