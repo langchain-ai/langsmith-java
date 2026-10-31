@@ -1,5 +1,42 @@
 # Changelog
 
+## [0.1.0-beta.29](https://github.com/langchain-ai/langsmith-java/compare/v0.1.0-beta.28...v0.1.0-beta.29) (2026-10-31)
+
+
+### Features
+
+* add HTTPS destination rewrite rules for sandboxes ([56c772d](https://github.com/langchain-ai/langsmith-java/commit/56c772d3b479b019be9de323a83f8c91200d9011))
+* **annotation-queues:** rubric item required_if and visible_if conditions ([233102f](https://github.com/langchain-ai/langsmith-java/commit/233102f3e8257e53030601901836bde6562ad67d))
+* **cli:** add langsmith evaluators create-decision-model ([f9421c9](https://github.com/langchain-ai/langsmith-java/commit/f9421c989fb6b89aafdb7c7b77684b2f70e47481))
+* **commits:** add cursor pagination to commits list ([1ad8b96](https://github.com/langchain-ai/langsmith-java/commit/1ad8b960a9201ed8fde651f27e82645507a677df))
+* **feedback:** add allows_multiple_categories flag to categorical feedback configs ([496db09](https://github.com/langchain-ai/langsmith-java/commit/496db09d9b099d52de6f47116b2a1fd9af52fd51))
+* **hub:** add cursor pagination to GET /api/v1/repos ([b4475b0](https://github.com/langchain-ai/langsmith-java/commit/b4475b0a28f92d4a7e5424de69f2b92586074789))
+* **sandboxes:** allow non-persistent mode for all tenants ([9282338](https://github.com/langchain-ai/langsmith-java/commit/9282338162edff2a79306e4e311232c64fc250e0))
+* **sandboxes:** AWS session tags on proxy role rules ([4c63ea8](https://github.com/langchain-ai/langsmith-java/commit/4c63ea8e2e4711c3902f2ef29bbeb0f6a514cf07))
+* **sandboxes:** show granular usage instead of dollar estimates ([4446bf5](https://github.com/langchain-ai/langsmith-java/commit/4446bf59cdb5a0a79ba0a47b9e9c1af52402fa27))
+* **sdk:** read profile api_key_env in Python, JS and Java SDKs ([a331bb3](https://github.com/langchain-ai/langsmith-java/commit/a331bb3f2debe4d083aa2fa3806cec1db1b900d1))
+* **sdks:** add create_decision_model to the generated SDKs ([a1acc44](https://github.com/langchain-ai/langsmith-java/commit/a1acc449313c7602bd5c43f4456fcd1776a7e3a2))
+* show dataplane name in workspace selector ([e3406e1](https://github.com/langchain-ai/langsmith-java/commit/e3406e121e746c591e8a5188447f8ca31c9d3522))
+
+
+### Bug Fixes
+
+* **evaluators:** show the effective spend limit in the evaluator tables ([f3ab49b](https://github.com/langchain-ai/langsmith-java/commit/f3ab49b5dcebe2ef4ea3e7da5589f78c999d2653))
+* **sandboxes:** cap non-persistent sandbox disk at 16 GiB per vCPU ([d048411](https://github.com/langchain-ai/langsmith-java/commit/d048411c10df551bf3bbad507040c878f19a7ef2))
+* **sandboxes:** retain recorded storage across sampling gaps ([152379b](https://github.com/langchain-ai/langsmith-java/commit/152379b488155cb26d8125e902c0e1206e0b2407))
+* **sdks:** unify shared-profile OAuth refresh locking ([90cf3d2](https://github.com/langchain-ai/langsmith-java/commit/90cf3d27f0b0bf2e24d6bedcce74d6815413a761))
+
+
+### Documentation
+
+* **api:** describe the annotation queue, example and feedback token CLI flags ([a948176](https://github.com/langchain-ai/langsmith-java/commit/a94817681b2deee63a4729dec3d4e57c48ea17f4))
+* **sandboxes:** document match_paths on proxy rules ([83d876c](https://github.com/langchain-ai/langsmith-java/commit/83d876cb7bf73f0c30bf6f4620458165cbae4662))
+
+
+### Build System
+
+* refresh CA bundles for dev ops ([67df18c](https://github.com/langchain-ai/langsmith-java/commit/67df18c23be8b6a5c5012dd97ca82c18d2847411))
+
 ## [0.1.0-beta.28](https://github.com/langchain-ai/langsmith-java/compare/v0.1.0-beta.27...v0.1.0-beta.28) (2026-10-27)
 
 
