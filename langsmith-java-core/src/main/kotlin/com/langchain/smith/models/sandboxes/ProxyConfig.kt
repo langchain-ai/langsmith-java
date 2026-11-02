@@ -1484,10 +1484,13 @@ private constructor(
         fun matchHeaders(): Optional<List<String>> = matchHeaders.getOptional("match_headers")
 
         /**
-         * MatchHosts is only accepted for header injection, rewrite, and relay rules. Provider auth
-         * rules use built-in host matching. A relay rule may also list IP addresses and CIDR blocks
-         * (10.0.0.0/8), which match connections the sandbox makes to an IP address rather than a
-         * name.
+         * MatchHosts lists the hosts a header injection, rewrite, or relay rule covers. AWS and GCP
+         * rules match their provider's hosts built in; there MatchHosts optionally narrows them to
+         * the listed hosts (e.g. "sts.amazonaws.com", "bigquery.googleapis.com"), and when empty
+         * the rule covers every host the provider can authenticate. A host no rule covers is passed
+         * through without TLS interception. Azure rules do not accept it. A relay rule may also
+         * list IP addresses and CIDR blocks (10.0.0.0/8), which match connections the sandbox makes
+         * to an IP address rather than a name.
          *
          * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
          *   the server responded with an unexpected value).
@@ -1924,10 +1927,13 @@ private constructor(
             }
 
             /**
-             * MatchHosts is only accepted for header injection, rewrite, and relay rules. Provider
-             * auth rules use built-in host matching. A relay rule may also list IP addresses and
-             * CIDR blocks (10.0.0.0/8), which match connections the sandbox makes to an IP address
-             * rather than a name.
+             * MatchHosts lists the hosts a header injection, rewrite, or relay rule covers. AWS and
+             * GCP rules match their provider's hosts built in; there MatchHosts optionally narrows
+             * them to the listed hosts (e.g. "sts.amazonaws.com", "bigquery.googleapis.com"), and
+             * when empty the rule covers every host the provider can authenticate. A host no rule
+             * covers is passed through without TLS interception. Azure rules do not accept it. A
+             * relay rule may also list IP addresses and CIDR blocks (10.0.0.0/8), which match
+             * connections the sandbox makes to an IP address rather than a name.
              */
             fun matchHosts(matchHosts: List<String>) = matchHosts(JsonField.of(matchHosts))
 
