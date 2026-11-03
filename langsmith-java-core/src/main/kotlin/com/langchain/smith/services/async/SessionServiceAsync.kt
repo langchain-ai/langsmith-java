@@ -188,7 +188,10 @@ interface SessionServiceAsync {
     fun delete(sessionId: String, requestOptions: RequestOptions): CompletableFuture<Void?> =
         delete(sessionId, SessionDeleteParams.none(), requestOptions)
 
-    /** Get a prebuilt dashboard for a tracing project. */
+    /**
+     * GET with body payload — no resources created. Returns the prebuilt dashboard for the tracing
+     * project matching the query passed as the request payload.
+     */
     fun dashboard(
         sessionId: String,
         params: SessionDashboardParams,

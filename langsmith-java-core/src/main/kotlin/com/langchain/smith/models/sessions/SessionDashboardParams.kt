@@ -11,7 +11,10 @@ import java.util.Objects
 import java.util.Optional
 import kotlin.jvm.optionals.getOrNull
 
-/** Get a prebuilt dashboard for a tracing project. */
+/**
+ * GET with body payload — no resources created. Returns the prebuilt dashboard for the tracing
+ * project matching the query passed as the request payload.
+ */
 class SessionDashboardParams
 private constructor(
     private val sessionId: String?,

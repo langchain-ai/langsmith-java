@@ -171,7 +171,10 @@ interface SessionService {
     fun delete(sessionId: String, requestOptions: RequestOptions) =
         delete(sessionId, SessionDeleteParams.none(), requestOptions)
 
-    /** Get a prebuilt dashboard for a tracing project. */
+    /**
+     * GET with body payload — no resources created. Returns the prebuilt dashboard for the tracing
+     * project matching the query passed as the request payload.
+     */
     fun dashboard(sessionId: String, params: SessionDashboardParams): CustomChartsSection =
         dashboard(sessionId, params, RequestOptions.none())
 
