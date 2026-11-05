@@ -94,7 +94,7 @@ dependencies {
         testImplementation("org.apache.commons:commons-compress") { version { require("1.28.0") } }
         testImplementation("commons-fileupload:commons-fileupload") { version { require("1.6.0") } }
         testImplementation("commons-io:commons-io") { version { require("2.22.0") } }
-        testImplementation("com.google.guava:guava") { version { require("33.6.0-jre") } }
+        testImplementation("com.google.guava:guava") { version { require("33.7.2-jre") } }
         testImplementation("com.jayway.jsonpath:json-path") { version { require("2.10.0") } }
         testImplementation("org.xmlunit:xmlunit-core") { version { require("2.12.0") } }
         testImplementation("net.minidev:json-smart") { version { require("2.6.0") } }
