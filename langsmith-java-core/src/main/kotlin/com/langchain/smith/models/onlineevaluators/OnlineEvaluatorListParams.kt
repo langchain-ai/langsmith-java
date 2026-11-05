@@ -19,6 +19,7 @@ private constructor(
     private val agentId: String?,
     private val feedbackKey: String?,
     private val limit: Long?,
+    private val metadata: String?,
     private val nameContains: String?,
     private val offset: Long?,
     private val resourceId: List<String>?,
@@ -41,6 +42,9 @@ private constructor(
 
     /** Maximum number of results (1-100) */
     fun limit(): Optional<Long> = Optional.ofNullable(limit)
+
+    /** Filter by metadata containment using a JSON object */
+    fun metadata(): Optional<String> = Optional.ofNullable(metadata)
 
     /** Filter by name substring (also searches creator names) */
     fun nameContains(): Optional<String> = Optional.ofNullable(nameContains)
@@ -87,6 +91,7 @@ private constructor(
         private var agentId: String? = null
         private var feedbackKey: String? = null
         private var limit: Long? = null
+        private var metadata: String? = null
         private var nameContains: String? = null
         private var offset: Long? = null
         private var resourceId: MutableList<String>? = null
@@ -102,6 +107,7 @@ private constructor(
             agentId = onlineEvaluatorListParams.agentId
             feedbackKey = onlineEvaluatorListParams.feedbackKey
             limit = onlineEvaluatorListParams.limit
+            metadata = onlineEvaluatorListParams.metadata
             nameContains = onlineEvaluatorListParams.nameContains
             offset = onlineEvaluatorListParams.offset
             resourceId = onlineEvaluatorListParams.resourceId?.toMutableList()
@@ -140,6 +146,12 @@ private constructor(
 
         /** Alias for calling [Builder.limit] with `limit.orElse(null)`. */
         fun limit(limit: Optional<Long>) = limit(limit.getOrNull())
+
+        /** Filter by metadata containment using a JSON object */
+        fun metadata(metadata: String?) = apply { this.metadata = metadata }
+
+        /** Alias for calling [Builder.metadata] with `metadata.orElse(null)`. */
+        fun metadata(metadata: Optional<String>) = metadata(metadata.getOrNull())
 
         /** Filter by name substring (also searches creator names) */
         fun nameContains(nameContains: String?) = apply { this.nameContains = nameContains }
@@ -327,6 +339,7 @@ private constructor(
                 agentId,
                 feedbackKey,
                 limit,
+                metadata,
                 nameContains,
                 offset,
                 resourceId?.toImmutable(),
@@ -347,6 +360,7 @@ private constructor(
                 agentId?.let { put("agent_id", it) }
                 feedbackKey?.let { put("feedback_key", it) }
                 limit?.let { put("limit", it.toString()) }
+                metadata?.let { put("metadata", it) }
                 nameContains?.let { put("name_contains", it) }
                 offset?.let { put("offset", it.toString()) }
                 resourceId?.forEach { put("resource_id", it) }
@@ -367,6 +381,7 @@ private constructor(
             agentId == other.agentId &&
             feedbackKey == other.feedbackKey &&
             limit == other.limit &&
+            metadata == other.metadata &&
             nameContains == other.nameContains &&
             offset == other.offset &&
             resourceId == other.resourceId &&
@@ -383,6 +398,7 @@ private constructor(
             agentId,
             feedbackKey,
             limit,
+            metadata,
             nameContains,
             offset,
             resourceId,
@@ -395,5 +411,5 @@ private constructor(
         )
 
     override fun toString() =
-        "OnlineEvaluatorListParams{agentId=$agentId, feedbackKey=$feedbackKey, limit=$limit, nameContains=$nameContains, offset=$offset, resourceId=$resourceId, sortBy=$sortBy, sortByDesc=$sortByDesc, tagValueId=$tagValueId, type=$type, additionalHeaders=$additionalHeaders, additionalQueryParams=$additionalQueryParams}"
+        "OnlineEvaluatorListParams{agentId=$agentId, feedbackKey=$feedbackKey, limit=$limit, metadata=$metadata, nameContains=$nameContains, offset=$offset, resourceId=$resourceId, sortBy=$sortBy, sortByDesc=$sortByDesc, tagValueId=$tagValueId, type=$type, additionalHeaders=$additionalHeaders, additionalQueryParams=$additionalQueryParams}"
 }
