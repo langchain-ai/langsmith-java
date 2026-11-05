@@ -5,7 +5,10 @@ package com.langchain.smith.services.async.datasets
 import com.langchain.smith.core.ClientOptions
 import com.langchain.smith.core.RequestOptions
 import com.langchain.smith.core.http.HttpResponse
+import com.langchain.smith.core.http.HttpResponseFor
 import com.langchain.smith.models.datasets.examples.ExampleDeleteParams
+import com.langchain.smith.models.datasets.examples.ExampleUpdateMetadataParams
+import com.langchain.smith.models.datasets.examples.ExampleUpdateMetadataResponse
 import java.util.concurrent.CompletableFuture
 import java.util.function.Consumer
 
@@ -52,6 +55,40 @@ interface ExampleServiceAsync {
     ): CompletableFuture<Void?>
 
     /**
+     * Applies the same metadata changes, in order, to every listed example in a dataset. Examples
+     * that are not in the dataset or were deleted are skipped; the rest are updated together, so if
+     * the update fails none of them change. Answers 207 with one status per submitted example ID:
+     * UPDATED, or NOT_FOUND for a skipped example. Metadata keys the operations do not name keep
+     * their values. To add examples to a split or remove them from one, use ARRAY_ADD or
+     * ARRAY_REMOVE on the dataset_split key. Requires permission to update datasets.
+     */
+    fun updateMetadata(
+        datasetId: String,
+        params: ExampleUpdateMetadataParams,
+    ): CompletableFuture<ExampleUpdateMetadataResponse> =
+        updateMetadata(datasetId, params, RequestOptions.none())
+
+    /** @see updateMetadata */
+    fun updateMetadata(
+        datasetId: String,
+        params: ExampleUpdateMetadataParams,
+        requestOptions: RequestOptions = RequestOptions.none(),
+    ): CompletableFuture<ExampleUpdateMetadataResponse> =
+        updateMetadata(params.toBuilder().datasetId(datasetId).build(), requestOptions)
+
+    /** @see updateMetadata */
+    fun updateMetadata(
+        params: ExampleUpdateMetadataParams
+    ): CompletableFuture<ExampleUpdateMetadataResponse> =
+        updateMetadata(params, RequestOptions.none())
+
+    /** @see updateMetadata */
+    fun updateMetadata(
+        params: ExampleUpdateMetadataParams,
+        requestOptions: RequestOptions = RequestOptions.none(),
+    ): CompletableFuture<ExampleUpdateMetadataResponse>
+
+    /**
      * A view of [ExampleServiceAsync] that provides access to raw HTTP responses for each method.
      */
     interface WithRawResponse {
@@ -92,5 +129,36 @@ interface ExampleServiceAsync {
             params: ExampleDeleteParams,
             requestOptions: RequestOptions = RequestOptions.none(),
         ): CompletableFuture<HttpResponse>
+
+        /**
+         * Returns a raw HTTP response for `patch
+         * /api/v1/platform/datasets/{dataset_id}/examples/metadata`, but is otherwise the same as
+         * [ExampleServiceAsync.updateMetadata].
+         */
+        fun updateMetadata(
+            datasetId: String,
+            params: ExampleUpdateMetadataParams,
+        ): CompletableFuture<HttpResponseFor<ExampleUpdateMetadataResponse>> =
+            updateMetadata(datasetId, params, RequestOptions.none())
+
+        /** @see updateMetadata */
+        fun updateMetadata(
+            datasetId: String,
+            params: ExampleUpdateMetadataParams,
+            requestOptions: RequestOptions = RequestOptions.none(),
+        ): CompletableFuture<HttpResponseFor<ExampleUpdateMetadataResponse>> =
+            updateMetadata(params.toBuilder().datasetId(datasetId).build(), requestOptions)
+
+        /** @see updateMetadata */
+        fun updateMetadata(
+            params: ExampleUpdateMetadataParams
+        ): CompletableFuture<HttpResponseFor<ExampleUpdateMetadataResponse>> =
+            updateMetadata(params, RequestOptions.none())
+
+        /** @see updateMetadata */
+        fun updateMetadata(
+            params: ExampleUpdateMetadataParams,
+            requestOptions: RequestOptions = RequestOptions.none(),
+        ): CompletableFuture<HttpResponseFor<ExampleUpdateMetadataResponse>>
     }
 }
