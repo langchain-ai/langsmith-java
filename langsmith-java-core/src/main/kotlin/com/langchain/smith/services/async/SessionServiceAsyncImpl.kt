@@ -23,6 +23,11 @@ import com.langchain.smith.models.sessions.SessionDashboardParams
 import com.langchain.smith.models.sessions.SessionDeleteParams
 import com.langchain.smith.models.sessions.SessionListPageAsync
 import com.langchain.smith.models.sessions.SessionListParams
+import com.langchain.smith.models.sessions.SessionListV1PageAsync
+import com.langchain.smith.models.sessions.SessionListV1Params
+import com.langchain.smith.models.sessions.SessionListV2PageAsync
+import com.langchain.smith.models.sessions.SessionListV2PageResponse
+import com.langchain.smith.models.sessions.SessionListV2Params
 import com.langchain.smith.models.sessions.SessionResolveParams
 import com.langchain.smith.models.sessions.SessionResolveResponse
 import com.langchain.smith.models.sessions.SessionRetrieveParams
@@ -72,13 +77,6 @@ class SessionServiceAsyncImpl internal constructor(private val clientOptions: Cl
         // patch /api/v1/sessions/{session_id}
         withRawResponse().update(params, requestOptions).thenApply { it.parse() }
 
-    override fun list(
-        params: SessionListParams,
-        requestOptions: RequestOptions,
-    ): CompletableFuture<SessionListPageAsync> =
-        // get /api/v1/sessions
-        withRawResponse().list(params, requestOptions).thenApply { it.parse() }
-
     override fun delete(
         params: SessionDeleteParams,
         requestOptions: RequestOptions,
@@ -93,12 +91,36 @@ class SessionServiceAsyncImpl internal constructor(private val clientOptions: Cl
         // post /api/v1/sessions/{session_id}/dashboard
         withRawResponse().dashboard(params, requestOptions).thenApply { it.parse() }
 
+    @Deprecated(
+        "Deprecated: use listV2 instead, which calls GET /api/v2/sessions and pages with a cursor. Will be removed after Apr 1, 2027."
+    )
+    override fun listV1(
+        params: SessionListV1Params,
+        requestOptions: RequestOptions,
+    ): CompletableFuture<SessionListV1PageAsync> =
+        // get /api/v1/sessions
+        withRawResponse().listV1(params, requestOptions).thenApply { it.parse() }
+
+    override fun listV2(
+        params: SessionListV2Params,
+        requestOptions: RequestOptions,
+    ): CompletableFuture<SessionListV2PageAsync> =
+        // get /api/v2/sessions
+        withRawResponse().listV2(params, requestOptions).thenApply { it.parse() }
+
     override fun resolve(
         params: SessionResolveParams,
         requestOptions: RequestOptions,
     ): CompletableFuture<SessionResolveResponse> =
         // get /api/v1/sessions/resolutions
         withRawResponse().resolve(params, requestOptions).thenApply { it.parse() }
+
+    override fun list(
+        params: SessionListParams,
+        requestOptions: RequestOptions,
+    ): CompletableFuture<SessionListPageAsync> =
+        // get /api/v1/sessions
+        withRawResponse().list(params, requestOptions).thenApply { it.parse() }
 
     class WithRawResponseImpl internal constructor(private val clientOptions: ClientOptions) :
         SessionServiceAsync.WithRawResponse {
@@ -217,44 +239,6 @@ class SessionServiceAsyncImpl internal constructor(private val clientOptions: Cl
                 }
         }
 
-        private val listHandler: Handler<List<TracerSession>> =
-            jsonHandler<List<TracerSession>>(clientOptions.jsonMapper)
-
-        override fun list(
-            params: SessionListParams,
-            requestOptions: RequestOptions,
-        ): CompletableFuture<HttpResponseFor<SessionListPageAsync>> {
-            val request =
-                HttpRequest.builder()
-                    .method(HttpMethod.GET)
-                    .baseUrl(clientOptions.baseUrl())
-                    .addPathSegments("api", "v1", "sessions")
-                    .build()
-                    .prepareAsync(clientOptions, params)
-            val requestOptions = requestOptions.applyDefaults(RequestOptions.from(clientOptions))
-            return request
-                .thenComposeAsync { clientOptions.httpClient.executeAsync(it, requestOptions) }
-                .thenApply { response ->
-                    errorHandler.handle(response).parseable {
-                        response
-                            .use { listHandler.handle(it) }
-                            .also {
-                                if (requestOptions.responseValidation!!) {
-                                    it.forEach { it.validate() }
-                                }
-                            }
-                            .let {
-                                SessionListPageAsync.builder()
-                                    .service(SessionServiceAsyncImpl(clientOptions))
-                                    .streamHandlerExecutor(clientOptions.streamHandlerExecutor)
-                                    .params(params)
-                                    .items(it)
-                                    .build()
-                            }
-                    }
-                }
-        }
-
         private val deleteHandler: Handler<Void?> = emptyHandler()
 
         override fun delete(
@@ -316,6 +300,85 @@ class SessionServiceAsyncImpl internal constructor(private val clientOptions: Cl
                 }
         }
 
+        private val listV1Handler: Handler<List<TracerSession>> =
+            jsonHandler<List<TracerSession>>(clientOptions.jsonMapper)
+
+        @Deprecated(
+            "Deprecated: use listV2 instead, which calls GET /api/v2/sessions and pages with a cursor. Will be removed after Apr 1, 2027."
+        )
+        override fun listV1(
+            params: SessionListV1Params,
+            requestOptions: RequestOptions,
+        ): CompletableFuture<HttpResponseFor<SessionListV1PageAsync>> {
+            val request =
+                HttpRequest.builder()
+                    .method(HttpMethod.GET)
+                    .baseUrl(clientOptions.baseUrl())
+                    .addPathSegments("api", "v1", "sessions")
+                    .build()
+                    .prepareAsync(clientOptions, params)
+            val requestOptions = requestOptions.applyDefaults(RequestOptions.from(clientOptions))
+            return request
+                .thenComposeAsync { clientOptions.httpClient.executeAsync(it, requestOptions) }
+                .thenApply { response ->
+                    errorHandler.handle(response).parseable {
+                        response
+                            .use { listV1Handler.handle(it) }
+                            .also {
+                                if (requestOptions.responseValidation!!) {
+                                    it.forEach { it.validate() }
+                                }
+                            }
+                            .let {
+                                SessionListV1PageAsync.builder()
+                                    .service(SessionServiceAsyncImpl(clientOptions))
+                                    .streamHandlerExecutor(clientOptions.streamHandlerExecutor)
+                                    .params(params)
+                                    .items(it)
+                                    .build()
+                            }
+                    }
+                }
+        }
+
+        private val listV2Handler: Handler<SessionListV2PageResponse> =
+            jsonHandler<SessionListV2PageResponse>(clientOptions.jsonMapper)
+
+        override fun listV2(
+            params: SessionListV2Params,
+            requestOptions: RequestOptions,
+        ): CompletableFuture<HttpResponseFor<SessionListV2PageAsync>> {
+            val request =
+                HttpRequest.builder()
+                    .method(HttpMethod.GET)
+                    .baseUrl(clientOptions.baseUrl())
+                    .addPathSegments("api", "v2", "sessions")
+                    .build()
+                    .prepareAsync(clientOptions, params)
+            val requestOptions = requestOptions.applyDefaults(RequestOptions.from(clientOptions))
+            return request
+                .thenComposeAsync { clientOptions.httpClient.executeAsync(it, requestOptions) }
+                .thenApply { response ->
+                    errorHandler.handle(response).parseable {
+                        response
+                            .use { listV2Handler.handle(it) }
+                            .also {
+                                if (requestOptions.responseValidation!!) {
+                                    it.validate()
+                                }
+                            }
+                            .let {
+                                SessionListV2PageAsync.builder()
+                                    .service(SessionServiceAsyncImpl(clientOptions))
+                                    .streamHandlerExecutor(clientOptions.streamHandlerExecutor)
+                                    .params(params)
+                                    .response(it)
+                                    .build()
+                            }
+                    }
+                }
+        }
+
         private val resolveHandler: Handler<SessionResolveResponse> =
             jsonHandler<SessionResolveResponse>(clientOptions.jsonMapper)
 
@@ -341,6 +404,44 @@ class SessionServiceAsyncImpl internal constructor(private val clientOptions: Cl
                                 if (requestOptions.responseValidation!!) {
                                     it.validate()
                                 }
+                            }
+                    }
+                }
+        }
+
+        private val listHandler: Handler<List<TracerSession>> =
+            jsonHandler<List<TracerSession>>(clientOptions.jsonMapper)
+
+        override fun list(
+            params: SessionListParams,
+            requestOptions: RequestOptions,
+        ): CompletableFuture<HttpResponseFor<SessionListPageAsync>> {
+            val request =
+                HttpRequest.builder()
+                    .method(HttpMethod.GET)
+                    .baseUrl(clientOptions.baseUrl())
+                    .addPathSegments("api", "v1", "sessions")
+                    .build()
+                    .prepareAsync(clientOptions, params)
+            val requestOptions = requestOptions.applyDefaults(RequestOptions.from(clientOptions))
+            return request
+                .thenComposeAsync { clientOptions.httpClient.executeAsync(it, requestOptions) }
+                .thenApply { response ->
+                    errorHandler.handle(response).parseable {
+                        response
+                            .use { listHandler.handle(it) }
+                            .also {
+                                if (requestOptions.responseValidation!!) {
+                                    it.forEach { it.validate() }
+                                }
+                            }
+                            .let {
+                                SessionListPageAsync.builder()
+                                    .service(SessionServiceAsyncImpl(clientOptions))
+                                    .streamHandlerExecutor(clientOptions.streamHandlerExecutor)
+                                    .params(params)
+                                    .items(it)
+                                    .build()
                             }
                     }
                 }

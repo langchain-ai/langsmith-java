@@ -1,0 +1,165 @@
+// File generated from our OpenAPI spec by Stainless.
+
+package com.langchain.smith.models.sessions
+
+import com.langchain.smith.core.http.Headers
+import com.langchain.smith.core.http.QueryParams
+import java.time.OffsetDateTime
+import org.assertj.core.api.Assertions.assertThat
+import org.junit.jupiter.api.Test
+
+internal class SessionListV1ParamsTest {
+
+    @Test
+    fun create() {
+        SessionListV1Params.builder()
+            .addId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+            .addId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+            .datasetVersion("dataset_version")
+            .facets(true)
+            .filter("filter")
+            .includeStats(true)
+            .limit(1L)
+            .metadata("metadata")
+            .name("name")
+            .nameContains("name_contains")
+            .offset(0L)
+            .addReferenceDataset("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+            .addReferenceDataset("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+            .referenceFree(true)
+            .sortBy(SessionSortableColumns.NAME)
+            .sortByDesc(true)
+            .sortByFeedbackKey("sort_by_feedback_key")
+            .sortByFeedbackSource(SessionListV1Params.SortByFeedbackSource.SESSION)
+            .statsFilter("stats_filter")
+            .addStatsSelect("string")
+            .addStatsSelect("string")
+            .statsStartTime(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
+            .addTagValueId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+            .addTagValueId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+            .useApproxStats(true)
+            .accept("accept")
+            .build()
+    }
+
+    @Test
+    fun headers() {
+        val params =
+            SessionListV1Params.builder()
+                .addId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                .addId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                .datasetVersion("dataset_version")
+                .facets(true)
+                .filter("filter")
+                .includeStats(true)
+                .limit(1L)
+                .metadata("metadata")
+                .name("name")
+                .nameContains("name_contains")
+                .offset(0L)
+                .addReferenceDataset("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                .addReferenceDataset("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                .referenceFree(true)
+                .sortBy(SessionSortableColumns.NAME)
+                .sortByDesc(true)
+                .sortByFeedbackKey("sort_by_feedback_key")
+                .sortByFeedbackSource(SessionListV1Params.SortByFeedbackSource.SESSION)
+                .statsFilter("stats_filter")
+                .addStatsSelect("string")
+                .addStatsSelect("string")
+                .statsStartTime(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
+                .addTagValueId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                .addTagValueId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                .useApproxStats(true)
+                .accept("accept")
+                .build()
+
+        val headers = params._headers()
+
+        assertThat(headers).isEqualTo(Headers.builder().put("accept", "accept").build())
+    }
+
+    @Test
+    fun headersWithoutOptionalFields() {
+        val params = SessionListV1Params.builder().build()
+
+        val headers = params._headers()
+
+        assertThat(headers).isEqualTo(Headers.builder().build())
+    }
+
+    @Test
+    fun queryParams() {
+        val params =
+            SessionListV1Params.builder()
+                .addId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                .addId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                .datasetVersion("dataset_version")
+                .facets(true)
+                .filter("filter")
+                .includeStats(true)
+                .limit(1L)
+                .metadata("metadata")
+                .name("name")
+                .nameContains("name_contains")
+                .offset(0L)
+                .addReferenceDataset("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                .addReferenceDataset("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                .referenceFree(true)
+                .sortBy(SessionSortableColumns.NAME)
+                .sortByDesc(true)
+                .sortByFeedbackKey("sort_by_feedback_key")
+                .sortByFeedbackSource(SessionListV1Params.SortByFeedbackSource.SESSION)
+                .statsFilter("stats_filter")
+                .addStatsSelect("string")
+                .addStatsSelect("string")
+                .statsStartTime(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
+                .addTagValueId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                .addTagValueId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                .useApproxStats(true)
+                .accept("accept")
+                .build()
+
+        val queryParams = params._queryParams()
+
+        assertThat(queryParams)
+            .isEqualTo(
+                QueryParams.builder()
+                    .put("id", "182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                    .put("id", "182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                    .put("dataset_version", "dataset_version")
+                    .put("facets", "true")
+                    .put("filter", "filter")
+                    .put("include_stats", "true")
+                    .put("limit", "1")
+                    .put("metadata", "metadata")
+                    .put("name", "name")
+                    .put("name_contains", "name_contains")
+                    .put("offset", "0")
+                    .put("reference_dataset", "182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                    .put("reference_dataset", "182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                    .put("reference_free", "true")
+                    .put("sort_by", "name")
+                    .put("sort_by_desc", "true")
+                    .put("sort_by_feedback_key", "sort_by_feedback_key")
+                    .put("sort_by_feedback_source", "session")
+                    .put("stats_filter", "stats_filter")
+                    .put("stats_select", "string")
+                    .put("stats_select", "string")
+                    .put("stats_start_time", "2019-12-27T18:11:19.117Z")
+                    .put("tag_value_id", "182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                    .put("tag_value_id", "182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                    .put("use_approx_stats", "true")
+                    .build()
+            )
+    }
+
+    @Test
+    fun queryParamsWithoutOptionalFields() {
+        val params = SessionListV1Params.builder().build()
+
+        val queryParams = params._queryParams()
+
+        assertThat(queryParams).isEqualTo(QueryParams.builder().build())
+    }
+}

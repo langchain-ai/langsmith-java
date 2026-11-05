@@ -13,6 +13,10 @@ import com.langchain.smith.models.sessions.SessionDashboardParams
 import com.langchain.smith.models.sessions.SessionDeleteParams
 import com.langchain.smith.models.sessions.SessionListPage
 import com.langchain.smith.models.sessions.SessionListParams
+import com.langchain.smith.models.sessions.SessionListV1Page
+import com.langchain.smith.models.sessions.SessionListV1Params
+import com.langchain.smith.models.sessions.SessionListV2Page
+import com.langchain.smith.models.sessions.SessionListV2Params
 import com.langchain.smith.models.sessions.SessionResolveParams
 import com.langchain.smith.models.sessions.SessionResolveResponse
 import com.langchain.smith.models.sessions.SessionRetrieveParams
@@ -122,23 +126,6 @@ interface SessionService {
     ): TracerSessionWithoutVirtualFields =
         update(sessionId, SessionUpdateParams.none(), requestOptions)
 
-    /** List all projects. */
-    fun list(): SessionListPage = list(SessionListParams.none())
-
-    /** @see list */
-    fun list(
-        params: SessionListParams = SessionListParams.none(),
-        requestOptions: RequestOptions = RequestOptions.none(),
-    ): SessionListPage
-
-    /** @see list */
-    fun list(params: SessionListParams = SessionListParams.none()): SessionListPage =
-        list(params, RequestOptions.none())
-
-    /** @see list */
-    fun list(requestOptions: RequestOptions): SessionListPage =
-        list(SessionListParams.none(), requestOptions)
-
     /**
      * Delete a specific project.
      *
@@ -197,6 +184,61 @@ interface SessionService {
     ): CustomChartsSection
 
     /**
+     * List all projects.
+     *
+     * Deprecated: use GET /api/v2/sessions, which pages with a cursor. Will be removed after Jun
+     * 1, 2027.
+     */
+    @Deprecated(
+        "Deprecated: use listV2 instead, which calls GET /api/v2/sessions and pages with a cursor. Will be removed after Apr 1, 2027."
+    )
+    fun listV1(): SessionListV1Page = listV1(SessionListV1Params.none())
+
+    /** @see listV1 */
+    @Deprecated(
+        "Deprecated: use listV2 instead, which calls GET /api/v2/sessions and pages with a cursor. Will be removed after Apr 1, 2027."
+    )
+    fun listV1(
+        params: SessionListV1Params = SessionListV1Params.none(),
+        requestOptions: RequestOptions = RequestOptions.none(),
+    ): SessionListV1Page
+
+    /** @see listV1 */
+    @Deprecated(
+        "Deprecated: use listV2 instead, which calls GET /api/v2/sessions and pages with a cursor. Will be removed after Apr 1, 2027."
+    )
+    fun listV1(params: SessionListV1Params = SessionListV1Params.none()): SessionListV1Page =
+        listV1(params, RequestOptions.none())
+
+    /** @see listV1 */
+    @Deprecated(
+        "Deprecated: use listV2 instead, which calls GET /api/v2/sessions and pages with a cursor. Will be removed after Apr 1, 2027."
+    )
+    fun listV1(requestOptions: RequestOptions): SessionListV1Page =
+        listV1(SessionListV1Params.none(), requestOptions)
+
+    /**
+     * Returns a page of the workspace's tracing projects and experiments. Pass the response's
+     * next_cursor as cursor to fetch the next page; next_cursor is null on the last page. A cursor
+     * is valid only with the same query parameters as the request that returned it.
+     */
+    fun listV2(): SessionListV2Page = listV2(SessionListV2Params.none())
+
+    /** @see listV2 */
+    fun listV2(
+        params: SessionListV2Params = SessionListV2Params.none(),
+        requestOptions: RequestOptions = RequestOptions.none(),
+    ): SessionListV2Page
+
+    /** @see listV2 */
+    fun listV2(params: SessionListV2Params = SessionListV2Params.none()): SessionListV2Page =
+        listV2(params, RequestOptions.none())
+
+    /** @see listV2 */
+    fun listV2(requestOptions: RequestOptions): SessionListV2Page =
+        listV2(SessionListV2Params.none(), requestOptions)
+
+    /**
      * Returns the tracing project (session) an address names. An address is an AGENT (`id` and
      * `environment`), an EXPERIMENT (`id`), or an EVALUATOR (no `id`: evaluator traces share one
      * project per workspace). Send `kind` and `environment` in upper case, as listed; they are
@@ -213,6 +255,28 @@ interface SessionService {
         params: SessionResolveParams,
         requestOptions: RequestOptions = RequestOptions.none(),
     ): SessionResolveResponse
+
+    /**
+     * List all projects.
+     *
+     * Deprecated: use GET /api/v2/sessions, which pages with a cursor. Will be removed after Jun
+     * 1, 2027.
+     */
+    fun list(): SessionListPage = list(SessionListParams.none())
+
+    /** @see list */
+    fun list(
+        params: SessionListParams = SessionListParams.none(),
+        requestOptions: RequestOptions = RequestOptions.none(),
+    ): SessionListPage
+
+    /** @see list */
+    fun list(params: SessionListParams = SessionListParams.none()): SessionListPage =
+        list(params, RequestOptions.none())
+
+    /** @see list */
+    fun list(requestOptions: RequestOptions): SessionListPage =
+        list(SessionListParams.none(), requestOptions)
 
     /** A view of [SessionService] that provides access to raw HTTP responses for each method. */
     interface WithRawResponse {
@@ -347,30 +411,6 @@ interface SessionService {
             update(sessionId, SessionUpdateParams.none(), requestOptions)
 
         /**
-         * Returns a raw HTTP response for `get /api/v1/sessions`, but is otherwise the same as
-         * [SessionService.list].
-         */
-        @MustBeClosed fun list(): HttpResponseFor<SessionListPage> = list(SessionListParams.none())
-
-        /** @see list */
-        @MustBeClosed
-        fun list(
-            params: SessionListParams = SessionListParams.none(),
-            requestOptions: RequestOptions = RequestOptions.none(),
-        ): HttpResponseFor<SessionListPage>
-
-        /** @see list */
-        @MustBeClosed
-        fun list(
-            params: SessionListParams = SessionListParams.none()
-        ): HttpResponseFor<SessionListPage> = list(params, RequestOptions.none())
-
-        /** @see list */
-        @MustBeClosed
-        fun list(requestOptions: RequestOptions): HttpResponseFor<SessionListPage> =
-            list(SessionListParams.none(), requestOptions)
-
-        /**
          * Returns a raw HTTP response for `delete /api/v1/sessions/{session_id}`, but is otherwise
          * the same as [SessionService.delete].
          */
@@ -442,6 +482,68 @@ interface SessionService {
         ): HttpResponseFor<CustomChartsSection>
 
         /**
+         * Returns a raw HTTP response for `get /api/v1/sessions`, but is otherwise the same as
+         * [SessionService.listV1].
+         */
+        @Deprecated(
+            "Deprecated: use listV2 instead, which calls GET /api/v2/sessions and pages with a cursor. Will be removed after Apr 1, 2027."
+        )
+        @MustBeClosed
+        fun listV1(): HttpResponseFor<SessionListV1Page> = listV1(SessionListV1Params.none())
+
+        /** @see listV1 */
+        @Deprecated(
+            "Deprecated: use listV2 instead, which calls GET /api/v2/sessions and pages with a cursor. Will be removed after Apr 1, 2027."
+        )
+        @MustBeClosed
+        fun listV1(
+            params: SessionListV1Params = SessionListV1Params.none(),
+            requestOptions: RequestOptions = RequestOptions.none(),
+        ): HttpResponseFor<SessionListV1Page>
+
+        /** @see listV1 */
+        @Deprecated(
+            "Deprecated: use listV2 instead, which calls GET /api/v2/sessions and pages with a cursor. Will be removed after Apr 1, 2027."
+        )
+        @MustBeClosed
+        fun listV1(
+            params: SessionListV1Params = SessionListV1Params.none()
+        ): HttpResponseFor<SessionListV1Page> = listV1(params, RequestOptions.none())
+
+        /** @see listV1 */
+        @Deprecated(
+            "Deprecated: use listV2 instead, which calls GET /api/v2/sessions and pages with a cursor. Will be removed after Apr 1, 2027."
+        )
+        @MustBeClosed
+        fun listV1(requestOptions: RequestOptions): HttpResponseFor<SessionListV1Page> =
+            listV1(SessionListV1Params.none(), requestOptions)
+
+        /**
+         * Returns a raw HTTP response for `get /api/v2/sessions`, but is otherwise the same as
+         * [SessionService.listV2].
+         */
+        @MustBeClosed
+        fun listV2(): HttpResponseFor<SessionListV2Page> = listV2(SessionListV2Params.none())
+
+        /** @see listV2 */
+        @MustBeClosed
+        fun listV2(
+            params: SessionListV2Params = SessionListV2Params.none(),
+            requestOptions: RequestOptions = RequestOptions.none(),
+        ): HttpResponseFor<SessionListV2Page>
+
+        /** @see listV2 */
+        @MustBeClosed
+        fun listV2(
+            params: SessionListV2Params = SessionListV2Params.none()
+        ): HttpResponseFor<SessionListV2Page> = listV2(params, RequestOptions.none())
+
+        /** @see listV2 */
+        @MustBeClosed
+        fun listV2(requestOptions: RequestOptions): HttpResponseFor<SessionListV2Page> =
+            listV2(SessionListV2Params.none(), requestOptions)
+
+        /**
          * Returns a raw HTTP response for `get /api/v1/sessions/resolutions`, but is otherwise the
          * same as [SessionService.resolve].
          */
@@ -455,5 +557,29 @@ interface SessionService {
             params: SessionResolveParams,
             requestOptions: RequestOptions = RequestOptions.none(),
         ): HttpResponseFor<SessionResolveResponse>
+
+        /**
+         * Returns a raw HTTP response for `get /api/v1/sessions`, but is otherwise the same as
+         * [SessionService.list].
+         */
+        @MustBeClosed fun list(): HttpResponseFor<SessionListPage> = list(SessionListParams.none())
+
+        /** @see list */
+        @MustBeClosed
+        fun list(
+            params: SessionListParams = SessionListParams.none(),
+            requestOptions: RequestOptions = RequestOptions.none(),
+        ): HttpResponseFor<SessionListPage>
+
+        /** @see list */
+        @MustBeClosed
+        fun list(
+            params: SessionListParams = SessionListParams.none()
+        ): HttpResponseFor<SessionListPage> = list(params, RequestOptions.none())
+
+        /** @see list */
+        @MustBeClosed
+        fun list(requestOptions: RequestOptions): HttpResponseFor<SessionListPage> =
+            list(SessionListParams.none(), requestOptions)
     }
 }

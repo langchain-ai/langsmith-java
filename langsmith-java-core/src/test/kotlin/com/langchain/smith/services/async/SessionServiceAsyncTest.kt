@@ -114,22 +114,6 @@ internal class SessionServiceAsyncTest {
 
     @Disabled("Mock server tests are disabled")
     @Test
-    fun list() {
-        val client =
-            LangsmithOkHttpClientAsync.builder()
-                .apiKey("My API Key")
-                .tenantId("My Tenant ID")
-                .build()
-        val sessionServiceAsync = client.sessions()
-
-        val pageFuture = sessionServiceAsync.list()
-
-        val page = pageFuture.get()
-        page.items().forEach { it.validate() }
-    }
-
-    @Disabled("Mock server tests are disabled")
-    @Test
     fun delete() {
         val client =
             LangsmithOkHttpClientAsync.builder()
@@ -183,6 +167,38 @@ internal class SessionServiceAsyncTest {
 
     @Disabled("Mock server tests are disabled")
     @Test
+    fun listV1() {
+        val client =
+            LangsmithOkHttpClientAsync.builder()
+                .apiKey("My API Key")
+                .tenantId("My Tenant ID")
+                .build()
+        val sessionServiceAsync = client.sessions()
+
+        val pageFuture = sessionServiceAsync.listV1()
+
+        val page = pageFuture.get()
+        page.items().forEach { it.validate() }
+    }
+
+    @Disabled("Mock server tests are disabled")
+    @Test
+    fun listV2() {
+        val client =
+            LangsmithOkHttpClientAsync.builder()
+                .apiKey("My API Key")
+                .tenantId("My Tenant ID")
+                .build()
+        val sessionServiceAsync = client.sessions()
+
+        val pageFuture = sessionServiceAsync.listV2()
+
+        val page = pageFuture.get()
+        page.response().validate()
+    }
+
+    @Disabled("Mock server tests are disabled")
+    @Test
     fun resolve() {
         val client =
             LangsmithOkHttpClientAsync.builder()
@@ -202,5 +218,21 @@ internal class SessionServiceAsyncTest {
 
         val response = responseFuture.get()
         response.validate()
+    }
+
+    @Disabled("Mock server tests are disabled")
+    @Test
+    fun list() {
+        val client =
+            LangsmithOkHttpClientAsync.builder()
+                .apiKey("My API Key")
+                .tenantId("My Tenant ID")
+                .build()
+        val sessionServiceAsync = client.sessions()
+
+        val pageFuture = sessionServiceAsync.list()
+
+        val page = pageFuture.get()
+        page.items().forEach { it.validate() }
     }
 }

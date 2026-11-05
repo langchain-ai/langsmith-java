@@ -12,6 +12,10 @@ import com.langchain.smith.models.sessions.SessionDashboardParams
 import com.langchain.smith.models.sessions.SessionDeleteParams
 import com.langchain.smith.models.sessions.SessionListPageAsync
 import com.langchain.smith.models.sessions.SessionListParams
+import com.langchain.smith.models.sessions.SessionListV1PageAsync
+import com.langchain.smith.models.sessions.SessionListV1Params
+import com.langchain.smith.models.sessions.SessionListV2PageAsync
+import com.langchain.smith.models.sessions.SessionListV2Params
 import com.langchain.smith.models.sessions.SessionResolveParams
 import com.langchain.smith.models.sessions.SessionResolveResponse
 import com.langchain.smith.models.sessions.SessionRetrieveParams
@@ -130,24 +134,6 @@ interface SessionServiceAsync {
     ): CompletableFuture<TracerSessionWithoutVirtualFields> =
         update(sessionId, SessionUpdateParams.none(), requestOptions)
 
-    /** List all projects. */
-    fun list(): CompletableFuture<SessionListPageAsync> = list(SessionListParams.none())
-
-    /** @see list */
-    fun list(
-        params: SessionListParams = SessionListParams.none(),
-        requestOptions: RequestOptions = RequestOptions.none(),
-    ): CompletableFuture<SessionListPageAsync>
-
-    /** @see list */
-    fun list(
-        params: SessionListParams = SessionListParams.none()
-    ): CompletableFuture<SessionListPageAsync> = list(params, RequestOptions.none())
-
-    /** @see list */
-    fun list(requestOptions: RequestOptions): CompletableFuture<SessionListPageAsync> =
-        list(SessionListParams.none(), requestOptions)
-
     /**
      * Delete a specific project.
      *
@@ -216,6 +202,63 @@ interface SessionServiceAsync {
     ): CompletableFuture<CustomChartsSection>
 
     /**
+     * List all projects.
+     *
+     * Deprecated: use GET /api/v2/sessions, which pages with a cursor. Will be removed after Jun
+     * 1, 2027.
+     */
+    @Deprecated(
+        "Deprecated: use listV2 instead, which calls GET /api/v2/sessions and pages with a cursor. Will be removed after Apr 1, 2027."
+    )
+    fun listV1(): CompletableFuture<SessionListV1PageAsync> = listV1(SessionListV1Params.none())
+
+    /** @see listV1 */
+    @Deprecated(
+        "Deprecated: use listV2 instead, which calls GET /api/v2/sessions and pages with a cursor. Will be removed after Apr 1, 2027."
+    )
+    fun listV1(
+        params: SessionListV1Params = SessionListV1Params.none(),
+        requestOptions: RequestOptions = RequestOptions.none(),
+    ): CompletableFuture<SessionListV1PageAsync>
+
+    /** @see listV1 */
+    @Deprecated(
+        "Deprecated: use listV2 instead, which calls GET /api/v2/sessions and pages with a cursor. Will be removed after Apr 1, 2027."
+    )
+    fun listV1(
+        params: SessionListV1Params = SessionListV1Params.none()
+    ): CompletableFuture<SessionListV1PageAsync> = listV1(params, RequestOptions.none())
+
+    /** @see listV1 */
+    @Deprecated(
+        "Deprecated: use listV2 instead, which calls GET /api/v2/sessions and pages with a cursor. Will be removed after Apr 1, 2027."
+    )
+    fun listV1(requestOptions: RequestOptions): CompletableFuture<SessionListV1PageAsync> =
+        listV1(SessionListV1Params.none(), requestOptions)
+
+    /**
+     * Returns a page of the workspace's tracing projects and experiments. Pass the response's
+     * next_cursor as cursor to fetch the next page; next_cursor is null on the last page. A cursor
+     * is valid only with the same query parameters as the request that returned it.
+     */
+    fun listV2(): CompletableFuture<SessionListV2PageAsync> = listV2(SessionListV2Params.none())
+
+    /** @see listV2 */
+    fun listV2(
+        params: SessionListV2Params = SessionListV2Params.none(),
+        requestOptions: RequestOptions = RequestOptions.none(),
+    ): CompletableFuture<SessionListV2PageAsync>
+
+    /** @see listV2 */
+    fun listV2(
+        params: SessionListV2Params = SessionListV2Params.none()
+    ): CompletableFuture<SessionListV2PageAsync> = listV2(params, RequestOptions.none())
+
+    /** @see listV2 */
+    fun listV2(requestOptions: RequestOptions): CompletableFuture<SessionListV2PageAsync> =
+        listV2(SessionListV2Params.none(), requestOptions)
+
+    /**
      * Returns the tracing project (session) an address names. An address is an AGENT (`id` and
      * `environment`), an EXPERIMENT (`id`), or an EVALUATOR (no `id`: evaluator traces share one
      * project per workspace). Send `kind` and `environment` in upper case, as listed; they are
@@ -232,6 +275,29 @@ interface SessionServiceAsync {
         params: SessionResolveParams,
         requestOptions: RequestOptions = RequestOptions.none(),
     ): CompletableFuture<SessionResolveResponse>
+
+    /**
+     * List all projects.
+     *
+     * Deprecated: use GET /api/v2/sessions, which pages with a cursor. Will be removed after Jun
+     * 1, 2027.
+     */
+    fun list(): CompletableFuture<SessionListPageAsync> = list(SessionListParams.none())
+
+    /** @see list */
+    fun list(
+        params: SessionListParams = SessionListParams.none(),
+        requestOptions: RequestOptions = RequestOptions.none(),
+    ): CompletableFuture<SessionListPageAsync>
+
+    /** @see list */
+    fun list(
+        params: SessionListParams = SessionListParams.none()
+    ): CompletableFuture<SessionListPageAsync> = list(params, RequestOptions.none())
+
+    /** @see list */
+    fun list(requestOptions: RequestOptions): CompletableFuture<SessionListPageAsync> =
+        list(SessionListParams.none(), requestOptions)
 
     /**
      * A view of [SessionServiceAsync] that provides access to raw HTTP responses for each method.
@@ -359,31 +425,6 @@ interface SessionServiceAsync {
             update(sessionId, SessionUpdateParams.none(), requestOptions)
 
         /**
-         * Returns a raw HTTP response for `get /api/v1/sessions`, but is otherwise the same as
-         * [SessionServiceAsync.list].
-         */
-        fun list(): CompletableFuture<HttpResponseFor<SessionListPageAsync>> =
-            list(SessionListParams.none())
-
-        /** @see list */
-        fun list(
-            params: SessionListParams = SessionListParams.none(),
-            requestOptions: RequestOptions = RequestOptions.none(),
-        ): CompletableFuture<HttpResponseFor<SessionListPageAsync>>
-
-        /** @see list */
-        fun list(
-            params: SessionListParams = SessionListParams.none()
-        ): CompletableFuture<HttpResponseFor<SessionListPageAsync>> =
-            list(params, RequestOptions.none())
-
-        /** @see list */
-        fun list(
-            requestOptions: RequestOptions
-        ): CompletableFuture<HttpResponseFor<SessionListPageAsync>> =
-            list(SessionListParams.none(), requestOptions)
-
-        /**
          * Returns a raw HTTP response for `delete /api/v1/sessions/{session_id}`, but is otherwise
          * the same as [SessionServiceAsync.delete].
          */
@@ -452,6 +493,68 @@ interface SessionServiceAsync {
         ): CompletableFuture<HttpResponseFor<CustomChartsSection>>
 
         /**
+         * Returns a raw HTTP response for `get /api/v1/sessions`, but is otherwise the same as
+         * [SessionServiceAsync.listV1].
+         */
+        @Deprecated(
+            "Deprecated: use listV2 instead, which calls GET /api/v2/sessions and pages with a cursor. Will be removed after Apr 1, 2027."
+        )
+        fun listV1(): CompletableFuture<HttpResponseFor<SessionListV1PageAsync>> =
+            listV1(SessionListV1Params.none())
+
+        /** @see listV1 */
+        @Deprecated(
+            "Deprecated: use listV2 instead, which calls GET /api/v2/sessions and pages with a cursor. Will be removed after Apr 1, 2027."
+        )
+        fun listV1(
+            params: SessionListV1Params = SessionListV1Params.none(),
+            requestOptions: RequestOptions = RequestOptions.none(),
+        ): CompletableFuture<HttpResponseFor<SessionListV1PageAsync>>
+
+        /** @see listV1 */
+        @Deprecated(
+            "Deprecated: use listV2 instead, which calls GET /api/v2/sessions and pages with a cursor. Will be removed after Apr 1, 2027."
+        )
+        fun listV1(
+            params: SessionListV1Params = SessionListV1Params.none()
+        ): CompletableFuture<HttpResponseFor<SessionListV1PageAsync>> =
+            listV1(params, RequestOptions.none())
+
+        /** @see listV1 */
+        @Deprecated(
+            "Deprecated: use listV2 instead, which calls GET /api/v2/sessions and pages with a cursor. Will be removed after Apr 1, 2027."
+        )
+        fun listV1(
+            requestOptions: RequestOptions
+        ): CompletableFuture<HttpResponseFor<SessionListV1PageAsync>> =
+            listV1(SessionListV1Params.none(), requestOptions)
+
+        /**
+         * Returns a raw HTTP response for `get /api/v2/sessions`, but is otherwise the same as
+         * [SessionServiceAsync.listV2].
+         */
+        fun listV2(): CompletableFuture<HttpResponseFor<SessionListV2PageAsync>> =
+            listV2(SessionListV2Params.none())
+
+        /** @see listV2 */
+        fun listV2(
+            params: SessionListV2Params = SessionListV2Params.none(),
+            requestOptions: RequestOptions = RequestOptions.none(),
+        ): CompletableFuture<HttpResponseFor<SessionListV2PageAsync>>
+
+        /** @see listV2 */
+        fun listV2(
+            params: SessionListV2Params = SessionListV2Params.none()
+        ): CompletableFuture<HttpResponseFor<SessionListV2PageAsync>> =
+            listV2(params, RequestOptions.none())
+
+        /** @see listV2 */
+        fun listV2(
+            requestOptions: RequestOptions
+        ): CompletableFuture<HttpResponseFor<SessionListV2PageAsync>> =
+            listV2(SessionListV2Params.none(), requestOptions)
+
+        /**
          * Returns a raw HTTP response for `get /api/v1/sessions/resolutions`, but is otherwise the
          * same as [SessionServiceAsync.resolve].
          */
@@ -465,5 +568,30 @@ interface SessionServiceAsync {
             params: SessionResolveParams,
             requestOptions: RequestOptions = RequestOptions.none(),
         ): CompletableFuture<HttpResponseFor<SessionResolveResponse>>
+
+        /**
+         * Returns a raw HTTP response for `get /api/v1/sessions`, but is otherwise the same as
+         * [SessionServiceAsync.list].
+         */
+        fun list(): CompletableFuture<HttpResponseFor<SessionListPageAsync>> =
+            list(SessionListParams.none())
+
+        /** @see list */
+        fun list(
+            params: SessionListParams = SessionListParams.none(),
+            requestOptions: RequestOptions = RequestOptions.none(),
+        ): CompletableFuture<HttpResponseFor<SessionListPageAsync>>
+
+        /** @see list */
+        fun list(
+            params: SessionListParams = SessionListParams.none()
+        ): CompletableFuture<HttpResponseFor<SessionListPageAsync>> =
+            list(params, RequestOptions.none())
+
+        /** @see list */
+        fun list(
+            requestOptions: RequestOptions
+        ): CompletableFuture<HttpResponseFor<SessionListPageAsync>> =
+            list(SessionListParams.none(), requestOptions)
     }
 }

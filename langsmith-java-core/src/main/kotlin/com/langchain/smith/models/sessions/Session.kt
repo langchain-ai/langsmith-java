@@ -1,0 +1,2480 @@
+// File generated from our OpenAPI spec by Stainless.
+
+package com.langchain.smith.models.sessions
+
+import com.fasterxml.jackson.annotation.JsonAnyGetter
+import com.fasterxml.jackson.annotation.JsonAnySetter
+import com.fasterxml.jackson.annotation.JsonCreator
+import com.fasterxml.jackson.annotation.JsonProperty
+import com.langchain.smith.core.Enum
+import com.langchain.smith.core.ExcludeMissing
+import com.langchain.smith.core.JsonField
+import com.langchain.smith.core.JsonMissing
+import com.langchain.smith.core.JsonValue
+import com.langchain.smith.core.checkKnown
+import com.langchain.smith.core.checkRequired
+import com.langchain.smith.core.toImmutable
+import com.langchain.smith.errors.LangChainInvalidDataException
+import java.time.OffsetDateTime
+import java.util.Collections
+import java.util.Objects
+import java.util.Optional
+import kotlin.jvm.optionals.getOrNull
+
+/** TracerSession schema. */
+class Session
+@JsonCreator(mode = JsonCreator.Mode.DISABLED)
+private constructor(
+    private val id: JsonField<String>,
+    private val name: JsonField<String>,
+    private val startTime: JsonField<OffsetDateTime>,
+    private val tenantId: JsonField<String>,
+    private val completionCost: JsonField<Double>,
+    private val completionTokens: JsonField<Long>,
+    private val defaultDatasetId: JsonField<String>,
+    private val description: JsonField<String>,
+    private val endTime: JsonField<OffsetDateTime>,
+    private val errorRate: JsonField<Double>,
+    private val experimentProgress: JsonField<ExperimentProgress>,
+    private val extra: JsonField<Extra>,
+    private val feedbackStats: JsonField<FeedbackStats>,
+    private val firstTokenP50: JsonField<Double>,
+    private val firstTokenP99: JsonField<Double>,
+    private val lastRunStartTime: JsonField<OffsetDateTime>,
+    private val lastRunStartTimeLive: JsonField<OffsetDateTime>,
+    private val latencyP50: JsonField<Double>,
+    private val latencyP99: JsonField<Double>,
+    private val promptCost: JsonField<Double>,
+    private val promptTokens: JsonField<Long>,
+    private val referenceDatasetId: JsonField<String>,
+    private val runCount: JsonField<Long>,
+    private val runFacets: JsonField<List<RunFacet>>,
+    private val sessionFeedbackStats: JsonField<SessionFeedbackStats>,
+    private val streamingRate: JsonField<Double>,
+    private val testRunNumber: JsonField<Long>,
+    private val totalCost: JsonField<Double>,
+    private val totalTokens: JsonField<Long>,
+    private val traceTier: JsonField<TraceTier>,
+    private val additionalProperties: MutableMap<String, JsonValue>,
+) {
+
+    @JsonCreator
+    private constructor(
+        @JsonProperty("id") @ExcludeMissing id: JsonField<String> = JsonMissing.of(),
+        @JsonProperty("name") @ExcludeMissing name: JsonField<String> = JsonMissing.of(),
+        @JsonProperty("start_time")
+        @ExcludeMissing
+        startTime: JsonField<OffsetDateTime> = JsonMissing.of(),
+        @JsonProperty("tenant_id") @ExcludeMissing tenantId: JsonField<String> = JsonMissing.of(),
+        @JsonProperty("completion_cost")
+        @ExcludeMissing
+        completionCost: JsonField<Double> = JsonMissing.of(),
+        @JsonProperty("completion_tokens")
+        @ExcludeMissing
+        completionTokens: JsonField<Long> = JsonMissing.of(),
+        @JsonProperty("default_dataset_id")
+        @ExcludeMissing
+        defaultDatasetId: JsonField<String> = JsonMissing.of(),
+        @JsonProperty("description")
+        @ExcludeMissing
+        description: JsonField<String> = JsonMissing.of(),
+        @JsonProperty("end_time")
+        @ExcludeMissing
+        endTime: JsonField<OffsetDateTime> = JsonMissing.of(),
+        @JsonProperty("error_rate") @ExcludeMissing errorRate: JsonField<Double> = JsonMissing.of(),
+        @JsonProperty("experiment_progress")
+        @ExcludeMissing
+        experimentProgress: JsonField<ExperimentProgress> = JsonMissing.of(),
+        @JsonProperty("extra") @ExcludeMissing extra: JsonField<Extra> = JsonMissing.of(),
+        @JsonProperty("feedback_stats")
+        @ExcludeMissing
+        feedbackStats: JsonField<FeedbackStats> = JsonMissing.of(),
+        @JsonProperty("first_token_p50")
+        @ExcludeMissing
+        firstTokenP50: JsonField<Double> = JsonMissing.of(),
+        @JsonProperty("first_token_p99")
+        @ExcludeMissing
+        firstTokenP99: JsonField<Double> = JsonMissing.of(),
+        @JsonProperty("last_run_start_time")
+        @ExcludeMissing
+        lastRunStartTime: JsonField<OffsetDateTime> = JsonMissing.of(),
+        @JsonProperty("last_run_start_time_live")
+        @ExcludeMissing
+        lastRunStartTimeLive: JsonField<OffsetDateTime> = JsonMissing.of(),
+        @JsonProperty("latency_p50")
+        @ExcludeMissing
+        latencyP50: JsonField<Double> = JsonMissing.of(),
+        @JsonProperty("latency_p99")
+        @ExcludeMissing
+        latencyP99: JsonField<Double> = JsonMissing.of(),
+        @JsonProperty("prompt_cost")
+        @ExcludeMissing
+        promptCost: JsonField<Double> = JsonMissing.of(),
+        @JsonProperty("prompt_tokens")
+        @ExcludeMissing
+        promptTokens: JsonField<Long> = JsonMissing.of(),
+        @JsonProperty("reference_dataset_id")
+        @ExcludeMissing
+        referenceDatasetId: JsonField<String> = JsonMissing.of(),
+        @JsonProperty("run_count") @ExcludeMissing runCount: JsonField<Long> = JsonMissing.of(),
+        @JsonProperty("run_facets")
+        @ExcludeMissing
+        runFacets: JsonField<List<RunFacet>> = JsonMissing.of(),
+        @JsonProperty("session_feedback_stats")
+        @ExcludeMissing
+        sessionFeedbackStats: JsonField<SessionFeedbackStats> = JsonMissing.of(),
+        @JsonProperty("streaming_rate")
+        @ExcludeMissing
+        streamingRate: JsonField<Double> = JsonMissing.of(),
+        @JsonProperty("test_run_number")
+        @ExcludeMissing
+        testRunNumber: JsonField<Long> = JsonMissing.of(),
+        @JsonProperty("total_cost") @ExcludeMissing totalCost: JsonField<Double> = JsonMissing.of(),
+        @JsonProperty("total_tokens")
+        @ExcludeMissing
+        totalTokens: JsonField<Long> = JsonMissing.of(),
+        @JsonProperty("trace_tier")
+        @ExcludeMissing
+        traceTier: JsonField<TraceTier> = JsonMissing.of(),
+    ) : this(
+        id,
+        name,
+        startTime,
+        tenantId,
+        completionCost,
+        completionTokens,
+        defaultDatasetId,
+        description,
+        endTime,
+        errorRate,
+        experimentProgress,
+        extra,
+        feedbackStats,
+        firstTokenP50,
+        firstTokenP99,
+        lastRunStartTime,
+        lastRunStartTimeLive,
+        latencyP50,
+        latencyP99,
+        promptCost,
+        promptTokens,
+        referenceDatasetId,
+        runCount,
+        runFacets,
+        sessionFeedbackStats,
+        streamingRate,
+        testRunNumber,
+        totalCost,
+        totalTokens,
+        traceTier,
+        mutableMapOf(),
+    )
+
+    /**
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type or is
+     *   unexpectedly missing or null (e.g. if the server responded with an unexpected value).
+     */
+    fun id(): String = id.getRequired("id")
+
+    /**
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type or is
+     *   unexpectedly missing or null (e.g. if the server responded with an unexpected value).
+     */
+    fun name(): String = name.getRequired("name")
+
+    /**
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type or is
+     *   unexpectedly missing or null (e.g. if the server responded with an unexpected value).
+     */
+    fun startTime(): OffsetDateTime = startTime.getRequired("start_time")
+
+    /**
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type or is
+     *   unexpectedly missing or null (e.g. if the server responded with an unexpected value).
+     */
+    fun tenantId(): String = tenantId.getRequired("tenant_id")
+
+    /**
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
+    fun completionCost(): Optional<Double> = completionCost.getOptional("completion_cost")
+
+    /**
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
+    fun completionTokens(): Optional<Long> = completionTokens.getOptional("completion_tokens")
+
+    /**
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
+    fun defaultDatasetId(): Optional<String> = defaultDatasetId.getOptional("default_dataset_id")
+
+    /**
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
+    fun description(): Optional<String> = description.getOptional("description")
+
+    /**
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
+    fun endTime(): Optional<OffsetDateTime> = endTime.getOptional("end_time")
+
+    /**
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
+    fun errorRate(): Optional<Double> = errorRate.getOptional("error_rate")
+
+    /**
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
+    fun experimentProgress(): Optional<ExperimentProgress> =
+        experimentProgress.getOptional("experiment_progress")
+
+    /**
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
+    fun extra(): Optional<Extra> = extra.getOptional("extra")
+
+    /**
+     * Feedback on the session's runs, by feedback key.
+     *
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
+    fun feedbackStats(): Optional<FeedbackStats> = feedbackStats.getOptional("feedback_stats")
+
+    /**
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
+    fun firstTokenP50(): Optional<Double> = firstTokenP50.getOptional("first_token_p50")
+
+    /**
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
+    fun firstTokenP99(): Optional<Double> = firstTokenP99.getOptional("first_token_p99")
+
+    /**
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
+    fun lastRunStartTime(): Optional<OffsetDateTime> =
+        lastRunStartTime.getOptional("last_run_start_time")
+
+    /**
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
+    fun lastRunStartTimeLive(): Optional<OffsetDateTime> =
+        lastRunStartTimeLive.getOptional("last_run_start_time_live")
+
+    /**
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
+    fun latencyP50(): Optional<Double> = latencyP50.getOptional("latency_p50")
+
+    /**
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
+    fun latencyP99(): Optional<Double> = latencyP99.getOptional("latency_p99")
+
+    /**
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
+    fun promptCost(): Optional<Double> = promptCost.getOptional("prompt_cost")
+
+    /**
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
+    fun promptTokens(): Optional<Long> = promptTokens.getOptional("prompt_tokens")
+
+    /**
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
+    fun referenceDatasetId(): Optional<String> =
+        referenceDatasetId.getOptional("reference_dataset_id")
+
+    /**
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
+    fun runCount(): Optional<Long> = runCount.getOptional("run_count")
+
+    /**
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
+    fun runFacets(): Optional<List<RunFacet>> = runFacets.getOptional("run_facets")
+
+    /**
+     * Feedback on the session itself, by feedback key.
+     *
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
+    fun sessionFeedbackStats(): Optional<SessionFeedbackStats> =
+        sessionFeedbackStats.getOptional("session_feedback_stats")
+
+    /**
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
+    fun streamingRate(): Optional<Double> = streamingRate.getOptional("streaming_rate")
+
+    /**
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
+    fun testRunNumber(): Optional<Long> = testRunNumber.getOptional("test_run_number")
+
+    /**
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
+    fun totalCost(): Optional<Double> = totalCost.getOptional("total_cost")
+
+    /**
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
+    fun totalTokens(): Optional<Long> = totalTokens.getOptional("total_tokens")
+
+    /**
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
+    fun traceTier(): Optional<TraceTier> = traceTier.getOptional("trace_tier")
+
+    /**
+     * Returns the raw JSON value of [id].
+     *
+     * Unlike [id], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    @JsonProperty("id") @ExcludeMissing fun _id(): JsonField<String> = id
+
+    /**
+     * Returns the raw JSON value of [name].
+     *
+     * Unlike [name], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    @JsonProperty("name") @ExcludeMissing fun _name(): JsonField<String> = name
+
+    /**
+     * Returns the raw JSON value of [startTime].
+     *
+     * Unlike [startTime], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    @JsonProperty("start_time")
+    @ExcludeMissing
+    fun _startTime(): JsonField<OffsetDateTime> = startTime
+
+    /**
+     * Returns the raw JSON value of [tenantId].
+     *
+     * Unlike [tenantId], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    @JsonProperty("tenant_id") @ExcludeMissing fun _tenantId(): JsonField<String> = tenantId
+
+    /**
+     * Returns the raw JSON value of [completionCost].
+     *
+     * Unlike [completionCost], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    @JsonProperty("completion_cost")
+    @ExcludeMissing
+    fun _completionCost(): JsonField<Double> = completionCost
+
+    /**
+     * Returns the raw JSON value of [completionTokens].
+     *
+     * Unlike [completionTokens], this method doesn't throw if the JSON field has an unexpected
+     * type.
+     */
+    @JsonProperty("completion_tokens")
+    @ExcludeMissing
+    fun _completionTokens(): JsonField<Long> = completionTokens
+
+    /**
+     * Returns the raw JSON value of [defaultDatasetId].
+     *
+     * Unlike [defaultDatasetId], this method doesn't throw if the JSON field has an unexpected
+     * type.
+     */
+    @JsonProperty("default_dataset_id")
+    @ExcludeMissing
+    fun _defaultDatasetId(): JsonField<String> = defaultDatasetId
+
+    /**
+     * Returns the raw JSON value of [description].
+     *
+     * Unlike [description], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    @JsonProperty("description") @ExcludeMissing fun _description(): JsonField<String> = description
+
+    /**
+     * Returns the raw JSON value of [endTime].
+     *
+     * Unlike [endTime], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    @JsonProperty("end_time") @ExcludeMissing fun _endTime(): JsonField<OffsetDateTime> = endTime
+
+    /**
+     * Returns the raw JSON value of [errorRate].
+     *
+     * Unlike [errorRate], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    @JsonProperty("error_rate") @ExcludeMissing fun _errorRate(): JsonField<Double> = errorRate
+
+    /**
+     * Returns the raw JSON value of [experimentProgress].
+     *
+     * Unlike [experimentProgress], this method doesn't throw if the JSON field has an unexpected
+     * type.
+     */
+    @JsonProperty("experiment_progress")
+    @ExcludeMissing
+    fun _experimentProgress(): JsonField<ExperimentProgress> = experimentProgress
+
+    /**
+     * Returns the raw JSON value of [extra].
+     *
+     * Unlike [extra], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    @JsonProperty("extra") @ExcludeMissing fun _extra(): JsonField<Extra> = extra
+
+    /**
+     * Returns the raw JSON value of [feedbackStats].
+     *
+     * Unlike [feedbackStats], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    @JsonProperty("feedback_stats")
+    @ExcludeMissing
+    fun _feedbackStats(): JsonField<FeedbackStats> = feedbackStats
+
+    /**
+     * Returns the raw JSON value of [firstTokenP50].
+     *
+     * Unlike [firstTokenP50], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    @JsonProperty("first_token_p50")
+    @ExcludeMissing
+    fun _firstTokenP50(): JsonField<Double> = firstTokenP50
+
+    /**
+     * Returns the raw JSON value of [firstTokenP99].
+     *
+     * Unlike [firstTokenP99], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    @JsonProperty("first_token_p99")
+    @ExcludeMissing
+    fun _firstTokenP99(): JsonField<Double> = firstTokenP99
+
+    /**
+     * Returns the raw JSON value of [lastRunStartTime].
+     *
+     * Unlike [lastRunStartTime], this method doesn't throw if the JSON field has an unexpected
+     * type.
+     */
+    @JsonProperty("last_run_start_time")
+    @ExcludeMissing
+    fun _lastRunStartTime(): JsonField<OffsetDateTime> = lastRunStartTime
+
+    /**
+     * Returns the raw JSON value of [lastRunStartTimeLive].
+     *
+     * Unlike [lastRunStartTimeLive], this method doesn't throw if the JSON field has an unexpected
+     * type.
+     */
+    @JsonProperty("last_run_start_time_live")
+    @ExcludeMissing
+    fun _lastRunStartTimeLive(): JsonField<OffsetDateTime> = lastRunStartTimeLive
+
+    /**
+     * Returns the raw JSON value of [latencyP50].
+     *
+     * Unlike [latencyP50], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    @JsonProperty("latency_p50") @ExcludeMissing fun _latencyP50(): JsonField<Double> = latencyP50
+
+    /**
+     * Returns the raw JSON value of [latencyP99].
+     *
+     * Unlike [latencyP99], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    @JsonProperty("latency_p99") @ExcludeMissing fun _latencyP99(): JsonField<Double> = latencyP99
+
+    /**
+     * Returns the raw JSON value of [promptCost].
+     *
+     * Unlike [promptCost], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    @JsonProperty("prompt_cost") @ExcludeMissing fun _promptCost(): JsonField<Double> = promptCost
+
+    /**
+     * Returns the raw JSON value of [promptTokens].
+     *
+     * Unlike [promptTokens], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    @JsonProperty("prompt_tokens")
+    @ExcludeMissing
+    fun _promptTokens(): JsonField<Long> = promptTokens
+
+    /**
+     * Returns the raw JSON value of [referenceDatasetId].
+     *
+     * Unlike [referenceDatasetId], this method doesn't throw if the JSON field has an unexpected
+     * type.
+     */
+    @JsonProperty("reference_dataset_id")
+    @ExcludeMissing
+    fun _referenceDatasetId(): JsonField<String> = referenceDatasetId
+
+    /**
+     * Returns the raw JSON value of [runCount].
+     *
+     * Unlike [runCount], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    @JsonProperty("run_count") @ExcludeMissing fun _runCount(): JsonField<Long> = runCount
+
+    /**
+     * Returns the raw JSON value of [runFacets].
+     *
+     * Unlike [runFacets], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    @JsonProperty("run_facets")
+    @ExcludeMissing
+    fun _runFacets(): JsonField<List<RunFacet>> = runFacets
+
+    /**
+     * Returns the raw JSON value of [sessionFeedbackStats].
+     *
+     * Unlike [sessionFeedbackStats], this method doesn't throw if the JSON field has an unexpected
+     * type.
+     */
+    @JsonProperty("session_feedback_stats")
+    @ExcludeMissing
+    fun _sessionFeedbackStats(): JsonField<SessionFeedbackStats> = sessionFeedbackStats
+
+    /**
+     * Returns the raw JSON value of [streamingRate].
+     *
+     * Unlike [streamingRate], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    @JsonProperty("streaming_rate")
+    @ExcludeMissing
+    fun _streamingRate(): JsonField<Double> = streamingRate
+
+    /**
+     * Returns the raw JSON value of [testRunNumber].
+     *
+     * Unlike [testRunNumber], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    @JsonProperty("test_run_number")
+    @ExcludeMissing
+    fun _testRunNumber(): JsonField<Long> = testRunNumber
+
+    /**
+     * Returns the raw JSON value of [totalCost].
+     *
+     * Unlike [totalCost], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    @JsonProperty("total_cost") @ExcludeMissing fun _totalCost(): JsonField<Double> = totalCost
+
+    /**
+     * Returns the raw JSON value of [totalTokens].
+     *
+     * Unlike [totalTokens], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    @JsonProperty("total_tokens") @ExcludeMissing fun _totalTokens(): JsonField<Long> = totalTokens
+
+    /**
+     * Returns the raw JSON value of [traceTier].
+     *
+     * Unlike [traceTier], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    @JsonProperty("trace_tier") @ExcludeMissing fun _traceTier(): JsonField<TraceTier> = traceTier
+
+    @JsonAnySetter
+    private fun putAdditionalProperty(key: String, value: JsonValue) {
+        additionalProperties.put(key, value)
+    }
+
+    @JsonAnyGetter
+    @ExcludeMissing
+    fun _additionalProperties(): Map<String, JsonValue> =
+        Collections.unmodifiableMap(additionalProperties)
+
+    fun toBuilder() = Builder().from(this)
+
+    companion object {
+
+        /**
+         * Returns a mutable builder for constructing an instance of [Session].
+         *
+         * The following fields are required:
+         * ```java
+         * .id()
+         * .name()
+         * .startTime()
+         * .tenantId()
+         * ```
+         */
+        @JvmStatic fun builder() = Builder()
+    }
+
+    /** A builder for [Session]. */
+    class Builder internal constructor() {
+
+        private var id: JsonField<String>? = null
+        private var name: JsonField<String>? = null
+        private var startTime: JsonField<OffsetDateTime>? = null
+        private var tenantId: JsonField<String>? = null
+        private var completionCost: JsonField<Double> = JsonMissing.of()
+        private var completionTokens: JsonField<Long> = JsonMissing.of()
+        private var defaultDatasetId: JsonField<String> = JsonMissing.of()
+        private var description: JsonField<String> = JsonMissing.of()
+        private var endTime: JsonField<OffsetDateTime> = JsonMissing.of()
+        private var errorRate: JsonField<Double> = JsonMissing.of()
+        private var experimentProgress: JsonField<ExperimentProgress> = JsonMissing.of()
+        private var extra: JsonField<Extra> = JsonMissing.of()
+        private var feedbackStats: JsonField<FeedbackStats> = JsonMissing.of()
+        private var firstTokenP50: JsonField<Double> = JsonMissing.of()
+        private var firstTokenP99: JsonField<Double> = JsonMissing.of()
+        private var lastRunStartTime: JsonField<OffsetDateTime> = JsonMissing.of()
+        private var lastRunStartTimeLive: JsonField<OffsetDateTime> = JsonMissing.of()
+        private var latencyP50: JsonField<Double> = JsonMissing.of()
+        private var latencyP99: JsonField<Double> = JsonMissing.of()
+        private var promptCost: JsonField<Double> = JsonMissing.of()
+        private var promptTokens: JsonField<Long> = JsonMissing.of()
+        private var referenceDatasetId: JsonField<String> = JsonMissing.of()
+        private var runCount: JsonField<Long> = JsonMissing.of()
+        private var runFacets: JsonField<MutableList<RunFacet>>? = null
+        private var sessionFeedbackStats: JsonField<SessionFeedbackStats> = JsonMissing.of()
+        private var streamingRate: JsonField<Double> = JsonMissing.of()
+        private var testRunNumber: JsonField<Long> = JsonMissing.of()
+        private var totalCost: JsonField<Double> = JsonMissing.of()
+        private var totalTokens: JsonField<Long> = JsonMissing.of()
+        private var traceTier: JsonField<TraceTier> = JsonMissing.of()
+        private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
+
+        @JvmSynthetic
+        internal fun from(session: Session) = apply {
+            id = session.id
+            name = session.name
+            startTime = session.startTime
+            tenantId = session.tenantId
+            completionCost = session.completionCost
+            completionTokens = session.completionTokens
+            defaultDatasetId = session.defaultDatasetId
+            description = session.description
+            endTime = session.endTime
+            errorRate = session.errorRate
+            experimentProgress = session.experimentProgress
+            extra = session.extra
+            feedbackStats = session.feedbackStats
+            firstTokenP50 = session.firstTokenP50
+            firstTokenP99 = session.firstTokenP99
+            lastRunStartTime = session.lastRunStartTime
+            lastRunStartTimeLive = session.lastRunStartTimeLive
+            latencyP50 = session.latencyP50
+            latencyP99 = session.latencyP99
+            promptCost = session.promptCost
+            promptTokens = session.promptTokens
+            referenceDatasetId = session.referenceDatasetId
+            runCount = session.runCount
+            runFacets = session.runFacets.map { it.toMutableList() }
+            sessionFeedbackStats = session.sessionFeedbackStats
+            streamingRate = session.streamingRate
+            testRunNumber = session.testRunNumber
+            totalCost = session.totalCost
+            totalTokens = session.totalTokens
+            traceTier = session.traceTier
+            additionalProperties = session.additionalProperties.toMutableMap()
+        }
+
+        fun id(id: String) = id(JsonField.of(id))
+
+        /**
+         * Sets [Builder.id] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.id] with a well-typed [String] value instead. This
+         * method is primarily for setting the field to an undocumented or not yet supported value.
+         */
+        fun id(id: JsonField<String>) = apply { this.id = id }
+
+        fun name(name: String) = name(JsonField.of(name))
+
+        /**
+         * Sets [Builder.name] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.name] with a well-typed [String] value instead. This
+         * method is primarily for setting the field to an undocumented or not yet supported value.
+         */
+        fun name(name: JsonField<String>) = apply { this.name = name }
+
+        fun startTime(startTime: OffsetDateTime) = startTime(JsonField.of(startTime))
+
+        /**
+         * Sets [Builder.startTime] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.startTime] with a well-typed [OffsetDateTime] value
+         * instead. This method is primarily for setting the field to an undocumented or not yet
+         * supported value.
+         */
+        fun startTime(startTime: JsonField<OffsetDateTime>) = apply { this.startTime = startTime }
+
+        fun tenantId(tenantId: String) = tenantId(JsonField.of(tenantId))
+
+        /**
+         * Sets [Builder.tenantId] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.tenantId] with a well-typed [String] value instead. This
+         * method is primarily for setting the field to an undocumented or not yet supported value.
+         */
+        fun tenantId(tenantId: JsonField<String>) = apply { this.tenantId = tenantId }
+
+        fun completionCost(completionCost: Double?) =
+            completionCost(JsonField.ofNullable(completionCost))
+
+        /**
+         * Alias for [Builder.completionCost].
+         *
+         * This unboxed primitive overload exists for backwards compatibility.
+         */
+        fun completionCost(completionCost: Double) = completionCost(completionCost as Double?)
+
+        /** Alias for calling [Builder.completionCost] with `completionCost.orElse(null)`. */
+        fun completionCost(completionCost: Optional<Double>) =
+            completionCost(completionCost.getOrNull())
+
+        /**
+         * Sets [Builder.completionCost] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.completionCost] with a well-typed [Double] value
+         * instead. This method is primarily for setting the field to an undocumented or not yet
+         * supported value.
+         */
+        fun completionCost(completionCost: JsonField<Double>) = apply {
+            this.completionCost = completionCost
+        }
+
+        fun completionTokens(completionTokens: Long?) =
+            completionTokens(JsonField.ofNullable(completionTokens))
+
+        /**
+         * Alias for [Builder.completionTokens].
+         *
+         * This unboxed primitive overload exists for backwards compatibility.
+         */
+        fun completionTokens(completionTokens: Long) = completionTokens(completionTokens as Long?)
+
+        /** Alias for calling [Builder.completionTokens] with `completionTokens.orElse(null)`. */
+        fun completionTokens(completionTokens: Optional<Long>) =
+            completionTokens(completionTokens.getOrNull())
+
+        /**
+         * Sets [Builder.completionTokens] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.completionTokens] with a well-typed [Long] value
+         * instead. This method is primarily for setting the field to an undocumented or not yet
+         * supported value.
+         */
+        fun completionTokens(completionTokens: JsonField<Long>) = apply {
+            this.completionTokens = completionTokens
+        }
+
+        fun defaultDatasetId(defaultDatasetId: String?) =
+            defaultDatasetId(JsonField.ofNullable(defaultDatasetId))
+
+        /** Alias for calling [Builder.defaultDatasetId] with `defaultDatasetId.orElse(null)`. */
+        fun defaultDatasetId(defaultDatasetId: Optional<String>) =
+            defaultDatasetId(defaultDatasetId.getOrNull())
+
+        /**
+         * Sets [Builder.defaultDatasetId] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.defaultDatasetId] with a well-typed [String] value
+         * instead. This method is primarily for setting the field to an undocumented or not yet
+         * supported value.
+         */
+        fun defaultDatasetId(defaultDatasetId: JsonField<String>) = apply {
+            this.defaultDatasetId = defaultDatasetId
+        }
+
+        fun description(description: String?) = description(JsonField.ofNullable(description))
+
+        /** Alias for calling [Builder.description] with `description.orElse(null)`. */
+        fun description(description: Optional<String>) = description(description.getOrNull())
+
+        /**
+         * Sets [Builder.description] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.description] with a well-typed [String] value instead.
+         * This method is primarily for setting the field to an undocumented or not yet supported
+         * value.
+         */
+        fun description(description: JsonField<String>) = apply { this.description = description }
+
+        fun endTime(endTime: OffsetDateTime?) = endTime(JsonField.ofNullable(endTime))
+
+        /** Alias for calling [Builder.endTime] with `endTime.orElse(null)`. */
+        fun endTime(endTime: Optional<OffsetDateTime>) = endTime(endTime.getOrNull())
+
+        /**
+         * Sets [Builder.endTime] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.endTime] with a well-typed [OffsetDateTime] value
+         * instead. This method is primarily for setting the field to an undocumented or not yet
+         * supported value.
+         */
+        fun endTime(endTime: JsonField<OffsetDateTime>) = apply { this.endTime = endTime }
+
+        fun errorRate(errorRate: Double?) = errorRate(JsonField.ofNullable(errorRate))
+
+        /**
+         * Alias for [Builder.errorRate].
+         *
+         * This unboxed primitive overload exists for backwards compatibility.
+         */
+        fun errorRate(errorRate: Double) = errorRate(errorRate as Double?)
+
+        /** Alias for calling [Builder.errorRate] with `errorRate.orElse(null)`. */
+        fun errorRate(errorRate: Optional<Double>) = errorRate(errorRate.getOrNull())
+
+        /**
+         * Sets [Builder.errorRate] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.errorRate] with a well-typed [Double] value instead.
+         * This method is primarily for setting the field to an undocumented or not yet supported
+         * value.
+         */
+        fun errorRate(errorRate: JsonField<Double>) = apply { this.errorRate = errorRate }
+
+        fun experimentProgress(experimentProgress: ExperimentProgress?) =
+            experimentProgress(JsonField.ofNullable(experimentProgress))
+
+        /**
+         * Alias for calling [Builder.experimentProgress] with `experimentProgress.orElse(null)`.
+         */
+        fun experimentProgress(experimentProgress: Optional<ExperimentProgress>) =
+            experimentProgress(experimentProgress.getOrNull())
+
+        /**
+         * Sets [Builder.experimentProgress] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.experimentProgress] with a well-typed
+         * [ExperimentProgress] value instead. This method is primarily for setting the field to an
+         * undocumented or not yet supported value.
+         */
+        fun experimentProgress(experimentProgress: JsonField<ExperimentProgress>) = apply {
+            this.experimentProgress = experimentProgress
+        }
+
+        fun extra(extra: Extra?) = extra(JsonField.ofNullable(extra))
+
+        /** Alias for calling [Builder.extra] with `extra.orElse(null)`. */
+        fun extra(extra: Optional<Extra>) = extra(extra.getOrNull())
+
+        /**
+         * Sets [Builder.extra] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.extra] with a well-typed [Extra] value instead. This
+         * method is primarily for setting the field to an undocumented or not yet supported value.
+         */
+        fun extra(extra: JsonField<Extra>) = apply { this.extra = extra }
+
+        /** Feedback on the session's runs, by feedback key. */
+        fun feedbackStats(feedbackStats: FeedbackStats?) =
+            feedbackStats(JsonField.ofNullable(feedbackStats))
+
+        /** Alias for calling [Builder.feedbackStats] with `feedbackStats.orElse(null)`. */
+        fun feedbackStats(feedbackStats: Optional<FeedbackStats>) =
+            feedbackStats(feedbackStats.getOrNull())
+
+        /**
+         * Sets [Builder.feedbackStats] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.feedbackStats] with a well-typed [FeedbackStats] value
+         * instead. This method is primarily for setting the field to an undocumented or not yet
+         * supported value.
+         */
+        fun feedbackStats(feedbackStats: JsonField<FeedbackStats>) = apply {
+            this.feedbackStats = feedbackStats
+        }
+
+        fun firstTokenP50(firstTokenP50: Double?) =
+            firstTokenP50(JsonField.ofNullable(firstTokenP50))
+
+        /**
+         * Alias for [Builder.firstTokenP50].
+         *
+         * This unboxed primitive overload exists for backwards compatibility.
+         */
+        fun firstTokenP50(firstTokenP50: Double) = firstTokenP50(firstTokenP50 as Double?)
+
+        /** Alias for calling [Builder.firstTokenP50] with `firstTokenP50.orElse(null)`. */
+        fun firstTokenP50(firstTokenP50: Optional<Double>) =
+            firstTokenP50(firstTokenP50.getOrNull())
+
+        /**
+         * Sets [Builder.firstTokenP50] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.firstTokenP50] with a well-typed [Double] value instead.
+         * This method is primarily for setting the field to an undocumented or not yet supported
+         * value.
+         */
+        fun firstTokenP50(firstTokenP50: JsonField<Double>) = apply {
+            this.firstTokenP50 = firstTokenP50
+        }
+
+        fun firstTokenP99(firstTokenP99: Double?) =
+            firstTokenP99(JsonField.ofNullable(firstTokenP99))
+
+        /**
+         * Alias for [Builder.firstTokenP99].
+         *
+         * This unboxed primitive overload exists for backwards compatibility.
+         */
+        fun firstTokenP99(firstTokenP99: Double) = firstTokenP99(firstTokenP99 as Double?)
+
+        /** Alias for calling [Builder.firstTokenP99] with `firstTokenP99.orElse(null)`. */
+        fun firstTokenP99(firstTokenP99: Optional<Double>) =
+            firstTokenP99(firstTokenP99.getOrNull())
+
+        /**
+         * Sets [Builder.firstTokenP99] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.firstTokenP99] with a well-typed [Double] value instead.
+         * This method is primarily for setting the field to an undocumented or not yet supported
+         * value.
+         */
+        fun firstTokenP99(firstTokenP99: JsonField<Double>) = apply {
+            this.firstTokenP99 = firstTokenP99
+        }
+
+        fun lastRunStartTime(lastRunStartTime: OffsetDateTime?) =
+            lastRunStartTime(JsonField.ofNullable(lastRunStartTime))
+
+        /** Alias for calling [Builder.lastRunStartTime] with `lastRunStartTime.orElse(null)`. */
+        fun lastRunStartTime(lastRunStartTime: Optional<OffsetDateTime>) =
+            lastRunStartTime(lastRunStartTime.getOrNull())
+
+        /**
+         * Sets [Builder.lastRunStartTime] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.lastRunStartTime] with a well-typed [OffsetDateTime]
+         * value instead. This method is primarily for setting the field to an undocumented or not
+         * yet supported value.
+         */
+        fun lastRunStartTime(lastRunStartTime: JsonField<OffsetDateTime>) = apply {
+            this.lastRunStartTime = lastRunStartTime
+        }
+
+        fun lastRunStartTimeLive(lastRunStartTimeLive: OffsetDateTime?) =
+            lastRunStartTimeLive(JsonField.ofNullable(lastRunStartTimeLive))
+
+        /**
+         * Alias for calling [Builder.lastRunStartTimeLive] with
+         * `lastRunStartTimeLive.orElse(null)`.
+         */
+        fun lastRunStartTimeLive(lastRunStartTimeLive: Optional<OffsetDateTime>) =
+            lastRunStartTimeLive(lastRunStartTimeLive.getOrNull())
+
+        /**
+         * Sets [Builder.lastRunStartTimeLive] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.lastRunStartTimeLive] with a well-typed [OffsetDateTime]
+         * value instead. This method is primarily for setting the field to an undocumented or not
+         * yet supported value.
+         */
+        fun lastRunStartTimeLive(lastRunStartTimeLive: JsonField<OffsetDateTime>) = apply {
+            this.lastRunStartTimeLive = lastRunStartTimeLive
+        }
+
+        fun latencyP50(latencyP50: Double?) = latencyP50(JsonField.ofNullable(latencyP50))
+
+        /**
+         * Alias for [Builder.latencyP50].
+         *
+         * This unboxed primitive overload exists for backwards compatibility.
+         */
+        fun latencyP50(latencyP50: Double) = latencyP50(latencyP50 as Double?)
+
+        /** Alias for calling [Builder.latencyP50] with `latencyP50.orElse(null)`. */
+        fun latencyP50(latencyP50: Optional<Double>) = latencyP50(latencyP50.getOrNull())
+
+        /**
+         * Sets [Builder.latencyP50] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.latencyP50] with a well-typed [Double] value instead.
+         * This method is primarily for setting the field to an undocumented or not yet supported
+         * value.
+         */
+        fun latencyP50(latencyP50: JsonField<Double>) = apply { this.latencyP50 = latencyP50 }
+
+        fun latencyP99(latencyP99: Double?) = latencyP99(JsonField.ofNullable(latencyP99))
+
+        /**
+         * Alias for [Builder.latencyP99].
+         *
+         * This unboxed primitive overload exists for backwards compatibility.
+         */
+        fun latencyP99(latencyP99: Double) = latencyP99(latencyP99 as Double?)
+
+        /** Alias for calling [Builder.latencyP99] with `latencyP99.orElse(null)`. */
+        fun latencyP99(latencyP99: Optional<Double>) = latencyP99(latencyP99.getOrNull())
+
+        /**
+         * Sets [Builder.latencyP99] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.latencyP99] with a well-typed [Double] value instead.
+         * This method is primarily for setting the field to an undocumented or not yet supported
+         * value.
+         */
+        fun latencyP99(latencyP99: JsonField<Double>) = apply { this.latencyP99 = latencyP99 }
+
+        fun promptCost(promptCost: Double?) = promptCost(JsonField.ofNullable(promptCost))
+
+        /**
+         * Alias for [Builder.promptCost].
+         *
+         * This unboxed primitive overload exists for backwards compatibility.
+         */
+        fun promptCost(promptCost: Double) = promptCost(promptCost as Double?)
+
+        /** Alias for calling [Builder.promptCost] with `promptCost.orElse(null)`. */
+        fun promptCost(promptCost: Optional<Double>) = promptCost(promptCost.getOrNull())
+
+        /**
+         * Sets [Builder.promptCost] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.promptCost] with a well-typed [Double] value instead.
+         * This method is primarily for setting the field to an undocumented or not yet supported
+         * value.
+         */
+        fun promptCost(promptCost: JsonField<Double>) = apply { this.promptCost = promptCost }
+
+        fun promptTokens(promptTokens: Long?) = promptTokens(JsonField.ofNullable(promptTokens))
+
+        /**
+         * Alias for [Builder.promptTokens].
+         *
+         * This unboxed primitive overload exists for backwards compatibility.
+         */
+        fun promptTokens(promptTokens: Long) = promptTokens(promptTokens as Long?)
+
+        /** Alias for calling [Builder.promptTokens] with `promptTokens.orElse(null)`. */
+        fun promptTokens(promptTokens: Optional<Long>) = promptTokens(promptTokens.getOrNull())
+
+        /**
+         * Sets [Builder.promptTokens] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.promptTokens] with a well-typed [Long] value instead.
+         * This method is primarily for setting the field to an undocumented or not yet supported
+         * value.
+         */
+        fun promptTokens(promptTokens: JsonField<Long>) = apply { this.promptTokens = promptTokens }
+
+        fun referenceDatasetId(referenceDatasetId: String?) =
+            referenceDatasetId(JsonField.ofNullable(referenceDatasetId))
+
+        /**
+         * Alias for calling [Builder.referenceDatasetId] with `referenceDatasetId.orElse(null)`.
+         */
+        fun referenceDatasetId(referenceDatasetId: Optional<String>) =
+            referenceDatasetId(referenceDatasetId.getOrNull())
+
+        /**
+         * Sets [Builder.referenceDatasetId] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.referenceDatasetId] with a well-typed [String] value
+         * instead. This method is primarily for setting the field to an undocumented or not yet
+         * supported value.
+         */
+        fun referenceDatasetId(referenceDatasetId: JsonField<String>) = apply {
+            this.referenceDatasetId = referenceDatasetId
+        }
+
+        fun runCount(runCount: Long?) = runCount(JsonField.ofNullable(runCount))
+
+        /**
+         * Alias for [Builder.runCount].
+         *
+         * This unboxed primitive overload exists for backwards compatibility.
+         */
+        fun runCount(runCount: Long) = runCount(runCount as Long?)
+
+        /** Alias for calling [Builder.runCount] with `runCount.orElse(null)`. */
+        fun runCount(runCount: Optional<Long>) = runCount(runCount.getOrNull())
+
+        /**
+         * Sets [Builder.runCount] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.runCount] with a well-typed [Long] value instead. This
+         * method is primarily for setting the field to an undocumented or not yet supported value.
+         */
+        fun runCount(runCount: JsonField<Long>) = apply { this.runCount = runCount }
+
+        fun runFacets(runFacets: List<RunFacet>?) = runFacets(JsonField.ofNullable(runFacets))
+
+        /** Alias for calling [Builder.runFacets] with `runFacets.orElse(null)`. */
+        fun runFacets(runFacets: Optional<List<RunFacet>>) = runFacets(runFacets.getOrNull())
+
+        /**
+         * Sets [Builder.runFacets] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.runFacets] with a well-typed `List<RunFacet>` value
+         * instead. This method is primarily for setting the field to an undocumented or not yet
+         * supported value.
+         */
+        fun runFacets(runFacets: JsonField<List<RunFacet>>) = apply {
+            this.runFacets = runFacets.map { it.toMutableList() }
+        }
+
+        /**
+         * Adds a single [RunFacet] to [runFacets].
+         *
+         * @throws IllegalStateException if the field was previously set to a non-list.
+         */
+        fun addRunFacet(runFacet: RunFacet) = apply {
+            runFacets =
+                (runFacets ?: JsonField.of(mutableListOf())).also {
+                    checkKnown("runFacets", it).add(runFacet)
+                }
+        }
+
+        /** Feedback on the session itself, by feedback key. */
+        fun sessionFeedbackStats(sessionFeedbackStats: SessionFeedbackStats?) =
+            sessionFeedbackStats(JsonField.ofNullable(sessionFeedbackStats))
+
+        /**
+         * Alias for calling [Builder.sessionFeedbackStats] with
+         * `sessionFeedbackStats.orElse(null)`.
+         */
+        fun sessionFeedbackStats(sessionFeedbackStats: Optional<SessionFeedbackStats>) =
+            sessionFeedbackStats(sessionFeedbackStats.getOrNull())
+
+        /**
+         * Sets [Builder.sessionFeedbackStats] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.sessionFeedbackStats] with a well-typed
+         * [SessionFeedbackStats] value instead. This method is primarily for setting the field to
+         * an undocumented or not yet supported value.
+         */
+        fun sessionFeedbackStats(sessionFeedbackStats: JsonField<SessionFeedbackStats>) = apply {
+            this.sessionFeedbackStats = sessionFeedbackStats
+        }
+
+        fun streamingRate(streamingRate: Double?) =
+            streamingRate(JsonField.ofNullable(streamingRate))
+
+        /**
+         * Alias for [Builder.streamingRate].
+         *
+         * This unboxed primitive overload exists for backwards compatibility.
+         */
+        fun streamingRate(streamingRate: Double) = streamingRate(streamingRate as Double?)
+
+        /** Alias for calling [Builder.streamingRate] with `streamingRate.orElse(null)`. */
+        fun streamingRate(streamingRate: Optional<Double>) =
+            streamingRate(streamingRate.getOrNull())
+
+        /**
+         * Sets [Builder.streamingRate] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.streamingRate] with a well-typed [Double] value instead.
+         * This method is primarily for setting the field to an undocumented or not yet supported
+         * value.
+         */
+        fun streamingRate(streamingRate: JsonField<Double>) = apply {
+            this.streamingRate = streamingRate
+        }
+
+        fun testRunNumber(testRunNumber: Long?) = testRunNumber(JsonField.ofNullable(testRunNumber))
+
+        /**
+         * Alias for [Builder.testRunNumber].
+         *
+         * This unboxed primitive overload exists for backwards compatibility.
+         */
+        fun testRunNumber(testRunNumber: Long) = testRunNumber(testRunNumber as Long?)
+
+        /** Alias for calling [Builder.testRunNumber] with `testRunNumber.orElse(null)`. */
+        fun testRunNumber(testRunNumber: Optional<Long>) = testRunNumber(testRunNumber.getOrNull())
+
+        /**
+         * Sets [Builder.testRunNumber] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.testRunNumber] with a well-typed [Long] value instead.
+         * This method is primarily for setting the field to an undocumented or not yet supported
+         * value.
+         */
+        fun testRunNumber(testRunNumber: JsonField<Long>) = apply {
+            this.testRunNumber = testRunNumber
+        }
+
+        fun totalCost(totalCost: Double?) = totalCost(JsonField.ofNullable(totalCost))
+
+        /**
+         * Alias for [Builder.totalCost].
+         *
+         * This unboxed primitive overload exists for backwards compatibility.
+         */
+        fun totalCost(totalCost: Double) = totalCost(totalCost as Double?)
+
+        /** Alias for calling [Builder.totalCost] with `totalCost.orElse(null)`. */
+        fun totalCost(totalCost: Optional<Double>) = totalCost(totalCost.getOrNull())
+
+        /**
+         * Sets [Builder.totalCost] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.totalCost] with a well-typed [Double] value instead.
+         * This method is primarily for setting the field to an undocumented or not yet supported
+         * value.
+         */
+        fun totalCost(totalCost: JsonField<Double>) = apply { this.totalCost = totalCost }
+
+        fun totalTokens(totalTokens: Long?) = totalTokens(JsonField.ofNullable(totalTokens))
+
+        /**
+         * Alias for [Builder.totalTokens].
+         *
+         * This unboxed primitive overload exists for backwards compatibility.
+         */
+        fun totalTokens(totalTokens: Long) = totalTokens(totalTokens as Long?)
+
+        /** Alias for calling [Builder.totalTokens] with `totalTokens.orElse(null)`. */
+        fun totalTokens(totalTokens: Optional<Long>) = totalTokens(totalTokens.getOrNull())
+
+        /**
+         * Sets [Builder.totalTokens] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.totalTokens] with a well-typed [Long] value instead.
+         * This method is primarily for setting the field to an undocumented or not yet supported
+         * value.
+         */
+        fun totalTokens(totalTokens: JsonField<Long>) = apply { this.totalTokens = totalTokens }
+
+        fun traceTier(traceTier: TraceTier?) = traceTier(JsonField.ofNullable(traceTier))
+
+        /** Alias for calling [Builder.traceTier] with `traceTier.orElse(null)`. */
+        fun traceTier(traceTier: Optional<TraceTier>) = traceTier(traceTier.getOrNull())
+
+        /**
+         * Sets [Builder.traceTier] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.traceTier] with a well-typed [TraceTier] value instead.
+         * This method is primarily for setting the field to an undocumented or not yet supported
+         * value.
+         */
+        fun traceTier(traceTier: JsonField<TraceTier>) = apply { this.traceTier = traceTier }
+
+        fun additionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
+            this.additionalProperties.clear()
+            putAllAdditionalProperties(additionalProperties)
+        }
+
+        fun putAdditionalProperty(key: String, value: JsonValue) = apply {
+            additionalProperties.put(key, value)
+        }
+
+        fun putAllAdditionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
+            this.additionalProperties.putAll(additionalProperties)
+        }
+
+        fun removeAdditionalProperty(key: String) = apply { additionalProperties.remove(key) }
+
+        fun removeAllAdditionalProperties(keys: Set<String>) = apply {
+            keys.forEach(::removeAdditionalProperty)
+        }
+
+        /**
+         * Returns an immutable instance of [Session].
+         *
+         * Further updates to this [Builder] will not mutate the returned instance.
+         *
+         * The following fields are required:
+         * ```java
+         * .id()
+         * .name()
+         * .startTime()
+         * .tenantId()
+         * ```
+         *
+         * @throws IllegalStateException if any required field is unset.
+         */
+        fun build(): Session =
+            Session(
+                checkRequired("id", id),
+                checkRequired("name", name),
+                checkRequired("startTime", startTime),
+                checkRequired("tenantId", tenantId),
+                completionCost,
+                completionTokens,
+                defaultDatasetId,
+                description,
+                endTime,
+                errorRate,
+                experimentProgress,
+                extra,
+                feedbackStats,
+                firstTokenP50,
+                firstTokenP99,
+                lastRunStartTime,
+                lastRunStartTimeLive,
+                latencyP50,
+                latencyP99,
+                promptCost,
+                promptTokens,
+                referenceDatasetId,
+                runCount,
+                (runFacets ?: JsonMissing.of()).map { it.toImmutable() },
+                sessionFeedbackStats,
+                streamingRate,
+                testRunNumber,
+                totalCost,
+                totalTokens,
+                traceTier,
+                additionalProperties.toMutableMap(),
+            )
+    }
+
+    private var validated: Boolean = false
+
+    /**
+     * Validates that the types of all values in this object match their expected types recursively.
+     *
+     * This method is _not_ forwards compatible with new types from the API for existing fields.
+     *
+     * @throws LangChainInvalidDataException if any value type in this object doesn't match its
+     *   expected type.
+     */
+    fun validate(): Session = apply {
+        if (validated) {
+            return@apply
+        }
+
+        id()
+        name()
+        startTime()
+        tenantId()
+        completionCost()
+        completionTokens()
+        defaultDatasetId()
+        description()
+        endTime()
+        errorRate()
+        experimentProgress().ifPresent { it.validate() }
+        extra().ifPresent { it.validate() }
+        feedbackStats().ifPresent { it.validate() }
+        firstTokenP50()
+        firstTokenP99()
+        lastRunStartTime()
+        lastRunStartTimeLive()
+        latencyP50()
+        latencyP99()
+        promptCost()
+        promptTokens()
+        referenceDatasetId()
+        runCount()
+        runFacets().ifPresent { it.forEach { it.validate() } }
+        sessionFeedbackStats().ifPresent { it.validate() }
+        streamingRate()
+        testRunNumber()
+        totalCost()
+        totalTokens()
+        traceTier().ifPresent { it.validate() }
+        validated = true
+    }
+
+    fun isValid(): Boolean =
+        try {
+            validate()
+            true
+        } catch (e: LangChainInvalidDataException) {
+            false
+        }
+
+    /**
+     * Returns a score indicating how many valid values are contained in this object recursively.
+     *
+     * Used for best match union deserialization.
+     */
+    @JvmSynthetic
+    internal fun validity(): Int =
+        (if (id.asKnown().isPresent) 1 else 0) +
+            (if (name.asKnown().isPresent) 1 else 0) +
+            (if (startTime.asKnown().isPresent) 1 else 0) +
+            (if (tenantId.asKnown().isPresent) 1 else 0) +
+            (if (completionCost.asKnown().isPresent) 1 else 0) +
+            (if (completionTokens.asKnown().isPresent) 1 else 0) +
+            (if (defaultDatasetId.asKnown().isPresent) 1 else 0) +
+            (if (description.asKnown().isPresent) 1 else 0) +
+            (if (endTime.asKnown().isPresent) 1 else 0) +
+            (if (errorRate.asKnown().isPresent) 1 else 0) +
+            (experimentProgress.asKnown().getOrNull()?.validity() ?: 0) +
+            (extra.asKnown().getOrNull()?.validity() ?: 0) +
+            (feedbackStats.asKnown().getOrNull()?.validity() ?: 0) +
+            (if (firstTokenP50.asKnown().isPresent) 1 else 0) +
+            (if (firstTokenP99.asKnown().isPresent) 1 else 0) +
+            (if (lastRunStartTime.asKnown().isPresent) 1 else 0) +
+            (if (lastRunStartTimeLive.asKnown().isPresent) 1 else 0) +
+            (if (latencyP50.asKnown().isPresent) 1 else 0) +
+            (if (latencyP99.asKnown().isPresent) 1 else 0) +
+            (if (promptCost.asKnown().isPresent) 1 else 0) +
+            (if (promptTokens.asKnown().isPresent) 1 else 0) +
+            (if (referenceDatasetId.asKnown().isPresent) 1 else 0) +
+            (if (runCount.asKnown().isPresent) 1 else 0) +
+            (runFacets.asKnown().getOrNull()?.sumOf { it.validity().toInt() } ?: 0) +
+            (sessionFeedbackStats.asKnown().getOrNull()?.validity() ?: 0) +
+            (if (streamingRate.asKnown().isPresent) 1 else 0) +
+            (if (testRunNumber.asKnown().isPresent) 1 else 0) +
+            (if (totalCost.asKnown().isPresent) 1 else 0) +
+            (if (totalTokens.asKnown().isPresent) 1 else 0) +
+            (traceTier.asKnown().getOrNull()?.validity() ?: 0)
+
+    class ExperimentProgress
+    @JsonCreator(mode = JsonCreator.Mode.DISABLED)
+    private constructor(
+        private val evaluatorProgress: JsonField<EvaluatorProgress>,
+        private val expectedRunCount: JsonField<Long>,
+        private val runProgress: JsonField<Double>,
+        private val additionalProperties: MutableMap<String, JsonValue>,
+    ) {
+
+        @JsonCreator
+        private constructor(
+            @JsonProperty("evaluator_progress")
+            @ExcludeMissing
+            evaluatorProgress: JsonField<EvaluatorProgress> = JsonMissing.of(),
+            @JsonProperty("expected_run_count")
+            @ExcludeMissing
+            expectedRunCount: JsonField<Long> = JsonMissing.of(),
+            @JsonProperty("run_progress")
+            @ExcludeMissing
+            runProgress: JsonField<Double> = JsonMissing.of(),
+        ) : this(evaluatorProgress, expectedRunCount, runProgress, mutableMapOf())
+
+        /**
+         * @throws LangChainInvalidDataException if the JSON field has an unexpected type or is
+         *   unexpectedly missing or null (e.g. if the server responded with an unexpected value).
+         */
+        fun evaluatorProgress(): EvaluatorProgress =
+            evaluatorProgress.getRequired("evaluator_progress")
+
+        /**
+         * @throws LangChainInvalidDataException if the JSON field has an unexpected type or is
+         *   unexpectedly missing or null (e.g. if the server responded with an unexpected value).
+         */
+        fun expectedRunCount(): Long = expectedRunCount.getRequired("expected_run_count")
+
+        /**
+         * @throws LangChainInvalidDataException if the JSON field has an unexpected type or is
+         *   unexpectedly missing or null (e.g. if the server responded with an unexpected value).
+         */
+        fun runProgress(): Double = runProgress.getRequired("run_progress")
+
+        /**
+         * Returns the raw JSON value of [evaluatorProgress].
+         *
+         * Unlike [evaluatorProgress], this method doesn't throw if the JSON field has an unexpected
+         * type.
+         */
+        @JsonProperty("evaluator_progress")
+        @ExcludeMissing
+        fun _evaluatorProgress(): JsonField<EvaluatorProgress> = evaluatorProgress
+
+        /**
+         * Returns the raw JSON value of [expectedRunCount].
+         *
+         * Unlike [expectedRunCount], this method doesn't throw if the JSON field has an unexpected
+         * type.
+         */
+        @JsonProperty("expected_run_count")
+        @ExcludeMissing
+        fun _expectedRunCount(): JsonField<Long> = expectedRunCount
+
+        /**
+         * Returns the raw JSON value of [runProgress].
+         *
+         * Unlike [runProgress], this method doesn't throw if the JSON field has an unexpected type.
+         */
+        @JsonProperty("run_progress")
+        @ExcludeMissing
+        fun _runProgress(): JsonField<Double> = runProgress
+
+        @JsonAnySetter
+        private fun putAdditionalProperty(key: String, value: JsonValue) {
+            additionalProperties.put(key, value)
+        }
+
+        @JsonAnyGetter
+        @ExcludeMissing
+        fun _additionalProperties(): Map<String, JsonValue> =
+            Collections.unmodifiableMap(additionalProperties)
+
+        fun toBuilder() = Builder().from(this)
+
+        companion object {
+
+            /**
+             * Returns a mutable builder for constructing an instance of [ExperimentProgress].
+             *
+             * The following fields are required:
+             * ```java
+             * .evaluatorProgress()
+             * .expectedRunCount()
+             * .runProgress()
+             * ```
+             */
+            @JvmStatic fun builder() = Builder()
+        }
+
+        /** A builder for [ExperimentProgress]. */
+        class Builder internal constructor() {
+
+            private var evaluatorProgress: JsonField<EvaluatorProgress>? = null
+            private var expectedRunCount: JsonField<Long>? = null
+            private var runProgress: JsonField<Double>? = null
+            private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
+
+            @JvmSynthetic
+            internal fun from(experimentProgress: ExperimentProgress) = apply {
+                evaluatorProgress = experimentProgress.evaluatorProgress
+                expectedRunCount = experimentProgress.expectedRunCount
+                runProgress = experimentProgress.runProgress
+                additionalProperties = experimentProgress.additionalProperties.toMutableMap()
+            }
+
+            fun evaluatorProgress(evaluatorProgress: EvaluatorProgress) =
+                evaluatorProgress(JsonField.of(evaluatorProgress))
+
+            /**
+             * Sets [Builder.evaluatorProgress] to an arbitrary JSON value.
+             *
+             * You should usually call [Builder.evaluatorProgress] with a well-typed
+             * [EvaluatorProgress] value instead. This method is primarily for setting the field to
+             * an undocumented or not yet supported value.
+             */
+            fun evaluatorProgress(evaluatorProgress: JsonField<EvaluatorProgress>) = apply {
+                this.evaluatorProgress = evaluatorProgress
+            }
+
+            fun expectedRunCount(expectedRunCount: Long) =
+                expectedRunCount(JsonField.of(expectedRunCount))
+
+            /**
+             * Sets [Builder.expectedRunCount] to an arbitrary JSON value.
+             *
+             * You should usually call [Builder.expectedRunCount] with a well-typed [Long] value
+             * instead. This method is primarily for setting the field to an undocumented or not yet
+             * supported value.
+             */
+            fun expectedRunCount(expectedRunCount: JsonField<Long>) = apply {
+                this.expectedRunCount = expectedRunCount
+            }
+
+            fun runProgress(runProgress: Double) = runProgress(JsonField.of(runProgress))
+
+            /**
+             * Sets [Builder.runProgress] to an arbitrary JSON value.
+             *
+             * You should usually call [Builder.runProgress] with a well-typed [Double] value
+             * instead. This method is primarily for setting the field to an undocumented or not yet
+             * supported value.
+             */
+            fun runProgress(runProgress: JsonField<Double>) = apply {
+                this.runProgress = runProgress
+            }
+
+            fun additionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
+                this.additionalProperties.clear()
+                putAllAdditionalProperties(additionalProperties)
+            }
+
+            fun putAdditionalProperty(key: String, value: JsonValue) = apply {
+                additionalProperties.put(key, value)
+            }
+
+            fun putAllAdditionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
+                this.additionalProperties.putAll(additionalProperties)
+            }
+
+            fun removeAdditionalProperty(key: String) = apply { additionalProperties.remove(key) }
+
+            fun removeAllAdditionalProperties(keys: Set<String>) = apply {
+                keys.forEach(::removeAdditionalProperty)
+            }
+
+            /**
+             * Returns an immutable instance of [ExperimentProgress].
+             *
+             * Further updates to this [Builder] will not mutate the returned instance.
+             *
+             * The following fields are required:
+             * ```java
+             * .evaluatorProgress()
+             * .expectedRunCount()
+             * .runProgress()
+             * ```
+             *
+             * @throws IllegalStateException if any required field is unset.
+             */
+            fun build(): ExperimentProgress =
+                ExperimentProgress(
+                    checkRequired("evaluatorProgress", evaluatorProgress),
+                    checkRequired("expectedRunCount", expectedRunCount),
+                    checkRequired("runProgress", runProgress),
+                    additionalProperties.toMutableMap(),
+                )
+        }
+
+        private var validated: Boolean = false
+
+        /**
+         * Validates that the types of all values in this object match their expected types
+         * recursively.
+         *
+         * This method is _not_ forwards compatible with new types from the API for existing fields.
+         *
+         * @throws LangChainInvalidDataException if any value type in this object doesn't match its
+         *   expected type.
+         */
+        fun validate(): ExperimentProgress = apply {
+            if (validated) {
+                return@apply
+            }
+
+            evaluatorProgress().validate()
+            expectedRunCount()
+            runProgress()
+            validated = true
+        }
+
+        fun isValid(): Boolean =
+            try {
+                validate()
+                true
+            } catch (e: LangChainInvalidDataException) {
+                false
+            }
+
+        /**
+         * Returns a score indicating how many valid values are contained in this object
+         * recursively.
+         *
+         * Used for best match union deserialization.
+         */
+        @JvmSynthetic
+        internal fun validity(): Int =
+            (evaluatorProgress.asKnown().getOrNull()?.validity() ?: 0) +
+                (if (expectedRunCount.asKnown().isPresent) 1 else 0) +
+                (if (runProgress.asKnown().isPresent) 1 else 0)
+
+        class EvaluatorProgress
+        @JsonCreator
+        private constructor(
+            @com.fasterxml.jackson.annotation.JsonValue
+            private val additionalProperties: Map<String, JsonValue>
+        ) {
+
+            @JsonAnyGetter
+            @ExcludeMissing
+            fun _additionalProperties(): Map<String, JsonValue> = additionalProperties
+
+            fun toBuilder() = Builder().from(this)
+
+            companion object {
+
+                /**
+                 * Returns a mutable builder for constructing an instance of [EvaluatorProgress].
+                 */
+                @JvmStatic fun builder() = Builder()
+            }
+
+            /** A builder for [EvaluatorProgress]. */
+            class Builder internal constructor() {
+
+                private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
+
+                @JvmSynthetic
+                internal fun from(evaluatorProgress: EvaluatorProgress) = apply {
+                    additionalProperties = evaluatorProgress.additionalProperties.toMutableMap()
+                }
+
+                fun additionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
+                    this.additionalProperties.clear()
+                    putAllAdditionalProperties(additionalProperties)
+                }
+
+                fun putAdditionalProperty(key: String, value: JsonValue) = apply {
+                    additionalProperties.put(key, value)
+                }
+
+                fun putAllAdditionalProperties(additionalProperties: Map<String, JsonValue>) =
+                    apply {
+                        this.additionalProperties.putAll(additionalProperties)
+                    }
+
+                fun removeAdditionalProperty(key: String) = apply {
+                    additionalProperties.remove(key)
+                }
+
+                fun removeAllAdditionalProperties(keys: Set<String>) = apply {
+                    keys.forEach(::removeAdditionalProperty)
+                }
+
+                /**
+                 * Returns an immutable instance of [EvaluatorProgress].
+                 *
+                 * Further updates to this [Builder] will not mutate the returned instance.
+                 */
+                fun build(): EvaluatorProgress =
+                    EvaluatorProgress(additionalProperties.toImmutable())
+            }
+
+            private var validated: Boolean = false
+
+            /**
+             * Validates that the types of all values in this object match their expected types
+             * recursively.
+             *
+             * This method is _not_ forwards compatible with new types from the API for existing
+             * fields.
+             *
+             * @throws LangChainInvalidDataException if any value type in this object doesn't match
+             *   its expected type.
+             */
+            fun validate(): EvaluatorProgress = apply {
+                if (validated) {
+                    return@apply
+                }
+
+                validated = true
+            }
+
+            fun isValid(): Boolean =
+                try {
+                    validate()
+                    true
+                } catch (e: LangChainInvalidDataException) {
+                    false
+                }
+
+            /**
+             * Returns a score indicating how many valid values are contained in this object
+             * recursively.
+             *
+             * Used for best match union deserialization.
+             */
+            @JvmSynthetic
+            internal fun validity(): Int =
+                additionalProperties.count { (_, value) -> !value.isNull() && !value.isMissing() }
+
+            override fun equals(other: Any?): Boolean {
+                if (this === other) {
+                    return true
+                }
+
+                return other is EvaluatorProgress &&
+                    additionalProperties == other.additionalProperties
+            }
+
+            private val hashCode: Int by lazy { Objects.hash(additionalProperties) }
+
+            override fun hashCode(): Int = hashCode
+
+            override fun toString() =
+                "EvaluatorProgress{additionalProperties=$additionalProperties}"
+        }
+
+        override fun equals(other: Any?): Boolean {
+            if (this === other) {
+                return true
+            }
+
+            return other is ExperimentProgress &&
+                evaluatorProgress == other.evaluatorProgress &&
+                expectedRunCount == other.expectedRunCount &&
+                runProgress == other.runProgress &&
+                additionalProperties == other.additionalProperties
+        }
+
+        private val hashCode: Int by lazy {
+            Objects.hash(evaluatorProgress, expectedRunCount, runProgress, additionalProperties)
+        }
+
+        override fun hashCode(): Int = hashCode
+
+        override fun toString() =
+            "ExperimentProgress{evaluatorProgress=$evaluatorProgress, expectedRunCount=$expectedRunCount, runProgress=$runProgress, additionalProperties=$additionalProperties}"
+    }
+
+    class Extra
+    @JsonCreator
+    private constructor(
+        @com.fasterxml.jackson.annotation.JsonValue
+        private val additionalProperties: Map<String, JsonValue>
+    ) {
+
+        @JsonAnyGetter
+        @ExcludeMissing
+        fun _additionalProperties(): Map<String, JsonValue> = additionalProperties
+
+        fun toBuilder() = Builder().from(this)
+
+        companion object {
+
+            /** Returns a mutable builder for constructing an instance of [Extra]. */
+            @JvmStatic fun builder() = Builder()
+        }
+
+        /** A builder for [Extra]. */
+        class Builder internal constructor() {
+
+            private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
+
+            @JvmSynthetic
+            internal fun from(extra: Extra) = apply {
+                additionalProperties = extra.additionalProperties.toMutableMap()
+            }
+
+            fun additionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
+                this.additionalProperties.clear()
+                putAllAdditionalProperties(additionalProperties)
+            }
+
+            fun putAdditionalProperty(key: String, value: JsonValue) = apply {
+                additionalProperties.put(key, value)
+            }
+
+            fun putAllAdditionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
+                this.additionalProperties.putAll(additionalProperties)
+            }
+
+            fun removeAdditionalProperty(key: String) = apply { additionalProperties.remove(key) }
+
+            fun removeAllAdditionalProperties(keys: Set<String>) = apply {
+                keys.forEach(::removeAdditionalProperty)
+            }
+
+            /**
+             * Returns an immutable instance of [Extra].
+             *
+             * Further updates to this [Builder] will not mutate the returned instance.
+             */
+            fun build(): Extra = Extra(additionalProperties.toImmutable())
+        }
+
+        private var validated: Boolean = false
+
+        /**
+         * Validates that the types of all values in this object match their expected types
+         * recursively.
+         *
+         * This method is _not_ forwards compatible with new types from the API for existing fields.
+         *
+         * @throws LangChainInvalidDataException if any value type in this object doesn't match its
+         *   expected type.
+         */
+        fun validate(): Extra = apply {
+            if (validated) {
+                return@apply
+            }
+
+            validated = true
+        }
+
+        fun isValid(): Boolean =
+            try {
+                validate()
+                true
+            } catch (e: LangChainInvalidDataException) {
+                false
+            }
+
+        /**
+         * Returns a score indicating how many valid values are contained in this object
+         * recursively.
+         *
+         * Used for best match union deserialization.
+         */
+        @JvmSynthetic
+        internal fun validity(): Int =
+            additionalProperties.count { (_, value) -> !value.isNull() && !value.isMissing() }
+
+        override fun equals(other: Any?): Boolean {
+            if (this === other) {
+                return true
+            }
+
+            return other is Extra && additionalProperties == other.additionalProperties
+        }
+
+        private val hashCode: Int by lazy { Objects.hash(additionalProperties) }
+
+        override fun hashCode(): Int = hashCode
+
+        override fun toString() = "Extra{additionalProperties=$additionalProperties}"
+    }
+
+    /** Feedback on the session's runs, by feedback key. */
+    class FeedbackStats
+    @JsonCreator
+    private constructor(
+        @com.fasterxml.jackson.annotation.JsonValue
+        private val additionalProperties: Map<String, JsonValue>
+    ) {
+
+        @JsonAnyGetter
+        @ExcludeMissing
+        fun _additionalProperties(): Map<String, JsonValue> = additionalProperties
+
+        fun toBuilder() = Builder().from(this)
+
+        companion object {
+
+            /** Returns a mutable builder for constructing an instance of [FeedbackStats]. */
+            @JvmStatic fun builder() = Builder()
+        }
+
+        /** A builder for [FeedbackStats]. */
+        class Builder internal constructor() {
+
+            private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
+
+            @JvmSynthetic
+            internal fun from(feedbackStats: FeedbackStats) = apply {
+                additionalProperties = feedbackStats.additionalProperties.toMutableMap()
+            }
+
+            fun additionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
+                this.additionalProperties.clear()
+                putAllAdditionalProperties(additionalProperties)
+            }
+
+            fun putAdditionalProperty(key: String, value: JsonValue) = apply {
+                additionalProperties.put(key, value)
+            }
+
+            fun putAllAdditionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
+                this.additionalProperties.putAll(additionalProperties)
+            }
+
+            fun removeAdditionalProperty(key: String) = apply { additionalProperties.remove(key) }
+
+            fun removeAllAdditionalProperties(keys: Set<String>) = apply {
+                keys.forEach(::removeAdditionalProperty)
+            }
+
+            /**
+             * Returns an immutable instance of [FeedbackStats].
+             *
+             * Further updates to this [Builder] will not mutate the returned instance.
+             */
+            fun build(): FeedbackStats = FeedbackStats(additionalProperties.toImmutable())
+        }
+
+        private var validated: Boolean = false
+
+        /**
+         * Validates that the types of all values in this object match their expected types
+         * recursively.
+         *
+         * This method is _not_ forwards compatible with new types from the API for existing fields.
+         *
+         * @throws LangChainInvalidDataException if any value type in this object doesn't match its
+         *   expected type.
+         */
+        fun validate(): FeedbackStats = apply {
+            if (validated) {
+                return@apply
+            }
+
+            validated = true
+        }
+
+        fun isValid(): Boolean =
+            try {
+                validate()
+                true
+            } catch (e: LangChainInvalidDataException) {
+                false
+            }
+
+        /**
+         * Returns a score indicating how many valid values are contained in this object
+         * recursively.
+         *
+         * Used for best match union deserialization.
+         */
+        @JvmSynthetic
+        internal fun validity(): Int =
+            additionalProperties.count { (_, value) -> !value.isNull() && !value.isMissing() }
+
+        override fun equals(other: Any?): Boolean {
+            if (this === other) {
+                return true
+            }
+
+            return other is FeedbackStats && additionalProperties == other.additionalProperties
+        }
+
+        private val hashCode: Int by lazy { Objects.hash(additionalProperties) }
+
+        override fun hashCode(): Int = hashCode
+
+        override fun toString() = "FeedbackStats{additionalProperties=$additionalProperties}"
+    }
+
+    class RunFacet
+    @JsonCreator
+    private constructor(
+        @com.fasterxml.jackson.annotation.JsonValue
+        private val additionalProperties: Map<String, JsonValue>
+    ) {
+
+        @JsonAnyGetter
+        @ExcludeMissing
+        fun _additionalProperties(): Map<String, JsonValue> = additionalProperties
+
+        fun toBuilder() = Builder().from(this)
+
+        companion object {
+
+            /** Returns a mutable builder for constructing an instance of [RunFacet]. */
+            @JvmStatic fun builder() = Builder()
+        }
+
+        /** A builder for [RunFacet]. */
+        class Builder internal constructor() {
+
+            private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
+
+            @JvmSynthetic
+            internal fun from(runFacet: RunFacet) = apply {
+                additionalProperties = runFacet.additionalProperties.toMutableMap()
+            }
+
+            fun additionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
+                this.additionalProperties.clear()
+                putAllAdditionalProperties(additionalProperties)
+            }
+
+            fun putAdditionalProperty(key: String, value: JsonValue) = apply {
+                additionalProperties.put(key, value)
+            }
+
+            fun putAllAdditionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
+                this.additionalProperties.putAll(additionalProperties)
+            }
+
+            fun removeAdditionalProperty(key: String) = apply { additionalProperties.remove(key) }
+
+            fun removeAllAdditionalProperties(keys: Set<String>) = apply {
+                keys.forEach(::removeAdditionalProperty)
+            }
+
+            /**
+             * Returns an immutable instance of [RunFacet].
+             *
+             * Further updates to this [Builder] will not mutate the returned instance.
+             */
+            fun build(): RunFacet = RunFacet(additionalProperties.toImmutable())
+        }
+
+        private var validated: Boolean = false
+
+        /**
+         * Validates that the types of all values in this object match their expected types
+         * recursively.
+         *
+         * This method is _not_ forwards compatible with new types from the API for existing fields.
+         *
+         * @throws LangChainInvalidDataException if any value type in this object doesn't match its
+         *   expected type.
+         */
+        fun validate(): RunFacet = apply {
+            if (validated) {
+                return@apply
+            }
+
+            validated = true
+        }
+
+        fun isValid(): Boolean =
+            try {
+                validate()
+                true
+            } catch (e: LangChainInvalidDataException) {
+                false
+            }
+
+        /**
+         * Returns a score indicating how many valid values are contained in this object
+         * recursively.
+         *
+         * Used for best match union deserialization.
+         */
+        @JvmSynthetic
+        internal fun validity(): Int =
+            additionalProperties.count { (_, value) -> !value.isNull() && !value.isMissing() }
+
+        override fun equals(other: Any?): Boolean {
+            if (this === other) {
+                return true
+            }
+
+            return other is RunFacet && additionalProperties == other.additionalProperties
+        }
+
+        private val hashCode: Int by lazy { Objects.hash(additionalProperties) }
+
+        override fun hashCode(): Int = hashCode
+
+        override fun toString() = "RunFacet{additionalProperties=$additionalProperties}"
+    }
+
+    /** Feedback on the session itself, by feedback key. */
+    class SessionFeedbackStats
+    @JsonCreator
+    private constructor(
+        @com.fasterxml.jackson.annotation.JsonValue
+        private val additionalProperties: Map<String, JsonValue>
+    ) {
+
+        @JsonAnyGetter
+        @ExcludeMissing
+        fun _additionalProperties(): Map<String, JsonValue> = additionalProperties
+
+        fun toBuilder() = Builder().from(this)
+
+        companion object {
+
+            /** Returns a mutable builder for constructing an instance of [SessionFeedbackStats]. */
+            @JvmStatic fun builder() = Builder()
+        }
+
+        /** A builder for [SessionFeedbackStats]. */
+        class Builder internal constructor() {
+
+            private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
+
+            @JvmSynthetic
+            internal fun from(sessionFeedbackStats: SessionFeedbackStats) = apply {
+                additionalProperties = sessionFeedbackStats.additionalProperties.toMutableMap()
+            }
+
+            fun additionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
+                this.additionalProperties.clear()
+                putAllAdditionalProperties(additionalProperties)
+            }
+
+            fun putAdditionalProperty(key: String, value: JsonValue) = apply {
+                additionalProperties.put(key, value)
+            }
+
+            fun putAllAdditionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
+                this.additionalProperties.putAll(additionalProperties)
+            }
+
+            fun removeAdditionalProperty(key: String) = apply { additionalProperties.remove(key) }
+
+            fun removeAllAdditionalProperties(keys: Set<String>) = apply {
+                keys.forEach(::removeAdditionalProperty)
+            }
+
+            /**
+             * Returns an immutable instance of [SessionFeedbackStats].
+             *
+             * Further updates to this [Builder] will not mutate the returned instance.
+             */
+            fun build(): SessionFeedbackStats =
+                SessionFeedbackStats(additionalProperties.toImmutable())
+        }
+
+        private var validated: Boolean = false
+
+        /**
+         * Validates that the types of all values in this object match their expected types
+         * recursively.
+         *
+         * This method is _not_ forwards compatible with new types from the API for existing fields.
+         *
+         * @throws LangChainInvalidDataException if any value type in this object doesn't match its
+         *   expected type.
+         */
+        fun validate(): SessionFeedbackStats = apply {
+            if (validated) {
+                return@apply
+            }
+
+            validated = true
+        }
+
+        fun isValid(): Boolean =
+            try {
+                validate()
+                true
+            } catch (e: LangChainInvalidDataException) {
+                false
+            }
+
+        /**
+         * Returns a score indicating how many valid values are contained in this object
+         * recursively.
+         *
+         * Used for best match union deserialization.
+         */
+        @JvmSynthetic
+        internal fun validity(): Int =
+            additionalProperties.count { (_, value) -> !value.isNull() && !value.isMissing() }
+
+        override fun equals(other: Any?): Boolean {
+            if (this === other) {
+                return true
+            }
+
+            return other is SessionFeedbackStats &&
+                additionalProperties == other.additionalProperties
+        }
+
+        private val hashCode: Int by lazy { Objects.hash(additionalProperties) }
+
+        override fun hashCode(): Int = hashCode
+
+        override fun toString() = "SessionFeedbackStats{additionalProperties=$additionalProperties}"
+    }
+
+    class TraceTier @JsonCreator private constructor(private val value: JsonField<String>) : Enum {
+
+        /**
+         * Returns this class instance's raw value.
+         *
+         * This is usually only useful if this instance was deserialized from data that doesn't
+         * match any known member, and you want to know that value. For example, if the SDK is on an
+         * older version than the API, then the API may respond with new members that the SDK is
+         * unaware of.
+         */
+        @com.fasterxml.jackson.annotation.JsonValue fun _value(): JsonField<String> = value
+
+        companion object {
+
+            @JvmField val LONG_LIVED = of("LONG_LIVED")
+
+            @JvmField val SHORT_LIVED = of("SHORT_LIVED")
+
+            @JvmStatic fun of(value: String) = TraceTier(JsonField.of(value))
+        }
+
+        /** An enum containing [TraceTier]'s known values. */
+        enum class Known {
+            LONG_LIVED,
+            SHORT_LIVED,
+        }
+
+        /**
+         * An enum containing [TraceTier]'s known values, as well as an [_UNKNOWN] member.
+         *
+         * An instance of [TraceTier] can contain an unknown value in a couple of cases:
+         * - It was deserialized from data that doesn't match any known member. For example, if the
+         *   SDK is on an older version than the API, then the API may respond with new members that
+         *   the SDK is unaware of.
+         * - It was constructed with an arbitrary value using the [of] method.
+         */
+        enum class Value {
+            LONG_LIVED,
+            SHORT_LIVED,
+            /**
+             * An enum member indicating that [TraceTier] was instantiated with an unknown value.
+             */
+            _UNKNOWN,
+        }
+
+        /**
+         * Returns an enum member corresponding to this class instance's value, or [Value._UNKNOWN]
+         * if the class was instantiated with an unknown value.
+         *
+         * Use the [known] method instead if you're certain the value is always known or if you want
+         * to throw for the unknown case.
+         */
+        fun value(): Value =
+            when (this) {
+                LONG_LIVED -> Value.LONG_LIVED
+                SHORT_LIVED -> Value.SHORT_LIVED
+                else -> Value._UNKNOWN
+            }
+
+        /**
+         * Returns an enum member corresponding to this class instance's value.
+         *
+         * Use the [value] method instead if you're uncertain the value is always known and don't
+         * want to throw for the unknown case.
+         *
+         * @throws LangChainInvalidDataException if this class instance's value is a not a known
+         *   member.
+         */
+        fun known(): Known =
+            when (this) {
+                LONG_LIVED -> Known.LONG_LIVED
+                SHORT_LIVED -> Known.SHORT_LIVED
+                else -> throw LangChainInvalidDataException("Unknown TraceTier: $value")
+            }
+
+        /**
+         * Returns this class instance's primitive wire representation.
+         *
+         * This differs from the [toString] method because that method is primarily for debugging
+         * and generally doesn't throw.
+         *
+         * @throws LangChainInvalidDataException if this class instance's value does not have the
+         *   expected primitive type.
+         */
+        fun asString(): String =
+            _value().asString().orElseThrow {
+                LangChainInvalidDataException("Value is not a String")
+            }
+
+        private var validated: Boolean = false
+
+        /**
+         * Validates that the types of all values in this object match their expected types
+         * recursively.
+         *
+         * This method is _not_ forwards compatible with new types from the API for existing fields.
+         *
+         * @throws LangChainInvalidDataException if any value type in this object doesn't match its
+         *   expected type.
+         */
+        fun validate(): TraceTier = apply {
+            if (validated) {
+                return@apply
+            }
+
+            known()
+            validated = true
+        }
+
+        fun isValid(): Boolean =
+            try {
+                validate()
+                true
+            } catch (e: LangChainInvalidDataException) {
+                false
+            }
+
+        /**
+         * Returns a score indicating how many valid values are contained in this object
+         * recursively.
+         *
+         * Used for best match union deserialization.
+         */
+        @JvmSynthetic internal fun validity(): Int = if (value() == Value._UNKNOWN) 0 else 1
+
+        override fun equals(other: Any?): Boolean {
+            if (this === other) {
+                return true
+            }
+
+            return other is TraceTier && value == other.value
+        }
+
+        override fun hashCode() = value.hashCode()
+
+        override fun toString() = value.toString()
+    }
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) {
+            return true
+        }
+
+        return other is Session &&
+            id == other.id &&
+            name == other.name &&
+            startTime == other.startTime &&
+            tenantId == other.tenantId &&
+            completionCost == other.completionCost &&
+            completionTokens == other.completionTokens &&
+            defaultDatasetId == other.defaultDatasetId &&
+            description == other.description &&
+            endTime == other.endTime &&
+            errorRate == other.errorRate &&
+            experimentProgress == other.experimentProgress &&
+            extra == other.extra &&
+            feedbackStats == other.feedbackStats &&
+            firstTokenP50 == other.firstTokenP50 &&
+            firstTokenP99 == other.firstTokenP99 &&
+            lastRunStartTime == other.lastRunStartTime &&
+            lastRunStartTimeLive == other.lastRunStartTimeLive &&
+            latencyP50 == other.latencyP50 &&
+            latencyP99 == other.latencyP99 &&
+            promptCost == other.promptCost &&
+            promptTokens == other.promptTokens &&
+            referenceDatasetId == other.referenceDatasetId &&
+            runCount == other.runCount &&
+            runFacets == other.runFacets &&
+            sessionFeedbackStats == other.sessionFeedbackStats &&
+            streamingRate == other.streamingRate &&
+            testRunNumber == other.testRunNumber &&
+            totalCost == other.totalCost &&
+            totalTokens == other.totalTokens &&
+            traceTier == other.traceTier &&
+            additionalProperties == other.additionalProperties
+    }
+
+    private val hashCode: Int by lazy {
+        Objects.hash(
+            id,
+            name,
+            startTime,
+            tenantId,
+            completionCost,
+            completionTokens,
+            defaultDatasetId,
+            description,
+            endTime,
+            errorRate,
+            experimentProgress,
+            extra,
+            feedbackStats,
+            firstTokenP50,
+            firstTokenP99,
+            lastRunStartTime,
+            lastRunStartTimeLive,
+            latencyP50,
+            latencyP99,
+            promptCost,
+            promptTokens,
+            referenceDatasetId,
+            runCount,
+            runFacets,
+            sessionFeedbackStats,
+            streamingRate,
+            testRunNumber,
+            totalCost,
+            totalTokens,
+            traceTier,
+            additionalProperties,
+        )
+    }
+
+    override fun hashCode(): Int = hashCode
+
+    override fun toString() =
+        "Session{id=$id, name=$name, startTime=$startTime, tenantId=$tenantId, completionCost=$completionCost, completionTokens=$completionTokens, defaultDatasetId=$defaultDatasetId, description=$description, endTime=$endTime, errorRate=$errorRate, experimentProgress=$experimentProgress, extra=$extra, feedbackStats=$feedbackStats, firstTokenP50=$firstTokenP50, firstTokenP99=$firstTokenP99, lastRunStartTime=$lastRunStartTime, lastRunStartTimeLive=$lastRunStartTimeLive, latencyP50=$latencyP50, latencyP99=$latencyP99, promptCost=$promptCost, promptTokens=$promptTokens, referenceDatasetId=$referenceDatasetId, runCount=$runCount, runFacets=$runFacets, sessionFeedbackStats=$sessionFeedbackStats, streamingRate=$streamingRate, testRunNumber=$testRunNumber, totalCost=$totalCost, totalTokens=$totalTokens, traceTier=$traceTier, additionalProperties=$additionalProperties}"
+}

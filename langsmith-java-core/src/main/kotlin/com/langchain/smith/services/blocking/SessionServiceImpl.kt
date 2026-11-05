@@ -23,6 +23,11 @@ import com.langchain.smith.models.sessions.SessionDashboardParams
 import com.langchain.smith.models.sessions.SessionDeleteParams
 import com.langchain.smith.models.sessions.SessionListPage
 import com.langchain.smith.models.sessions.SessionListParams
+import com.langchain.smith.models.sessions.SessionListV1Page
+import com.langchain.smith.models.sessions.SessionListV1Params
+import com.langchain.smith.models.sessions.SessionListV2Page
+import com.langchain.smith.models.sessions.SessionListV2PageResponse
+import com.langchain.smith.models.sessions.SessionListV2Params
 import com.langchain.smith.models.sessions.SessionResolveParams
 import com.langchain.smith.models.sessions.SessionResolveResponse
 import com.langchain.smith.models.sessions.SessionRetrieveParams
@@ -71,10 +76,6 @@ class SessionServiceImpl internal constructor(private val clientOptions: ClientO
         // patch /api/v1/sessions/{session_id}
         withRawResponse().update(params, requestOptions).parse()
 
-    override fun list(params: SessionListParams, requestOptions: RequestOptions): SessionListPage =
-        // get /api/v1/sessions
-        withRawResponse().list(params, requestOptions).parse()
-
     override fun delete(params: SessionDeleteParams, requestOptions: RequestOptions) {
         // delete /api/v1/sessions/{session_id}
         withRawResponse().delete(params, requestOptions)
@@ -87,12 +88,33 @@ class SessionServiceImpl internal constructor(private val clientOptions: ClientO
         // post /api/v1/sessions/{session_id}/dashboard
         withRawResponse().dashboard(params, requestOptions).parse()
 
+    @Deprecated(
+        "Deprecated: use listV2 instead, which calls GET /api/v2/sessions and pages with a cursor. Will be removed after Apr 1, 2027."
+    )
+    override fun listV1(
+        params: SessionListV1Params,
+        requestOptions: RequestOptions,
+    ): SessionListV1Page =
+        // get /api/v1/sessions
+        withRawResponse().listV1(params, requestOptions).parse()
+
+    override fun listV2(
+        params: SessionListV2Params,
+        requestOptions: RequestOptions,
+    ): SessionListV2Page =
+        // get /api/v2/sessions
+        withRawResponse().listV2(params, requestOptions).parse()
+
     override fun resolve(
         params: SessionResolveParams,
         requestOptions: RequestOptions,
     ): SessionResolveResponse =
         // get /api/v1/sessions/resolutions
         withRawResponse().resolve(params, requestOptions).parse()
+
+    override fun list(params: SessionListParams, requestOptions: RequestOptions): SessionListPage =
+        // get /api/v1/sessions
+        withRawResponse().list(params, requestOptions).parse()
 
     class WithRawResponseImpl internal constructor(private val clientOptions: ClientOptions) :
         SessionService.WithRawResponse {
@@ -202,40 +224,6 @@ class SessionServiceImpl internal constructor(private val clientOptions: ClientO
             }
         }
 
-        private val listHandler: Handler<List<TracerSession>> =
-            jsonHandler<List<TracerSession>>(clientOptions.jsonMapper)
-
-        override fun list(
-            params: SessionListParams,
-            requestOptions: RequestOptions,
-        ): HttpResponseFor<SessionListPage> {
-            val request =
-                HttpRequest.builder()
-                    .method(HttpMethod.GET)
-                    .baseUrl(clientOptions.baseUrl())
-                    .addPathSegments("api", "v1", "sessions")
-                    .build()
-                    .prepare(clientOptions, params)
-            val requestOptions = requestOptions.applyDefaults(RequestOptions.from(clientOptions))
-            val response = clientOptions.httpClient.execute(request, requestOptions)
-            return errorHandler.handle(response).parseable {
-                response
-                    .use { listHandler.handle(it) }
-                    .also {
-                        if (requestOptions.responseValidation!!) {
-                            it.forEach { it.validate() }
-                        }
-                    }
-                    .let {
-                        SessionListPage.builder()
-                            .service(SessionServiceImpl(clientOptions))
-                            .params(params)
-                            .items(it)
-                            .build()
-                    }
-            }
-        }
-
         private val deleteHandler: Handler<Void?> = emptyHandler()
 
         override fun delete(
@@ -291,6 +279,77 @@ class SessionServiceImpl internal constructor(private val clientOptions: ClientO
             }
         }
 
+        private val listV1Handler: Handler<List<TracerSession>> =
+            jsonHandler<List<TracerSession>>(clientOptions.jsonMapper)
+
+        @Deprecated(
+            "Deprecated: use listV2 instead, which calls GET /api/v2/sessions and pages with a cursor. Will be removed after Apr 1, 2027."
+        )
+        override fun listV1(
+            params: SessionListV1Params,
+            requestOptions: RequestOptions,
+        ): HttpResponseFor<SessionListV1Page> {
+            val request =
+                HttpRequest.builder()
+                    .method(HttpMethod.GET)
+                    .baseUrl(clientOptions.baseUrl())
+                    .addPathSegments("api", "v1", "sessions")
+                    .build()
+                    .prepare(clientOptions, params)
+            val requestOptions = requestOptions.applyDefaults(RequestOptions.from(clientOptions))
+            val response = clientOptions.httpClient.execute(request, requestOptions)
+            return errorHandler.handle(response).parseable {
+                response
+                    .use { listV1Handler.handle(it) }
+                    .also {
+                        if (requestOptions.responseValidation!!) {
+                            it.forEach { it.validate() }
+                        }
+                    }
+                    .let {
+                        SessionListV1Page.builder()
+                            .service(SessionServiceImpl(clientOptions))
+                            .params(params)
+                            .items(it)
+                            .build()
+                    }
+            }
+        }
+
+        private val listV2Handler: Handler<SessionListV2PageResponse> =
+            jsonHandler<SessionListV2PageResponse>(clientOptions.jsonMapper)
+
+        override fun listV2(
+            params: SessionListV2Params,
+            requestOptions: RequestOptions,
+        ): HttpResponseFor<SessionListV2Page> {
+            val request =
+                HttpRequest.builder()
+                    .method(HttpMethod.GET)
+                    .baseUrl(clientOptions.baseUrl())
+                    .addPathSegments("api", "v2", "sessions")
+                    .build()
+                    .prepare(clientOptions, params)
+            val requestOptions = requestOptions.applyDefaults(RequestOptions.from(clientOptions))
+            val response = clientOptions.httpClient.execute(request, requestOptions)
+            return errorHandler.handle(response).parseable {
+                response
+                    .use { listV2Handler.handle(it) }
+                    .also {
+                        if (requestOptions.responseValidation!!) {
+                            it.validate()
+                        }
+                    }
+                    .let {
+                        SessionListV2Page.builder()
+                            .service(SessionServiceImpl(clientOptions))
+                            .params(params)
+                            .response(it)
+                            .build()
+                    }
+            }
+        }
+
         private val resolveHandler: Handler<SessionResolveResponse> =
             jsonHandler<SessionResolveResponse>(clientOptions.jsonMapper)
 
@@ -314,6 +373,40 @@ class SessionServiceImpl internal constructor(private val clientOptions: ClientO
                         if (requestOptions.responseValidation!!) {
                             it.validate()
                         }
+                    }
+            }
+        }
+
+        private val listHandler: Handler<List<TracerSession>> =
+            jsonHandler<List<TracerSession>>(clientOptions.jsonMapper)
+
+        override fun list(
+            params: SessionListParams,
+            requestOptions: RequestOptions,
+        ): HttpResponseFor<SessionListPage> {
+            val request =
+                HttpRequest.builder()
+                    .method(HttpMethod.GET)
+                    .baseUrl(clientOptions.baseUrl())
+                    .addPathSegments("api", "v1", "sessions")
+                    .build()
+                    .prepare(clientOptions, params)
+            val requestOptions = requestOptions.applyDefaults(RequestOptions.from(clientOptions))
+            val response = clientOptions.httpClient.execute(request, requestOptions)
+            return errorHandler.handle(response).parseable {
+                response
+                    .use { listHandler.handle(it) }
+                    .also {
+                        if (requestOptions.responseValidation!!) {
+                            it.forEach { it.validate() }
+                        }
+                    }
+                    .let {
+                        SessionListPage.builder()
+                            .service(SessionServiceImpl(clientOptions))
+                            .params(params)
+                            .items(it)
+                            .build()
                     }
             }
         }

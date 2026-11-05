@@ -102,18 +102,6 @@ internal class SessionServiceTest {
 
     @Disabled("Mock server tests are disabled")
     @Test
-    fun list() {
-        val client =
-            LangsmithOkHttpClient.builder().apiKey("My API Key").tenantId("My Tenant ID").build()
-        val sessionService = client.sessions()
-
-        val page = sessionService.list()
-
-        page.items().forEach { it.validate() }
-    }
-
-    @Disabled("Mock server tests are disabled")
-    @Test
     fun delete() {
         val client =
             LangsmithOkHttpClient.builder().apiKey("My API Key").tenantId("My Tenant ID").build()
@@ -158,6 +146,30 @@ internal class SessionServiceTest {
 
     @Disabled("Mock server tests are disabled")
     @Test
+    fun listV1() {
+        val client =
+            LangsmithOkHttpClient.builder().apiKey("My API Key").tenantId("My Tenant ID").build()
+        val sessionService = client.sessions()
+
+        val page = sessionService.listV1()
+
+        page.items().forEach { it.validate() }
+    }
+
+    @Disabled("Mock server tests are disabled")
+    @Test
+    fun listV2() {
+        val client =
+            LangsmithOkHttpClient.builder().apiKey("My API Key").tenantId("My Tenant ID").build()
+        val sessionService = client.sessions()
+
+        val page = sessionService.listV2()
+
+        page.response().validate()
+    }
+
+    @Disabled("Mock server tests are disabled")
+    @Test
     fun resolve() {
         val client =
             LangsmithOkHttpClient.builder().apiKey("My API Key").tenantId("My Tenant ID").build()
@@ -173,5 +185,17 @@ internal class SessionServiceTest {
             )
 
         response.validate()
+    }
+
+    @Disabled("Mock server tests are disabled")
+    @Test
+    fun list() {
+        val client =
+            LangsmithOkHttpClient.builder().apiKey("My API Key").tenantId("My Tenant ID").build()
+        val sessionService = client.sessions()
+
+        val page = sessionService.list()
+
+        page.items().forEach { it.validate() }
     }
 }

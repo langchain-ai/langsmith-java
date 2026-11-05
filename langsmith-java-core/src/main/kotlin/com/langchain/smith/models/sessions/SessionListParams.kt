@@ -16,7 +16,12 @@ import java.util.Objects
 import java.util.Optional
 import kotlin.jvm.optionals.getOrNull
 
-/** List all projects. */
+/**
+ * List all projects.
+ *
+ * Deprecated: use GET /api/v2/sessions, which pages with a cursor. Will be removed after Jun
+ * 1, 2027.
+ */
 class SessionListParams
 private constructor(
     private val id: List<String>?,
