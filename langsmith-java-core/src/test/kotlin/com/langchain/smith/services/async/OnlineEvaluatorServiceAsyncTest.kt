@@ -69,6 +69,11 @@ internal class OnlineEvaluatorServiceAsyncTest {
                             .variableMapping(JsonValue.from(mapOf<String, Any>()))
                             .build()
                     )
+                    .metadata(
+                        CreateOnlineEvaluatorRequest.Metadata.builder()
+                            .putAdditionalProperty("foo", JsonValue.from("bar"))
+                            .build()
+                    )
                     .name("name")
                     .type(OnlineEvaluatorType.LLM)
                     .build()
@@ -146,6 +151,11 @@ internal class OnlineEvaluatorServiceAsyncTest {
                                     .promptRepoHandle("prompt_repo_handle")
                                     .useCorrectionsDataset(true)
                                     .variableMapping(JsonValue.from(mapOf<String, Any>()))
+                                    .build()
+                            )
+                            .metadata(
+                                UpdateOnlineEvaluatorRequest.Metadata.builder()
+                                    .putAdditionalProperty("foo", JsonValue.from("bar"))
                                     .build()
                             )
                             .name("name")

@@ -60,6 +60,11 @@ internal class OnlineEvaluatorTest {
                         .variableMapping(JsonValue.from(mapOf<String, Any>()))
                         .build()
                 )
+                .metadata(
+                    OnlineEvaluator.Metadata.builder()
+                        .putAdditionalProperty("foo", JsonValue.from("bar"))
+                        .build()
+                )
                 .name("name")
                 .addRunRule(
                     OnlineEvaluatorRunRule.builder()
@@ -133,6 +138,12 @@ internal class OnlineEvaluatorTest {
                     .promptRepoHandle("prompt_repo_handle")
                     .useCorrectionsDataset(true)
                     .variableMapping(JsonValue.from(mapOf<String, Any>()))
+                    .build()
+            )
+        assertThat(onlineEvaluator.metadata())
+            .contains(
+                OnlineEvaluator.Metadata.builder()
+                    .putAdditionalProperty("foo", JsonValue.from("bar"))
                     .build()
             )
         assertThat(onlineEvaluator.name()).contains("name")
@@ -212,6 +223,11 @@ internal class OnlineEvaluatorTest {
                         .promptRepoHandle("prompt_repo_handle")
                         .useCorrectionsDataset(true)
                         .variableMapping(JsonValue.from(mapOf<String, Any>()))
+                        .build()
+                )
+                .metadata(
+                    OnlineEvaluator.Metadata.builder()
+                        .putAdditionalProperty("foo", JsonValue.from("bar"))
                         .build()
                 )
                 .name("name")
