@@ -74,6 +74,7 @@ internal class EvaluatorServiceTest {
                     .baseUrl("base_url")
                     .datasetId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                     .filter("filter")
+                    .groupBy(EvaluatorCreateDecisionModelParams.GroupBy.THREAD_ID)
                     .maxRetries(0L)
                     .model("model")
                     .modelHeaders(

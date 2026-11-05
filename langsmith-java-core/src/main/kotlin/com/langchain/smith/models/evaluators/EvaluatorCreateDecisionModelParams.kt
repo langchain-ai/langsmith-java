@@ -84,6 +84,15 @@ private constructor(
     fun filter(): Optional<String> = body.filter()
 
     /**
+     * Set to thread_id to evaluate each thread once it goes idle, instead of each run. Requires
+     * session_id. Decision models don't support trajectory_id.
+     *
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
+    fun groupBy(): Optional<GroupBy> = body.groupBy()
+
+    /**
      * How many times to retry a failed model call. openai_decisions only.
      *
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
@@ -206,6 +215,13 @@ private constructor(
      * Unlike [filter], this method doesn't throw if the JSON field has an unexpected type.
      */
     fun _filter(): JsonField<String> = body._filter()
+
+    /**
+     * Returns the raw JSON value of [groupBy].
+     *
+     * Unlike [groupBy], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    fun _groupBy(): JsonField<GroupBy> = body._groupBy()
 
     /**
      * Returns the raw JSON value of [maxRetries].
@@ -422,6 +438,23 @@ private constructor(
          * method is primarily for setting the field to an undocumented or not yet supported value.
          */
         fun filter(filter: JsonField<String>) = apply { body.filter(filter) }
+
+        /**
+         * Set to thread_id to evaluate each thread once it goes idle, instead of each run. Requires
+         * session_id. Decision models don't support trajectory_id.
+         */
+        fun groupBy(groupBy: GroupBy?) = apply { body.groupBy(groupBy) }
+
+        /** Alias for calling [Builder.groupBy] with `groupBy.orElse(null)`. */
+        fun groupBy(groupBy: Optional<GroupBy>) = groupBy(groupBy.getOrNull())
+
+        /**
+         * Sets [Builder.groupBy] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.groupBy] with a well-typed [GroupBy] value instead. This
+         * method is primarily for setting the field to an undocumented or not yet supported value.
+         */
+        fun groupBy(groupBy: JsonField<GroupBy>) = apply { body.groupBy(groupBy) }
 
         /** How many times to retry a failed model call. openai_decisions only. */
         fun maxRetries(maxRetries: Long?) = apply { body.maxRetries(maxRetries) }
@@ -767,6 +800,7 @@ private constructor(
         private val baseUrl: JsonField<String>,
         private val datasetId: JsonField<String>,
         private val filter: JsonField<String>,
+        private val groupBy: JsonField<GroupBy>,
         private val maxRetries: JsonField<Long>,
         private val model: JsonField<String>,
         private val modelHeaders: JsonField<ModelHeaders>,
@@ -796,6 +830,9 @@ private constructor(
             @ExcludeMissing
             datasetId: JsonField<String> = JsonMissing.of(),
             @JsonProperty("filter") @ExcludeMissing filter: JsonField<String> = JsonMissing.of(),
+            @JsonProperty("group_by")
+            @ExcludeMissing
+            groupBy: JsonField<GroupBy> = JsonMissing.of(),
             @JsonProperty("max_retries")
             @ExcludeMissing
             maxRetries: JsonField<Long> = JsonMissing.of(),
@@ -831,6 +868,7 @@ private constructor(
             baseUrl,
             datasetId,
             filter,
+            groupBy,
             maxRetries,
             model,
             modelHeaders,
@@ -892,6 +930,15 @@ private constructor(
          *   the server responded with an unexpected value).
          */
         fun filter(): Optional<String> = filter.getOptional("filter")
+
+        /**
+         * Set to thread_id to evaluate each thread once it goes idle, instead of each run. Requires
+         * session_id. Decision models don't support trajectory_id.
+         *
+         * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
+         *   the server responded with an unexpected value).
+         */
+        fun groupBy(): Optional<GroupBy> = groupBy.getOptional("group_by")
 
         /**
          * How many times to retry a failed model call. openai_decisions only.
@@ -1027,6 +1074,13 @@ private constructor(
         @JsonProperty("filter") @ExcludeMissing fun _filter(): JsonField<String> = filter
 
         /**
+         * Returns the raw JSON value of [groupBy].
+         *
+         * Unlike [groupBy], this method doesn't throw if the JSON field has an unexpected type.
+         */
+        @JsonProperty("group_by") @ExcludeMissing fun _groupBy(): JsonField<GroupBy> = groupBy
+
+        /**
          * Returns the raw JSON value of [maxRetries].
          *
          * Unlike [maxRetries], this method doesn't throw if the JSON field has an unexpected type.
@@ -1150,6 +1204,7 @@ private constructor(
             private var baseUrl: JsonField<String> = JsonMissing.of()
             private var datasetId: JsonField<String> = JsonMissing.of()
             private var filter: JsonField<String> = JsonMissing.of()
+            private var groupBy: JsonField<GroupBy> = JsonMissing.of()
             private var maxRetries: JsonField<Long> = JsonMissing.of()
             private var model: JsonField<String> = JsonMissing.of()
             private var modelHeaders: JsonField<ModelHeaders> = JsonMissing.of()
@@ -1170,6 +1225,7 @@ private constructor(
                 baseUrl = body.baseUrl
                 datasetId = body.datasetId
                 filter = body.filter
+                groupBy = body.groupBy
                 maxRetries = body.maxRetries
                 model = body.model
                 modelHeaders = body.modelHeaders
@@ -1283,6 +1339,24 @@ private constructor(
              * supported value.
              */
             fun filter(filter: JsonField<String>) = apply { this.filter = filter }
+
+            /**
+             * Set to thread_id to evaluate each thread once it goes idle, instead of each run.
+             * Requires session_id. Decision models don't support trajectory_id.
+             */
+            fun groupBy(groupBy: GroupBy?) = groupBy(JsonField.ofNullable(groupBy))
+
+            /** Alias for calling [Builder.groupBy] with `groupBy.orElse(null)`. */
+            fun groupBy(groupBy: Optional<GroupBy>) = groupBy(groupBy.getOrNull())
+
+            /**
+             * Sets [Builder.groupBy] to an arbitrary JSON value.
+             *
+             * You should usually call [Builder.groupBy] with a well-typed [GroupBy] value instead.
+             * This method is primarily for setting the field to an undocumented or not yet
+             * supported value.
+             */
+            fun groupBy(groupBy: JsonField<GroupBy>) = apply { this.groupBy = groupBy }
 
             /** How many times to retry a failed model call. openai_decisions only. */
             fun maxRetries(maxRetries: Long?) = maxRetries(JsonField.ofNullable(maxRetries))
@@ -1515,6 +1589,7 @@ private constructor(
                     baseUrl,
                     datasetId,
                     filter,
+                    groupBy,
                     maxRetries,
                     model,
                     modelHeaders,
@@ -1551,6 +1626,7 @@ private constructor(
             baseUrl()
             datasetId()
             filter()
+            groupBy().ifPresent { it.validate() }
             maxRetries()
             model()
             modelHeaders().ifPresent { it.validate() }
@@ -1586,6 +1662,7 @@ private constructor(
                 (if (baseUrl.asKnown().isPresent) 1 else 0) +
                 (if (datasetId.asKnown().isPresent) 1 else 0) +
                 (if (filter.asKnown().isPresent) 1 else 0) +
+                (groupBy.asKnown().getOrNull()?.validity() ?: 0) +
                 (if (maxRetries.asKnown().isPresent) 1 else 0) +
                 (if (model.asKnown().isPresent) 1 else 0) +
                 (modelHeaders.asKnown().getOrNull()?.validity() ?: 0) +
@@ -1609,6 +1686,7 @@ private constructor(
                 baseUrl == other.baseUrl &&
                 datasetId == other.datasetId &&
                 filter == other.filter &&
+                groupBy == other.groupBy &&
                 maxRetries == other.maxRetries &&
                 model == other.model &&
                 modelHeaders == other.modelHeaders &&
@@ -1630,6 +1708,7 @@ private constructor(
                 baseUrl,
                 datasetId,
                 filter,
+                groupBy,
                 maxRetries,
                 model,
                 modelHeaders,
@@ -1647,7 +1726,7 @@ private constructor(
         override fun hashCode(): Int = hashCode
 
         override fun toString() =
-            "Body{displayName=$displayName, prompt=$prompt, questions=$questions, baseUrl=$baseUrl, datasetId=$datasetId, filter=$filter, maxRetries=$maxRetries, model=$model, modelHeaders=$modelHeaders, playgroundSettingsId=$playgroundSettingsId, provider=$provider, samplingRate=$samplingRate, sessionId=$sessionId, templateFormat=$templateFormat, timeoutSeconds=$timeoutSeconds, variableMapping=$variableMapping, additionalProperties=$additionalProperties}"
+            "Body{displayName=$displayName, prompt=$prompt, questions=$questions, baseUrl=$baseUrl, datasetId=$datasetId, filter=$filter, groupBy=$groupBy, maxRetries=$maxRetries, model=$model, modelHeaders=$modelHeaders, playgroundSettingsId=$playgroundSettingsId, provider=$provider, samplingRate=$samplingRate, sessionId=$sessionId, templateFormat=$templateFormat, timeoutSeconds=$timeoutSeconds, variableMapping=$variableMapping, additionalProperties=$additionalProperties}"
     }
 
     /** The questions, keyed by feedback key, in the order to ask them. */
@@ -1757,6 +1836,140 @@ private constructor(
         override fun hashCode(): Int = hashCode
 
         override fun toString() = "Questions{additionalProperties=$additionalProperties}"
+    }
+
+    /**
+     * Set to thread_id to evaluate each thread once it goes idle, instead of each run. Requires
+     * session_id. Decision models don't support trajectory_id.
+     */
+    class GroupBy @JsonCreator private constructor(private val value: JsonField<String>) : Enum {
+
+        /**
+         * Returns this class instance's raw value.
+         *
+         * This is usually only useful if this instance was deserialized from data that doesn't
+         * match any known member, and you want to know that value. For example, if the SDK is on an
+         * older version than the API, then the API may respond with new members that the SDK is
+         * unaware of.
+         */
+        @com.fasterxml.jackson.annotation.JsonValue fun _value(): JsonField<String> = value
+
+        companion object {
+
+            @JvmField val THREAD_ID = of("thread_id")
+
+            @JvmStatic fun of(value: String) = GroupBy(JsonField.of(value))
+        }
+
+        /** An enum containing [GroupBy]'s known values. */
+        enum class Known {
+            THREAD_ID
+        }
+
+        /**
+         * An enum containing [GroupBy]'s known values, as well as an [_UNKNOWN] member.
+         *
+         * An instance of [GroupBy] can contain an unknown value in a couple of cases:
+         * - It was deserialized from data that doesn't match any known member. For example, if the
+         *   SDK is on an older version than the API, then the API may respond with new members that
+         *   the SDK is unaware of.
+         * - It was constructed with an arbitrary value using the [of] method.
+         */
+        enum class Value {
+            THREAD_ID,
+            /** An enum member indicating that [GroupBy] was instantiated with an unknown value. */
+            _UNKNOWN,
+        }
+
+        /**
+         * Returns an enum member corresponding to this class instance's value, or [Value._UNKNOWN]
+         * if the class was instantiated with an unknown value.
+         *
+         * Use the [known] method instead if you're certain the value is always known or if you want
+         * to throw for the unknown case.
+         */
+        fun value(): Value =
+            when (this) {
+                THREAD_ID -> Value.THREAD_ID
+                else -> Value._UNKNOWN
+            }
+
+        /**
+         * Returns an enum member corresponding to this class instance's value.
+         *
+         * Use the [value] method instead if you're uncertain the value is always known and don't
+         * want to throw for the unknown case.
+         *
+         * @throws LangChainInvalidDataException if this class instance's value is a not a known
+         *   member.
+         */
+        fun known(): Known =
+            when (this) {
+                THREAD_ID -> Known.THREAD_ID
+                else -> throw LangChainInvalidDataException("Unknown GroupBy: $value")
+            }
+
+        /**
+         * Returns this class instance's primitive wire representation.
+         *
+         * This differs from the [toString] method because that method is primarily for debugging
+         * and generally doesn't throw.
+         *
+         * @throws LangChainInvalidDataException if this class instance's value does not have the
+         *   expected primitive type.
+         */
+        fun asString(): String =
+            _value().asString().orElseThrow {
+                LangChainInvalidDataException("Value is not a String")
+            }
+
+        private var validated: Boolean = false
+
+        /**
+         * Validates that the types of all values in this object match their expected types
+         * recursively.
+         *
+         * This method is _not_ forwards compatible with new types from the API for existing fields.
+         *
+         * @throws LangChainInvalidDataException if any value type in this object doesn't match its
+         *   expected type.
+         */
+        fun validate(): GroupBy = apply {
+            if (validated) {
+                return@apply
+            }
+
+            known()
+            validated = true
+        }
+
+        fun isValid(): Boolean =
+            try {
+                validate()
+                true
+            } catch (e: LangChainInvalidDataException) {
+                false
+            }
+
+        /**
+         * Returns a score indicating how many valid values are contained in this object
+         * recursively.
+         *
+         * Used for best match union deserialization.
+         */
+        @JvmSynthetic internal fun validity(): Int = if (value() == Value._UNKNOWN) 0 else 1
+
+        override fun equals(other: Any?): Boolean {
+            if (this === other) {
+                return true
+            }
+
+            return other is GroupBy && value == other.value
+        }
+
+        override fun hashCode() = value.hashCode()
+
+        override fun toString() = value.toString()
     }
 
     /**

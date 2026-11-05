@@ -35,6 +35,7 @@ internal class EvaluatorCreateDecisionModelParamsTest {
             .baseUrl("base_url")
             .datasetId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
             .filter("filter")
+            .groupBy(EvaluatorCreateDecisionModelParams.GroupBy.THREAD_ID)
             .maxRetries(0L)
             .model("model")
             .modelHeaders(
@@ -87,6 +88,7 @@ internal class EvaluatorCreateDecisionModelParamsTest {
                 .baseUrl("base_url")
                 .datasetId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                 .filter("filter")
+                .groupBy(EvaluatorCreateDecisionModelParams.GroupBy.THREAD_ID)
                 .maxRetries(0L)
                 .model("model")
                 .modelHeaders(
@@ -135,6 +137,7 @@ internal class EvaluatorCreateDecisionModelParamsTest {
         assertThat(body.baseUrl()).contains("base_url")
         assertThat(body.datasetId()).contains("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
         assertThat(body.filter()).contains("filter")
+        assertThat(body.groupBy()).contains(EvaluatorCreateDecisionModelParams.GroupBy.THREAD_ID)
         assertThat(body.maxRetries()).contains(0L)
         assertThat(body.model()).contains("model")
         assertThat(body.modelHeaders())
