@@ -38,7 +38,10 @@ private constructor(
 
     fun queueId(): Optional<String> = Optional.ofNullable(queueId)
 
-    /** Extend trace retention for added run items */
+    /**
+     * Defaults to false. When true, upgrade the traces of added runs from base to extended
+     * retention. Thread items are not upgraded.
+     */
     fun extendTraceRetention(): Optional<Boolean> = Optional.ofNullable(extendTraceRetention)
 
     /**
@@ -95,7 +98,10 @@ private constructor(
         /** Alias for calling [Builder.queueId] with `queueId.orElse(null)`. */
         fun queueId(queueId: Optional<String>) = queueId(queueId.getOrNull())
 
-        /** Extend trace retention for added run items */
+        /**
+         * Defaults to false. When true, upgrade the traces of added runs from base to extended
+         * retention. Thread items are not upgraded.
+         */
         fun extendTraceRetention(extendTraceRetention: Boolean?) = apply {
             this.extendTraceRetention = extendTraceRetention
         }
