@@ -18,9 +18,9 @@ internal class SettingServiceAsyncTest {
                 .build()
         val settingServiceAsync = client.settings()
 
-        val appHubCrudTenantsTenantFuture = settingServiceAsync.list()
+        val settingsFuture = settingServiceAsync.list()
 
-        val appHubCrudTenantsTenant = appHubCrudTenantsTenantFuture.get()
-        appHubCrudTenantsTenant.validate()
+        val settings = settingsFuture.get()
+        settings.validate()
     }
 }

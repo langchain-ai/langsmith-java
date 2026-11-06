@@ -14,8 +14,8 @@ import com.langchain.smith.core.http.HttpResponse.Handler
 import com.langchain.smith.core.http.HttpResponseFor
 import com.langchain.smith.core.http.parseable
 import com.langchain.smith.core.prepareAsync
-import com.langchain.smith.models.settings.AppHubCrudTenantsTenant
 import com.langchain.smith.models.settings.SettingListParams
+import com.langchain.smith.models.settings.SettingListResponse
 import java.util.concurrent.CompletableFuture
 import java.util.function.Consumer
 
@@ -34,7 +34,7 @@ class SettingServiceAsyncImpl internal constructor(private val clientOptions: Cl
     override fun list(
         params: SettingListParams,
         requestOptions: RequestOptions,
-    ): CompletableFuture<AppHubCrudTenantsTenant> =
+    ): CompletableFuture<SettingListResponse> =
         // get /api/v1/settings
         withRawResponse().list(params, requestOptions).thenApply { it.parse() }
 
@@ -51,13 +51,13 @@ class SettingServiceAsyncImpl internal constructor(private val clientOptions: Cl
                 clientOptions.toBuilder().apply(modifier::accept).build()
             )
 
-        private val listHandler: Handler<AppHubCrudTenantsTenant> =
-            jsonHandler<AppHubCrudTenantsTenant>(clientOptions.jsonMapper)
+        private val listHandler: Handler<SettingListResponse> =
+            jsonHandler<SettingListResponse>(clientOptions.jsonMapper)
 
         override fun list(
             params: SettingListParams,
             requestOptions: RequestOptions,
-        ): CompletableFuture<HttpResponseFor<AppHubCrudTenantsTenant>> {
+        ): CompletableFuture<HttpResponseFor<SettingListResponse>> {
             val request =
                 HttpRequest.builder()
                     .method(HttpMethod.GET)

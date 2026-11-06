@@ -5,8 +5,8 @@ package com.langchain.smith.services.async
 import com.langchain.smith.core.ClientOptions
 import com.langchain.smith.core.RequestOptions
 import com.langchain.smith.core.http.HttpResponseFor
-import com.langchain.smith.models.settings.AppHubCrudTenantsTenant
 import com.langchain.smith.models.settings.SettingListParams
+import com.langchain.smith.models.settings.SettingListResponse
 import java.util.concurrent.CompletableFuture
 import java.util.function.Consumer
 
@@ -24,22 +24,22 @@ interface SettingServiceAsync {
      */
     fun withOptions(modifier: Consumer<ClientOptions.Builder>): SettingServiceAsync
 
-    /** Get settings. */
-    fun list(): CompletableFuture<AppHubCrudTenantsTenant> = list(SettingListParams.none())
+    /** Get the current workspace. */
+    fun list(): CompletableFuture<SettingListResponse> = list(SettingListParams.none())
 
     /** @see list */
     fun list(
         params: SettingListParams = SettingListParams.none(),
         requestOptions: RequestOptions = RequestOptions.none(),
-    ): CompletableFuture<AppHubCrudTenantsTenant>
+    ): CompletableFuture<SettingListResponse>
 
     /** @see list */
     fun list(
         params: SettingListParams = SettingListParams.none()
-    ): CompletableFuture<AppHubCrudTenantsTenant> = list(params, RequestOptions.none())
+    ): CompletableFuture<SettingListResponse> = list(params, RequestOptions.none())
 
     /** @see list */
-    fun list(requestOptions: RequestOptions): CompletableFuture<AppHubCrudTenantsTenant> =
+    fun list(requestOptions: RequestOptions): CompletableFuture<SettingListResponse> =
         list(SettingListParams.none(), requestOptions)
 
     /**
@@ -60,25 +60,25 @@ interface SettingServiceAsync {
          * Returns a raw HTTP response for `get /api/v1/settings`, but is otherwise the same as
          * [SettingServiceAsync.list].
          */
-        fun list(): CompletableFuture<HttpResponseFor<AppHubCrudTenantsTenant>> =
+        fun list(): CompletableFuture<HttpResponseFor<SettingListResponse>> =
             list(SettingListParams.none())
 
         /** @see list */
         fun list(
             params: SettingListParams = SettingListParams.none(),
             requestOptions: RequestOptions = RequestOptions.none(),
-        ): CompletableFuture<HttpResponseFor<AppHubCrudTenantsTenant>>
+        ): CompletableFuture<HttpResponseFor<SettingListResponse>>
 
         /** @see list */
         fun list(
             params: SettingListParams = SettingListParams.none()
-        ): CompletableFuture<HttpResponseFor<AppHubCrudTenantsTenant>> =
+        ): CompletableFuture<HttpResponseFor<SettingListResponse>> =
             list(params, RequestOptions.none())
 
         /** @see list */
         fun list(
             requestOptions: RequestOptions
-        ): CompletableFuture<HttpResponseFor<AppHubCrudTenantsTenant>> =
+        ): CompletableFuture<HttpResponseFor<SettingListResponse>> =
             list(SettingListParams.none(), requestOptions)
     }
 }

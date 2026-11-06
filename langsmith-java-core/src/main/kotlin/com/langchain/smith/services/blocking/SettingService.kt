@@ -6,8 +6,8 @@ import com.google.errorprone.annotations.MustBeClosed
 import com.langchain.smith.core.ClientOptions
 import com.langchain.smith.core.RequestOptions
 import com.langchain.smith.core.http.HttpResponseFor
-import com.langchain.smith.models.settings.AppHubCrudTenantsTenant
 import com.langchain.smith.models.settings.SettingListParams
+import com.langchain.smith.models.settings.SettingListResponse
 import java.util.function.Consumer
 
 interface SettingService {
@@ -24,21 +24,21 @@ interface SettingService {
      */
     fun withOptions(modifier: Consumer<ClientOptions.Builder>): SettingService
 
-    /** Get settings. */
-    fun list(): AppHubCrudTenantsTenant = list(SettingListParams.none())
+    /** Get the current workspace. */
+    fun list(): SettingListResponse = list(SettingListParams.none())
 
     /** @see list */
     fun list(
         params: SettingListParams = SettingListParams.none(),
         requestOptions: RequestOptions = RequestOptions.none(),
-    ): AppHubCrudTenantsTenant
+    ): SettingListResponse
 
     /** @see list */
-    fun list(params: SettingListParams = SettingListParams.none()): AppHubCrudTenantsTenant =
+    fun list(params: SettingListParams = SettingListParams.none()): SettingListResponse =
         list(params, RequestOptions.none())
 
     /** @see list */
-    fun list(requestOptions: RequestOptions): AppHubCrudTenantsTenant =
+    fun list(requestOptions: RequestOptions): SettingListResponse =
         list(SettingListParams.none(), requestOptions)
 
     /** A view of [SettingService] that provides access to raw HTTP responses for each method. */
@@ -56,24 +56,24 @@ interface SettingService {
          * [SettingService.list].
          */
         @MustBeClosed
-        fun list(): HttpResponseFor<AppHubCrudTenantsTenant> = list(SettingListParams.none())
+        fun list(): HttpResponseFor<SettingListResponse> = list(SettingListParams.none())
 
         /** @see list */
         @MustBeClosed
         fun list(
             params: SettingListParams = SettingListParams.none(),
             requestOptions: RequestOptions = RequestOptions.none(),
-        ): HttpResponseFor<AppHubCrudTenantsTenant>
+        ): HttpResponseFor<SettingListResponse>
 
         /** @see list */
         @MustBeClosed
         fun list(
             params: SettingListParams = SettingListParams.none()
-        ): HttpResponseFor<AppHubCrudTenantsTenant> = list(params, RequestOptions.none())
+        ): HttpResponseFor<SettingListResponse> = list(params, RequestOptions.none())
 
         /** @see list */
         @MustBeClosed
-        fun list(requestOptions: RequestOptions): HttpResponseFor<AppHubCrudTenantsTenant> =
+        fun list(requestOptions: RequestOptions): HttpResponseFor<SettingListResponse> =
             list(SettingListParams.none(), requestOptions)
     }
 }

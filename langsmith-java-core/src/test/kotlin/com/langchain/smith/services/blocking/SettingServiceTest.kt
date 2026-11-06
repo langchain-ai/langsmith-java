@@ -15,8 +15,8 @@ internal class SettingServiceTest {
             LangsmithOkHttpClient.builder().apiKey("My API Key").tenantId("My Tenant ID").build()
         val settingService = client.settings()
 
-        val appHubCrudTenantsTenant = settingService.list()
+        val settings = settingService.list()
 
-        appHubCrudTenantsTenant.validate()
+        settings.validate()
     }
 }

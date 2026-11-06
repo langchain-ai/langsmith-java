@@ -7,7 +7,7 @@ import com.langchain.smith.core.http.Headers
 import com.langchain.smith.core.http.QueryParams
 import java.util.Objects
 
-/** Get settings. */
+/** Get the current workspace. */
 class SettingListParams
 private constructor(
     private val additionalHeaders: Headers,

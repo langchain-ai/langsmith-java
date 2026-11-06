@@ -14,8 +14,8 @@ import com.langchain.smith.core.http.HttpResponse.Handler
 import com.langchain.smith.core.http.HttpResponseFor
 import com.langchain.smith.core.http.parseable
 import com.langchain.smith.core.prepare
-import com.langchain.smith.models.settings.AppHubCrudTenantsTenant
 import com.langchain.smith.models.settings.SettingListParams
+import com.langchain.smith.models.settings.SettingListResponse
 import java.util.function.Consumer
 
 class SettingServiceImpl internal constructor(private val clientOptions: ClientOptions) :
@@ -33,7 +33,7 @@ class SettingServiceImpl internal constructor(private val clientOptions: ClientO
     override fun list(
         params: SettingListParams,
         requestOptions: RequestOptions,
-    ): AppHubCrudTenantsTenant =
+    ): SettingListResponse =
         // get /api/v1/settings
         withRawResponse().list(params, requestOptions).parse()
 
@@ -50,13 +50,13 @@ class SettingServiceImpl internal constructor(private val clientOptions: ClientO
                 clientOptions.toBuilder().apply(modifier::accept).build()
             )
 
-        private val listHandler: Handler<AppHubCrudTenantsTenant> =
-            jsonHandler<AppHubCrudTenantsTenant>(clientOptions.jsonMapper)
+        private val listHandler: Handler<SettingListResponse> =
+            jsonHandler<SettingListResponse>(clientOptions.jsonMapper)
 
         override fun list(
             params: SettingListParams,
             requestOptions: RequestOptions,
-        ): HttpResponseFor<AppHubCrudTenantsTenant> {
+        ): HttpResponseFor<SettingListResponse> {
             val request =
                 HttpRequest.builder()
                     .method(HttpMethod.GET)
