@@ -6,22 +6,12 @@ import com.fasterxml.jackson.annotation.JsonAnyGetter
 import com.fasterxml.jackson.annotation.JsonAnySetter
 import com.fasterxml.jackson.annotation.JsonCreator
 import com.fasterxml.jackson.annotation.JsonProperty
-import com.fasterxml.jackson.core.JsonGenerator
-import com.fasterxml.jackson.core.ObjectCodec
-import com.fasterxml.jackson.databind.JsonNode
-import com.fasterxml.jackson.databind.SerializerProvider
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize
-import com.fasterxml.jackson.databind.annotation.JsonSerialize
-import com.fasterxml.jackson.module.kotlin.jacksonTypeRef
-import com.langchain.smith.core.BaseDeserializer
-import com.langchain.smith.core.BaseSerializer
 import com.langchain.smith.core.ExcludeMissing
 import com.langchain.smith.core.JsonField
 import com.langchain.smith.core.JsonMissing
 import com.langchain.smith.core.JsonValue
 import com.langchain.smith.core.Params
-import com.langchain.smith.core.allMaxBy
-import com.langchain.smith.core.getOrThrow
+import com.langchain.smith.core.checkKnown
 import com.langchain.smith.core.http.Headers
 import com.langchain.smith.core.http.QueryParams
 import com.langchain.smith.core.toImmutable
@@ -59,7 +49,7 @@ private constructor(
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
      */
-    fun baselineExperimentId(): Optional<BaselineExperimentId> = body.baselineExperimentId()
+    fun baselineExperimentId(): Optional<String> = body.baselineExperimentId()
 
     /**
      * New dataset description. Null clears it. Omit to keep the current description.
@@ -67,7 +57,7 @@ private constructor(
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
      */
-    fun description(): Optional<Description> = body.description()
+    fun description(): Optional<String> = body.description()
 
     /**
      * JSON Schema that example inputs must match. Replaces the current inputs schema as a whole;
@@ -97,7 +87,7 @@ private constructor(
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
      */
-    fun name(): Optional<Name> = body.name()
+    fun name(): Optional<String> = body.name()
 
     /**
      * JSON Schema that example outputs must match. Replaces the current outputs schema as a whole;
@@ -134,7 +124,7 @@ private constructor(
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
      */
-    fun transformations(): Optional<Transformations> = body.transformations()
+    fun transformations(): Optional<List<DatasetTransformation>> = body.transformations()
 
     /**
      * Returns the raw JSON value of [baselineExperimentId].
@@ -142,14 +132,14 @@ private constructor(
      * Unlike [baselineExperimentId], this method doesn't throw if the JSON field has an unexpected
      * type.
      */
-    fun _baselineExperimentId(): JsonField<BaselineExperimentId> = body._baselineExperimentId()
+    fun _baselineExperimentId(): JsonField<String> = body._baselineExperimentId()
 
     /**
      * Returns the raw JSON value of [description].
      *
      * Unlike [description], this method doesn't throw if the JSON field has an unexpected type.
      */
-    fun _description(): JsonField<Description> = body._description()
+    fun _description(): JsonField<String> = body._description()
 
     /**
      * Returns the raw JSON value of [inputsSchemaDefinition].
@@ -172,7 +162,7 @@ private constructor(
      *
      * Unlike [name], this method doesn't throw if the JSON field has an unexpected type.
      */
-    fun _name(): JsonField<Name> = body._name()
+    fun _name(): JsonField<String> = body._name()
 
     /**
      * Returns the raw JSON value of [outputsSchemaDefinition].
@@ -195,7 +185,7 @@ private constructor(
      *
      * Unlike [transformations], this method doesn't throw if the JSON field has an unexpected type.
      */
-    fun _transformations(): JsonField<Transformations> = body._transformations()
+    fun _transformations(): JsonField<List<DatasetTransformation>> = body._transformations()
 
     fun _additionalBodyProperties(): Map<String, JsonValue> = body._additionalProperties()
 
@@ -255,7 +245,7 @@ private constructor(
          * Must be an experiment run on this dataset, otherwise returns 400. Null clears it. Omit to
          * keep the current baseline.
          */
-        fun baselineExperimentId(baselineExperimentId: BaselineExperimentId?) = apply {
+        fun baselineExperimentId(baselineExperimentId: String?) = apply {
             body.baselineExperimentId(baselineExperimentId)
         }
 
@@ -263,52 +253,34 @@ private constructor(
          * Alias for calling [Builder.baselineExperimentId] with
          * `baselineExperimentId.orElse(null)`.
          */
-        fun baselineExperimentId(baselineExperimentId: Optional<BaselineExperimentId>) =
+        fun baselineExperimentId(baselineExperimentId: Optional<String>) =
             baselineExperimentId(baselineExperimentId.getOrNull())
 
         /**
          * Sets [Builder.baselineExperimentId] to an arbitrary JSON value.
          *
-         * You should usually call [Builder.baselineExperimentId] with a well-typed
-         * [BaselineExperimentId] value instead. This method is primarily for setting the field to
-         * an undocumented or not yet supported value.
+         * You should usually call [Builder.baselineExperimentId] with a well-typed [String] value
+         * instead. This method is primarily for setting the field to an undocumented or not yet
+         * supported value.
          */
-        fun baselineExperimentId(baselineExperimentId: JsonField<BaselineExperimentId>) = apply {
+        fun baselineExperimentId(baselineExperimentId: JsonField<String>) = apply {
             body.baselineExperimentId(baselineExperimentId)
         }
 
-        /**
-         * Alias for calling [baselineExperimentId] with `BaselineExperimentId.ofString(string)`.
-         */
-        fun baselineExperimentId(string: String) = apply { body.baselineExperimentId(string) }
-
-        /**
-         * Alias for calling [baselineExperimentId] with `BaselineExperimentId.ofMissing(missing)`.
-         */
-        fun baselineExperimentId(missing: Missing) = apply { body.baselineExperimentId(missing) }
-
         /** New dataset description. Null clears it. Omit to keep the current description. */
-        fun description(description: Description?) = apply { body.description(description) }
+        fun description(description: String?) = apply { body.description(description) }
 
         /** Alias for calling [Builder.description] with `description.orElse(null)`. */
-        fun description(description: Optional<Description>) = description(description.getOrNull())
+        fun description(description: Optional<String>) = description(description.getOrNull())
 
         /**
          * Sets [Builder.description] to an arbitrary JSON value.
          *
-         * You should usually call [Builder.description] with a well-typed [Description] value
-         * instead. This method is primarily for setting the field to an undocumented or not yet
-         * supported value.
+         * You should usually call [Builder.description] with a well-typed [String] value instead.
+         * This method is primarily for setting the field to an undocumented or not yet supported
+         * value.
          */
-        fun description(description: JsonField<Description>) = apply {
-            body.description(description)
-        }
-
-        /** Alias for calling [description] with `Description.ofString(string)`. */
-        fun description(string: String) = apply { body.description(string) }
-
-        /** Alias for calling [description] with `Description.ofMissing(missing)`. */
-        fun description(missing: Missing) = apply { body.description(missing) }
+        fun description(description: JsonField<String>) = apply { body.description(description) }
 
         /**
          * JSON Schema that example inputs must match. Replaces the current inputs schema as a
@@ -341,22 +313,6 @@ private constructor(
             }
 
         /**
-         * Alias for calling [inputsSchemaDefinition] with
-         * `InputsSchemaDefinition.ofUnionMember0(unionMember0)`.
-         */
-        fun inputsSchemaDefinition(unionMember0: InputsSchemaDefinition.UnionMember0) = apply {
-            body.inputsSchemaDefinition(unionMember0)
-        }
-
-        /**
-         * Alias for calling [inputsSchemaDefinition] with
-         * `InputsSchemaDefinition.ofMissing(missing)`.
-         */
-        fun inputsSchemaDefinition(missing: Missing) = apply {
-            body.inputsSchemaDefinition(missing)
-        }
-
-        /**
          * Dataset metadata as a JSON object. Replaces the current metadata as a whole; keys are not
          * merged. Send an empty object to clear it. Omit to keep the current metadata.
          */
@@ -374,34 +330,22 @@ private constructor(
          */
         fun metadata(metadata: JsonField<Metadata>) = apply { body.metadata(metadata) }
 
-        /** Alias for calling [metadata] with `Metadata.ofUnionMember0(unionMember0)`. */
-        fun metadata(unionMember0: Metadata.UnionMember0) = apply { body.metadata(unionMember0) }
-
-        /** Alias for calling [metadata] with `Metadata.ofMissing(missing)`. */
-        fun metadata(missing: Missing) = apply { body.metadata(missing) }
-
         /**
          * New dataset name. Must be unique in the workspace; a name already used by another dataset
          * returns 409. Null returns 400. Omit to keep the current name.
          */
-        fun name(name: Name?) = apply { body.name(name) }
+        fun name(name: String?) = apply { body.name(name) }
 
         /** Alias for calling [Builder.name] with `name.orElse(null)`. */
-        fun name(name: Optional<Name>) = name(name.getOrNull())
+        fun name(name: Optional<String>) = name(name.getOrNull())
 
         /**
          * Sets [Builder.name] to an arbitrary JSON value.
          *
-         * You should usually call [Builder.name] with a well-typed [Name] value instead. This
+         * You should usually call [Builder.name] with a well-typed [String] value instead. This
          * method is primarily for setting the field to an undocumented or not yet supported value.
          */
-        fun name(name: JsonField<Name>) = apply { body.name(name) }
-
-        /** Alias for calling [name] with `Name.ofString(string)`. */
-        fun name(string: String) = apply { body.name(string) }
-
-        /** Alias for calling [name] with `Name.ofMissing(missing)`. */
-        fun name(missing: Missing) = apply { body.name(missing) }
+        fun name(name: JsonField<String>) = apply { body.name(name) }
 
         /**
          * JSON Schema that example outputs must match. Replaces the current outputs schema as a
@@ -432,22 +376,6 @@ private constructor(
             apply {
                 body.outputsSchemaDefinition(outputsSchemaDefinition)
             }
-
-        /**
-         * Alias for calling [outputsSchemaDefinition] with
-         * `OutputsSchemaDefinition.ofUnionMember0(unionMember0)`.
-         */
-        fun outputsSchemaDefinition(unionMember0: OutputsSchemaDefinition.UnionMember0) = apply {
-            body.outputsSchemaDefinition(unionMember0)
-        }
-
-        /**
-         * Alias for calling [outputsSchemaDefinition] with
-         * `OutputsSchemaDefinition.ofMissing(missing)`.
-         */
-        fun outputsSchemaDefinition(missing: Missing) = apply {
-            body.outputsSchemaDefinition(missing)
-        }
 
         /**
          * Example updates keyed by example ID, applied in the same transaction so existing examples
@@ -482,32 +410,33 @@ private constructor(
          * of them. Existing examples are not transformed. Requires a schema on the inputs or
          * outputs the path points into, otherwise returns 400. Omit to keep the current list.
          */
-        fun transformations(transformations: Transformations?) = apply {
+        fun transformations(transformations: List<DatasetTransformation>?) = apply {
             body.transformations(transformations)
         }
 
         /** Alias for calling [Builder.transformations] with `transformations.orElse(null)`. */
-        fun transformations(transformations: Optional<Transformations>) =
+        fun transformations(transformations: Optional<List<DatasetTransformation>>) =
             transformations(transformations.getOrNull())
 
         /**
          * Sets [Builder.transformations] to an arbitrary JSON value.
          *
-         * You should usually call [Builder.transformations] with a well-typed [Transformations]
-         * value instead. This method is primarily for setting the field to an undocumented or not
-         * yet supported value.
+         * You should usually call [Builder.transformations] with a well-typed
+         * `List<DatasetTransformation>` value instead. This method is primarily for setting the
+         * field to an undocumented or not yet supported value.
          */
-        fun transformations(transformations: JsonField<Transformations>) = apply {
+        fun transformations(transformations: JsonField<List<DatasetTransformation>>) = apply {
             body.transformations(transformations)
         }
 
-        /** Alias for calling [transformations] with `Transformations.ofDataset(dataset)`. */
-        fun transformationsOfDataset(dataset: List<DatasetTransformation>) = apply {
-            body.transformationsOfDataset(dataset)
+        /**
+         * Adds a single [DatasetTransformation] to [transformations].
+         *
+         * @throws IllegalStateException if the field was previously set to a non-list.
+         */
+        fun addTransformation(transformation: DatasetTransformation) = apply {
+            body.addTransformation(transformation)
         }
-
-        /** Alias for calling [transformations] with `Transformations.ofMissing(missing)`. */
-        fun transformations(missing: Missing) = apply { body.transformations(missing) }
 
         fun additionalBodyProperties(additionalBodyProperties: Map<String, JsonValue>) = apply {
             body.additionalProperties(additionalBodyProperties)
@@ -656,14 +585,14 @@ private constructor(
     class Body
     @JsonCreator(mode = JsonCreator.Mode.DISABLED)
     private constructor(
-        private val baselineExperimentId: JsonField<BaselineExperimentId>,
-        private val description: JsonField<Description>,
+        private val baselineExperimentId: JsonField<String>,
+        private val description: JsonField<String>,
         private val inputsSchemaDefinition: JsonField<InputsSchemaDefinition>,
         private val metadata: JsonField<Metadata>,
-        private val name: JsonField<Name>,
+        private val name: JsonField<String>,
         private val outputsSchemaDefinition: JsonField<OutputsSchemaDefinition>,
         private val patchExamples: JsonField<PatchExamples>,
-        private val transformations: JsonField<Transformations>,
+        private val transformations: JsonField<List<DatasetTransformation>>,
         private val additionalProperties: MutableMap<String, JsonValue>,
     ) {
 
@@ -671,17 +600,17 @@ private constructor(
         private constructor(
             @JsonProperty("baseline_experiment_id")
             @ExcludeMissing
-            baselineExperimentId: JsonField<BaselineExperimentId> = JsonMissing.of(),
+            baselineExperimentId: JsonField<String> = JsonMissing.of(),
             @JsonProperty("description")
             @ExcludeMissing
-            description: JsonField<Description> = JsonMissing.of(),
+            description: JsonField<String> = JsonMissing.of(),
             @JsonProperty("inputs_schema_definition")
             @ExcludeMissing
             inputsSchemaDefinition: JsonField<InputsSchemaDefinition> = JsonMissing.of(),
             @JsonProperty("metadata")
             @ExcludeMissing
             metadata: JsonField<Metadata> = JsonMissing.of(),
-            @JsonProperty("name") @ExcludeMissing name: JsonField<Name> = JsonMissing.of(),
+            @JsonProperty("name") @ExcludeMissing name: JsonField<String> = JsonMissing.of(),
             @JsonProperty("outputs_schema_definition")
             @ExcludeMissing
             outputsSchemaDefinition: JsonField<OutputsSchemaDefinition> = JsonMissing.of(),
@@ -690,7 +619,7 @@ private constructor(
             patchExamples: JsonField<PatchExamples> = JsonMissing.of(),
             @JsonProperty("transformations")
             @ExcludeMissing
-            transformations: JsonField<Transformations> = JsonMissing.of(),
+            transformations: JsonField<List<DatasetTransformation>> = JsonMissing.of(),
         ) : this(
             baselineExperimentId,
             description,
@@ -711,7 +640,7 @@ private constructor(
          * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
          *   the server responded with an unexpected value).
          */
-        fun baselineExperimentId(): Optional<BaselineExperimentId> =
+        fun baselineExperimentId(): Optional<String> =
             baselineExperimentId.getOptional("baseline_experiment_id")
 
         /**
@@ -720,7 +649,7 @@ private constructor(
          * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
          *   the server responded with an unexpected value).
          */
-        fun description(): Optional<Description> = description.getOptional("description")
+        fun description(): Optional<String> = description.getOptional("description")
 
         /**
          * JSON Schema that example inputs must match. Replaces the current inputs schema as a
@@ -751,7 +680,7 @@ private constructor(
          * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
          *   the server responded with an unexpected value).
          */
-        fun name(): Optional<Name> = name.getOptional("name")
+        fun name(): Optional<String> = name.getOptional("name")
 
         /**
          * JSON Schema that example outputs must match. Replaces the current outputs schema as a
@@ -788,7 +717,7 @@ private constructor(
          * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
          *   the server responded with an unexpected value).
          */
-        fun transformations(): Optional<Transformations> =
+        fun transformations(): Optional<List<DatasetTransformation>> =
             transformations.getOptional("transformations")
 
         /**
@@ -799,7 +728,7 @@ private constructor(
          */
         @JsonProperty("baseline_experiment_id")
         @ExcludeMissing
-        fun _baselineExperimentId(): JsonField<BaselineExperimentId> = baselineExperimentId
+        fun _baselineExperimentId(): JsonField<String> = baselineExperimentId
 
         /**
          * Returns the raw JSON value of [description].
@@ -808,7 +737,7 @@ private constructor(
          */
         @JsonProperty("description")
         @ExcludeMissing
-        fun _description(): JsonField<Description> = description
+        fun _description(): JsonField<String> = description
 
         /**
          * Returns the raw JSON value of [inputsSchemaDefinition].
@@ -832,7 +761,7 @@ private constructor(
          *
          * Unlike [name], this method doesn't throw if the JSON field has an unexpected type.
          */
-        @JsonProperty("name") @ExcludeMissing fun _name(): JsonField<Name> = name
+        @JsonProperty("name") @ExcludeMissing fun _name(): JsonField<String> = name
 
         /**
          * Returns the raw JSON value of [outputsSchemaDefinition].
@@ -862,7 +791,7 @@ private constructor(
          */
         @JsonProperty("transformations")
         @ExcludeMissing
-        fun _transformations(): JsonField<Transformations> = transformations
+        fun _transformations(): JsonField<List<DatasetTransformation>> = transformations
 
         @JsonAnySetter
         private fun putAdditionalProperty(key: String, value: JsonValue) {
@@ -885,15 +814,15 @@ private constructor(
         /** A builder for [Body]. */
         class Builder internal constructor() {
 
-            private var baselineExperimentId: JsonField<BaselineExperimentId> = JsonMissing.of()
-            private var description: JsonField<Description> = JsonMissing.of()
+            private var baselineExperimentId: JsonField<String> = JsonMissing.of()
+            private var description: JsonField<String> = JsonMissing.of()
             private var inputsSchemaDefinition: JsonField<InputsSchemaDefinition> = JsonMissing.of()
             private var metadata: JsonField<Metadata> = JsonMissing.of()
-            private var name: JsonField<Name> = JsonMissing.of()
+            private var name: JsonField<String> = JsonMissing.of()
             private var outputsSchemaDefinition: JsonField<OutputsSchemaDefinition> =
                 JsonMissing.of()
             private var patchExamples: JsonField<PatchExamples> = JsonMissing.of()
-            private var transformations: JsonField<Transformations> = JsonMissing.of()
+            private var transformations: JsonField<MutableList<DatasetTransformation>>? = null
             private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
 
             @JvmSynthetic
@@ -905,7 +834,7 @@ private constructor(
                 name = body.name
                 outputsSchemaDefinition = body.outputsSchemaDefinition
                 patchExamples = body.patchExamples
-                transformations = body.transformations
+                transformations = body.transformations.map { it.toMutableList() }
                 additionalProperties = body.additionalProperties.toMutableMap()
             }
 
@@ -914,66 +843,43 @@ private constructor(
              * Must be an experiment run on this dataset, otherwise returns 400. Null clears it.
              * Omit to keep the current baseline.
              */
-            fun baselineExperimentId(baselineExperimentId: BaselineExperimentId?) =
+            fun baselineExperimentId(baselineExperimentId: String?) =
                 baselineExperimentId(JsonField.ofNullable(baselineExperimentId))
 
             /**
              * Alias for calling [Builder.baselineExperimentId] with
              * `baselineExperimentId.orElse(null)`.
              */
-            fun baselineExperimentId(baselineExperimentId: Optional<BaselineExperimentId>) =
+            fun baselineExperimentId(baselineExperimentId: Optional<String>) =
                 baselineExperimentId(baselineExperimentId.getOrNull())
 
             /**
              * Sets [Builder.baselineExperimentId] to an arbitrary JSON value.
              *
-             * You should usually call [Builder.baselineExperimentId] with a well-typed
-             * [BaselineExperimentId] value instead. This method is primarily for setting the field
-             * to an undocumented or not yet supported value.
+             * You should usually call [Builder.baselineExperimentId] with a well-typed [String]
+             * value instead. This method is primarily for setting the field to an undocumented or
+             * not yet supported value.
              */
-            fun baselineExperimentId(baselineExperimentId: JsonField<BaselineExperimentId>) =
-                apply {
-                    this.baselineExperimentId = baselineExperimentId
-                }
-
-            /**
-             * Alias for calling [baselineExperimentId] with
-             * `BaselineExperimentId.ofString(string)`.
-             */
-            fun baselineExperimentId(string: String) =
-                baselineExperimentId(BaselineExperimentId.ofString(string))
-
-            /**
-             * Alias for calling [baselineExperimentId] with
-             * `BaselineExperimentId.ofMissing(missing)`.
-             */
-            fun baselineExperimentId(missing: Missing) =
-                baselineExperimentId(BaselineExperimentId.ofMissing(missing))
+            fun baselineExperimentId(baselineExperimentId: JsonField<String>) = apply {
+                this.baselineExperimentId = baselineExperimentId
+            }
 
             /** New dataset description. Null clears it. Omit to keep the current description. */
-            fun description(description: Description?) =
-                description(JsonField.ofNullable(description))
+            fun description(description: String?) = description(JsonField.ofNullable(description))
 
             /** Alias for calling [Builder.description] with `description.orElse(null)`. */
-            fun description(description: Optional<Description>) =
-                description(description.getOrNull())
+            fun description(description: Optional<String>) = description(description.getOrNull())
 
             /**
              * Sets [Builder.description] to an arbitrary JSON value.
              *
-             * You should usually call [Builder.description] with a well-typed [Description] value
+             * You should usually call [Builder.description] with a well-typed [String] value
              * instead. This method is primarily for setting the field to an undocumented or not yet
              * supported value.
              */
-            fun description(description: JsonField<Description>) = apply {
+            fun description(description: JsonField<String>) = apply {
                 this.description = description
             }
-
-            /** Alias for calling [description] with `Description.ofString(string)`. */
-            fun description(string: String) = description(Description.ofString(string))
-
-            /** Alias for calling [description] with `Description.ofMissing(missing)`. */
-            fun description(missing: Missing) = description(Description.ofMissing(missing))
 
             /**
              * JSON Schema that example inputs must match. Replaces the current inputs schema as a
@@ -1005,20 +911,6 @@ private constructor(
                 }
 
             /**
-             * Alias for calling [inputsSchemaDefinition] with
-             * `InputsSchemaDefinition.ofUnionMember0(unionMember0)`.
-             */
-            fun inputsSchemaDefinition(unionMember0: InputsSchemaDefinition.UnionMember0) =
-                inputsSchemaDefinition(InputsSchemaDefinition.ofUnionMember0(unionMember0))
-
-            /**
-             * Alias for calling [inputsSchemaDefinition] with
-             * `InputsSchemaDefinition.ofMissing(missing)`.
-             */
-            fun inputsSchemaDefinition(missing: Missing) =
-                inputsSchemaDefinition(InputsSchemaDefinition.ofMissing(missing))
-
-            /**
              * Dataset metadata as a JSON object. Replaces the current metadata as a whole; keys are
              * not merged. Send an empty object to clear it. Omit to keep the current metadata.
              */
@@ -1036,36 +928,23 @@ private constructor(
              */
             fun metadata(metadata: JsonField<Metadata>) = apply { this.metadata = metadata }
 
-            /** Alias for calling [metadata] with `Metadata.ofUnionMember0(unionMember0)`. */
-            fun metadata(unionMember0: Metadata.UnionMember0) =
-                metadata(Metadata.ofUnionMember0(unionMember0))
-
-            /** Alias for calling [metadata] with `Metadata.ofMissing(missing)`. */
-            fun metadata(missing: Missing) = metadata(Metadata.ofMissing(missing))
-
             /**
              * New dataset name. Must be unique in the workspace; a name already used by another
              * dataset returns 409. Null returns 400. Omit to keep the current name.
              */
-            fun name(name: Name?) = name(JsonField.ofNullable(name))
+            fun name(name: String?) = name(JsonField.ofNullable(name))
 
             /** Alias for calling [Builder.name] with `name.orElse(null)`. */
-            fun name(name: Optional<Name>) = name(name.getOrNull())
+            fun name(name: Optional<String>) = name(name.getOrNull())
 
             /**
              * Sets [Builder.name] to an arbitrary JSON value.
              *
-             * You should usually call [Builder.name] with a well-typed [Name] value instead. This
+             * You should usually call [Builder.name] with a well-typed [String] value instead. This
              * method is primarily for setting the field to an undocumented or not yet supported
              * value.
              */
-            fun name(name: JsonField<Name>) = apply { this.name = name }
-
-            /** Alias for calling [name] with `Name.ofString(string)`. */
-            fun name(string: String) = name(Name.ofString(string))
-
-            /** Alias for calling [name] with `Name.ofMissing(missing)`. */
-            fun name(missing: Missing) = name(Name.ofMissing(missing))
+            fun name(name: JsonField<String>) = apply { this.name = name }
 
             /**
              * JSON Schema that example outputs must match. Replaces the current outputs schema as a
@@ -1095,20 +974,6 @@ private constructor(
             fun outputsSchemaDefinition(
                 outputsSchemaDefinition: JsonField<OutputsSchemaDefinition>
             ) = apply { this.outputsSchemaDefinition = outputsSchemaDefinition }
-
-            /**
-             * Alias for calling [outputsSchemaDefinition] with
-             * `OutputsSchemaDefinition.ofUnionMember0(unionMember0)`.
-             */
-            fun outputsSchemaDefinition(unionMember0: OutputsSchemaDefinition.UnionMember0) =
-                outputsSchemaDefinition(OutputsSchemaDefinition.ofUnionMember0(unionMember0))
-
-            /**
-             * Alias for calling [outputsSchemaDefinition] with
-             * `OutputsSchemaDefinition.ofMissing(missing)`.
-             */
-            fun outputsSchemaDefinition(missing: Missing) =
-                outputsSchemaDefinition(OutputsSchemaDefinition.ofMissing(missing))
 
             /**
              * Example updates keyed by example ID, applied in the same transaction so existing
@@ -1144,31 +1009,35 @@ private constructor(
              * or outputs the path points into, otherwise returns 400. Omit to keep the current
              * list.
              */
-            fun transformations(transformations: Transformations?) =
+            fun transformations(transformations: List<DatasetTransformation>?) =
                 transformations(JsonField.ofNullable(transformations))
 
             /** Alias for calling [Builder.transformations] with `transformations.orElse(null)`. */
-            fun transformations(transformations: Optional<Transformations>) =
+            fun transformations(transformations: Optional<List<DatasetTransformation>>) =
                 transformations(transformations.getOrNull())
 
             /**
              * Sets [Builder.transformations] to an arbitrary JSON value.
              *
-             * You should usually call [Builder.transformations] with a well-typed [Transformations]
-             * value instead. This method is primarily for setting the field to an undocumented or
-             * not yet supported value.
+             * You should usually call [Builder.transformations] with a well-typed
+             * `List<DatasetTransformation>` value instead. This method is primarily for setting the
+             * field to an undocumented or not yet supported value.
              */
-            fun transformations(transformations: JsonField<Transformations>) = apply {
-                this.transformations = transformations
+            fun transformations(transformations: JsonField<List<DatasetTransformation>>) = apply {
+                this.transformations = transformations.map { it.toMutableList() }
             }
 
-            /** Alias for calling [transformations] with `Transformations.ofDataset(dataset)`. */
-            fun transformationsOfDataset(dataset: List<DatasetTransformation>) =
-                transformations(Transformations.ofDataset(dataset))
-
-            /** Alias for calling [transformations] with `Transformations.ofMissing(missing)`. */
-            fun transformations(missing: Missing) =
-                transformations(Transformations.ofMissing(missing))
+            /**
+             * Adds a single [DatasetTransformation] to [transformations].
+             *
+             * @throws IllegalStateException if the field was previously set to a non-list.
+             */
+            fun addTransformation(transformation: DatasetTransformation) = apply {
+                transformations =
+                    (transformations ?: JsonField.of(mutableListOf())).also {
+                        checkKnown("transformations", it).add(transformation)
+                    }
+            }
 
             fun additionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
                 this.additionalProperties.clear()
@@ -1203,7 +1072,7 @@ private constructor(
                     name,
                     outputsSchemaDefinition,
                     patchExamples,
-                    transformations,
+                    (transformations ?: JsonMissing.of()).map { it.toImmutable() },
                     additionalProperties.toMutableMap(),
                 )
         }
@@ -1224,14 +1093,14 @@ private constructor(
                 return@apply
             }
 
-            baselineExperimentId().ifPresent { it.validate() }
-            description().ifPresent { it.validate() }
+            baselineExperimentId()
+            description()
             inputsSchemaDefinition().ifPresent { it.validate() }
             metadata().ifPresent { it.validate() }
-            name().ifPresent { it.validate() }
+            name()
             outputsSchemaDefinition().ifPresent { it.validate() }
             patchExamples().ifPresent { it.validate() }
-            transformations().ifPresent { it.validate() }
+            transformations().ifPresent { it.forEach { it.validate() } }
             validated = true
         }
 
@@ -1251,14 +1120,14 @@ private constructor(
          */
         @JvmSynthetic
         internal fun validity(): Int =
-            (baselineExperimentId.asKnown().getOrNull()?.validity() ?: 0) +
-                (description.asKnown().getOrNull()?.validity() ?: 0) +
+            (if (baselineExperimentId.asKnown().isPresent) 1 else 0) +
+                (if (description.asKnown().isPresent) 1 else 0) +
                 (inputsSchemaDefinition.asKnown().getOrNull()?.validity() ?: 0) +
                 (metadata.asKnown().getOrNull()?.validity() ?: 0) +
-                (name.asKnown().getOrNull()?.validity() ?: 0) +
+                (if (name.asKnown().isPresent) 1 else 0) +
                 (outputsSchemaDefinition.asKnown().getOrNull()?.validity() ?: 0) +
                 (patchExamples.asKnown().getOrNull()?.validity() ?: 0) +
-                (transformations.asKnown().getOrNull()?.validity() ?: 0)
+                (transformations.asKnown().getOrNull()?.sumOf { it.validity().toInt() } ?: 0)
 
         override fun equals(other: Any?): Boolean {
             if (this === other) {
@@ -1298,500 +1167,70 @@ private constructor(
     }
 
     /**
-     * ID of the experiment used as the baseline when comparing experiments on this dataset. Must be
-     * an experiment run on this dataset, otherwise returns 400. Null clears it. Omit to keep the
-     * current baseline.
-     */
-    @JsonDeserialize(using = BaselineExperimentId.Deserializer::class)
-    @JsonSerialize(using = BaselineExperimentId.Serializer::class)
-    class BaselineExperimentId
-    private constructor(
-        private val string: String? = null,
-        private val missing: Missing? = null,
-        private val _json: JsonValue? = null,
-    ) {
-
-        fun string(): Optional<String> = Optional.ofNullable(string)
-
-        fun missing(): Optional<Missing> = Optional.ofNullable(missing)
-
-        fun isString(): Boolean = string != null
-
-        fun isMissing(): Boolean = missing != null
-
-        fun asString(): String = string.getOrThrow("string")
-
-        fun asMissing(): Missing = missing.getOrThrow("missing")
-
-        fun _json(): Optional<JsonValue> = Optional.ofNullable(_json)
-
-        /**
-         * Maps this instance's current variant to a value of type [T] using the given [visitor].
-         *
-         * Note that this method is _not_ forwards compatible with new variants from the API, unless
-         * [visitor] overrides [Visitor.unknown]. To handle variants not known to this version of
-         * the SDK gracefully, consider overriding [Visitor.unknown]:
-         * ```java
-         * import com.langchain.smith.core.JsonValue;
-         * import java.util.Optional;
-         *
-         * Optional<String> result = baselineExperimentId.accept(new BaselineExperimentId.Visitor<Optional<String>>() {
-         *     @Override
-         *     public Optional<String> visitString(String string) {
-         *         return Optional.of(string.toString());
-         *     }
-         *
-         *     // ...
-         *
-         *     @Override
-         *     public Optional<String> unknown(JsonValue json) {
-         *         // Or inspect the `json`.
-         *         return Optional.empty();
-         *     }
-         * });
-         * ```
-         *
-         * @throws LangChainInvalidDataException if [Visitor.unknown] is not overridden in [visitor]
-         *   and the current variant is unknown.
-         */
-        fun <T> accept(visitor: Visitor<T>): T =
-            when {
-                string != null -> visitor.visitString(string)
-                missing != null -> visitor.visitMissing(missing)
-                else -> visitor.unknown(_json)
-            }
-
-        private var validated: Boolean = false
-
-        /**
-         * Validates that the types of all values in this object match their expected types
-         * recursively.
-         *
-         * This method is _not_ forwards compatible with new types from the API for existing fields.
-         *
-         * @throws LangChainInvalidDataException if any value type in this object doesn't match its
-         *   expected type.
-         */
-        fun validate(): BaselineExperimentId = apply {
-            if (validated) {
-                return@apply
-            }
-
-            accept(
-                object : Visitor<Unit> {
-                    override fun visitString(string: String) {}
-
-                    override fun visitMissing(missing: Missing) {
-                        missing.validate()
-                    }
-                }
-            )
-            validated = true
-        }
-
-        fun isValid(): Boolean =
-            try {
-                validate()
-                true
-            } catch (e: LangChainInvalidDataException) {
-                false
-            }
-
-        /**
-         * Returns a score indicating how many valid values are contained in this object
-         * recursively.
-         *
-         * Used for best match union deserialization.
-         */
-        @JvmSynthetic
-        internal fun validity(): Int =
-            accept(
-                object : Visitor<Int> {
-                    override fun visitString(string: String) = 1
-
-                    override fun visitMissing(missing: Missing) = missing.validity()
-
-                    override fun unknown(json: JsonValue?) = 0
-                }
-            )
-
-        override fun equals(other: Any?): Boolean {
-            if (this === other) {
-                return true
-            }
-
-            return other is BaselineExperimentId &&
-                string == other.string &&
-                missing == other.missing
-        }
-
-        override fun hashCode(): Int = Objects.hash(string, missing)
-
-        override fun toString(): String =
-            when {
-                string != null -> "BaselineExperimentId{string=$string}"
-                missing != null -> "BaselineExperimentId{missing=$missing}"
-                _json != null -> "BaselineExperimentId{_unknown=$_json}"
-                else -> throw IllegalStateException("Invalid BaselineExperimentId")
-            }
-
-        companion object {
-
-            @JvmStatic fun ofString(string: String) = BaselineExperimentId(string = string)
-
-            @JvmStatic fun ofMissing(missing: Missing) = BaselineExperimentId(missing = missing)
-        }
-
-        /**
-         * An interface that defines how to map each variant of [BaselineExperimentId] to a value of
-         * type [T].
-         */
-        interface Visitor<out T> {
-
-            fun visitString(string: String): T
-
-            fun visitMissing(missing: Missing): T
-
-            /**
-             * Maps an unknown variant of [BaselineExperimentId] to a value of type [T].
-             *
-             * An instance of [BaselineExperimentId] can contain an unknown variant if it was
-             * deserialized from data that doesn't match any known variant. For example, if the SDK
-             * is on an older version than the API, then the API may respond with new variants that
-             * the SDK is unaware of.
-             *
-             * @throws LangChainInvalidDataException in the default implementation.
-             */
-            fun unknown(json: JsonValue?): T {
-                throw LangChainInvalidDataException("Unknown BaselineExperimentId: $json")
-            }
-        }
-
-        internal class Deserializer :
-            BaseDeserializer<BaselineExperimentId>(BaselineExperimentId::class) {
-
-            override fun ObjectCodec.deserialize(node: JsonNode): BaselineExperimentId {
-                val json = JsonValue.fromJsonNode(node)
-
-                val bestMatches =
-                    sequenceOf(
-                            tryDeserialize(node, jacksonTypeRef<Missing>())?.let {
-                                BaselineExperimentId(missing = it, _json = json)
-                            },
-                            tryDeserialize(node, jacksonTypeRef<String>())?.let {
-                                BaselineExperimentId(string = it, _json = json)
-                            },
-                        )
-                        .filterNotNull()
-                        .allMaxBy { it.validity() }
-                        .toList()
-                return when (bestMatches.size) {
-                    // This can happen if what we're deserializing is completely incompatible with
-                    // all the possible variants (e.g. deserializing from boolean).
-                    0 -> BaselineExperimentId(_json = json)
-                    1 -> bestMatches.single()
-                    // If there's more than one match with the highest validity, then use the first
-                    // completely valid match, or simply the first match if none are completely
-                    // valid.
-                    else -> bestMatches.firstOrNull { it.isValid() } ?: bestMatches.first()
-                }
-            }
-        }
-
-        internal class Serializer :
-            BaseSerializer<BaselineExperimentId>(BaselineExperimentId::class) {
-
-            override fun serialize(
-                value: BaselineExperimentId,
-                generator: JsonGenerator,
-                provider: SerializerProvider,
-            ) {
-                when {
-                    value.string != null -> generator.writeObject(value.string)
-                    value.missing != null -> generator.writeObject(value.missing)
-                    value._json != null -> generator.writeObject(value._json)
-                    else -> throw IllegalStateException("Invalid BaselineExperimentId")
-                }
-            }
-        }
-    }
-
-    /** New dataset description. Null clears it. Omit to keep the current description. */
-    @JsonDeserialize(using = Description.Deserializer::class)
-    @JsonSerialize(using = Description.Serializer::class)
-    class Description
-    private constructor(
-        private val string: String? = null,
-        private val missing: Missing? = null,
-        private val _json: JsonValue? = null,
-    ) {
-
-        fun string(): Optional<String> = Optional.ofNullable(string)
-
-        fun missing(): Optional<Missing> = Optional.ofNullable(missing)
-
-        fun isString(): Boolean = string != null
-
-        fun isMissing(): Boolean = missing != null
-
-        fun asString(): String = string.getOrThrow("string")
-
-        fun asMissing(): Missing = missing.getOrThrow("missing")
-
-        fun _json(): Optional<JsonValue> = Optional.ofNullable(_json)
-
-        /**
-         * Maps this instance's current variant to a value of type [T] using the given [visitor].
-         *
-         * Note that this method is _not_ forwards compatible with new variants from the API, unless
-         * [visitor] overrides [Visitor.unknown]. To handle variants not known to this version of
-         * the SDK gracefully, consider overriding [Visitor.unknown]:
-         * ```java
-         * import com.langchain.smith.core.JsonValue;
-         * import java.util.Optional;
-         *
-         * Optional<String> result = description.accept(new Description.Visitor<Optional<String>>() {
-         *     @Override
-         *     public Optional<String> visitString(String string) {
-         *         return Optional.of(string.toString());
-         *     }
-         *
-         *     // ...
-         *
-         *     @Override
-         *     public Optional<String> unknown(JsonValue json) {
-         *         // Or inspect the `json`.
-         *         return Optional.empty();
-         *     }
-         * });
-         * ```
-         *
-         * @throws LangChainInvalidDataException if [Visitor.unknown] is not overridden in [visitor]
-         *   and the current variant is unknown.
-         */
-        fun <T> accept(visitor: Visitor<T>): T =
-            when {
-                string != null -> visitor.visitString(string)
-                missing != null -> visitor.visitMissing(missing)
-                else -> visitor.unknown(_json)
-            }
-
-        private var validated: Boolean = false
-
-        /**
-         * Validates that the types of all values in this object match their expected types
-         * recursively.
-         *
-         * This method is _not_ forwards compatible with new types from the API for existing fields.
-         *
-         * @throws LangChainInvalidDataException if any value type in this object doesn't match its
-         *   expected type.
-         */
-        fun validate(): Description = apply {
-            if (validated) {
-                return@apply
-            }
-
-            accept(
-                object : Visitor<Unit> {
-                    override fun visitString(string: String) {}
-
-                    override fun visitMissing(missing: Missing) {
-                        missing.validate()
-                    }
-                }
-            )
-            validated = true
-        }
-
-        fun isValid(): Boolean =
-            try {
-                validate()
-                true
-            } catch (e: LangChainInvalidDataException) {
-                false
-            }
-
-        /**
-         * Returns a score indicating how many valid values are contained in this object
-         * recursively.
-         *
-         * Used for best match union deserialization.
-         */
-        @JvmSynthetic
-        internal fun validity(): Int =
-            accept(
-                object : Visitor<Int> {
-                    override fun visitString(string: String) = 1
-
-                    override fun visitMissing(missing: Missing) = missing.validity()
-
-                    override fun unknown(json: JsonValue?) = 0
-                }
-            )
-
-        override fun equals(other: Any?): Boolean {
-            if (this === other) {
-                return true
-            }
-
-            return other is Description && string == other.string && missing == other.missing
-        }
-
-        override fun hashCode(): Int = Objects.hash(string, missing)
-
-        override fun toString(): String =
-            when {
-                string != null -> "Description{string=$string}"
-                missing != null -> "Description{missing=$missing}"
-                _json != null -> "Description{_unknown=$_json}"
-                else -> throw IllegalStateException("Invalid Description")
-            }
-
-        companion object {
-
-            @JvmStatic fun ofString(string: String) = Description(string = string)
-
-            @JvmStatic fun ofMissing(missing: Missing) = Description(missing = missing)
-        }
-
-        /**
-         * An interface that defines how to map each variant of [Description] to a value of type
-         * [T].
-         */
-        interface Visitor<out T> {
-
-            fun visitString(string: String): T
-
-            fun visitMissing(missing: Missing): T
-
-            /**
-             * Maps an unknown variant of [Description] to a value of type [T].
-             *
-             * An instance of [Description] can contain an unknown variant if it was deserialized
-             * from data that doesn't match any known variant. For example, if the SDK is on an
-             * older version than the API, then the API may respond with new variants that the SDK
-             * is unaware of.
-             *
-             * @throws LangChainInvalidDataException in the default implementation.
-             */
-            fun unknown(json: JsonValue?): T {
-                throw LangChainInvalidDataException("Unknown Description: $json")
-            }
-        }
-
-        internal class Deserializer : BaseDeserializer<Description>(Description::class) {
-
-            override fun ObjectCodec.deserialize(node: JsonNode): Description {
-                val json = JsonValue.fromJsonNode(node)
-
-                val bestMatches =
-                    sequenceOf(
-                            tryDeserialize(node, jacksonTypeRef<Missing>())?.let {
-                                Description(missing = it, _json = json)
-                            },
-                            tryDeserialize(node, jacksonTypeRef<String>())?.let {
-                                Description(string = it, _json = json)
-                            },
-                        )
-                        .filterNotNull()
-                        .allMaxBy { it.validity() }
-                        .toList()
-                return when (bestMatches.size) {
-                    // This can happen if what we're deserializing is completely incompatible with
-                    // all the possible variants (e.g. deserializing from boolean).
-                    0 -> Description(_json = json)
-                    1 -> bestMatches.single()
-                    // If there's more than one match with the highest validity, then use the first
-                    // completely valid match, or simply the first match if none are completely
-                    // valid.
-                    else -> bestMatches.firstOrNull { it.isValid() } ?: bestMatches.first()
-                }
-            }
-        }
-
-        internal class Serializer : BaseSerializer<Description>(Description::class) {
-
-            override fun serialize(
-                value: Description,
-                generator: JsonGenerator,
-                provider: SerializerProvider,
-            ) {
-                when {
-                    value.string != null -> generator.writeObject(value.string)
-                    value.missing != null -> generator.writeObject(value.missing)
-                    value._json != null -> generator.writeObject(value._json)
-                    else -> throw IllegalStateException("Invalid Description")
-                }
-            }
-        }
-    }
-
-    /**
      * JSON Schema that example inputs must match. Replaces the current inputs schema as a whole;
      * null removes it, which returns 400 while transformations still point into inputs. Only
      * key-value datasets support schemas. Every existing example must match the new schema,
      * otherwise the request returns 400 with the IDs of the examples that do not, and nothing is
      * changed. Omit to keep the current schema.
      */
-    @JsonDeserialize(using = InputsSchemaDefinition.Deserializer::class)
-    @JsonSerialize(using = InputsSchemaDefinition.Serializer::class)
     class InputsSchemaDefinition
+    @JsonCreator
     private constructor(
-        private val unionMember0: UnionMember0? = null,
-        private val missing: Missing? = null,
-        private val _json: JsonValue? = null,
+        @com.fasterxml.jackson.annotation.JsonValue
+        private val additionalProperties: Map<String, JsonValue>
     ) {
 
-        fun unionMember0(): Optional<UnionMember0> = Optional.ofNullable(unionMember0)
+        @JsonAnyGetter
+        @ExcludeMissing
+        fun _additionalProperties(): Map<String, JsonValue> = additionalProperties
 
-        fun missing(): Optional<Missing> = Optional.ofNullable(missing)
+        fun toBuilder() = Builder().from(this)
 
-        fun isUnionMember0(): Boolean = unionMember0 != null
+        companion object {
 
-        fun isMissing(): Boolean = missing != null
+            /**
+             * Returns a mutable builder for constructing an instance of [InputsSchemaDefinition].
+             */
+            @JvmStatic fun builder() = Builder()
+        }
 
-        fun asUnionMember0(): UnionMember0 = unionMember0.getOrThrow("unionMember0")
+        /** A builder for [InputsSchemaDefinition]. */
+        class Builder internal constructor() {
 
-        fun asMissing(): Missing = missing.getOrThrow("missing")
+            private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
 
-        fun _json(): Optional<JsonValue> = Optional.ofNullable(_json)
-
-        /**
-         * Maps this instance's current variant to a value of type [T] using the given [visitor].
-         *
-         * Note that this method is _not_ forwards compatible with new variants from the API, unless
-         * [visitor] overrides [Visitor.unknown]. To handle variants not known to this version of
-         * the SDK gracefully, consider overriding [Visitor.unknown]:
-         * ```java
-         * import com.langchain.smith.core.JsonValue;
-         * import java.util.Optional;
-         *
-         * Optional<String> result = inputsSchemaDefinition.accept(new InputsSchemaDefinition.Visitor<Optional<String>>() {
-         *     @Override
-         *     public Optional<String> visitUnionMember0(UnionMember0 unionMember0) {
-         *         return Optional.of(unionMember0.toString());
-         *     }
-         *
-         *     // ...
-         *
-         *     @Override
-         *     public Optional<String> unknown(JsonValue json) {
-         *         // Or inspect the `json`.
-         *         return Optional.empty();
-         *     }
-         * });
-         * ```
-         *
-         * @throws LangChainInvalidDataException if [Visitor.unknown] is not overridden in [visitor]
-         *   and the current variant is unknown.
-         */
-        fun <T> accept(visitor: Visitor<T>): T =
-            when {
-                unionMember0 != null -> visitor.visitUnionMember0(unionMember0)
-                missing != null -> visitor.visitMissing(missing)
-                else -> visitor.unknown(_json)
+            @JvmSynthetic
+            internal fun from(inputsSchemaDefinition: InputsSchemaDefinition) = apply {
+                additionalProperties = inputsSchemaDefinition.additionalProperties.toMutableMap()
             }
+
+            fun additionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
+                this.additionalProperties.clear()
+                putAllAdditionalProperties(additionalProperties)
+            }
+
+            fun putAdditionalProperty(key: String, value: JsonValue) = apply {
+                additionalProperties.put(key, value)
+            }
+
+            fun putAllAdditionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
+                this.additionalProperties.putAll(additionalProperties)
+            }
+
+            fun removeAdditionalProperty(key: String) = apply { additionalProperties.remove(key) }
+
+            fun removeAllAdditionalProperties(keys: Set<String>) = apply {
+                keys.forEach(::removeAdditionalProperty)
+            }
+
+            /**
+             * Returns an immutable instance of [InputsSchemaDefinition].
+             *
+             * Further updates to this [Builder] will not mutate the returned instance.
+             */
+            fun build(): InputsSchemaDefinition =
+                InputsSchemaDefinition(additionalProperties.toImmutable())
+        }
 
         private var validated: Boolean = false
 
@@ -1809,17 +1248,6 @@ private constructor(
                 return@apply
             }
 
-            accept(
-                object : Visitor<Unit> {
-                    override fun visitUnionMember0(unionMember0: UnionMember0) {
-                        unionMember0.validate()
-                    }
-
-                    override fun visitMissing(missing: Missing) {
-                        missing.validate()
-                    }
-                }
-            )
             validated = true
         }
 
@@ -1839,16 +1267,7 @@ private constructor(
          */
         @JvmSynthetic
         internal fun validity(): Int =
-            accept(
-                object : Visitor<Int> {
-                    override fun visitUnionMember0(unionMember0: UnionMember0) =
-                        unionMember0.validity()
-
-                    override fun visitMissing(missing: Missing) = missing.validity()
-
-                    override fun unknown(json: JsonValue?) = 0
-                }
-            )
+            additionalProperties.count { (_, value) -> !value.isNull() && !value.isMissing() }
 
         override fun equals(other: Any?): Boolean {
             if (this === other) {
@@ -1856,277 +1275,76 @@ private constructor(
             }
 
             return other is InputsSchemaDefinition &&
-                unionMember0 == other.unionMember0 &&
-                missing == other.missing
+                additionalProperties == other.additionalProperties
         }
 
-        override fun hashCode(): Int = Objects.hash(unionMember0, missing)
+        private val hashCode: Int by lazy { Objects.hash(additionalProperties) }
 
-        override fun toString(): String =
-            when {
-                unionMember0 != null -> "InputsSchemaDefinition{unionMember0=$unionMember0}"
-                missing != null -> "InputsSchemaDefinition{missing=$missing}"
-                _json != null -> "InputsSchemaDefinition{_unknown=$_json}"
-                else -> throw IllegalStateException("Invalid InputsSchemaDefinition")
-            }
+        override fun hashCode(): Int = hashCode
 
-        companion object {
-
-            @JvmStatic
-            fun ofUnionMember0(unionMember0: UnionMember0) =
-                InputsSchemaDefinition(unionMember0 = unionMember0)
-
-            @JvmStatic fun ofMissing(missing: Missing) = InputsSchemaDefinition(missing = missing)
-        }
-
-        /**
-         * An interface that defines how to map each variant of [InputsSchemaDefinition] to a value
-         * of type [T].
-         */
-        interface Visitor<out T> {
-
-            fun visitUnionMember0(unionMember0: UnionMember0): T
-
-            fun visitMissing(missing: Missing): T
-
-            /**
-             * Maps an unknown variant of [InputsSchemaDefinition] to a value of type [T].
-             *
-             * An instance of [InputsSchemaDefinition] can contain an unknown variant if it was
-             * deserialized from data that doesn't match any known variant. For example, if the SDK
-             * is on an older version than the API, then the API may respond with new variants that
-             * the SDK is unaware of.
-             *
-             * @throws LangChainInvalidDataException in the default implementation.
-             */
-            fun unknown(json: JsonValue?): T {
-                throw LangChainInvalidDataException("Unknown InputsSchemaDefinition: $json")
-            }
-        }
-
-        internal class Deserializer :
-            BaseDeserializer<InputsSchemaDefinition>(InputsSchemaDefinition::class) {
-
-            override fun ObjectCodec.deserialize(node: JsonNode): InputsSchemaDefinition {
-                val json = JsonValue.fromJsonNode(node)
-
-                val bestMatches =
-                    sequenceOf(
-                            tryDeserialize(node, jacksonTypeRef<UnionMember0>())?.let {
-                                InputsSchemaDefinition(unionMember0 = it, _json = json)
-                            },
-                            tryDeserialize(node, jacksonTypeRef<Missing>())?.let {
-                                InputsSchemaDefinition(missing = it, _json = json)
-                            },
-                        )
-                        .filterNotNull()
-                        .allMaxBy { it.validity() }
-                        .toList()
-                return when (bestMatches.size) {
-                    // This can happen if what we're deserializing is completely incompatible with
-                    // all the possible variants (e.g. deserializing from boolean).
-                    0 -> InputsSchemaDefinition(_json = json)
-                    1 -> bestMatches.single()
-                    // If there's more than one match with the highest validity, then use the first
-                    // completely valid match, or simply the first match if none are completely
-                    // valid.
-                    else -> bestMatches.firstOrNull { it.isValid() } ?: bestMatches.first()
-                }
-            }
-        }
-
-        internal class Serializer :
-            BaseSerializer<InputsSchemaDefinition>(InputsSchemaDefinition::class) {
-
-            override fun serialize(
-                value: InputsSchemaDefinition,
-                generator: JsonGenerator,
-                provider: SerializerProvider,
-            ) {
-                when {
-                    value.unionMember0 != null -> generator.writeObject(value.unionMember0)
-                    value.missing != null -> generator.writeObject(value.missing)
-                    value._json != null -> generator.writeObject(value._json)
-                    else -> throw IllegalStateException("Invalid InputsSchemaDefinition")
-                }
-            }
-        }
-
-        class UnionMember0
-        @JsonCreator
-        private constructor(
-            @com.fasterxml.jackson.annotation.JsonValue
-            private val additionalProperties: Map<String, JsonValue>
-        ) {
-
-            @JsonAnyGetter
-            @ExcludeMissing
-            fun _additionalProperties(): Map<String, JsonValue> = additionalProperties
-
-            fun toBuilder() = Builder().from(this)
-
-            companion object {
-
-                /** Returns a mutable builder for constructing an instance of [UnionMember0]. */
-                @JvmStatic fun builder() = Builder()
-            }
-
-            /** A builder for [UnionMember0]. */
-            class Builder internal constructor() {
-
-                private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
-
-                @JvmSynthetic
-                internal fun from(unionMember0: UnionMember0) = apply {
-                    additionalProperties = unionMember0.additionalProperties.toMutableMap()
-                }
-
-                fun additionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
-                    this.additionalProperties.clear()
-                    putAllAdditionalProperties(additionalProperties)
-                }
-
-                fun putAdditionalProperty(key: String, value: JsonValue) = apply {
-                    additionalProperties.put(key, value)
-                }
-
-                fun putAllAdditionalProperties(additionalProperties: Map<String, JsonValue>) =
-                    apply {
-                        this.additionalProperties.putAll(additionalProperties)
-                    }
-
-                fun removeAdditionalProperty(key: String) = apply {
-                    additionalProperties.remove(key)
-                }
-
-                fun removeAllAdditionalProperties(keys: Set<String>) = apply {
-                    keys.forEach(::removeAdditionalProperty)
-                }
-
-                /**
-                 * Returns an immutable instance of [UnionMember0].
-                 *
-                 * Further updates to this [Builder] will not mutate the returned instance.
-                 */
-                fun build(): UnionMember0 = UnionMember0(additionalProperties.toImmutable())
-            }
-
-            private var validated: Boolean = false
-
-            /**
-             * Validates that the types of all values in this object match their expected types
-             * recursively.
-             *
-             * This method is _not_ forwards compatible with new types from the API for existing
-             * fields.
-             *
-             * @throws LangChainInvalidDataException if any value type in this object doesn't match
-             *   its expected type.
-             */
-            fun validate(): UnionMember0 = apply {
-                if (validated) {
-                    return@apply
-                }
-
-                validated = true
-            }
-
-            fun isValid(): Boolean =
-                try {
-                    validate()
-                    true
-                } catch (e: LangChainInvalidDataException) {
-                    false
-                }
-
-            /**
-             * Returns a score indicating how many valid values are contained in this object
-             * recursively.
-             *
-             * Used for best match union deserialization.
-             */
-            @JvmSynthetic
-            internal fun validity(): Int =
-                additionalProperties.count { (_, value) -> !value.isNull() && !value.isMissing() }
-
-            override fun equals(other: Any?): Boolean {
-                if (this === other) {
-                    return true
-                }
-
-                return other is UnionMember0 && additionalProperties == other.additionalProperties
-            }
-
-            private val hashCode: Int by lazy { Objects.hash(additionalProperties) }
-
-            override fun hashCode(): Int = hashCode
-
-            override fun toString() = "UnionMember0{additionalProperties=$additionalProperties}"
-        }
+        override fun toString() =
+            "InputsSchemaDefinition{additionalProperties=$additionalProperties}"
     }
 
     /**
      * Dataset metadata as a JSON object. Replaces the current metadata as a whole; keys are not
      * merged. Send an empty object to clear it. Omit to keep the current metadata.
      */
-    @JsonDeserialize(using = Metadata.Deserializer::class)
-    @JsonSerialize(using = Metadata.Serializer::class)
     class Metadata
+    @JsonCreator
     private constructor(
-        private val unionMember0: UnionMember0? = null,
-        private val missing: Missing? = null,
-        private val _json: JsonValue? = null,
+        @com.fasterxml.jackson.annotation.JsonValue
+        private val additionalProperties: Map<String, JsonValue>
     ) {
 
-        fun unionMember0(): Optional<UnionMember0> = Optional.ofNullable(unionMember0)
+        @JsonAnyGetter
+        @ExcludeMissing
+        fun _additionalProperties(): Map<String, JsonValue> = additionalProperties
 
-        fun missing(): Optional<Missing> = Optional.ofNullable(missing)
+        fun toBuilder() = Builder().from(this)
 
-        fun isUnionMember0(): Boolean = unionMember0 != null
+        companion object {
 
-        fun isMissing(): Boolean = missing != null
+            /** Returns a mutable builder for constructing an instance of [Metadata]. */
+            @JvmStatic fun builder() = Builder()
+        }
 
-        fun asUnionMember0(): UnionMember0 = unionMember0.getOrThrow("unionMember0")
+        /** A builder for [Metadata]. */
+        class Builder internal constructor() {
 
-        fun asMissing(): Missing = missing.getOrThrow("missing")
+            private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
 
-        fun _json(): Optional<JsonValue> = Optional.ofNullable(_json)
-
-        /**
-         * Maps this instance's current variant to a value of type [T] using the given [visitor].
-         *
-         * Note that this method is _not_ forwards compatible with new variants from the API, unless
-         * [visitor] overrides [Visitor.unknown]. To handle variants not known to this version of
-         * the SDK gracefully, consider overriding [Visitor.unknown]:
-         * ```java
-         * import com.langchain.smith.core.JsonValue;
-         * import java.util.Optional;
-         *
-         * Optional<String> result = metadata.accept(new Metadata.Visitor<Optional<String>>() {
-         *     @Override
-         *     public Optional<String> visitUnionMember0(UnionMember0 unionMember0) {
-         *         return Optional.of(unionMember0.toString());
-         *     }
-         *
-         *     // ...
-         *
-         *     @Override
-         *     public Optional<String> unknown(JsonValue json) {
-         *         // Or inspect the `json`.
-         *         return Optional.empty();
-         *     }
-         * });
-         * ```
-         *
-         * @throws LangChainInvalidDataException if [Visitor.unknown] is not overridden in [visitor]
-         *   and the current variant is unknown.
-         */
-        fun <T> accept(visitor: Visitor<T>): T =
-            when {
-                unionMember0 != null -> visitor.visitUnionMember0(unionMember0)
-                missing != null -> visitor.visitMissing(missing)
-                else -> visitor.unknown(_json)
+            @JvmSynthetic
+            internal fun from(metadata: Metadata) = apply {
+                additionalProperties = metadata.additionalProperties.toMutableMap()
             }
+
+            fun additionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
+                this.additionalProperties.clear()
+                putAllAdditionalProperties(additionalProperties)
+            }
+
+            fun putAdditionalProperty(key: String, value: JsonValue) = apply {
+                additionalProperties.put(key, value)
+            }
+
+            fun putAllAdditionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
+                this.additionalProperties.putAll(additionalProperties)
+            }
+
+            fun removeAdditionalProperty(key: String) = apply { additionalProperties.remove(key) }
+
+            fun removeAllAdditionalProperties(keys: Set<String>) = apply {
+                keys.forEach(::removeAdditionalProperty)
+            }
+
+            /**
+             * Returns an immutable instance of [Metadata].
+             *
+             * Further updates to this [Builder] will not mutate the returned instance.
+             */
+            fun build(): Metadata = Metadata(additionalProperties.toImmutable())
+        }
 
         private var validated: Boolean = false
 
@@ -2144,17 +1362,6 @@ private constructor(
                 return@apply
             }
 
-            accept(
-                object : Visitor<Unit> {
-                    override fun visitUnionMember0(unionMember0: UnionMember0) {
-                        unionMember0.validate()
-                    }
-
-                    override fun visitMissing(missing: Missing) {
-                        missing.validate()
-                    }
-                }
-            )
             validated = true
         }
 
@@ -2174,436 +1381,21 @@ private constructor(
          */
         @JvmSynthetic
         internal fun validity(): Int =
-            accept(
-                object : Visitor<Int> {
-                    override fun visitUnionMember0(unionMember0: UnionMember0) =
-                        unionMember0.validity()
-
-                    override fun visitMissing(missing: Missing) = missing.validity()
-
-                    override fun unknown(json: JsonValue?) = 0
-                }
-            )
+            additionalProperties.count { (_, value) -> !value.isNull() && !value.isMissing() }
 
         override fun equals(other: Any?): Boolean {
             if (this === other) {
                 return true
             }
 
-            return other is Metadata &&
-                unionMember0 == other.unionMember0 &&
-                missing == other.missing
+            return other is Metadata && additionalProperties == other.additionalProperties
         }
 
-        override fun hashCode(): Int = Objects.hash(unionMember0, missing)
+        private val hashCode: Int by lazy { Objects.hash(additionalProperties) }
 
-        override fun toString(): String =
-            when {
-                unionMember0 != null -> "Metadata{unionMember0=$unionMember0}"
-                missing != null -> "Metadata{missing=$missing}"
-                _json != null -> "Metadata{_unknown=$_json}"
-                else -> throw IllegalStateException("Invalid Metadata")
-            }
+        override fun hashCode(): Int = hashCode
 
-        companion object {
-
-            @JvmStatic
-            fun ofUnionMember0(unionMember0: UnionMember0) = Metadata(unionMember0 = unionMember0)
-
-            @JvmStatic fun ofMissing(missing: Missing) = Metadata(missing = missing)
-        }
-
-        /**
-         * An interface that defines how to map each variant of [Metadata] to a value of type [T].
-         */
-        interface Visitor<out T> {
-
-            fun visitUnionMember0(unionMember0: UnionMember0): T
-
-            fun visitMissing(missing: Missing): T
-
-            /**
-             * Maps an unknown variant of [Metadata] to a value of type [T].
-             *
-             * An instance of [Metadata] can contain an unknown variant if it was deserialized from
-             * data that doesn't match any known variant. For example, if the SDK is on an older
-             * version than the API, then the API may respond with new variants that the SDK is
-             * unaware of.
-             *
-             * @throws LangChainInvalidDataException in the default implementation.
-             */
-            fun unknown(json: JsonValue?): T {
-                throw LangChainInvalidDataException("Unknown Metadata: $json")
-            }
-        }
-
-        internal class Deserializer : BaseDeserializer<Metadata>(Metadata::class) {
-
-            override fun ObjectCodec.deserialize(node: JsonNode): Metadata {
-                val json = JsonValue.fromJsonNode(node)
-
-                val bestMatches =
-                    sequenceOf(
-                            tryDeserialize(node, jacksonTypeRef<UnionMember0>())?.let {
-                                Metadata(unionMember0 = it, _json = json)
-                            },
-                            tryDeserialize(node, jacksonTypeRef<Missing>())?.let {
-                                Metadata(missing = it, _json = json)
-                            },
-                        )
-                        .filterNotNull()
-                        .allMaxBy { it.validity() }
-                        .toList()
-                return when (bestMatches.size) {
-                    // This can happen if what we're deserializing is completely incompatible with
-                    // all the possible variants (e.g. deserializing from boolean).
-                    0 -> Metadata(_json = json)
-                    1 -> bestMatches.single()
-                    // If there's more than one match with the highest validity, then use the first
-                    // completely valid match, or simply the first match if none are completely
-                    // valid.
-                    else -> bestMatches.firstOrNull { it.isValid() } ?: bestMatches.first()
-                }
-            }
-        }
-
-        internal class Serializer : BaseSerializer<Metadata>(Metadata::class) {
-
-            override fun serialize(
-                value: Metadata,
-                generator: JsonGenerator,
-                provider: SerializerProvider,
-            ) {
-                when {
-                    value.unionMember0 != null -> generator.writeObject(value.unionMember0)
-                    value.missing != null -> generator.writeObject(value.missing)
-                    value._json != null -> generator.writeObject(value._json)
-                    else -> throw IllegalStateException("Invalid Metadata")
-                }
-            }
-        }
-
-        class UnionMember0
-        @JsonCreator
-        private constructor(
-            @com.fasterxml.jackson.annotation.JsonValue
-            private val additionalProperties: Map<String, JsonValue>
-        ) {
-
-            @JsonAnyGetter
-            @ExcludeMissing
-            fun _additionalProperties(): Map<String, JsonValue> = additionalProperties
-
-            fun toBuilder() = Builder().from(this)
-
-            companion object {
-
-                /** Returns a mutable builder for constructing an instance of [UnionMember0]. */
-                @JvmStatic fun builder() = Builder()
-            }
-
-            /** A builder for [UnionMember0]. */
-            class Builder internal constructor() {
-
-                private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
-
-                @JvmSynthetic
-                internal fun from(unionMember0: UnionMember0) = apply {
-                    additionalProperties = unionMember0.additionalProperties.toMutableMap()
-                }
-
-                fun additionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
-                    this.additionalProperties.clear()
-                    putAllAdditionalProperties(additionalProperties)
-                }
-
-                fun putAdditionalProperty(key: String, value: JsonValue) = apply {
-                    additionalProperties.put(key, value)
-                }
-
-                fun putAllAdditionalProperties(additionalProperties: Map<String, JsonValue>) =
-                    apply {
-                        this.additionalProperties.putAll(additionalProperties)
-                    }
-
-                fun removeAdditionalProperty(key: String) = apply {
-                    additionalProperties.remove(key)
-                }
-
-                fun removeAllAdditionalProperties(keys: Set<String>) = apply {
-                    keys.forEach(::removeAdditionalProperty)
-                }
-
-                /**
-                 * Returns an immutable instance of [UnionMember0].
-                 *
-                 * Further updates to this [Builder] will not mutate the returned instance.
-                 */
-                fun build(): UnionMember0 = UnionMember0(additionalProperties.toImmutable())
-            }
-
-            private var validated: Boolean = false
-
-            /**
-             * Validates that the types of all values in this object match their expected types
-             * recursively.
-             *
-             * This method is _not_ forwards compatible with new types from the API for existing
-             * fields.
-             *
-             * @throws LangChainInvalidDataException if any value type in this object doesn't match
-             *   its expected type.
-             */
-            fun validate(): UnionMember0 = apply {
-                if (validated) {
-                    return@apply
-                }
-
-                validated = true
-            }
-
-            fun isValid(): Boolean =
-                try {
-                    validate()
-                    true
-                } catch (e: LangChainInvalidDataException) {
-                    false
-                }
-
-            /**
-             * Returns a score indicating how many valid values are contained in this object
-             * recursively.
-             *
-             * Used for best match union deserialization.
-             */
-            @JvmSynthetic
-            internal fun validity(): Int =
-                additionalProperties.count { (_, value) -> !value.isNull() && !value.isMissing() }
-
-            override fun equals(other: Any?): Boolean {
-                if (this === other) {
-                    return true
-                }
-
-                return other is UnionMember0 && additionalProperties == other.additionalProperties
-            }
-
-            private val hashCode: Int by lazy { Objects.hash(additionalProperties) }
-
-            override fun hashCode(): Int = hashCode
-
-            override fun toString() = "UnionMember0{additionalProperties=$additionalProperties}"
-        }
-    }
-
-    /**
-     * New dataset name. Must be unique in the workspace; a name already used by another dataset
-     * returns 409. Null returns 400. Omit to keep the current name.
-     */
-    @JsonDeserialize(using = Name.Deserializer::class)
-    @JsonSerialize(using = Name.Serializer::class)
-    class Name
-    private constructor(
-        private val string: String? = null,
-        private val missing: Missing? = null,
-        private val _json: JsonValue? = null,
-    ) {
-
-        fun string(): Optional<String> = Optional.ofNullable(string)
-
-        fun missing(): Optional<Missing> = Optional.ofNullable(missing)
-
-        fun isString(): Boolean = string != null
-
-        fun isMissing(): Boolean = missing != null
-
-        fun asString(): String = string.getOrThrow("string")
-
-        fun asMissing(): Missing = missing.getOrThrow("missing")
-
-        fun _json(): Optional<JsonValue> = Optional.ofNullable(_json)
-
-        /**
-         * Maps this instance's current variant to a value of type [T] using the given [visitor].
-         *
-         * Note that this method is _not_ forwards compatible with new variants from the API, unless
-         * [visitor] overrides [Visitor.unknown]. To handle variants not known to this version of
-         * the SDK gracefully, consider overriding [Visitor.unknown]:
-         * ```java
-         * import com.langchain.smith.core.JsonValue;
-         * import java.util.Optional;
-         *
-         * Optional<String> result = name.accept(new Name.Visitor<Optional<String>>() {
-         *     @Override
-         *     public Optional<String> visitString(String string) {
-         *         return Optional.of(string.toString());
-         *     }
-         *
-         *     // ...
-         *
-         *     @Override
-         *     public Optional<String> unknown(JsonValue json) {
-         *         // Or inspect the `json`.
-         *         return Optional.empty();
-         *     }
-         * });
-         * ```
-         *
-         * @throws LangChainInvalidDataException if [Visitor.unknown] is not overridden in [visitor]
-         *   and the current variant is unknown.
-         */
-        fun <T> accept(visitor: Visitor<T>): T =
-            when {
-                string != null -> visitor.visitString(string)
-                missing != null -> visitor.visitMissing(missing)
-                else -> visitor.unknown(_json)
-            }
-
-        private var validated: Boolean = false
-
-        /**
-         * Validates that the types of all values in this object match their expected types
-         * recursively.
-         *
-         * This method is _not_ forwards compatible with new types from the API for existing fields.
-         *
-         * @throws LangChainInvalidDataException if any value type in this object doesn't match its
-         *   expected type.
-         */
-        fun validate(): Name = apply {
-            if (validated) {
-                return@apply
-            }
-
-            accept(
-                object : Visitor<Unit> {
-                    override fun visitString(string: String) {}
-
-                    override fun visitMissing(missing: Missing) {
-                        missing.validate()
-                    }
-                }
-            )
-            validated = true
-        }
-
-        fun isValid(): Boolean =
-            try {
-                validate()
-                true
-            } catch (e: LangChainInvalidDataException) {
-                false
-            }
-
-        /**
-         * Returns a score indicating how many valid values are contained in this object
-         * recursively.
-         *
-         * Used for best match union deserialization.
-         */
-        @JvmSynthetic
-        internal fun validity(): Int =
-            accept(
-                object : Visitor<Int> {
-                    override fun visitString(string: String) = 1
-
-                    override fun visitMissing(missing: Missing) = missing.validity()
-
-                    override fun unknown(json: JsonValue?) = 0
-                }
-            )
-
-        override fun equals(other: Any?): Boolean {
-            if (this === other) {
-                return true
-            }
-
-            return other is Name && string == other.string && missing == other.missing
-        }
-
-        override fun hashCode(): Int = Objects.hash(string, missing)
-
-        override fun toString(): String =
-            when {
-                string != null -> "Name{string=$string}"
-                missing != null -> "Name{missing=$missing}"
-                _json != null -> "Name{_unknown=$_json}"
-                else -> throw IllegalStateException("Invalid Name")
-            }
-
-        companion object {
-
-            @JvmStatic fun ofString(string: String) = Name(string = string)
-
-            @JvmStatic fun ofMissing(missing: Missing) = Name(missing = missing)
-        }
-
-        /** An interface that defines how to map each variant of [Name] to a value of type [T]. */
-        interface Visitor<out T> {
-
-            fun visitString(string: String): T
-
-            fun visitMissing(missing: Missing): T
-
-            /**
-             * Maps an unknown variant of [Name] to a value of type [T].
-             *
-             * An instance of [Name] can contain an unknown variant if it was deserialized from data
-             * that doesn't match any known variant. For example, if the SDK is on an older version
-             * than the API, then the API may respond with new variants that the SDK is unaware of.
-             *
-             * @throws LangChainInvalidDataException in the default implementation.
-             */
-            fun unknown(json: JsonValue?): T {
-                throw LangChainInvalidDataException("Unknown Name: $json")
-            }
-        }
-
-        internal class Deserializer : BaseDeserializer<Name>(Name::class) {
-
-            override fun ObjectCodec.deserialize(node: JsonNode): Name {
-                val json = JsonValue.fromJsonNode(node)
-
-                val bestMatches =
-                    sequenceOf(
-                            tryDeserialize(node, jacksonTypeRef<Missing>())?.let {
-                                Name(missing = it, _json = json)
-                            },
-                            tryDeserialize(node, jacksonTypeRef<String>())?.let {
-                                Name(string = it, _json = json)
-                            },
-                        )
-                        .filterNotNull()
-                        .allMaxBy { it.validity() }
-                        .toList()
-                return when (bestMatches.size) {
-                    // This can happen if what we're deserializing is completely incompatible with
-                    // all the possible variants (e.g. deserializing from boolean).
-                    0 -> Name(_json = json)
-                    1 -> bestMatches.single()
-                    // If there's more than one match with the highest validity, then use the first
-                    // completely valid match, or simply the first match if none are completely
-                    // valid.
-                    else -> bestMatches.firstOrNull { it.isValid() } ?: bestMatches.first()
-                }
-            }
-        }
-
-        internal class Serializer : BaseSerializer<Name>(Name::class) {
-
-            override fun serialize(
-                value: Name,
-                generator: JsonGenerator,
-                provider: SerializerProvider,
-            ) {
-                when {
-                    value.string != null -> generator.writeObject(value.string)
-                    value.missing != null -> generator.writeObject(value.missing)
-                    value._json != null -> generator.writeObject(value._json)
-                    else -> throw IllegalStateException("Invalid Name")
-                }
-            }
-        }
+        override fun toString() = "Metadata{additionalProperties=$additionalProperties}"
     }
 
     /**
@@ -2613,64 +1405,64 @@ private constructor(
      * otherwise the request returns 400 with the IDs of the examples that do not, and nothing is
      * changed. Omit to keep the current schema.
      */
-    @JsonDeserialize(using = OutputsSchemaDefinition.Deserializer::class)
-    @JsonSerialize(using = OutputsSchemaDefinition.Serializer::class)
     class OutputsSchemaDefinition
+    @JsonCreator
     private constructor(
-        private val unionMember0: UnionMember0? = null,
-        private val missing: Missing? = null,
-        private val _json: JsonValue? = null,
+        @com.fasterxml.jackson.annotation.JsonValue
+        private val additionalProperties: Map<String, JsonValue>
     ) {
 
-        fun unionMember0(): Optional<UnionMember0> = Optional.ofNullable(unionMember0)
+        @JsonAnyGetter
+        @ExcludeMissing
+        fun _additionalProperties(): Map<String, JsonValue> = additionalProperties
 
-        fun missing(): Optional<Missing> = Optional.ofNullable(missing)
+        fun toBuilder() = Builder().from(this)
 
-        fun isUnionMember0(): Boolean = unionMember0 != null
+        companion object {
 
-        fun isMissing(): Boolean = missing != null
+            /**
+             * Returns a mutable builder for constructing an instance of [OutputsSchemaDefinition].
+             */
+            @JvmStatic fun builder() = Builder()
+        }
 
-        fun asUnionMember0(): UnionMember0 = unionMember0.getOrThrow("unionMember0")
+        /** A builder for [OutputsSchemaDefinition]. */
+        class Builder internal constructor() {
 
-        fun asMissing(): Missing = missing.getOrThrow("missing")
+            private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
 
-        fun _json(): Optional<JsonValue> = Optional.ofNullable(_json)
-
-        /**
-         * Maps this instance's current variant to a value of type [T] using the given [visitor].
-         *
-         * Note that this method is _not_ forwards compatible with new variants from the API, unless
-         * [visitor] overrides [Visitor.unknown]. To handle variants not known to this version of
-         * the SDK gracefully, consider overriding [Visitor.unknown]:
-         * ```java
-         * import com.langchain.smith.core.JsonValue;
-         * import java.util.Optional;
-         *
-         * Optional<String> result = outputsSchemaDefinition.accept(new OutputsSchemaDefinition.Visitor<Optional<String>>() {
-         *     @Override
-         *     public Optional<String> visitUnionMember0(UnionMember0 unionMember0) {
-         *         return Optional.of(unionMember0.toString());
-         *     }
-         *
-         *     // ...
-         *
-         *     @Override
-         *     public Optional<String> unknown(JsonValue json) {
-         *         // Or inspect the `json`.
-         *         return Optional.empty();
-         *     }
-         * });
-         * ```
-         *
-         * @throws LangChainInvalidDataException if [Visitor.unknown] is not overridden in [visitor]
-         *   and the current variant is unknown.
-         */
-        fun <T> accept(visitor: Visitor<T>): T =
-            when {
-                unionMember0 != null -> visitor.visitUnionMember0(unionMember0)
-                missing != null -> visitor.visitMissing(missing)
-                else -> visitor.unknown(_json)
+            @JvmSynthetic
+            internal fun from(outputsSchemaDefinition: OutputsSchemaDefinition) = apply {
+                additionalProperties = outputsSchemaDefinition.additionalProperties.toMutableMap()
             }
+
+            fun additionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
+                this.additionalProperties.clear()
+                putAllAdditionalProperties(additionalProperties)
+            }
+
+            fun putAdditionalProperty(key: String, value: JsonValue) = apply {
+                additionalProperties.put(key, value)
+            }
+
+            fun putAllAdditionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
+                this.additionalProperties.putAll(additionalProperties)
+            }
+
+            fun removeAdditionalProperty(key: String) = apply { additionalProperties.remove(key) }
+
+            fun removeAllAdditionalProperties(keys: Set<String>) = apply {
+                keys.forEach(::removeAdditionalProperty)
+            }
+
+            /**
+             * Returns an immutable instance of [OutputsSchemaDefinition].
+             *
+             * Further updates to this [Builder] will not mutate the returned instance.
+             */
+            fun build(): OutputsSchemaDefinition =
+                OutputsSchemaDefinition(additionalProperties.toImmutable())
+        }
 
         private var validated: Boolean = false
 
@@ -2688,17 +1480,6 @@ private constructor(
                 return@apply
             }
 
-            accept(
-                object : Visitor<Unit> {
-                    override fun visitUnionMember0(unionMember0: UnionMember0) {
-                        unionMember0.validate()
-                    }
-
-                    override fun visitMissing(missing: Missing) {
-                        missing.validate()
-                    }
-                }
-            )
             validated = true
         }
 
@@ -2718,16 +1499,7 @@ private constructor(
          */
         @JvmSynthetic
         internal fun validity(): Int =
-            accept(
-                object : Visitor<Int> {
-                    override fun visitUnionMember0(unionMember0: UnionMember0) =
-                        unionMember0.validity()
-
-                    override fun visitMissing(missing: Missing) = missing.validity()
-
-                    override fun unknown(json: JsonValue?) = 0
-                }
-            )
+            additionalProperties.count { (_, value) -> !value.isNull() && !value.isMissing() }
 
         override fun equals(other: Any?): Boolean {
             if (this === other) {
@@ -2735,213 +1507,15 @@ private constructor(
             }
 
             return other is OutputsSchemaDefinition &&
-                unionMember0 == other.unionMember0 &&
-                missing == other.missing
+                additionalProperties == other.additionalProperties
         }
 
-        override fun hashCode(): Int = Objects.hash(unionMember0, missing)
+        private val hashCode: Int by lazy { Objects.hash(additionalProperties) }
 
-        override fun toString(): String =
-            when {
-                unionMember0 != null -> "OutputsSchemaDefinition{unionMember0=$unionMember0}"
-                missing != null -> "OutputsSchemaDefinition{missing=$missing}"
-                _json != null -> "OutputsSchemaDefinition{_unknown=$_json}"
-                else -> throw IllegalStateException("Invalid OutputsSchemaDefinition")
-            }
+        override fun hashCode(): Int = hashCode
 
-        companion object {
-
-            @JvmStatic
-            fun ofUnionMember0(unionMember0: UnionMember0) =
-                OutputsSchemaDefinition(unionMember0 = unionMember0)
-
-            @JvmStatic fun ofMissing(missing: Missing) = OutputsSchemaDefinition(missing = missing)
-        }
-
-        /**
-         * An interface that defines how to map each variant of [OutputsSchemaDefinition] to a value
-         * of type [T].
-         */
-        interface Visitor<out T> {
-
-            fun visitUnionMember0(unionMember0: UnionMember0): T
-
-            fun visitMissing(missing: Missing): T
-
-            /**
-             * Maps an unknown variant of [OutputsSchemaDefinition] to a value of type [T].
-             *
-             * An instance of [OutputsSchemaDefinition] can contain an unknown variant if it was
-             * deserialized from data that doesn't match any known variant. For example, if the SDK
-             * is on an older version than the API, then the API may respond with new variants that
-             * the SDK is unaware of.
-             *
-             * @throws LangChainInvalidDataException in the default implementation.
-             */
-            fun unknown(json: JsonValue?): T {
-                throw LangChainInvalidDataException("Unknown OutputsSchemaDefinition: $json")
-            }
-        }
-
-        internal class Deserializer :
-            BaseDeserializer<OutputsSchemaDefinition>(OutputsSchemaDefinition::class) {
-
-            override fun ObjectCodec.deserialize(node: JsonNode): OutputsSchemaDefinition {
-                val json = JsonValue.fromJsonNode(node)
-
-                val bestMatches =
-                    sequenceOf(
-                            tryDeserialize(node, jacksonTypeRef<UnionMember0>())?.let {
-                                OutputsSchemaDefinition(unionMember0 = it, _json = json)
-                            },
-                            tryDeserialize(node, jacksonTypeRef<Missing>())?.let {
-                                OutputsSchemaDefinition(missing = it, _json = json)
-                            },
-                        )
-                        .filterNotNull()
-                        .allMaxBy { it.validity() }
-                        .toList()
-                return when (bestMatches.size) {
-                    // This can happen if what we're deserializing is completely incompatible with
-                    // all the possible variants (e.g. deserializing from boolean).
-                    0 -> OutputsSchemaDefinition(_json = json)
-                    1 -> bestMatches.single()
-                    // If there's more than one match with the highest validity, then use the first
-                    // completely valid match, or simply the first match if none are completely
-                    // valid.
-                    else -> bestMatches.firstOrNull { it.isValid() } ?: bestMatches.first()
-                }
-            }
-        }
-
-        internal class Serializer :
-            BaseSerializer<OutputsSchemaDefinition>(OutputsSchemaDefinition::class) {
-
-            override fun serialize(
-                value: OutputsSchemaDefinition,
-                generator: JsonGenerator,
-                provider: SerializerProvider,
-            ) {
-                when {
-                    value.unionMember0 != null -> generator.writeObject(value.unionMember0)
-                    value.missing != null -> generator.writeObject(value.missing)
-                    value._json != null -> generator.writeObject(value._json)
-                    else -> throw IllegalStateException("Invalid OutputsSchemaDefinition")
-                }
-            }
-        }
-
-        class UnionMember0
-        @JsonCreator
-        private constructor(
-            @com.fasterxml.jackson.annotation.JsonValue
-            private val additionalProperties: Map<String, JsonValue>
-        ) {
-
-            @JsonAnyGetter
-            @ExcludeMissing
-            fun _additionalProperties(): Map<String, JsonValue> = additionalProperties
-
-            fun toBuilder() = Builder().from(this)
-
-            companion object {
-
-                /** Returns a mutable builder for constructing an instance of [UnionMember0]. */
-                @JvmStatic fun builder() = Builder()
-            }
-
-            /** A builder for [UnionMember0]. */
-            class Builder internal constructor() {
-
-                private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
-
-                @JvmSynthetic
-                internal fun from(unionMember0: UnionMember0) = apply {
-                    additionalProperties = unionMember0.additionalProperties.toMutableMap()
-                }
-
-                fun additionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
-                    this.additionalProperties.clear()
-                    putAllAdditionalProperties(additionalProperties)
-                }
-
-                fun putAdditionalProperty(key: String, value: JsonValue) = apply {
-                    additionalProperties.put(key, value)
-                }
-
-                fun putAllAdditionalProperties(additionalProperties: Map<String, JsonValue>) =
-                    apply {
-                        this.additionalProperties.putAll(additionalProperties)
-                    }
-
-                fun removeAdditionalProperty(key: String) = apply {
-                    additionalProperties.remove(key)
-                }
-
-                fun removeAllAdditionalProperties(keys: Set<String>) = apply {
-                    keys.forEach(::removeAdditionalProperty)
-                }
-
-                /**
-                 * Returns an immutable instance of [UnionMember0].
-                 *
-                 * Further updates to this [Builder] will not mutate the returned instance.
-                 */
-                fun build(): UnionMember0 = UnionMember0(additionalProperties.toImmutable())
-            }
-
-            private var validated: Boolean = false
-
-            /**
-             * Validates that the types of all values in this object match their expected types
-             * recursively.
-             *
-             * This method is _not_ forwards compatible with new types from the API for existing
-             * fields.
-             *
-             * @throws LangChainInvalidDataException if any value type in this object doesn't match
-             *   its expected type.
-             */
-            fun validate(): UnionMember0 = apply {
-                if (validated) {
-                    return@apply
-                }
-
-                validated = true
-            }
-
-            fun isValid(): Boolean =
-                try {
-                    validate()
-                    true
-                } catch (e: LangChainInvalidDataException) {
-                    false
-                }
-
-            /**
-             * Returns a score indicating how many valid values are contained in this object
-             * recursively.
-             *
-             * Used for best match union deserialization.
-             */
-            @JvmSynthetic
-            internal fun validity(): Int =
-                additionalProperties.count { (_, value) -> !value.isNull() && !value.isMissing() }
-
-            override fun equals(other: Any?): Boolean {
-                if (this === other) {
-                    return true
-                }
-
-                return other is UnionMember0 && additionalProperties == other.additionalProperties
-            }
-
-            private val hashCode: Int by lazy { Objects.hash(additionalProperties) }
-
-            override fun hashCode(): Int = hashCode
-
-            override fun toString() = "UnionMember0{additionalProperties=$additionalProperties}"
-        }
+        override fun toString() =
+            "OutputsSchemaDefinition{additionalProperties=$additionalProperties}"
     }
 
     /**
@@ -3058,226 +1632,6 @@ private constructor(
         override fun hashCode(): Int = hashCode
 
         override fun toString() = "PatchExamples{additionalProperties=$additionalProperties}"
-    }
-
-    /**
-     * Transformations applied to new examples, each a path into inputs or outputs and a
-     * transformation type. Replaces the whole current list; null or an empty list removes all of
-     * them. Existing examples are not transformed. Requires a schema on the inputs or outputs the
-     * path points into, otherwise returns 400. Omit to keep the current list.
-     */
-    @JsonDeserialize(using = Transformations.Deserializer::class)
-    @JsonSerialize(using = Transformations.Serializer::class)
-    class Transformations
-    private constructor(
-        private val dataset: List<DatasetTransformation>? = null,
-        private val missing: Missing? = null,
-        private val _json: JsonValue? = null,
-    ) {
-
-        fun dataset(): Optional<List<DatasetTransformation>> = Optional.ofNullable(dataset)
-
-        fun missing(): Optional<Missing> = Optional.ofNullable(missing)
-
-        fun isDataset(): Boolean = dataset != null
-
-        fun isMissing(): Boolean = missing != null
-
-        fun asDataset(): List<DatasetTransformation> = dataset.getOrThrow("dataset")
-
-        fun asMissing(): Missing = missing.getOrThrow("missing")
-
-        fun _json(): Optional<JsonValue> = Optional.ofNullable(_json)
-
-        /**
-         * Maps this instance's current variant to a value of type [T] using the given [visitor].
-         *
-         * Note that this method is _not_ forwards compatible with new variants from the API, unless
-         * [visitor] overrides [Visitor.unknown]. To handle variants not known to this version of
-         * the SDK gracefully, consider overriding [Visitor.unknown]:
-         * ```java
-         * import com.langchain.smith.core.JsonValue;
-         * import java.util.Optional;
-         *
-         * Optional<String> result = transformations.accept(new Transformations.Visitor<Optional<String>>() {
-         *     @Override
-         *     public Optional<String> visitDataset(List<DatasetTransformation> dataset) {
-         *         return Optional.of(dataset.toString());
-         *     }
-         *
-         *     // ...
-         *
-         *     @Override
-         *     public Optional<String> unknown(JsonValue json) {
-         *         // Or inspect the `json`.
-         *         return Optional.empty();
-         *     }
-         * });
-         * ```
-         *
-         * @throws LangChainInvalidDataException if [Visitor.unknown] is not overridden in [visitor]
-         *   and the current variant is unknown.
-         */
-        fun <T> accept(visitor: Visitor<T>): T =
-            when {
-                dataset != null -> visitor.visitDataset(dataset)
-                missing != null -> visitor.visitMissing(missing)
-                else -> visitor.unknown(_json)
-            }
-
-        private var validated: Boolean = false
-
-        /**
-         * Validates that the types of all values in this object match their expected types
-         * recursively.
-         *
-         * This method is _not_ forwards compatible with new types from the API for existing fields.
-         *
-         * @throws LangChainInvalidDataException if any value type in this object doesn't match its
-         *   expected type.
-         */
-        fun validate(): Transformations = apply {
-            if (validated) {
-                return@apply
-            }
-
-            accept(
-                object : Visitor<Unit> {
-                    override fun visitDataset(dataset: List<DatasetTransformation>) {
-                        dataset.forEach { it.validate() }
-                    }
-
-                    override fun visitMissing(missing: Missing) {
-                        missing.validate()
-                    }
-                }
-            )
-            validated = true
-        }
-
-        fun isValid(): Boolean =
-            try {
-                validate()
-                true
-            } catch (e: LangChainInvalidDataException) {
-                false
-            }
-
-        /**
-         * Returns a score indicating how many valid values are contained in this object
-         * recursively.
-         *
-         * Used for best match union deserialization.
-         */
-        @JvmSynthetic
-        internal fun validity(): Int =
-            accept(
-                object : Visitor<Int> {
-                    override fun visitDataset(dataset: List<DatasetTransformation>) =
-                        dataset.sumOf { it.validity().toInt() }
-
-                    override fun visitMissing(missing: Missing) = missing.validity()
-
-                    override fun unknown(json: JsonValue?) = 0
-                }
-            )
-
-        override fun equals(other: Any?): Boolean {
-            if (this === other) {
-                return true
-            }
-
-            return other is Transformations && dataset == other.dataset && missing == other.missing
-        }
-
-        override fun hashCode(): Int = Objects.hash(dataset, missing)
-
-        override fun toString(): String =
-            when {
-                dataset != null -> "Transformations{dataset=$dataset}"
-                missing != null -> "Transformations{missing=$missing}"
-                _json != null -> "Transformations{_unknown=$_json}"
-                else -> throw IllegalStateException("Invalid Transformations")
-            }
-
-        companion object {
-
-            @JvmStatic
-            fun ofDataset(dataset: List<DatasetTransformation>) =
-                Transformations(dataset = dataset.toImmutable())
-
-            @JvmStatic fun ofMissing(missing: Missing) = Transformations(missing = missing)
-        }
-
-        /**
-         * An interface that defines how to map each variant of [Transformations] to a value of type
-         * [T].
-         */
-        interface Visitor<out T> {
-
-            fun visitDataset(dataset: List<DatasetTransformation>): T
-
-            fun visitMissing(missing: Missing): T
-
-            /**
-             * Maps an unknown variant of [Transformations] to a value of type [T].
-             *
-             * An instance of [Transformations] can contain an unknown variant if it was
-             * deserialized from data that doesn't match any known variant. For example, if the SDK
-             * is on an older version than the API, then the API may respond with new variants that
-             * the SDK is unaware of.
-             *
-             * @throws LangChainInvalidDataException in the default implementation.
-             */
-            fun unknown(json: JsonValue?): T {
-                throw LangChainInvalidDataException("Unknown Transformations: $json")
-            }
-        }
-
-        internal class Deserializer : BaseDeserializer<Transformations>(Transformations::class) {
-
-            override fun ObjectCodec.deserialize(node: JsonNode): Transformations {
-                val json = JsonValue.fromJsonNode(node)
-
-                val bestMatches =
-                    sequenceOf(
-                            tryDeserialize(node, jacksonTypeRef<Missing>())?.let {
-                                Transformations(missing = it, _json = json)
-                            },
-                            tryDeserialize(node, jacksonTypeRef<List<DatasetTransformation>>())
-                                ?.let { Transformations(dataset = it, _json = json) },
-                        )
-                        .filterNotNull()
-                        .allMaxBy { it.validity() }
-                        .toList()
-                return when (bestMatches.size) {
-                    // This can happen if what we're deserializing is completely incompatible with
-                    // all the possible variants (e.g. deserializing from boolean).
-                    0 -> Transformations(_json = json)
-                    1 -> bestMatches.single()
-                    // If there's more than one match with the highest validity, then use the first
-                    // completely valid match, or simply the first match if none are completely
-                    // valid.
-                    else -> bestMatches.firstOrNull { it.isValid() } ?: bestMatches.first()
-                }
-            }
-        }
-
-        internal class Serializer : BaseSerializer<Transformations>(Transformations::class) {
-
-            override fun serialize(
-                value: Transformations,
-                generator: JsonGenerator,
-                provider: SerializerProvider,
-            ) {
-                when {
-                    value.dataset != null -> generator.writeObject(value.dataset)
-                    value.missing != null -> generator.writeObject(value.missing)
-                    value._json != null -> generator.writeObject(value._json)
-                    else -> throw IllegalStateException("Invalid Transformations")
-                }
-            }
-        }
     }
 
     override fun equals(other: Any?): Boolean {

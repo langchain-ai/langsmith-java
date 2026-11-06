@@ -55,7 +55,7 @@ internal class AnnotationQueueRubricItemSchemaTest {
                 .feedbackConfigId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                 .isAssertion(true)
                 .isRequired(true)
-                .regexValidator("string")
+                .regexValidator("regex_validator")
                 .requiredIf(
                     AnnotationQueueRubricItemSchema.RequiredIf.builder()
                         .join(AnnotationQueueRubricItemSchema.RequiredIf.Join.ALL)
@@ -131,8 +131,7 @@ internal class AnnotationQueueRubricItemSchemaTest {
             .contains("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
         assertThat(annotationQueueRubricItemSchema.isAssertion()).contains(true)
         assertThat(annotationQueueRubricItemSchema.isRequired()).contains(true)
-        assertThat(annotationQueueRubricItemSchema.regexValidator())
-            .contains(AnnotationQueueRubricItemSchema.RegexValidator.ofString("string"))
+        assertThat(annotationQueueRubricItemSchema.regexValidator()).contains("regex_validator")
         assertThat(annotationQueueRubricItemSchema.requiredIf())
             .contains(
                 AnnotationQueueRubricItemSchema.RequiredIf.builder()
@@ -218,7 +217,7 @@ internal class AnnotationQueueRubricItemSchemaTest {
                 .feedbackConfigId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                 .isAssertion(true)
                 .isRequired(true)
-                .regexValidator("string")
+                .regexValidator("regex_validator")
                 .requiredIf(
                     AnnotationQueueRubricItemSchema.RequiredIf.builder()
                         .join(AnnotationQueueRubricItemSchema.RequiredIf.Join.ALL)

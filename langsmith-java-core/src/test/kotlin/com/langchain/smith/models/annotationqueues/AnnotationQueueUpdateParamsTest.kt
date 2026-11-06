@@ -18,7 +18,7 @@ internal class AnnotationQueueUpdateParamsTest {
             .description("description")
             .enableReservations(true)
             .metadata(
-                AnnotationQueueUpdateParams.Metadata.UnionMember0.builder()
+                AnnotationQueueUpdateParams.Metadata.builder()
                     .putAdditionalProperty("foo", JsonValue.from("bar"))
                     .build()
             )
@@ -69,7 +69,7 @@ internal class AnnotationQueueUpdateParamsTest {
                     .feedbackConfigId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                     .isAssertion(true)
                     .isRequired(true)
-                    .regexValidator("string")
+                    .regexValidator("regex_validator")
                     .requiredIf(
                         AnnotationQueueRubricItemSchema.RequiredIf.builder()
                             .join(AnnotationQueueRubricItemSchema.RequiredIf.Join.ALL)
@@ -130,7 +130,7 @@ internal class AnnotationQueueUpdateParamsTest {
                 .description("description")
                 .enableReservations(true)
                 .metadata(
-                    AnnotationQueueUpdateParams.Metadata.UnionMember0.builder()
+                    AnnotationQueueUpdateParams.Metadata.builder()
                         .putAdditionalProperty("foo", JsonValue.from("bar"))
                         .build()
                 )
@@ -182,7 +182,7 @@ internal class AnnotationQueueUpdateParamsTest {
                         .feedbackConfigId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                         .isAssertion(true)
                         .isRequired(true)
-                        .regexValidator("string")
+                        .regexValidator("regex_validator")
                         .requiredIf(
                             AnnotationQueueRubricItemSchema.RequiredIf.builder()
                                 .join(AnnotationQueueRubricItemSchema.RequiredIf.Join.ALL)
@@ -225,21 +225,16 @@ internal class AnnotationQueueUpdateParamsTest {
 
         assertThat(body.defaultDataset()).contains("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
         assertThat(body.description()).contains("description")
-        assertThat(body.enableReservations())
-            .contains(AnnotationQueueUpdateParams.EnableReservations.ofBool(true))
+        assertThat(body.enableReservations()).contains(true)
         assertThat(body.metadata())
             .contains(
-                AnnotationQueueUpdateParams.Metadata.ofUnionMember0(
-                    AnnotationQueueUpdateParams.Metadata.UnionMember0.builder()
-                        .putAdditionalProperty("foo", JsonValue.from("bar"))
-                        .build()
-                )
+                AnnotationQueueUpdateParams.Metadata.builder()
+                    .putAdditionalProperty("foo", JsonValue.from("bar"))
+                    .build()
             )
         assertThat(body.name()).contains("name")
-        assertThat(body.numReviewersPerItem())
-            .contains(AnnotationQueueUpdateParams.NumReviewersPerItem.ofInteger(0L))
-        assertThat(body.reservationMinutes())
-            .contains(AnnotationQueueUpdateParams.ReservationMinutes.ofInteger(0L))
+        assertThat(body.numReviewersPerItem()).contains(0L)
+        assertThat(body.reservationMinutes()).contains(0L)
         assertThat(body.reviewerAccessMode())
             .contains(AnnotationQueueUpdateParams.ReviewerAccessMode.ANY)
         assertThat(body.rubricInstructions()).contains("rubric_instructions")
@@ -286,7 +281,7 @@ internal class AnnotationQueueUpdateParamsTest {
                     .feedbackConfigId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                     .isAssertion(true)
                     .isRequired(true)
-                    .regexValidator("string")
+                    .regexValidator("regex_validator")
                     .requiredIf(
                         AnnotationQueueRubricItemSchema.RequiredIf.builder()
                             .join(AnnotationQueueRubricItemSchema.RequiredIf.Join.ALL)

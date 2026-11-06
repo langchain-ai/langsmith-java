@@ -103,20 +103,20 @@ internal class DatasetServiceAsyncTest {
                 DatasetUpdateParams.builder()
                     .datasetId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                     .baselineExperimentId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                    .description("string")
+                    .description("description")
                     .inputsSchemaDefinition(
-                        DatasetUpdateParams.InputsSchemaDefinition.UnionMember0.builder()
+                        DatasetUpdateParams.InputsSchemaDefinition.builder()
                             .putAdditionalProperty("foo", JsonValue.from("bar"))
                             .build()
                     )
                     .metadata(
-                        DatasetUpdateParams.Metadata.UnionMember0.builder()
+                        DatasetUpdateParams.Metadata.builder()
                             .putAdditionalProperty("foo", JsonValue.from("bar"))
                             .build()
                     )
-                    .name("string")
+                    .name("name")
                     .outputsSchemaDefinition(
-                        DatasetUpdateParams.OutputsSchemaDefinition.UnionMember0.builder()
+                        DatasetUpdateParams.OutputsSchemaDefinition.builder()
                             .putAdditionalProperty("foo", JsonValue.from("bar"))
                             .build()
                     )
@@ -142,16 +142,13 @@ internal class DatasetServiceAsyncTest {
                             )
                             .build()
                     )
-                    .transformationsOfDataset(
-                        listOf(
-                            DatasetTransformation.builder()
-                                .addPath("string")
-                                .transformationType(
-                                    DatasetTransformation.TransformationType
-                                        .CONVERT_TO_OPENAI_MESSAGE
-                                )
-                                .build()
-                        )
+                    .addTransformation(
+                        DatasetTransformation.builder()
+                            .addPath("string")
+                            .transformationType(
+                                DatasetTransformation.TransformationType.CONVERT_TO_OPENAI_MESSAGE
+                            )
+                            .build()
                     )
                     .build()
             )

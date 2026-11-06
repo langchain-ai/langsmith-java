@@ -54,7 +54,7 @@ internal class AnnotationQueueServiceAsyncTest {
                     .description("description")
                     .enableReservations(true)
                     .metadata(
-                        AnnotationQueueUpdateParams.Metadata.UnionMember0.builder()
+                        AnnotationQueueUpdateParams.Metadata.builder()
                             .putAdditionalProperty("foo", JsonValue.from("bar"))
                             .build()
                     )
@@ -106,7 +106,7 @@ internal class AnnotationQueueServiceAsyncTest {
                             .feedbackConfigId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                             .isAssertion(true)
                             .isRequired(true)
-                            .regexValidator("string")
+                            .regexValidator("regex_validator")
                             .requiredIf(
                                 AnnotationQueueRubricItemSchema.RequiredIf.builder()
                                     .join(AnnotationQueueRubricItemSchema.RequiredIf.Join.ALL)
@@ -243,7 +243,7 @@ internal class AnnotationQueueServiceAsyncTest {
                             .feedbackConfigId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                             .isAssertion(true)
                             .isRequired(true)
-                            .regexValidator("string")
+                            .regexValidator("regex_validator")
                             .requiredIf(
                                 AnnotationQueueRubricItemSchema.RequiredIf.builder()
                                     .join(AnnotationQueueRubricItemSchema.RequiredIf.Join.ALL)

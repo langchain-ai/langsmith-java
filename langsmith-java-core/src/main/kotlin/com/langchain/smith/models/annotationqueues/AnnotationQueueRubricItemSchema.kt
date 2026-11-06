@@ -6,27 +6,15 @@ import com.fasterxml.jackson.annotation.JsonAnyGetter
 import com.fasterxml.jackson.annotation.JsonAnySetter
 import com.fasterxml.jackson.annotation.JsonCreator
 import com.fasterxml.jackson.annotation.JsonProperty
-import com.fasterxml.jackson.core.JsonGenerator
-import com.fasterxml.jackson.core.ObjectCodec
-import com.fasterxml.jackson.databind.JsonNode
-import com.fasterxml.jackson.databind.SerializerProvider
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize
-import com.fasterxml.jackson.databind.annotation.JsonSerialize
-import com.fasterxml.jackson.module.kotlin.jacksonTypeRef
-import com.langchain.smith.core.BaseDeserializer
-import com.langchain.smith.core.BaseSerializer
 import com.langchain.smith.core.Enum
 import com.langchain.smith.core.ExcludeMissing
 import com.langchain.smith.core.JsonField
 import com.langchain.smith.core.JsonMissing
 import com.langchain.smith.core.JsonValue
-import com.langchain.smith.core.allMaxBy
 import com.langchain.smith.core.checkKnown
 import com.langchain.smith.core.checkRequired
-import com.langchain.smith.core.getOrThrow
 import com.langchain.smith.core.toImmutable
 import com.langchain.smith.errors.LangChainInvalidDataException
-import com.langchain.smith.models.datasets.Missing
 import java.time.OffsetDateTime
 import java.util.Collections
 import java.util.Objects
@@ -42,7 +30,7 @@ private constructor(
     private val feedbackConfigId: JsonField<String>,
     private val isAssertion: JsonField<Boolean>,
     private val isRequired: JsonField<Boolean>,
-    private val regexValidator: JsonField<RegexValidator>,
+    private val regexValidator: JsonField<String>,
     private val requiredIf: JsonField<RequiredIf>,
     private val scoreDescriptions: JsonField<ScoreDescriptions>,
     private val valueDescriptions: JsonField<ValueDescriptions>,
@@ -72,7 +60,7 @@ private constructor(
         isRequired: JsonField<Boolean> = JsonMissing.of(),
         @JsonProperty("regex_validator")
         @ExcludeMissing
-        regexValidator: JsonField<RegexValidator> = JsonMissing.of(),
+        regexValidator: JsonField<String> = JsonMissing.of(),
         @JsonProperty("required_if")
         @ExcludeMissing
         requiredIf: JsonField<RequiredIf> = JsonMissing.of(),
@@ -140,7 +128,7 @@ private constructor(
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
      */
-    fun regexValidator(): Optional<RegexValidator> = regexValidator.getOptional("regex_validator")
+    fun regexValidator(): Optional<String> = regexValidator.getOptional("regex_validator")
 
     /**
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
@@ -226,7 +214,7 @@ private constructor(
      */
     @JsonProperty("regex_validator")
     @ExcludeMissing
-    fun _regexValidator(): JsonField<RegexValidator> = regexValidator
+    fun _regexValidator(): JsonField<String> = regexValidator
 
     /**
      * Returns the raw JSON value of [requiredIf].
@@ -299,7 +287,7 @@ private constructor(
         private var feedbackConfigId: JsonField<String> = JsonMissing.of()
         private var isAssertion: JsonField<Boolean> = JsonMissing.of()
         private var isRequired: JsonField<Boolean> = JsonMissing.of()
-        private var regexValidator: JsonField<RegexValidator> = JsonMissing.of()
+        private var regexValidator: JsonField<String> = JsonMissing.of()
         private var requiredIf: JsonField<RequiredIf> = JsonMissing.of()
         private var scoreDescriptions: JsonField<ScoreDescriptions> = JsonMissing.of()
         private var valueDescriptions: JsonField<ValueDescriptions> = JsonMissing.of()
@@ -427,29 +415,23 @@ private constructor(
          */
         fun isRequired(isRequired: JsonField<Boolean>) = apply { this.isRequired = isRequired }
 
-        fun regexValidator(regexValidator: RegexValidator?) =
+        fun regexValidator(regexValidator: String?) =
             regexValidator(JsonField.ofNullable(regexValidator))
 
         /** Alias for calling [Builder.regexValidator] with `regexValidator.orElse(null)`. */
-        fun regexValidator(regexValidator: Optional<RegexValidator>) =
+        fun regexValidator(regexValidator: Optional<String>) =
             regexValidator(regexValidator.getOrNull())
 
         /**
          * Sets [Builder.regexValidator] to an arbitrary JSON value.
          *
-         * You should usually call [Builder.regexValidator] with a well-typed [RegexValidator] value
+         * You should usually call [Builder.regexValidator] with a well-typed [String] value
          * instead. This method is primarily for setting the field to an undocumented or not yet
          * supported value.
          */
-        fun regexValidator(regexValidator: JsonField<RegexValidator>) = apply {
+        fun regexValidator(regexValidator: JsonField<String>) = apply {
             this.regexValidator = regexValidator
         }
-
-        /** Alias for calling [regexValidator] with `RegexValidator.ofString(string)`. */
-        fun regexValidator(string: String) = regexValidator(RegexValidator.ofString(string))
-
-        /** Alias for calling [regexValidator] with `RegexValidator.ofMissing(missing)`. */
-        fun regexValidator(missing: Missing) = regexValidator(RegexValidator.ofMissing(missing))
 
         fun requiredIf(requiredIf: RequiredIf?) = requiredIf(JsonField.ofNullable(requiredIf))
 
@@ -584,7 +566,7 @@ private constructor(
         feedbackConfigId()
         isAssertion()
         isRequired()
-        regexValidator().ifPresent { it.validate() }
+        regexValidator()
         requiredIf().ifPresent { it.validate() }
         scoreDescriptions().ifPresent { it.validate() }
         valueDescriptions().ifPresent { it.validate() }
@@ -613,7 +595,7 @@ private constructor(
             (if (feedbackConfigId.asKnown().isPresent) 1 else 0) +
             (if (isAssertion.asKnown().isPresent) 1 else 0) +
             (if (isRequired.asKnown().isPresent) 1 else 0) +
-            (regexValidator.asKnown().getOrNull()?.validity() ?: 0) +
+            (if (regexValidator.asKnown().isPresent) 1 else 0) +
             (requiredIf.asKnown().getOrNull()?.validity() ?: 0) +
             (scoreDescriptions.asKnown().getOrNull()?.validity() ?: 0) +
             (valueDescriptions.asKnown().getOrNull()?.validity() ?: 0) +
@@ -1857,216 +1839,6 @@ private constructor(
 
         override fun toString() =
             "FeedbackConfig{id=$id, feedbackConfig=$feedbackConfig, feedbackKey=$feedbackKey, modifiedAt=$modifiedAt, tenantId=$tenantId, isDeleted=$isDeleted, isEnforced=$isEnforced, isFirst=$isFirst, isLowerScoreBetter=$isLowerScoreBetter, additionalProperties=$additionalProperties}"
-    }
-
-    @JsonDeserialize(using = RegexValidator.Deserializer::class)
-    @JsonSerialize(using = RegexValidator.Serializer::class)
-    class RegexValidator
-    private constructor(
-        private val string: String? = null,
-        private val missing: Missing? = null,
-        private val _json: JsonValue? = null,
-    ) {
-
-        fun string(): Optional<String> = Optional.ofNullable(string)
-
-        fun missing(): Optional<Missing> = Optional.ofNullable(missing)
-
-        fun isString(): Boolean = string != null
-
-        fun isMissing(): Boolean = missing != null
-
-        fun asString(): String = string.getOrThrow("string")
-
-        fun asMissing(): Missing = missing.getOrThrow("missing")
-
-        fun _json(): Optional<JsonValue> = Optional.ofNullable(_json)
-
-        /**
-         * Maps this instance's current variant to a value of type [T] using the given [visitor].
-         *
-         * Note that this method is _not_ forwards compatible with new variants from the API, unless
-         * [visitor] overrides [Visitor.unknown]. To handle variants not known to this version of
-         * the SDK gracefully, consider overriding [Visitor.unknown]:
-         * ```java
-         * import com.langchain.smith.core.JsonValue;
-         * import java.util.Optional;
-         *
-         * Optional<String> result = regexValidator.accept(new RegexValidator.Visitor<Optional<String>>() {
-         *     @Override
-         *     public Optional<String> visitString(String string) {
-         *         return Optional.of(string.toString());
-         *     }
-         *
-         *     // ...
-         *
-         *     @Override
-         *     public Optional<String> unknown(JsonValue json) {
-         *         // Or inspect the `json`.
-         *         return Optional.empty();
-         *     }
-         * });
-         * ```
-         *
-         * @throws LangChainInvalidDataException if [Visitor.unknown] is not overridden in [visitor]
-         *   and the current variant is unknown.
-         */
-        fun <T> accept(visitor: Visitor<T>): T =
-            when {
-                string != null -> visitor.visitString(string)
-                missing != null -> visitor.visitMissing(missing)
-                else -> visitor.unknown(_json)
-            }
-
-        private var validated: Boolean = false
-
-        /**
-         * Validates that the types of all values in this object match their expected types
-         * recursively.
-         *
-         * This method is _not_ forwards compatible with new types from the API for existing fields.
-         *
-         * @throws LangChainInvalidDataException if any value type in this object doesn't match its
-         *   expected type.
-         */
-        fun validate(): RegexValidator = apply {
-            if (validated) {
-                return@apply
-            }
-
-            accept(
-                object : Visitor<Unit> {
-                    override fun visitString(string: String) {}
-
-                    override fun visitMissing(missing: Missing) {
-                        missing.validate()
-                    }
-                }
-            )
-            validated = true
-        }
-
-        fun isValid(): Boolean =
-            try {
-                validate()
-                true
-            } catch (e: LangChainInvalidDataException) {
-                false
-            }
-
-        /**
-         * Returns a score indicating how many valid values are contained in this object
-         * recursively.
-         *
-         * Used for best match union deserialization.
-         */
-        @JvmSynthetic
-        internal fun validity(): Int =
-            accept(
-                object : Visitor<Int> {
-                    override fun visitString(string: String) = 1
-
-                    override fun visitMissing(missing: Missing) = missing.validity()
-
-                    override fun unknown(json: JsonValue?) = 0
-                }
-            )
-
-        override fun equals(other: Any?): Boolean {
-            if (this === other) {
-                return true
-            }
-
-            return other is RegexValidator && string == other.string && missing == other.missing
-        }
-
-        override fun hashCode(): Int = Objects.hash(string, missing)
-
-        override fun toString(): String =
-            when {
-                string != null -> "RegexValidator{string=$string}"
-                missing != null -> "RegexValidator{missing=$missing}"
-                _json != null -> "RegexValidator{_unknown=$_json}"
-                else -> throw IllegalStateException("Invalid RegexValidator")
-            }
-
-        companion object {
-
-            @JvmStatic fun ofString(string: String) = RegexValidator(string = string)
-
-            @JvmStatic fun ofMissing(missing: Missing) = RegexValidator(missing = missing)
-        }
-
-        /**
-         * An interface that defines how to map each variant of [RegexValidator] to a value of type
-         * [T].
-         */
-        interface Visitor<out T> {
-
-            fun visitString(string: String): T
-
-            fun visitMissing(missing: Missing): T
-
-            /**
-             * Maps an unknown variant of [RegexValidator] to a value of type [T].
-             *
-             * An instance of [RegexValidator] can contain an unknown variant if it was deserialized
-             * from data that doesn't match any known variant. For example, if the SDK is on an
-             * older version than the API, then the API may respond with new variants that the SDK
-             * is unaware of.
-             *
-             * @throws LangChainInvalidDataException in the default implementation.
-             */
-            fun unknown(json: JsonValue?): T {
-                throw LangChainInvalidDataException("Unknown RegexValidator: $json")
-            }
-        }
-
-        internal class Deserializer : BaseDeserializer<RegexValidator>(RegexValidator::class) {
-
-            override fun ObjectCodec.deserialize(node: JsonNode): RegexValidator {
-                val json = JsonValue.fromJsonNode(node)
-
-                val bestMatches =
-                    sequenceOf(
-                            tryDeserialize(node, jacksonTypeRef<Missing>())?.let {
-                                RegexValidator(missing = it, _json = json)
-                            },
-                            tryDeserialize(node, jacksonTypeRef<String>())?.let {
-                                RegexValidator(string = it, _json = json)
-                            },
-                        )
-                        .filterNotNull()
-                        .allMaxBy { it.validity() }
-                        .toList()
-                return when (bestMatches.size) {
-                    // This can happen if what we're deserializing is completely incompatible with
-                    // all the possible variants (e.g. deserializing from boolean).
-                    0 -> RegexValidator(_json = json)
-                    1 -> bestMatches.single()
-                    // If there's more than one match with the highest validity, then use the first
-                    // completely valid match, or simply the first match if none are completely
-                    // valid.
-                    else -> bestMatches.firstOrNull { it.isValid() } ?: bestMatches.first()
-                }
-            }
-        }
-
-        internal class Serializer : BaseSerializer<RegexValidator>(RegexValidator::class) {
-
-            override fun serialize(
-                value: RegexValidator,
-                generator: JsonGenerator,
-                provider: SerializerProvider,
-            ) {
-                when {
-                    value.string != null -> generator.writeObject(value.string)
-                    value.missing != null -> generator.writeObject(value.missing)
-                    value._json != null -> generator.writeObject(value._json)
-                    else -> throw IllegalStateException("Invalid RegexValidator")
-                }
-            }
-        }
     }
 
     class RequiredIf

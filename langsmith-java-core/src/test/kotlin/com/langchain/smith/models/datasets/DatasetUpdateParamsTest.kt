@@ -3,6 +3,7 @@
 package com.langchain.smith.models.datasets
 
 import com.langchain.smith.core.JsonValue
+import kotlin.jvm.optionals.getOrNull
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
@@ -13,20 +14,20 @@ internal class DatasetUpdateParamsTest {
         DatasetUpdateParams.builder()
             .datasetId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
             .baselineExperimentId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-            .description("string")
+            .description("description")
             .inputsSchemaDefinition(
-                DatasetUpdateParams.InputsSchemaDefinition.UnionMember0.builder()
+                DatasetUpdateParams.InputsSchemaDefinition.builder()
                     .putAdditionalProperty("foo", JsonValue.from("bar"))
                     .build()
             )
             .metadata(
-                DatasetUpdateParams.Metadata.UnionMember0.builder()
+                DatasetUpdateParams.Metadata.builder()
                     .putAdditionalProperty("foo", JsonValue.from("bar"))
                     .build()
             )
-            .name("string")
+            .name("name")
             .outputsSchemaDefinition(
-                DatasetUpdateParams.OutputsSchemaDefinition.UnionMember0.builder()
+                DatasetUpdateParams.OutputsSchemaDefinition.builder()
                     .putAdditionalProperty("foo", JsonValue.from("bar"))
                     .build()
             )
@@ -52,15 +53,13 @@ internal class DatasetUpdateParamsTest {
                     )
                     .build()
             )
-            .transformationsOfDataset(
-                listOf(
-                    DatasetTransformation.builder()
-                        .addPath("string")
-                        .transformationType(
-                            DatasetTransformation.TransformationType.CONVERT_TO_OPENAI_MESSAGE
-                        )
-                        .build()
-                )
+            .addTransformation(
+                DatasetTransformation.builder()
+                    .addPath("string")
+                    .transformationType(
+                        DatasetTransformation.TransformationType.CONVERT_TO_OPENAI_MESSAGE
+                    )
+                    .build()
             )
             .build()
     }
@@ -81,20 +80,20 @@ internal class DatasetUpdateParamsTest {
             DatasetUpdateParams.builder()
                 .datasetId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                 .baselineExperimentId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                .description("string")
+                .description("description")
                 .inputsSchemaDefinition(
-                    DatasetUpdateParams.InputsSchemaDefinition.UnionMember0.builder()
+                    DatasetUpdateParams.InputsSchemaDefinition.builder()
                         .putAdditionalProperty("foo", JsonValue.from("bar"))
                         .build()
                 )
                 .metadata(
-                    DatasetUpdateParams.Metadata.UnionMember0.builder()
+                    DatasetUpdateParams.Metadata.builder()
                         .putAdditionalProperty("foo", JsonValue.from("bar"))
                         .build()
                 )
-                .name("string")
+                .name("name")
                 .outputsSchemaDefinition(
-                    DatasetUpdateParams.OutputsSchemaDefinition.UnionMember0.builder()
+                    DatasetUpdateParams.OutputsSchemaDefinition.builder()
                         .putAdditionalProperty("foo", JsonValue.from("bar"))
                         .build()
                 )
@@ -120,51 +119,38 @@ internal class DatasetUpdateParamsTest {
                         )
                         .build()
                 )
-                .transformationsOfDataset(
-                    listOf(
-                        DatasetTransformation.builder()
-                            .addPath("string")
-                            .transformationType(
-                                DatasetTransformation.TransformationType.CONVERT_TO_OPENAI_MESSAGE
-                            )
-                            .build()
-                    )
+                .addTransformation(
+                    DatasetTransformation.builder()
+                        .addPath("string")
+                        .transformationType(
+                            DatasetTransformation.TransformationType.CONVERT_TO_OPENAI_MESSAGE
+                        )
+                        .build()
                 )
                 .build()
 
         val body = params._body()
 
-        assertThat(body.baselineExperimentId())
-            .contains(
-                DatasetUpdateParams.BaselineExperimentId.ofString(
-                    "182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"
-                )
-            )
-        assertThat(body.description()).contains(DatasetUpdateParams.Description.ofString("string"))
+        assertThat(body.baselineExperimentId()).contains("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+        assertThat(body.description()).contains("description")
         assertThat(body.inputsSchemaDefinition())
             .contains(
-                DatasetUpdateParams.InputsSchemaDefinition.ofUnionMember0(
-                    DatasetUpdateParams.InputsSchemaDefinition.UnionMember0.builder()
-                        .putAdditionalProperty("foo", JsonValue.from("bar"))
-                        .build()
-                )
+                DatasetUpdateParams.InputsSchemaDefinition.builder()
+                    .putAdditionalProperty("foo", JsonValue.from("bar"))
+                    .build()
             )
         assertThat(body.metadata())
             .contains(
-                DatasetUpdateParams.Metadata.ofUnionMember0(
-                    DatasetUpdateParams.Metadata.UnionMember0.builder()
-                        .putAdditionalProperty("foo", JsonValue.from("bar"))
-                        .build()
-                )
+                DatasetUpdateParams.Metadata.builder()
+                    .putAdditionalProperty("foo", JsonValue.from("bar"))
+                    .build()
             )
-        assertThat(body.name()).contains(DatasetUpdateParams.Name.ofString("string"))
+        assertThat(body.name()).contains("name")
         assertThat(body.outputsSchemaDefinition())
             .contains(
-                DatasetUpdateParams.OutputsSchemaDefinition.ofUnionMember0(
-                    DatasetUpdateParams.OutputsSchemaDefinition.UnionMember0.builder()
-                        .putAdditionalProperty("foo", JsonValue.from("bar"))
-                        .build()
-                )
+                DatasetUpdateParams.OutputsSchemaDefinition.builder()
+                    .putAdditionalProperty("foo", JsonValue.from("bar"))
+                    .build()
             )
         assertThat(body.patchExamples())
             .contains(
@@ -189,18 +175,14 @@ internal class DatasetUpdateParamsTest {
                     )
                     .build()
             )
-        assertThat(body.transformations())
-            .contains(
-                DatasetUpdateParams.Transformations.ofDataset(
-                    listOf(
-                        DatasetTransformation.builder()
-                            .addPath("string")
-                            .transformationType(
-                                DatasetTransformation.TransformationType.CONVERT_TO_OPENAI_MESSAGE
-                            )
-                            .build()
+        assertThat(body.transformations().getOrNull())
+            .containsExactly(
+                DatasetTransformation.builder()
+                    .addPath("string")
+                    .transformationType(
+                        DatasetTransformation.TransformationType.CONVERT_TO_OPENAI_MESSAGE
                     )
-                )
+                    .build()
             )
     }
 

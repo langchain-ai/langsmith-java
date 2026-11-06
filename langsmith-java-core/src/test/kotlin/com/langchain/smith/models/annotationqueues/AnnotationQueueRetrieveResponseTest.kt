@@ -83,7 +83,7 @@ internal class AnnotationQueueRetrieveResponseTest {
                         .feedbackConfigId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                         .isAssertion(true)
                         .isRequired(true)
-                        .regexValidator("string")
+                        .regexValidator("regex_validator")
                         .requiredIf(
                             AnnotationQueueRubricItemSchema.RequiredIf.builder()
                                 .join(AnnotationQueueRubricItemSchema.RequiredIf.Join.ALL)
@@ -201,7 +201,7 @@ internal class AnnotationQueueRetrieveResponseTest {
                     .feedbackConfigId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                     .isAssertion(true)
                     .isRequired(true)
-                    .regexValidator("string")
+                    .regexValidator("regex_validator")
                     .requiredIf(
                         AnnotationQueueRubricItemSchema.RequiredIf.builder()
                             .join(AnnotationQueueRubricItemSchema.RequiredIf.Join.ALL)
@@ -318,7 +318,7 @@ internal class AnnotationQueueRetrieveResponseTest {
                         .feedbackConfigId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                         .isAssertion(true)
                         .isRequired(true)
-                        .regexValidator("string")
+                        .regexValidator("regex_validator")
                         .requiredIf(
                             AnnotationQueueRubricItemSchema.RequiredIf.builder()
                                 .join(AnnotationQueueRubricItemSchema.RequiredIf.Join.ALL)
