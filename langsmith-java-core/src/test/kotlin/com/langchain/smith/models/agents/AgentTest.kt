@@ -16,6 +16,7 @@ internal class AgentTest {
             Agent.builder()
                 .id("id")
                 .agentType(Agent.AgentType.CUSTOM)
+                .agentUuid("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                 .createdAt(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
                 .addEnvironment(
                     Agent.Environment.builder()
@@ -44,6 +45,7 @@ internal class AgentTest {
 
         assertThat(agent.id()).isEqualTo("id")
         assertThat(agent.agentType()).isEqualTo(Agent.AgentType.CUSTOM)
+        assertThat(agent.agentUuid()).isEqualTo("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
         assertThat(agent.createdAt()).isEqualTo(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
         assertThat(agent.environments())
             .containsExactly(
@@ -78,6 +80,7 @@ internal class AgentTest {
             Agent.builder()
                 .id("id")
                 .agentType(Agent.AgentType.CUSTOM)
+                .agentUuid("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                 .createdAt(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
                 .addEnvironment(
                     Agent.Environment.builder()

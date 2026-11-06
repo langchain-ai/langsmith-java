@@ -26,6 +26,7 @@ class Agent
 private constructor(
     private val id: JsonField<String>,
     private val agentType: JsonField<AgentType>,
+    private val agentUuid: JsonField<String>,
     private val createdAt: JsonField<OffsetDateTime>,
     private val environments: JsonField<List<Environment>>,
     private val name: JsonField<String>,
@@ -44,6 +45,7 @@ private constructor(
         @JsonProperty("agent_type")
         @ExcludeMissing
         agentType: JsonField<AgentType> = JsonMissing.of(),
+        @JsonProperty("agent_uuid") @ExcludeMissing agentUuid: JsonField<String> = JsonMissing.of(),
         @JsonProperty("created_at")
         @ExcludeMissing
         createdAt: JsonField<OffsetDateTime> = JsonMissing.of(),
@@ -64,6 +66,7 @@ private constructor(
     ) : this(
         id,
         agentType,
+        agentUuid,
         createdAt,
         environments,
         name,
@@ -87,6 +90,15 @@ private constructor(
      *   unexpectedly missing or null (e.g. if the server responded with an unexpected value).
      */
     fun agentType(): AgentType = agentType.getRequired("agent_type")
+
+    /**
+     * The agent's permanent identifier, assigned by LangSmith and never reused; workload identity
+     * subjects name the agent by it.
+     *
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type or is
+     *   unexpectedly missing or null (e.g. if the server responded with an unexpected value).
+     */
+    fun agentUuid(): String = agentUuid.getRequired("agent_uuid")
 
     /**
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type or is
@@ -159,6 +171,13 @@ private constructor(
      * Unlike [agentType], this method doesn't throw if the JSON field has an unexpected type.
      */
     @JsonProperty("agent_type") @ExcludeMissing fun _agentType(): JsonField<AgentType> = agentType
+
+    /**
+     * Returns the raw JSON value of [agentUuid].
+     *
+     * Unlike [agentUuid], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    @JsonProperty("agent_uuid") @ExcludeMissing fun _agentUuid(): JsonField<String> = agentUuid
 
     /**
      * Returns the raw JSON value of [createdAt].
@@ -250,6 +269,7 @@ private constructor(
          * ```java
          * .id()
          * .agentType()
+         * .agentUuid()
          * .createdAt()
          * .environments()
          * .name()
@@ -264,6 +284,7 @@ private constructor(
 
         private var id: JsonField<String>? = null
         private var agentType: JsonField<AgentType>? = null
+        private var agentUuid: JsonField<String>? = null
         private var createdAt: JsonField<OffsetDateTime>? = null
         private var environments: JsonField<MutableList<Environment>>? = null
         private var name: JsonField<String>? = null
@@ -279,6 +300,7 @@ private constructor(
         internal fun from(agent: Agent) = apply {
             id = agent.id
             agentType = agent.agentType
+            agentUuid = agent.agentUuid
             createdAt = agent.createdAt
             environments = agent.environments.map { it.toMutableList() }
             name = agent.name
@@ -311,6 +333,21 @@ private constructor(
          * value.
          */
         fun agentType(agentType: JsonField<AgentType>) = apply { this.agentType = agentType }
+
+        /**
+         * The agent's permanent identifier, assigned by LangSmith and never reused; workload
+         * identity subjects name the agent by it.
+         */
+        fun agentUuid(agentUuid: String) = agentUuid(JsonField.of(agentUuid))
+
+        /**
+         * Sets [Builder.agentUuid] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.agentUuid] with a well-typed [String] value instead.
+         * This method is primarily for setting the field to an undocumented or not yet supported
+         * value.
+         */
+        fun agentUuid(agentUuid: JsonField<String>) = apply { this.agentUuid = agentUuid }
 
         fun createdAt(createdAt: OffsetDateTime) = createdAt(JsonField.of(createdAt))
 
@@ -463,6 +500,7 @@ private constructor(
          * ```java
          * .id()
          * .agentType()
+         * .agentUuid()
          * .createdAt()
          * .environments()
          * .name()
@@ -475,6 +513,7 @@ private constructor(
             Agent(
                 checkRequired("id", id),
                 checkRequired("agentType", agentType),
+                checkRequired("agentUuid", agentUuid),
                 checkRequired("createdAt", createdAt),
                 checkRequired("environments", environments).map { it.toImmutable() },
                 checkRequired("name", name),
@@ -505,6 +544,7 @@ private constructor(
 
         id()
         agentType().validate()
+        agentUuid()
         createdAt()
         environments().forEach { it.validate() }
         name()
@@ -534,6 +574,7 @@ private constructor(
     internal fun validity(): Int =
         (if (id.asKnown().isPresent) 1 else 0) +
             (agentType.asKnown().getOrNull()?.validity() ?: 0) +
+            (if (agentUuid.asKnown().isPresent) 1 else 0) +
             (if (createdAt.asKnown().isPresent) 1 else 0) +
             (environments.asKnown().getOrNull()?.sumOf { it.validity().toInt() } ?: 0) +
             (if (name.asKnown().isPresent) 1 else 0) +
@@ -1647,6 +1688,7 @@ private constructor(
         return other is Agent &&
             id == other.id &&
             agentType == other.agentType &&
+            agentUuid == other.agentUuid &&
             createdAt == other.createdAt &&
             environments == other.environments &&
             name == other.name &&
@@ -1663,6 +1705,7 @@ private constructor(
         Objects.hash(
             id,
             agentType,
+            agentUuid,
             createdAt,
             environments,
             name,
@@ -1679,5 +1722,5 @@ private constructor(
     override fun hashCode(): Int = hashCode
 
     override fun toString() =
-        "Agent{id=$id, agentType=$agentType, createdAt=$createdAt, environments=$environments, name=$name, sourceType=$sourceType, avatarUrl=$avatarUrl, owner=$owner, ownerId=$ownerId, tagKeyId=$tagKeyId, tagValueId=$tagValueId, additionalProperties=$additionalProperties}"
+        "Agent{id=$id, agentType=$agentType, agentUuid=$agentUuid, createdAt=$createdAt, environments=$environments, name=$name, sourceType=$sourceType, avatarUrl=$avatarUrl, owner=$owner, ownerId=$ownerId, tagKeyId=$tagKeyId, tagValueId=$tagValueId, additionalProperties=$additionalProperties}"
 }
