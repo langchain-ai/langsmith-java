@@ -53,6 +53,7 @@ private constructor(
     private val tags: JsonField<List<String>>,
     private val tenantId: JsonField<String>,
     private val traces: JsonValue,
+    private val type: JsonField<Type>,
     private val updatedAt: JsonField<String>,
     private val validationResult: JsonField<ValidationResult>,
     private val watchingSince: JsonField<String>,
@@ -120,6 +121,7 @@ private constructor(
         @JsonProperty("tags") @ExcludeMissing tags: JsonField<List<String>> = JsonMissing.of(),
         @JsonProperty("tenant_id") @ExcludeMissing tenantId: JsonField<String> = JsonMissing.of(),
         @JsonProperty("traces") @ExcludeMissing traces: JsonValue = JsonMissing.of(),
+        @JsonProperty("type") @ExcludeMissing type: JsonField<Type> = JsonMissing.of(),
         @JsonProperty("updated_at") @ExcludeMissing updatedAt: JsonField<String> = JsonMissing.of(),
         @JsonProperty("validation_result")
         @ExcludeMissing
@@ -157,6 +159,7 @@ private constructor(
         tags,
         tenantId,
         traces,
+        type,
         updatedAt,
         validationResult,
         watchingSince,
@@ -364,6 +367,15 @@ private constructor(
      * ```
      */
     @JsonProperty("traces") @ExcludeMissing fun _traces(): JsonValue = traces
+
+    /**
+     * "actionable" (there is something to do; it may carry PRs or LangSmith assets) or "finding"
+     * (an observation only). Defaults to "actionable".
+     *
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
+    fun type(): Optional<Type> = type.getOptional("type")
 
     /**
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
@@ -594,6 +606,13 @@ private constructor(
     @JsonProperty("tenant_id") @ExcludeMissing fun _tenantId(): JsonField<String> = tenantId
 
     /**
+     * Returns the raw JSON value of [type].
+     *
+     * Unlike [type], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    @JsonProperty("type") @ExcludeMissing fun _type(): JsonField<Type> = type
+
+    /**
      * Returns the raw JSON value of [updatedAt].
      *
      * Unlike [updatedAt], this method doesn't throw if the JSON field has an unexpected type.
@@ -669,6 +688,7 @@ private constructor(
         private var tags: JsonField<MutableList<String>>? = null
         private var tenantId: JsonField<String> = JsonMissing.of()
         private var traces: JsonValue = JsonMissing.of()
+        private var type: JsonField<Type> = JsonMissing.of()
         private var updatedAt: JsonField<String> = JsonMissing.of()
         private var validationResult: JsonField<ValidationResult> = JsonMissing.of()
         private var watchingSince: JsonField<String> = JsonMissing.of()
@@ -705,6 +725,7 @@ private constructor(
             tags = issue.tags.map { it.toMutableList() }
             tenantId = issue.tenantId
             traces = issue.traces
+            type = issue.type
             updatedAt = issue.updatedAt
             validationResult = issue.validationResult
             watchingSince = issue.watchingSince
@@ -1097,6 +1118,20 @@ private constructor(
 
         fun traces(traces: JsonValue) = apply { this.traces = traces }
 
+        /**
+         * "actionable" (there is something to do; it may carry PRs or LangSmith assets) or
+         * "finding" (an observation only). Defaults to "actionable".
+         */
+        fun type(type: Type) = type(JsonField.of(type))
+
+        /**
+         * Sets [Builder.type] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.type] with a well-typed [Type] value instead. This
+         * method is primarily for setting the field to an undocumented or not yet supported value.
+         */
+        fun type(type: JsonField<Type>) = apply { this.type = type }
+
         fun updatedAt(updatedAt: String) = updatedAt(JsonField.of(updatedAt))
 
         /**
@@ -1190,6 +1225,7 @@ private constructor(
                 (tags ?: JsonMissing.of()).map { it.toImmutable() },
                 tenantId,
                 traces,
+                type,
                 updatedAt,
                 validationResult,
                 watchingSince,
@@ -1238,6 +1274,7 @@ private constructor(
         status().ifPresent { it.validate() }
         tags()
         tenantId()
+        type().ifPresent { it.validate() }
         updatedAt()
         validationResult().ifPresent { it.validate() }
         watchingSince()
@@ -1285,6 +1322,7 @@ private constructor(
             (status.asKnown().getOrNull()?.validity() ?: 0) +
             (tags.asKnown().getOrNull()?.size ?: 0) +
             (if (tenantId.asKnown().isPresent) 1 else 0) +
+            (type.asKnown().getOrNull()?.validity() ?: 0) +
             (if (updatedAt.asKnown().isPresent) 1 else 0) +
             (validationResult.asKnown().getOrNull()?.validity() ?: 0) +
             (if (watchingSince.asKnown().isPresent) 1 else 0)
@@ -8253,6 +8291,146 @@ private constructor(
         override fun toString() = value.toString()
     }
 
+    /**
+     * "actionable" (there is something to do; it may carry PRs or LangSmith assets) or "finding"
+     * (an observation only). Defaults to "actionable".
+     */
+    class Type @JsonCreator private constructor(private val value: JsonField<String>) : Enum {
+
+        /**
+         * Returns this class instance's raw value.
+         *
+         * This is usually only useful if this instance was deserialized from data that doesn't
+         * match any known member, and you want to know that value. For example, if the SDK is on an
+         * older version than the API, then the API may respond with new members that the SDK is
+         * unaware of.
+         */
+        @com.fasterxml.jackson.annotation.JsonValue fun _value(): JsonField<String> = value
+
+        companion object {
+
+            @JvmField val ACTIONABLE = of("actionable")
+
+            @JvmField val FINDING = of("finding")
+
+            @JvmStatic fun of(value: String) = Type(JsonField.of(value))
+        }
+
+        /** An enum containing [Type]'s known values. */
+        enum class Known {
+            ACTIONABLE,
+            FINDING,
+        }
+
+        /**
+         * An enum containing [Type]'s known values, as well as an [_UNKNOWN] member.
+         *
+         * An instance of [Type] can contain an unknown value in a couple of cases:
+         * - It was deserialized from data that doesn't match any known member. For example, if the
+         *   SDK is on an older version than the API, then the API may respond with new members that
+         *   the SDK is unaware of.
+         * - It was constructed with an arbitrary value using the [of] method.
+         */
+        enum class Value {
+            ACTIONABLE,
+            FINDING,
+            /** An enum member indicating that [Type] was instantiated with an unknown value. */
+            _UNKNOWN,
+        }
+
+        /**
+         * Returns an enum member corresponding to this class instance's value, or [Value._UNKNOWN]
+         * if the class was instantiated with an unknown value.
+         *
+         * Use the [known] method instead if you're certain the value is always known or if you want
+         * to throw for the unknown case.
+         */
+        fun value(): Value =
+            when (this) {
+                ACTIONABLE -> Value.ACTIONABLE
+                FINDING -> Value.FINDING
+                else -> Value._UNKNOWN
+            }
+
+        /**
+         * Returns an enum member corresponding to this class instance's value.
+         *
+         * Use the [value] method instead if you're uncertain the value is always known and don't
+         * want to throw for the unknown case.
+         *
+         * @throws LangChainInvalidDataException if this class instance's value is a not a known
+         *   member.
+         */
+        fun known(): Known =
+            when (this) {
+                ACTIONABLE -> Known.ACTIONABLE
+                FINDING -> Known.FINDING
+                else -> throw LangChainInvalidDataException("Unknown Type: $value")
+            }
+
+        /**
+         * Returns this class instance's primitive wire representation.
+         *
+         * This differs from the [toString] method because that method is primarily for debugging
+         * and generally doesn't throw.
+         *
+         * @throws LangChainInvalidDataException if this class instance's value does not have the
+         *   expected primitive type.
+         */
+        fun asString(): String =
+            _value().asString().orElseThrow {
+                LangChainInvalidDataException("Value is not a String")
+            }
+
+        private var validated: Boolean = false
+
+        /**
+         * Validates that the types of all values in this object match their expected types
+         * recursively.
+         *
+         * This method is _not_ forwards compatible with new types from the API for existing fields.
+         *
+         * @throws LangChainInvalidDataException if any value type in this object doesn't match its
+         *   expected type.
+         */
+        fun validate(): Type = apply {
+            if (validated) {
+                return@apply
+            }
+
+            known()
+            validated = true
+        }
+
+        fun isValid(): Boolean =
+            try {
+                validate()
+                true
+            } catch (e: LangChainInvalidDataException) {
+                false
+            }
+
+        /**
+         * Returns a score indicating how many valid values are contained in this object
+         * recursively.
+         *
+         * Used for best match union deserialization.
+         */
+        @JvmSynthetic internal fun validity(): Int = if (value() == Value._UNKNOWN) 0 else 1
+
+        override fun equals(other: Any?): Boolean {
+            if (this === other) {
+                return true
+            }
+
+            return other is Type && value == other.value
+        }
+
+        override fun hashCode() = value.hashCode()
+
+        override fun toString() = value.toString()
+    }
+
     class ValidationResult
     @JsonCreator(mode = JsonCreator.Mode.DISABLED)
     private constructor(
@@ -8891,6 +9069,7 @@ private constructor(
             tags == other.tags &&
             tenantId == other.tenantId &&
             traces == other.traces &&
+            type == other.type &&
             updatedAt == other.updatedAt &&
             validationResult == other.validationResult &&
             watchingSince == other.watchingSince &&
@@ -8928,6 +9107,7 @@ private constructor(
             tags,
             tenantId,
             traces,
+            type,
             updatedAt,
             validationResult,
             watchingSince,
@@ -8938,5 +9118,5 @@ private constructor(
     override fun hashCode(): Int = hashCode
 
     override fun toString() =
-        "Issue{id=$id, actions=$actions, autoResolutionEvidence=$autoResolutionEvidence, autoResolutionState=$autoResolutionState, createdAt=$createdAt, description=$description, evidence=$evidence, firstSeenAt=$firstSeenAt, fixBranch=$fixBranch, fixDispatchedAt=$fixDispatchedAt, fixPrNumber=$fixPrNumber, fixPrompt=$fixPrompt, fixVerification=$fixVerification, fixes=$fixes, lastSeenAt=$lastSeenAt, linearContext=$linearContext, linearSync=$linearSync, name=$name, proposedContextFixes=$proposedContextFixes, proposedExamples=$proposedExamples, proposedFix=$proposedFix, proposedPromptFixes=$proposedPromptFixes, recurrencesSinceWatching=$recurrencesSinceWatching, sessionId=$sessionId, severity=$severity, status=$status, tags=$tags, tenantId=$tenantId, traces=$traces, updatedAt=$updatedAt, validationResult=$validationResult, watchingSince=$watchingSince, additionalProperties=$additionalProperties}"
+        "Issue{id=$id, actions=$actions, autoResolutionEvidence=$autoResolutionEvidence, autoResolutionState=$autoResolutionState, createdAt=$createdAt, description=$description, evidence=$evidence, firstSeenAt=$firstSeenAt, fixBranch=$fixBranch, fixDispatchedAt=$fixDispatchedAt, fixPrNumber=$fixPrNumber, fixPrompt=$fixPrompt, fixVerification=$fixVerification, fixes=$fixes, lastSeenAt=$lastSeenAt, linearContext=$linearContext, linearSync=$linearSync, name=$name, proposedContextFixes=$proposedContextFixes, proposedExamples=$proposedExamples, proposedFix=$proposedFix, proposedPromptFixes=$proposedPromptFixes, recurrencesSinceWatching=$recurrencesSinceWatching, sessionId=$sessionId, severity=$severity, status=$status, tags=$tags, tenantId=$tenantId, traces=$traces, type=$type, updatedAt=$updatedAt, validationResult=$validationResult, watchingSince=$watchingSince, additionalProperties=$additionalProperties}"
 }

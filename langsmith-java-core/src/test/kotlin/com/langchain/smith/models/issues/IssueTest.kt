@@ -177,6 +177,7 @@ internal class IssueTest {
                 .addTag("string")
                 .tenantId("tenant_id")
                 .traces(JsonValue.from(mapOf<String, Any>()))
+                .type(Issue.Type.ACTIONABLE)
                 .updatedAt("updated_at")
                 .validationResult(
                     Issue.ValidationResult.builder()
@@ -355,6 +356,7 @@ internal class IssueTest {
         assertThat(issue.tags().getOrNull()).containsExactly("string")
         assertThat(issue.tenantId()).contains("tenant_id")
         assertThat(issue._traces()).isEqualTo(JsonValue.from(mapOf<String, Any>()))
+        assertThat(issue.type()).contains(Issue.Type.ACTIONABLE)
         assertThat(issue.updatedAt()).contains("updated_at")
         assertThat(issue.validationResult())
             .contains(
@@ -538,6 +540,7 @@ internal class IssueTest {
                 .addTag("string")
                 .tenantId("tenant_id")
                 .traces(JsonValue.from(mapOf<String, Any>()))
+                .type(Issue.Type.ACTIONABLE)
                 .updatedAt("updated_at")
                 .validationResult(
                     Issue.ValidationResult.builder()
