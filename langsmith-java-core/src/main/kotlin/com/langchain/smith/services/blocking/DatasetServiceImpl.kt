@@ -25,6 +25,11 @@ import com.langchain.smith.models.datasets.DatasetDeleteParams
 import com.langchain.smith.models.datasets.DatasetDeleteResponse
 import com.langchain.smith.models.datasets.DatasetListPage
 import com.langchain.smith.models.datasets.DatasetListParams
+import com.langchain.smith.models.datasets.DatasetListV1Page
+import com.langchain.smith.models.datasets.DatasetListV1Params
+import com.langchain.smith.models.datasets.DatasetListV2Page
+import com.langchain.smith.models.datasets.DatasetListV2PageResponse
+import com.langchain.smith.models.datasets.DatasetListV2Params
 import com.langchain.smith.models.datasets.DatasetRetrieveCsvParams
 import com.langchain.smith.models.datasets.DatasetRetrieveCsvResponse
 import com.langchain.smith.models.datasets.DatasetRetrieveJsonlParams
@@ -114,10 +119,6 @@ class DatasetServiceImpl internal constructor(private val clientOptions: ClientO
         // patch /api/v1/datasets/{dataset_id}
         withRawResponse().update(params, requestOptions).parse()
 
-    override fun list(params: DatasetListParams, requestOptions: RequestOptions): DatasetListPage =
-        // get /api/v1/datasets
-        withRawResponse().list(params, requestOptions).parse()
-
     override fun delete(
         params: DatasetDeleteParams,
         requestOptions: RequestOptions,
@@ -131,6 +132,21 @@ class DatasetServiceImpl internal constructor(private val clientOptions: ClientO
     ): List<DatasetCloneResponse> =
         // post /api/v1/datasets/clone
         withRawResponse().clone(params, requestOptions).parse()
+
+    @Deprecated("Use listV2 instead, which calls GET /api/v2/datasets and pages with a cursor.")
+    override fun listV1(
+        params: DatasetListV1Params,
+        requestOptions: RequestOptions,
+    ): DatasetListV1Page =
+        // get /api/v1/datasets
+        withRawResponse().listV1(params, requestOptions).parse()
+
+    override fun listV2(
+        params: DatasetListV2Params,
+        requestOptions: RequestOptions,
+    ): DatasetListV2Page =
+        // get /api/v2/datasets
+        withRawResponse().listV2(params, requestOptions).parse()
 
     override fun retrieveCsv(
         params: DatasetRetrieveCsvParams,
@@ -177,6 +193,10 @@ class DatasetServiceImpl internal constructor(private val clientOptions: ClientO
     override fun upload(params: DatasetUploadParams, requestOptions: RequestOptions): Dataset =
         // post /api/v1/datasets/upload
         withRawResponse().upload(params, requestOptions).parse()
+
+    override fun list(params: DatasetListParams, requestOptions: RequestOptions): DatasetListPage =
+        // get /api/v1/datasets
+        withRawResponse().list(params, requestOptions).parse()
 
     class WithRawResponseImpl internal constructor(private val clientOptions: ClientOptions) :
         DatasetService.WithRawResponse {
@@ -321,40 +341,6 @@ class DatasetServiceImpl internal constructor(private val clientOptions: ClientO
             }
         }
 
-        private val listHandler: Handler<List<Dataset>> =
-            jsonHandler<List<Dataset>>(clientOptions.jsonMapper)
-
-        override fun list(
-            params: DatasetListParams,
-            requestOptions: RequestOptions,
-        ): HttpResponseFor<DatasetListPage> {
-            val request =
-                HttpRequest.builder()
-                    .method(HttpMethod.GET)
-                    .baseUrl(clientOptions.baseUrl())
-                    .addPathSegments("api", "v1", "datasets")
-                    .build()
-                    .prepare(clientOptions, params)
-            val requestOptions = requestOptions.applyDefaults(RequestOptions.from(clientOptions))
-            val response = clientOptions.httpClient.execute(request, requestOptions)
-            return errorHandler.handle(response).parseable {
-                response
-                    .use { listHandler.handle(it) }
-                    .also {
-                        if (requestOptions.responseValidation!!) {
-                            it.forEach { it.validate() }
-                        }
-                    }
-                    .let {
-                        DatasetListPage.builder()
-                            .service(DatasetServiceImpl(clientOptions))
-                            .params(params)
-                            .items(it)
-                            .build()
-                    }
-            }
-        }
-
         private val deleteHandler: Handler<DatasetDeleteResponse> =
             jsonHandler<DatasetDeleteResponse>(clientOptions.jsonMapper)
 
@@ -410,6 +396,75 @@ class DatasetServiceImpl internal constructor(private val clientOptions: ClientO
                         if (requestOptions.responseValidation!!) {
                             it.forEach { it.validate() }
                         }
+                    }
+            }
+        }
+
+        private val listV1Handler: Handler<List<Dataset>> =
+            jsonHandler<List<Dataset>>(clientOptions.jsonMapper)
+
+        @Deprecated("Use listV2 instead, which calls GET /api/v2/datasets and pages with a cursor.")
+        override fun listV1(
+            params: DatasetListV1Params,
+            requestOptions: RequestOptions,
+        ): HttpResponseFor<DatasetListV1Page> {
+            val request =
+                HttpRequest.builder()
+                    .method(HttpMethod.GET)
+                    .baseUrl(clientOptions.baseUrl())
+                    .addPathSegments("api", "v1", "datasets")
+                    .build()
+                    .prepare(clientOptions, params)
+            val requestOptions = requestOptions.applyDefaults(RequestOptions.from(clientOptions))
+            val response = clientOptions.httpClient.execute(request, requestOptions)
+            return errorHandler.handle(response).parseable {
+                response
+                    .use { listV1Handler.handle(it) }
+                    .also {
+                        if (requestOptions.responseValidation!!) {
+                            it.forEach { it.validate() }
+                        }
+                    }
+                    .let {
+                        DatasetListV1Page.builder()
+                            .service(DatasetServiceImpl(clientOptions))
+                            .params(params)
+                            .items(it)
+                            .build()
+                    }
+            }
+        }
+
+        private val listV2Handler: Handler<DatasetListV2PageResponse> =
+            jsonHandler<DatasetListV2PageResponse>(clientOptions.jsonMapper)
+
+        override fun listV2(
+            params: DatasetListV2Params,
+            requestOptions: RequestOptions,
+        ): HttpResponseFor<DatasetListV2Page> {
+            val request =
+                HttpRequest.builder()
+                    .method(HttpMethod.GET)
+                    .baseUrl(clientOptions.baseUrl())
+                    .addPathSegments("api", "v2", "datasets")
+                    .build()
+                    .prepare(clientOptions, params)
+            val requestOptions = requestOptions.applyDefaults(RequestOptions.from(clientOptions))
+            val response = clientOptions.httpClient.execute(request, requestOptions)
+            return errorHandler.handle(response).parseable {
+                response
+                    .use { listV2Handler.handle(it) }
+                    .also {
+                        if (requestOptions.responseValidation!!) {
+                            it.validate()
+                        }
+                    }
+                    .let {
+                        DatasetListV2Page.builder()
+                            .service(DatasetServiceImpl(clientOptions))
+                            .params(params)
+                            .response(it)
+                            .build()
                     }
             }
         }
@@ -618,6 +673,40 @@ class DatasetServiceImpl internal constructor(private val clientOptions: ClientO
                         if (requestOptions.responseValidation!!) {
                             it.validate()
                         }
+                    }
+            }
+        }
+
+        private val listHandler: Handler<List<Dataset>> =
+            jsonHandler<List<Dataset>>(clientOptions.jsonMapper)
+
+        override fun list(
+            params: DatasetListParams,
+            requestOptions: RequestOptions,
+        ): HttpResponseFor<DatasetListPage> {
+            val request =
+                HttpRequest.builder()
+                    .method(HttpMethod.GET)
+                    .baseUrl(clientOptions.baseUrl())
+                    .addPathSegments("api", "v1", "datasets")
+                    .build()
+                    .prepare(clientOptions, params)
+            val requestOptions = requestOptions.applyDefaults(RequestOptions.from(clientOptions))
+            val response = clientOptions.httpClient.execute(request, requestOptions)
+            return errorHandler.handle(response).parseable {
+                response
+                    .use { listHandler.handle(it) }
+                    .also {
+                        if (requestOptions.responseValidation!!) {
+                            it.forEach { it.validate() }
+                        }
+                    }
+                    .let {
+                        DatasetListPage.builder()
+                            .service(DatasetServiceImpl(clientOptions))
+                            .params(params)
+                            .items(it)
+                            .build()
                     }
             }
         }

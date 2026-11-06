@@ -14,6 +14,10 @@ import com.langchain.smith.models.datasets.DatasetDeleteParams
 import com.langchain.smith.models.datasets.DatasetDeleteResponse
 import com.langchain.smith.models.datasets.DatasetListPage
 import com.langchain.smith.models.datasets.DatasetListParams
+import com.langchain.smith.models.datasets.DatasetListV1Page
+import com.langchain.smith.models.datasets.DatasetListV1Params
+import com.langchain.smith.models.datasets.DatasetListV2Page
+import com.langchain.smith.models.datasets.DatasetListV2Params
 import com.langchain.smith.models.datasets.DatasetRetrieveCsvParams
 import com.langchain.smith.models.datasets.DatasetRetrieveCsvResponse
 import com.langchain.smith.models.datasets.DatasetRetrieveJsonlParams
@@ -146,23 +150,6 @@ interface DatasetService {
     fun update(datasetId: String, requestOptions: RequestOptions): DatasetUpdateResponse =
         update(datasetId, DatasetUpdateParams.none(), requestOptions)
 
-    /** Get all datasets by query params and owner. */
-    fun list(): DatasetListPage = list(DatasetListParams.none())
-
-    /** @see list */
-    fun list(
-        params: DatasetListParams = DatasetListParams.none(),
-        requestOptions: RequestOptions = RequestOptions.none(),
-    ): DatasetListPage
-
-    /** @see list */
-    fun list(params: DatasetListParams = DatasetListParams.none()): DatasetListPage =
-        list(params, RequestOptions.none())
-
-    /** @see list */
-    fun list(requestOptions: RequestOptions): DatasetListPage =
-        list(DatasetListParams.none(), requestOptions)
-
     /** Delete a specific dataset. */
     fun delete(datasetId: String): DatasetDeleteResponse =
         delete(datasetId, DatasetDeleteParams.none())
@@ -213,6 +200,48 @@ interface DatasetService {
         params: DatasetCloneParams,
         requestOptions: RequestOptions = RequestOptions.none(),
     ): List<DatasetCloneResponse>
+
+    /** Get all datasets by query params and owner. */
+    @Deprecated("Use listV2 instead, which calls GET /api/v2/datasets and pages with a cursor.")
+    fun listV1(): DatasetListV1Page = listV1(DatasetListV1Params.none())
+
+    /** @see listV1 */
+    @Deprecated("Use listV2 instead, which calls GET /api/v2/datasets and pages with a cursor.")
+    fun listV1(
+        params: DatasetListV1Params = DatasetListV1Params.none(),
+        requestOptions: RequestOptions = RequestOptions.none(),
+    ): DatasetListV1Page
+
+    /** @see listV1 */
+    @Deprecated("Use listV2 instead, which calls GET /api/v2/datasets and pages with a cursor.")
+    fun listV1(params: DatasetListV1Params = DatasetListV1Params.none()): DatasetListV1Page =
+        listV1(params, RequestOptions.none())
+
+    /** @see listV1 */
+    @Deprecated("Use listV2 instead, which calls GET /api/v2/datasets and pages with a cursor.")
+    fun listV1(requestOptions: RequestOptions): DatasetListV1Page =
+        listV1(DatasetListV1Params.none(), requestOptions)
+
+    /**
+     * Returns one page of the datasets in the workspace, filtered and sorted by the query
+     * parameters. Pass the next_cursor of a response as cursor, with the same filters and sort, to
+     * get the next page. next_cursor is null on the last page.
+     */
+    fun listV2(): DatasetListV2Page = listV2(DatasetListV2Params.none())
+
+    /** @see listV2 */
+    fun listV2(
+        params: DatasetListV2Params = DatasetListV2Params.none(),
+        requestOptions: RequestOptions = RequestOptions.none(),
+    ): DatasetListV2Page
+
+    /** @see listV2 */
+    fun listV2(params: DatasetListV2Params = DatasetListV2Params.none()): DatasetListV2Page =
+        listV2(params, RequestOptions.none())
+
+    /** @see listV2 */
+    fun listV2(requestOptions: RequestOptions): DatasetListV2Page =
+        listV2(DatasetListV2Params.none(), requestOptions)
 
     /** Download a dataset as CSV format. */
     fun retrieveCsv(datasetId: String): DatasetRetrieveCsvResponse =
@@ -420,6 +449,23 @@ interface DatasetService {
         requestOptions: RequestOptions = RequestOptions.none(),
     ): Dataset
 
+    /** Get all datasets by query params and owner. */
+    fun list(): DatasetListPage = list(DatasetListParams.none())
+
+    /** @see list */
+    fun list(
+        params: DatasetListParams = DatasetListParams.none(),
+        requestOptions: RequestOptions = RequestOptions.none(),
+    ): DatasetListPage
+
+    /** @see list */
+    fun list(params: DatasetListParams = DatasetListParams.none()): DatasetListPage =
+        list(params, RequestOptions.none())
+
+    /** @see list */
+    fun list(requestOptions: RequestOptions): DatasetListPage =
+        list(DatasetListParams.none(), requestOptions)
+
     /** A view of [DatasetService] that provides access to raw HTTP responses for each method. */
     interface WithRawResponse {
 
@@ -545,30 +591,6 @@ interface DatasetService {
             update(datasetId, DatasetUpdateParams.none(), requestOptions)
 
         /**
-         * Returns a raw HTTP response for `get /api/v1/datasets`, but is otherwise the same as
-         * [DatasetService.list].
-         */
-        @MustBeClosed fun list(): HttpResponseFor<DatasetListPage> = list(DatasetListParams.none())
-
-        /** @see list */
-        @MustBeClosed
-        fun list(
-            params: DatasetListParams = DatasetListParams.none(),
-            requestOptions: RequestOptions = RequestOptions.none(),
-        ): HttpResponseFor<DatasetListPage>
-
-        /** @see list */
-        @MustBeClosed
-        fun list(
-            params: DatasetListParams = DatasetListParams.none()
-        ): HttpResponseFor<DatasetListPage> = list(params, RequestOptions.none())
-
-        /** @see list */
-        @MustBeClosed
-        fun list(requestOptions: RequestOptions): HttpResponseFor<DatasetListPage> =
-            list(DatasetListParams.none(), requestOptions)
-
-        /**
          * Returns a raw HTTP response for `delete /api/v1/datasets/{dataset_id}`, but is otherwise
          * the same as [DatasetService.delete].
          */
@@ -626,6 +648,60 @@ interface DatasetService {
             params: DatasetCloneParams,
             requestOptions: RequestOptions = RequestOptions.none(),
         ): HttpResponseFor<List<DatasetCloneResponse>>
+
+        /**
+         * Returns a raw HTTP response for `get /api/v1/datasets`, but is otherwise the same as
+         * [DatasetService.listV1].
+         */
+        @Deprecated("Use listV2 instead, which calls GET /api/v2/datasets and pages with a cursor.")
+        @MustBeClosed
+        fun listV1(): HttpResponseFor<DatasetListV1Page> = listV1(DatasetListV1Params.none())
+
+        /** @see listV1 */
+        @Deprecated("Use listV2 instead, which calls GET /api/v2/datasets and pages with a cursor.")
+        @MustBeClosed
+        fun listV1(
+            params: DatasetListV1Params = DatasetListV1Params.none(),
+            requestOptions: RequestOptions = RequestOptions.none(),
+        ): HttpResponseFor<DatasetListV1Page>
+
+        /** @see listV1 */
+        @Deprecated("Use listV2 instead, which calls GET /api/v2/datasets and pages with a cursor.")
+        @MustBeClosed
+        fun listV1(
+            params: DatasetListV1Params = DatasetListV1Params.none()
+        ): HttpResponseFor<DatasetListV1Page> = listV1(params, RequestOptions.none())
+
+        /** @see listV1 */
+        @Deprecated("Use listV2 instead, which calls GET /api/v2/datasets and pages with a cursor.")
+        @MustBeClosed
+        fun listV1(requestOptions: RequestOptions): HttpResponseFor<DatasetListV1Page> =
+            listV1(DatasetListV1Params.none(), requestOptions)
+
+        /**
+         * Returns a raw HTTP response for `get /api/v2/datasets`, but is otherwise the same as
+         * [DatasetService.listV2].
+         */
+        @MustBeClosed
+        fun listV2(): HttpResponseFor<DatasetListV2Page> = listV2(DatasetListV2Params.none())
+
+        /** @see listV2 */
+        @MustBeClosed
+        fun listV2(
+            params: DatasetListV2Params = DatasetListV2Params.none(),
+            requestOptions: RequestOptions = RequestOptions.none(),
+        ): HttpResponseFor<DatasetListV2Page>
+
+        /** @see listV2 */
+        @MustBeClosed
+        fun listV2(
+            params: DatasetListV2Params = DatasetListV2Params.none()
+        ): HttpResponseFor<DatasetListV2Page> = listV2(params, RequestOptions.none())
+
+        /** @see listV2 */
+        @MustBeClosed
+        fun listV2(requestOptions: RequestOptions): HttpResponseFor<DatasetListV2Page> =
+            listV2(DatasetListV2Params.none(), requestOptions)
 
         /**
          * Returns a raw HTTP response for `get /api/v1/datasets/{dataset_id}/csv`, but is otherwise
@@ -904,5 +980,29 @@ interface DatasetService {
             params: DatasetUploadParams,
             requestOptions: RequestOptions = RequestOptions.none(),
         ): HttpResponseFor<Dataset>
+
+        /**
+         * Returns a raw HTTP response for `get /api/v1/datasets`, but is otherwise the same as
+         * [DatasetService.list].
+         */
+        @MustBeClosed fun list(): HttpResponseFor<DatasetListPage> = list(DatasetListParams.none())
+
+        /** @see list */
+        @MustBeClosed
+        fun list(
+            params: DatasetListParams = DatasetListParams.none(),
+            requestOptions: RequestOptions = RequestOptions.none(),
+        ): HttpResponseFor<DatasetListPage>
+
+        /** @see list */
+        @MustBeClosed
+        fun list(
+            params: DatasetListParams = DatasetListParams.none()
+        ): HttpResponseFor<DatasetListPage> = list(params, RequestOptions.none())
+
+        /** @see list */
+        @MustBeClosed
+        fun list(requestOptions: RequestOptions): HttpResponseFor<DatasetListPage> =
+            list(DatasetListParams.none(), requestOptions)
     }
 }

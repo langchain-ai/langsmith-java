@@ -13,6 +13,10 @@ import com.langchain.smith.models.datasets.DatasetDeleteParams
 import com.langchain.smith.models.datasets.DatasetDeleteResponse
 import com.langchain.smith.models.datasets.DatasetListPageAsync
 import com.langchain.smith.models.datasets.DatasetListParams
+import com.langchain.smith.models.datasets.DatasetListV1PageAsync
+import com.langchain.smith.models.datasets.DatasetListV1Params
+import com.langchain.smith.models.datasets.DatasetListV2PageAsync
+import com.langchain.smith.models.datasets.DatasetListV2Params
 import com.langchain.smith.models.datasets.DatasetRetrieveCsvParams
 import com.langchain.smith.models.datasets.DatasetRetrieveCsvResponse
 import com.langchain.smith.models.datasets.DatasetRetrieveJsonlParams
@@ -153,24 +157,6 @@ interface DatasetServiceAsync {
     ): CompletableFuture<DatasetUpdateResponse> =
         update(datasetId, DatasetUpdateParams.none(), requestOptions)
 
-    /** Get all datasets by query params and owner. */
-    fun list(): CompletableFuture<DatasetListPageAsync> = list(DatasetListParams.none())
-
-    /** @see list */
-    fun list(
-        params: DatasetListParams = DatasetListParams.none(),
-        requestOptions: RequestOptions = RequestOptions.none(),
-    ): CompletableFuture<DatasetListPageAsync>
-
-    /** @see list */
-    fun list(
-        params: DatasetListParams = DatasetListParams.none()
-    ): CompletableFuture<DatasetListPageAsync> = list(params, RequestOptions.none())
-
-    /** @see list */
-    fun list(requestOptions: RequestOptions): CompletableFuture<DatasetListPageAsync> =
-        list(DatasetListParams.none(), requestOptions)
-
     /** Delete a specific dataset. */
     fun delete(datasetId: String): CompletableFuture<DatasetDeleteResponse> =
         delete(datasetId, DatasetDeleteParams.none())
@@ -224,6 +210,50 @@ interface DatasetServiceAsync {
         params: DatasetCloneParams,
         requestOptions: RequestOptions = RequestOptions.none(),
     ): CompletableFuture<List<DatasetCloneResponse>>
+
+    /** Get all datasets by query params and owner. */
+    @Deprecated("Use listV2 instead, which calls GET /api/v2/datasets and pages with a cursor.")
+    fun listV1(): CompletableFuture<DatasetListV1PageAsync> = listV1(DatasetListV1Params.none())
+
+    /** @see listV1 */
+    @Deprecated("Use listV2 instead, which calls GET /api/v2/datasets and pages with a cursor.")
+    fun listV1(
+        params: DatasetListV1Params = DatasetListV1Params.none(),
+        requestOptions: RequestOptions = RequestOptions.none(),
+    ): CompletableFuture<DatasetListV1PageAsync>
+
+    /** @see listV1 */
+    @Deprecated("Use listV2 instead, which calls GET /api/v2/datasets and pages with a cursor.")
+    fun listV1(
+        params: DatasetListV1Params = DatasetListV1Params.none()
+    ): CompletableFuture<DatasetListV1PageAsync> = listV1(params, RequestOptions.none())
+
+    /** @see listV1 */
+    @Deprecated("Use listV2 instead, which calls GET /api/v2/datasets and pages with a cursor.")
+    fun listV1(requestOptions: RequestOptions): CompletableFuture<DatasetListV1PageAsync> =
+        listV1(DatasetListV1Params.none(), requestOptions)
+
+    /**
+     * Returns one page of the datasets in the workspace, filtered and sorted by the query
+     * parameters. Pass the next_cursor of a response as cursor, with the same filters and sort, to
+     * get the next page. next_cursor is null on the last page.
+     */
+    fun listV2(): CompletableFuture<DatasetListV2PageAsync> = listV2(DatasetListV2Params.none())
+
+    /** @see listV2 */
+    fun listV2(
+        params: DatasetListV2Params = DatasetListV2Params.none(),
+        requestOptions: RequestOptions = RequestOptions.none(),
+    ): CompletableFuture<DatasetListV2PageAsync>
+
+    /** @see listV2 */
+    fun listV2(
+        params: DatasetListV2Params = DatasetListV2Params.none()
+    ): CompletableFuture<DatasetListV2PageAsync> = listV2(params, RequestOptions.none())
+
+    /** @see listV2 */
+    fun listV2(requestOptions: RequestOptions): CompletableFuture<DatasetListV2PageAsync> =
+        listV2(DatasetListV2Params.none(), requestOptions)
 
     /** Download a dataset as CSV format. */
     fun retrieveCsv(datasetId: String): CompletableFuture<DatasetRetrieveCsvResponse> =
@@ -452,6 +482,24 @@ interface DatasetServiceAsync {
         requestOptions: RequestOptions = RequestOptions.none(),
     ): CompletableFuture<Dataset>
 
+    /** Get all datasets by query params and owner. */
+    fun list(): CompletableFuture<DatasetListPageAsync> = list(DatasetListParams.none())
+
+    /** @see list */
+    fun list(
+        params: DatasetListParams = DatasetListParams.none(),
+        requestOptions: RequestOptions = RequestOptions.none(),
+    ): CompletableFuture<DatasetListPageAsync>
+
+    /** @see list */
+    fun list(
+        params: DatasetListParams = DatasetListParams.none()
+    ): CompletableFuture<DatasetListPageAsync> = list(params, RequestOptions.none())
+
+    /** @see list */
+    fun list(requestOptions: RequestOptions): CompletableFuture<DatasetListPageAsync> =
+        list(DatasetListParams.none(), requestOptions)
+
     /**
      * A view of [DatasetServiceAsync] that provides access to raw HTTP responses for each method.
      */
@@ -574,31 +622,6 @@ interface DatasetServiceAsync {
             update(datasetId, DatasetUpdateParams.none(), requestOptions)
 
         /**
-         * Returns a raw HTTP response for `get /api/v1/datasets`, but is otherwise the same as
-         * [DatasetServiceAsync.list].
-         */
-        fun list(): CompletableFuture<HttpResponseFor<DatasetListPageAsync>> =
-            list(DatasetListParams.none())
-
-        /** @see list */
-        fun list(
-            params: DatasetListParams = DatasetListParams.none(),
-            requestOptions: RequestOptions = RequestOptions.none(),
-        ): CompletableFuture<HttpResponseFor<DatasetListPageAsync>>
-
-        /** @see list */
-        fun list(
-            params: DatasetListParams = DatasetListParams.none()
-        ): CompletableFuture<HttpResponseFor<DatasetListPageAsync>> =
-            list(params, RequestOptions.none())
-
-        /** @see list */
-        fun list(
-            requestOptions: RequestOptions
-        ): CompletableFuture<HttpResponseFor<DatasetListPageAsync>> =
-            list(DatasetListParams.none(), requestOptions)
-
-        /**
          * Returns a raw HTTP response for `delete /api/v1/datasets/{dataset_id}`, but is otherwise
          * the same as [DatasetServiceAsync.delete].
          */
@@ -653,6 +676,60 @@ interface DatasetServiceAsync {
             params: DatasetCloneParams,
             requestOptions: RequestOptions = RequestOptions.none(),
         ): CompletableFuture<HttpResponseFor<List<DatasetCloneResponse>>>
+
+        /**
+         * Returns a raw HTTP response for `get /api/v1/datasets`, but is otherwise the same as
+         * [DatasetServiceAsync.listV1].
+         */
+        @Deprecated("Use listV2 instead, which calls GET /api/v2/datasets and pages with a cursor.")
+        fun listV1(): CompletableFuture<HttpResponseFor<DatasetListV1PageAsync>> =
+            listV1(DatasetListV1Params.none())
+
+        /** @see listV1 */
+        @Deprecated("Use listV2 instead, which calls GET /api/v2/datasets and pages with a cursor.")
+        fun listV1(
+            params: DatasetListV1Params = DatasetListV1Params.none(),
+            requestOptions: RequestOptions = RequestOptions.none(),
+        ): CompletableFuture<HttpResponseFor<DatasetListV1PageAsync>>
+
+        /** @see listV1 */
+        @Deprecated("Use listV2 instead, which calls GET /api/v2/datasets and pages with a cursor.")
+        fun listV1(
+            params: DatasetListV1Params = DatasetListV1Params.none()
+        ): CompletableFuture<HttpResponseFor<DatasetListV1PageAsync>> =
+            listV1(params, RequestOptions.none())
+
+        /** @see listV1 */
+        @Deprecated("Use listV2 instead, which calls GET /api/v2/datasets and pages with a cursor.")
+        fun listV1(
+            requestOptions: RequestOptions
+        ): CompletableFuture<HttpResponseFor<DatasetListV1PageAsync>> =
+            listV1(DatasetListV1Params.none(), requestOptions)
+
+        /**
+         * Returns a raw HTTP response for `get /api/v2/datasets`, but is otherwise the same as
+         * [DatasetServiceAsync.listV2].
+         */
+        fun listV2(): CompletableFuture<HttpResponseFor<DatasetListV2PageAsync>> =
+            listV2(DatasetListV2Params.none())
+
+        /** @see listV2 */
+        fun listV2(
+            params: DatasetListV2Params = DatasetListV2Params.none(),
+            requestOptions: RequestOptions = RequestOptions.none(),
+        ): CompletableFuture<HttpResponseFor<DatasetListV2PageAsync>>
+
+        /** @see listV2 */
+        fun listV2(
+            params: DatasetListV2Params = DatasetListV2Params.none()
+        ): CompletableFuture<HttpResponseFor<DatasetListV2PageAsync>> =
+            listV2(params, RequestOptions.none())
+
+        /** @see listV2 */
+        fun listV2(
+            requestOptions: RequestOptions
+        ): CompletableFuture<HttpResponseFor<DatasetListV2PageAsync>> =
+            listV2(DatasetListV2Params.none(), requestOptions)
 
         /**
          * Returns a raw HTTP response for `get /api/v1/datasets/{dataset_id}/csv`, but is otherwise
@@ -909,5 +986,30 @@ interface DatasetServiceAsync {
             params: DatasetUploadParams,
             requestOptions: RequestOptions = RequestOptions.none(),
         ): CompletableFuture<HttpResponseFor<Dataset>>
+
+        /**
+         * Returns a raw HTTP response for `get /api/v1/datasets`, but is otherwise the same as
+         * [DatasetServiceAsync.list].
+         */
+        fun list(): CompletableFuture<HttpResponseFor<DatasetListPageAsync>> =
+            list(DatasetListParams.none())
+
+        /** @see list */
+        fun list(
+            params: DatasetListParams = DatasetListParams.none(),
+            requestOptions: RequestOptions = RequestOptions.none(),
+        ): CompletableFuture<HttpResponseFor<DatasetListPageAsync>>
+
+        /** @see list */
+        fun list(
+            params: DatasetListParams = DatasetListParams.none()
+        ): CompletableFuture<HttpResponseFor<DatasetListPageAsync>> =
+            list(params, RequestOptions.none())
+
+        /** @see list */
+        fun list(
+            requestOptions: RequestOptions
+        ): CompletableFuture<HttpResponseFor<DatasetListPageAsync>> =
+            list(DatasetListParams.none(), requestOptions)
     }
 }

@@ -162,22 +162,6 @@ internal class DatasetServiceAsyncTest {
 
     @Disabled("Mock server tests are disabled")
     @Test
-    fun list() {
-        val client =
-            LangsmithOkHttpClientAsync.builder()
-                .apiKey("My API Key")
-                .tenantId("My Tenant ID")
-                .build()
-        val datasetServiceAsync = client.datasets()
-
-        val pageFuture = datasetServiceAsync.list()
-
-        val page = pageFuture.get()
-        page.items().forEach { it.validate() }
-    }
-
-    @Disabled("Mock server tests are disabled")
-    @Test
     fun delete() {
         val client =
             LangsmithOkHttpClientAsync.builder()
@@ -216,6 +200,38 @@ internal class DatasetServiceAsyncTest {
 
         val response = responseFuture.get()
         response.forEach { it.validate() }
+    }
+
+    @Disabled("Mock server tests are disabled")
+    @Test
+    fun listV1() {
+        val client =
+            LangsmithOkHttpClientAsync.builder()
+                .apiKey("My API Key")
+                .tenantId("My Tenant ID")
+                .build()
+        val datasetServiceAsync = client.datasets()
+
+        val pageFuture = datasetServiceAsync.listV1()
+
+        val page = pageFuture.get()
+        page.items().forEach { it.validate() }
+    }
+
+    @Disabled("Mock server tests are disabled")
+    @Test
+    fun listV2() {
+        val client =
+            LangsmithOkHttpClientAsync.builder()
+                .apiKey("My API Key")
+                .tenantId("My Tenant ID")
+                .build()
+        val datasetServiceAsync = client.datasets()
+
+        val pageFuture = datasetServiceAsync.listV2()
+
+        val page = pageFuture.get()
+        page.response().validate()
     }
 
     @Disabled("Mock server tests are disabled")
@@ -384,5 +400,21 @@ internal class DatasetServiceAsyncTest {
 
         val dataset = datasetFuture.get()
         dataset.validate()
+    }
+
+    @Disabled("Mock server tests are disabled")
+    @Test
+    fun list() {
+        val client =
+            LangsmithOkHttpClientAsync.builder()
+                .apiKey("My API Key")
+                .tenantId("My Tenant ID")
+                .build()
+        val datasetServiceAsync = client.datasets()
+
+        val pageFuture = datasetServiceAsync.list()
+
+        val page = pageFuture.get()
+        page.items().forEach { it.validate() }
     }
 }
