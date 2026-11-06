@@ -23,6 +23,7 @@ import com.langchain.smith.services.async.RunServiceAsync
 import com.langchain.smith.services.async.SandboxServiceAsync
 import com.langchain.smith.services.async.SessionServiceAsync
 import com.langchain.smith.services.async.SettingServiceAsync
+import com.langchain.smith.services.async.SqlServiceAsync
 import com.langchain.smith.services.async.ThreadServiceAsync
 import com.langchain.smith.services.async.TraceServiceAsync
 import com.langchain.smith.services.async.WorkspaceServiceAsync
@@ -63,6 +64,8 @@ interface LangsmithClientAsync {
      * The original service is not modified.
      */
     fun withOptions(modifier: Consumer<ClientOptions.Builder>): LangsmithClientAsync
+
+    fun sql(): SqlServiceAsync
 
     fun productFeedback(): ProductFeedbackServiceAsync
 
@@ -136,6 +139,8 @@ interface LangsmithClientAsync {
         fun withOptions(
             modifier: Consumer<ClientOptions.Builder>
         ): LangsmithClientAsync.WithRawResponse
+
+        fun sql(): SqlServiceAsync.WithRawResponse
 
         fun productFeedback(): ProductFeedbackServiceAsync.WithRawResponse
 

@@ -44,6 +44,8 @@ import com.langchain.smith.services.async.SessionServiceAsync
 import com.langchain.smith.services.async.SessionServiceAsyncImpl
 import com.langchain.smith.services.async.SettingServiceAsync
 import com.langchain.smith.services.async.SettingServiceAsyncImpl
+import com.langchain.smith.services.async.SqlServiceAsync
+import com.langchain.smith.services.async.SqlServiceAsyncImpl
 import com.langchain.smith.services.async.ThreadServiceAsync
 import com.langchain.smith.services.async.ThreadServiceAsyncImpl
 import com.langchain.smith.services.async.TraceServiceAsync
@@ -68,6 +70,8 @@ class LangsmithClientAsyncImpl(private val clientOptions: ClientOptions) : Langs
     private val withRawResponse: LangsmithClientAsync.WithRawResponse by lazy {
         WithRawResponseImpl(clientOptions)
     }
+
+    private val sql: SqlServiceAsync by lazy { SqlServiceAsyncImpl(clientOptionsWithUserAgent) }
 
     private val productFeedback: ProductFeedbackServiceAsync by lazy {
         ProductFeedbackServiceAsyncImpl(clientOptionsWithUserAgent)
@@ -162,6 +166,8 @@ class LangsmithClientAsyncImpl(private val clientOptions: ClientOptions) : Langs
     override fun withOptions(modifier: Consumer<ClientOptions.Builder>): LangsmithClientAsync =
         LangsmithClientAsyncImpl(clientOptions.toBuilder().apply(modifier::accept).build())
 
+    override fun sql(): SqlServiceAsync = sql
+
     override fun productFeedback(): ProductFeedbackServiceAsync = productFeedback
 
     override fun agents(): AgentServiceAsync = agents
@@ -221,6 +227,10 @@ class LangsmithClientAsyncImpl(private val clientOptions: ClientOptions) : Langs
 
     class WithRawResponseImpl internal constructor(private val clientOptions: ClientOptions) :
         LangsmithClientAsync.WithRawResponse {
+
+        private val sql: SqlServiceAsync.WithRawResponse by lazy {
+            SqlServiceAsyncImpl.WithRawResponseImpl(clientOptions)
+        }
 
         private val productFeedback: ProductFeedbackServiceAsync.WithRawResponse by lazy {
             ProductFeedbackServiceAsyncImpl.WithRawResponseImpl(clientOptions)
@@ -320,6 +330,8 @@ class LangsmithClientAsyncImpl(private val clientOptions: ClientOptions) : Langs
             LangsmithClientAsyncImpl.WithRawResponseImpl(
                 clientOptions.toBuilder().apply(modifier::accept).build()
             )
+
+        override fun sql(): SqlServiceAsync.WithRawResponse = sql
 
         override fun productFeedback(): ProductFeedbackServiceAsync.WithRawResponse =
             productFeedback

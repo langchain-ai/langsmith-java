@@ -23,6 +23,7 @@ import com.langchain.smith.services.blocking.RunService
 import com.langchain.smith.services.blocking.SandboxService
 import com.langchain.smith.services.blocking.SessionService
 import com.langchain.smith.services.blocking.SettingService
+import com.langchain.smith.services.blocking.SqlService
 import com.langchain.smith.services.blocking.ThreadService
 import com.langchain.smith.services.blocking.TraceService
 import com.langchain.smith.services.blocking.WorkspaceService
@@ -63,6 +64,8 @@ interface LangsmithClient {
      * The original service is not modified.
      */
     fun withOptions(modifier: Consumer<ClientOptions.Builder>): LangsmithClient
+
+    fun sql(): SqlService
 
     fun productFeedback(): ProductFeedbackService
 
@@ -132,6 +135,8 @@ interface LangsmithClient {
          * The original service is not modified.
          */
         fun withOptions(modifier: Consumer<ClientOptions.Builder>): LangsmithClient.WithRawResponse
+
+        fun sql(): SqlService.WithRawResponse
 
         fun productFeedback(): ProductFeedbackService.WithRawResponse
 
