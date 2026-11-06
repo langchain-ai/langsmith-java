@@ -33,6 +33,9 @@ class SplitServiceImpl internal constructor(private val clientOptions: ClientOpt
     override fun withOptions(modifier: Consumer<ClientOptions.Builder>): SplitService =
         SplitServiceImpl(clientOptions.toBuilder().apply(modifier::accept).build())
 
+    @Deprecated(
+        "Deprecated: use datasets().examples().updateMetadata() instead, with an ARRAY_ADD or ARRAY_REMOVE operation on the dataset_split key. Will be removed after May 31, 2027."
+    )
     override fun create(params: SplitCreateParams, requestOptions: RequestOptions): List<String> =
         // put /api/v1/datasets/{dataset_id}/splits
         withRawResponse().create(params, requestOptions).parse()
@@ -60,6 +63,9 @@ class SplitServiceImpl internal constructor(private val clientOptions: ClientOpt
         private val createHandler: Handler<List<String>> =
             jsonHandler<List<String>>(clientOptions.jsonMapper)
 
+        @Deprecated(
+            "Deprecated: use datasets().examples().updateMetadata() instead, with an ARRAY_ADD or ARRAY_REMOVE operation on the dataset_split key. Will be removed after May 31, 2027."
+        )
         override fun create(
             params: SplitCreateParams,
             requestOptions: RequestOptions,

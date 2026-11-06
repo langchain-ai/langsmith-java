@@ -27,15 +27,25 @@ interface SplitServiceAsync {
     /**
      * Add examples to a split, or remove them from it.
      *
+     * Deprecated: use PATCH /api/v1/platform/datasets/{dataset_id}/examples/metadata with an
+     * ARRAY_ADD or ARRAY_REMOVE operation on the dataset_split key. Will be removed after May
+     * 31, 2027.
+     *
      * Returns the IDs of the given examples found in the dataset. Each of them gets a new version,
      * even when its splits do not change. An example's other splits are kept, and an example
      * without a split counts as being in the base split. Removing an example's last split leaves it
      * in no split.
      */
+    @Deprecated(
+        "Deprecated: use datasets().examples().updateMetadata() instead, with an ARRAY_ADD or ARRAY_REMOVE operation on the dataset_split key. Will be removed after May 31, 2027."
+    )
     fun create(datasetId: String, params: SplitCreateParams): CompletableFuture<List<String>> =
         create(datasetId, params, RequestOptions.none())
 
     /** @see create */
+    @Deprecated(
+        "Deprecated: use datasets().examples().updateMetadata() instead, with an ARRAY_ADD or ARRAY_REMOVE operation on the dataset_split key. Will be removed after May 31, 2027."
+    )
     fun create(
         datasetId: String,
         params: SplitCreateParams,
@@ -44,10 +54,16 @@ interface SplitServiceAsync {
         create(params.toBuilder().datasetId(datasetId).build(), requestOptions)
 
     /** @see create */
+    @Deprecated(
+        "Deprecated: use datasets().examples().updateMetadata() instead, with an ARRAY_ADD or ARRAY_REMOVE operation on the dataset_split key. Will be removed after May 31, 2027."
+    )
     fun create(params: SplitCreateParams): CompletableFuture<List<String>> =
         create(params, RequestOptions.none())
 
     /** @see create */
+    @Deprecated(
+        "Deprecated: use datasets().examples().updateMetadata() instead, with an ARRAY_ADD or ARRAY_REMOVE operation on the dataset_split key. Will be removed after May 31, 2027."
+    )
     fun create(
         params: SplitCreateParams,
         requestOptions: RequestOptions = RequestOptions.none(),
@@ -108,6 +124,9 @@ interface SplitServiceAsync {
          * Returns a raw HTTP response for `put /api/v1/datasets/{dataset_id}/splits`, but is
          * otherwise the same as [SplitServiceAsync.create].
          */
+        @Deprecated(
+            "Deprecated: use datasets().examples().updateMetadata() instead, with an ARRAY_ADD or ARRAY_REMOVE operation on the dataset_split key. Will be removed after May 31, 2027."
+        )
         fun create(
             datasetId: String,
             params: SplitCreateParams,
@@ -115,6 +134,9 @@ interface SplitServiceAsync {
             create(datasetId, params, RequestOptions.none())
 
         /** @see create */
+        @Deprecated(
+            "Deprecated: use datasets().examples().updateMetadata() instead, with an ARRAY_ADD or ARRAY_REMOVE operation on the dataset_split key. Will be removed after May 31, 2027."
+        )
         fun create(
             datasetId: String,
             params: SplitCreateParams,
@@ -123,10 +145,16 @@ interface SplitServiceAsync {
             create(params.toBuilder().datasetId(datasetId).build(), requestOptions)
 
         /** @see create */
+        @Deprecated(
+            "Deprecated: use datasets().examples().updateMetadata() instead, with an ARRAY_ADD or ARRAY_REMOVE operation on the dataset_split key. Will be removed after May 31, 2027."
+        )
         fun create(params: SplitCreateParams): CompletableFuture<HttpResponseFor<List<String>>> =
             create(params, RequestOptions.none())
 
         /** @see create */
+        @Deprecated(
+            "Deprecated: use datasets().examples().updateMetadata() instead, with an ARRAY_ADD or ARRAY_REMOVE operation on the dataset_split key. Will be removed after May 31, 2027."
+        )
         fun create(
             params: SplitCreateParams,
             requestOptions: RequestOptions = RequestOptions.none(),

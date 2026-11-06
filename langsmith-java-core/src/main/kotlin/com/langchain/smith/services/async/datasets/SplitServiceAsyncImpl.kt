@@ -34,6 +34,9 @@ class SplitServiceAsyncImpl internal constructor(private val clientOptions: Clie
     override fun withOptions(modifier: Consumer<ClientOptions.Builder>): SplitServiceAsync =
         SplitServiceAsyncImpl(clientOptions.toBuilder().apply(modifier::accept).build())
 
+    @Deprecated(
+        "Deprecated: use datasets().examples().updateMetadata() instead, with an ARRAY_ADD or ARRAY_REMOVE operation on the dataset_split key. Will be removed after May 31, 2027."
+    )
     override fun create(
         params: SplitCreateParams,
         requestOptions: RequestOptions,
@@ -64,6 +67,9 @@ class SplitServiceAsyncImpl internal constructor(private val clientOptions: Clie
         private val createHandler: Handler<List<String>> =
             jsonHandler<List<String>>(clientOptions.jsonMapper)
 
+        @Deprecated(
+            "Deprecated: use datasets().examples().updateMetadata() instead, with an ARRAY_ADD or ARRAY_REMOVE operation on the dataset_split key. Will be removed after May 31, 2027."
+        )
         override fun create(
             params: SplitCreateParams,
             requestOptions: RequestOptions,
