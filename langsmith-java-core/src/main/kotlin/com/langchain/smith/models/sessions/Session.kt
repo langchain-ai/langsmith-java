@@ -44,6 +44,7 @@ private constructor(
     private val lastRunStartTimeLive: JsonField<OffsetDateTime>,
     private val latencyP50: JsonField<Double>,
     private val latencyP99: JsonField<Double>,
+    private val longlivedTtlDays: JsonField<Long>,
     private val promptCost: JsonField<Double>,
     private val promptTokens: JsonField<Long>,
     private val referenceDatasetId: JsonField<String>,
@@ -107,6 +108,9 @@ private constructor(
         @JsonProperty("latency_p99")
         @ExcludeMissing
         latencyP99: JsonField<Double> = JsonMissing.of(),
+        @JsonProperty("longlived_ttl_days")
+        @ExcludeMissing
+        longlivedTtlDays: JsonField<Long> = JsonMissing.of(),
         @JsonProperty("prompt_cost")
         @ExcludeMissing
         promptCost: JsonField<Double> = JsonMissing.of(),
@@ -156,6 +160,7 @@ private constructor(
         lastRunStartTimeLive,
         latencyP50,
         latencyP99,
+        longlivedTtlDays,
         promptCost,
         promptTokens,
         referenceDatasetId,
@@ -288,6 +293,17 @@ private constructor(
      *   server responded with an unexpected value).
      */
     fun latencyP99(): Optional<Double> = latencyP99.getOptional("latency_p99")
+
+    /**
+     * Retention in days for traces while trace_tier is longlived. One of 30, 60, 90, 120, 150, 180,
+     * 240, 300, 365 or 400, up to the maximum of the deployment. Self-hosted also accepts its
+     * configured retention. The value is kept while trace_tier is shortlived. Null means the
+     * project uses the workspace retention.
+     *
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
+    fun longlivedTtlDays(): Optional<Long> = longlivedTtlDays.getOptional("longlived_ttl_days")
 
     /**
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
@@ -518,6 +534,16 @@ private constructor(
     @JsonProperty("latency_p99") @ExcludeMissing fun _latencyP99(): JsonField<Double> = latencyP99
 
     /**
+     * Returns the raw JSON value of [longlivedTtlDays].
+     *
+     * Unlike [longlivedTtlDays], this method doesn't throw if the JSON field has an unexpected
+     * type.
+     */
+    @JsonProperty("longlived_ttl_days")
+    @ExcludeMissing
+    fun _longlivedTtlDays(): JsonField<Long> = longlivedTtlDays
+
+    /**
      * Returns the raw JSON value of [promptCost].
      *
      * Unlike [promptCost], this method doesn't throw if the JSON field has an unexpected type.
@@ -658,6 +684,7 @@ private constructor(
         private var lastRunStartTimeLive: JsonField<OffsetDateTime> = JsonMissing.of()
         private var latencyP50: JsonField<Double> = JsonMissing.of()
         private var latencyP99: JsonField<Double> = JsonMissing.of()
+        private var longlivedTtlDays: JsonField<Long> = JsonMissing.of()
         private var promptCost: JsonField<Double> = JsonMissing.of()
         private var promptTokens: JsonField<Long> = JsonMissing.of()
         private var referenceDatasetId: JsonField<String> = JsonMissing.of()
@@ -692,6 +719,7 @@ private constructor(
             lastRunStartTimeLive = session.lastRunStartTimeLive
             latencyP50 = session.latencyP50
             latencyP99 = session.latencyP99
+            longlivedTtlDays = session.longlivedTtlDays
             promptCost = session.promptCost
             promptTokens = session.promptTokens
             referenceDatasetId = session.referenceDatasetId
@@ -1047,6 +1075,37 @@ private constructor(
          */
         fun latencyP99(latencyP99: JsonField<Double>) = apply { this.latencyP99 = latencyP99 }
 
+        /**
+         * Retention in days for traces while trace_tier is longlived. One of 30, 60, 90, 120, 150,
+         * 180, 240, 300, 365 or 400, up to the maximum of the deployment. Self-hosted also accepts
+         * its configured retention. The value is kept while trace_tier is shortlived. Null means
+         * the project uses the workspace retention.
+         */
+        fun longlivedTtlDays(longlivedTtlDays: Long?) =
+            longlivedTtlDays(JsonField.ofNullable(longlivedTtlDays))
+
+        /**
+         * Alias for [Builder.longlivedTtlDays].
+         *
+         * This unboxed primitive overload exists for backwards compatibility.
+         */
+        fun longlivedTtlDays(longlivedTtlDays: Long) = longlivedTtlDays(longlivedTtlDays as Long?)
+
+        /** Alias for calling [Builder.longlivedTtlDays] with `longlivedTtlDays.orElse(null)`. */
+        fun longlivedTtlDays(longlivedTtlDays: Optional<Long>) =
+            longlivedTtlDays(longlivedTtlDays.getOrNull())
+
+        /**
+         * Sets [Builder.longlivedTtlDays] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.longlivedTtlDays] with a well-typed [Long] value
+         * instead. This method is primarily for setting the field to an undocumented or not yet
+         * supported value.
+         */
+        fun longlivedTtlDays(longlivedTtlDays: JsonField<Long>) = apply {
+            this.longlivedTtlDays = longlivedTtlDays
+        }
+
         fun promptCost(promptCost: Double?) = promptCost(JsonField.ofNullable(promptCost))
 
         /**
@@ -1338,6 +1397,7 @@ private constructor(
                 lastRunStartTimeLive,
                 latencyP50,
                 latencyP99,
+                longlivedTtlDays,
                 promptCost,
                 promptTokens,
                 referenceDatasetId,
@@ -1387,6 +1447,7 @@ private constructor(
         lastRunStartTimeLive()
         latencyP50()
         latencyP99()
+        longlivedTtlDays()
         promptCost()
         promptTokens()
         referenceDatasetId()
@@ -1435,6 +1496,7 @@ private constructor(
             (if (lastRunStartTimeLive.asKnown().isPresent) 1 else 0) +
             (if (latencyP50.asKnown().isPresent) 1 else 0) +
             (if (latencyP99.asKnown().isPresent) 1 else 0) +
+            (if (longlivedTtlDays.asKnown().isPresent) 1 else 0) +
             (if (promptCost.asKnown().isPresent) 1 else 0) +
             (if (promptTokens.asKnown().isPresent) 1 else 0) +
             (if (referenceDatasetId.asKnown().isPresent) 1 else 0) +
@@ -2423,6 +2485,7 @@ private constructor(
             lastRunStartTimeLive == other.lastRunStartTimeLive &&
             latencyP50 == other.latencyP50 &&
             latencyP99 == other.latencyP99 &&
+            longlivedTtlDays == other.longlivedTtlDays &&
             promptCost == other.promptCost &&
             promptTokens == other.promptTokens &&
             referenceDatasetId == other.referenceDatasetId &&
@@ -2458,6 +2521,7 @@ private constructor(
             lastRunStartTimeLive,
             latencyP50,
             latencyP99,
+            longlivedTtlDays,
             promptCost,
             promptTokens,
             referenceDatasetId,
@@ -2476,5 +2540,5 @@ private constructor(
     override fun hashCode(): Int = hashCode
 
     override fun toString() =
-        "Session{id=$id, name=$name, startTime=$startTime, tenantId=$tenantId, completionCost=$completionCost, completionTokens=$completionTokens, defaultDatasetId=$defaultDatasetId, description=$description, endTime=$endTime, errorRate=$errorRate, experimentProgress=$experimentProgress, extra=$extra, feedbackStats=$feedbackStats, firstTokenP50=$firstTokenP50, firstTokenP99=$firstTokenP99, lastRunStartTime=$lastRunStartTime, lastRunStartTimeLive=$lastRunStartTimeLive, latencyP50=$latencyP50, latencyP99=$latencyP99, promptCost=$promptCost, promptTokens=$promptTokens, referenceDatasetId=$referenceDatasetId, runCount=$runCount, runFacets=$runFacets, sessionFeedbackStats=$sessionFeedbackStats, streamingRate=$streamingRate, testRunNumber=$testRunNumber, totalCost=$totalCost, totalTokens=$totalTokens, traceTier=$traceTier, additionalProperties=$additionalProperties}"
+        "Session{id=$id, name=$name, startTime=$startTime, tenantId=$tenantId, completionCost=$completionCost, completionTokens=$completionTokens, defaultDatasetId=$defaultDatasetId, description=$description, endTime=$endTime, errorRate=$errorRate, experimentProgress=$experimentProgress, extra=$extra, feedbackStats=$feedbackStats, firstTokenP50=$firstTokenP50, firstTokenP99=$firstTokenP99, lastRunStartTime=$lastRunStartTime, lastRunStartTimeLive=$lastRunStartTimeLive, latencyP50=$latencyP50, latencyP99=$latencyP99, longlivedTtlDays=$longlivedTtlDays, promptCost=$promptCost, promptTokens=$promptTokens, referenceDatasetId=$referenceDatasetId, runCount=$runCount, runFacets=$runFacets, sessionFeedbackStats=$sessionFeedbackStats, streamingRate=$streamingRate, testRunNumber=$testRunNumber, totalCost=$totalCost, totalTokens=$totalTokens, traceTier=$traceTier, additionalProperties=$additionalProperties}"
 }

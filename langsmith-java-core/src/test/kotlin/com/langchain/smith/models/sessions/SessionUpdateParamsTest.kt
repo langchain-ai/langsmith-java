@@ -21,6 +21,7 @@ internal class SessionUpdateParamsTest {
                     .putAdditionalProperty("foo", JsonValue.from("bar"))
                     .build()
             )
+            .longlivedTtlDays(0L)
             .name("name")
             .traceTier(SessionUpdateParams.TraceTier.LONGLIVED)
             .build()
@@ -49,6 +50,7 @@ internal class SessionUpdateParamsTest {
                         .putAdditionalProperty("foo", JsonValue.from("bar"))
                         .build()
                 )
+                .longlivedTtlDays(0L)
                 .name("name")
                 .traceTier(SessionUpdateParams.TraceTier.LONGLIVED)
                 .build()
@@ -64,6 +66,7 @@ internal class SessionUpdateParamsTest {
                     .putAdditionalProperty("foo", JsonValue.from("bar"))
                     .build()
             )
+        assertThat(body.longlivedTtlDays()).contains(0L)
         assertThat(body.name()).contains("name")
         assertThat(body.traceTier()).contains(SessionUpdateParams.TraceTier.LONGLIVED)
     }

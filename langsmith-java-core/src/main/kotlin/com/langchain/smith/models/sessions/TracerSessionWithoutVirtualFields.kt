@@ -32,6 +32,7 @@ private constructor(
     private val endTime: JsonField<OffsetDateTime>,
     private val extra: JsonField<Extra>,
     private val lastRunStartTimeLive: JsonField<OffsetDateTime>,
+    private val longlivedTtlDays: JsonField<Long>,
     private val name: JsonField<String>,
     private val referenceDatasetId: JsonField<String>,
     private val startTime: JsonField<OffsetDateTime>,
@@ -56,6 +57,9 @@ private constructor(
         @JsonProperty("last_run_start_time_live")
         @ExcludeMissing
         lastRunStartTimeLive: JsonField<OffsetDateTime> = JsonMissing.of(),
+        @JsonProperty("longlived_ttl_days")
+        @ExcludeMissing
+        longlivedTtlDays: JsonField<Long> = JsonMissing.of(),
         @JsonProperty("name") @ExcludeMissing name: JsonField<String> = JsonMissing.of(),
         @JsonProperty("reference_dataset_id")
         @ExcludeMissing
@@ -74,6 +78,7 @@ private constructor(
         endTime,
         extra,
         lastRunStartTimeLive,
+        longlivedTtlDays,
         name,
         referenceDatasetId,
         startTime,
@@ -123,6 +128,17 @@ private constructor(
      */
     fun lastRunStartTimeLive(): Optional<OffsetDateTime> =
         lastRunStartTimeLive.getOptional("last_run_start_time_live")
+
+    /**
+     * Retention in days for traces while trace_tier is longlived. One of 30, 60, 90, 120, 150, 180,
+     * 240, 300, 365 or 400, up to the maximum of the deployment. Self-hosted also accepts its
+     * configured retention. The value is kept while trace_tier is shortlived. Null means the
+     * project uses the workspace retention.
+     *
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
+    fun longlivedTtlDays(): Optional<Long> = longlivedTtlDays.getOptional("longlived_ttl_days")
 
     /**
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
@@ -205,6 +221,16 @@ private constructor(
     fun _lastRunStartTimeLive(): JsonField<OffsetDateTime> = lastRunStartTimeLive
 
     /**
+     * Returns the raw JSON value of [longlivedTtlDays].
+     *
+     * Unlike [longlivedTtlDays], this method doesn't throw if the JSON field has an unexpected
+     * type.
+     */
+    @JsonProperty("longlived_ttl_days")
+    @ExcludeMissing
+    fun _longlivedTtlDays(): JsonField<Long> = longlivedTtlDays
+
+    /**
      * Returns the raw JSON value of [name].
      *
      * Unlike [name], this method doesn't throw if the JSON field has an unexpected type.
@@ -274,6 +300,7 @@ private constructor(
         private var endTime: JsonField<OffsetDateTime> = JsonMissing.of()
         private var extra: JsonField<Extra> = JsonMissing.of()
         private var lastRunStartTimeLive: JsonField<OffsetDateTime> = JsonMissing.of()
+        private var longlivedTtlDays: JsonField<Long> = JsonMissing.of()
         private var name: JsonField<String> = JsonMissing.of()
         private var referenceDatasetId: JsonField<String> = JsonMissing.of()
         private var startTime: JsonField<OffsetDateTime> = JsonMissing.of()
@@ -290,6 +317,7 @@ private constructor(
                 endTime = tracerSessionWithoutVirtualFields.endTime
                 extra = tracerSessionWithoutVirtualFields.extra
                 lastRunStartTimeLive = tracerSessionWithoutVirtualFields.lastRunStartTimeLive
+                longlivedTtlDays = tracerSessionWithoutVirtualFields.longlivedTtlDays
                 name = tracerSessionWithoutVirtualFields.name
                 referenceDatasetId = tracerSessionWithoutVirtualFields.referenceDatasetId
                 startTime = tracerSessionWithoutVirtualFields.startTime
@@ -398,6 +426,37 @@ private constructor(
             this.lastRunStartTimeLive = lastRunStartTimeLive
         }
 
+        /**
+         * Retention in days for traces while trace_tier is longlived. One of 30, 60, 90, 120, 150,
+         * 180, 240, 300, 365 or 400, up to the maximum of the deployment. Self-hosted also accepts
+         * its configured retention. The value is kept while trace_tier is shortlived. Null means
+         * the project uses the workspace retention.
+         */
+        fun longlivedTtlDays(longlivedTtlDays: Long?) =
+            longlivedTtlDays(JsonField.ofNullable(longlivedTtlDays))
+
+        /**
+         * Alias for [Builder.longlivedTtlDays].
+         *
+         * This unboxed primitive overload exists for backwards compatibility.
+         */
+        fun longlivedTtlDays(longlivedTtlDays: Long) = longlivedTtlDays(longlivedTtlDays as Long?)
+
+        /** Alias for calling [Builder.longlivedTtlDays] with `longlivedTtlDays.orElse(null)`. */
+        fun longlivedTtlDays(longlivedTtlDays: Optional<Long>) =
+            longlivedTtlDays(longlivedTtlDays.getOrNull())
+
+        /**
+         * Sets [Builder.longlivedTtlDays] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.longlivedTtlDays] with a well-typed [Long] value
+         * instead. This method is primarily for setting the field to an undocumented or not yet
+         * supported value.
+         */
+        fun longlivedTtlDays(longlivedTtlDays: JsonField<Long>) = apply {
+            this.longlivedTtlDays = longlivedTtlDays
+        }
+
         fun name(name: String) = name(JsonField.of(name))
 
         /**
@@ -494,6 +553,7 @@ private constructor(
                 endTime,
                 extra,
                 lastRunStartTimeLive,
+                longlivedTtlDays,
                 name,
                 referenceDatasetId,
                 startTime,
@@ -524,6 +584,7 @@ private constructor(
         endTime()
         extra().ifPresent { it.validate() }
         lastRunStartTimeLive()
+        longlivedTtlDays()
         name()
         referenceDatasetId()
         startTime()
@@ -553,6 +614,7 @@ private constructor(
             (if (endTime.asKnown().isPresent) 1 else 0) +
             (extra.asKnown().getOrNull()?.validity() ?: 0) +
             (if (lastRunStartTimeLive.asKnown().isPresent) 1 else 0) +
+            (if (longlivedTtlDays.asKnown().isPresent) 1 else 0) +
             (if (name.asKnown().isPresent) 1 else 0) +
             (if (referenceDatasetId.asKnown().isPresent) 1 else 0) +
             (if (startTime.asKnown().isPresent) 1 else 0) +
@@ -817,6 +879,7 @@ private constructor(
             endTime == other.endTime &&
             extra == other.extra &&
             lastRunStartTimeLive == other.lastRunStartTimeLive &&
+            longlivedTtlDays == other.longlivedTtlDays &&
             name == other.name &&
             referenceDatasetId == other.referenceDatasetId &&
             startTime == other.startTime &&
@@ -833,6 +896,7 @@ private constructor(
             endTime,
             extra,
             lastRunStartTimeLive,
+            longlivedTtlDays,
             name,
             referenceDatasetId,
             startTime,
@@ -844,5 +908,5 @@ private constructor(
     override fun hashCode(): Int = hashCode
 
     override fun toString() =
-        "TracerSessionWithoutVirtualFields{id=$id, tenantId=$tenantId, defaultDatasetId=$defaultDatasetId, description=$description, endTime=$endTime, extra=$extra, lastRunStartTimeLive=$lastRunStartTimeLive, name=$name, referenceDatasetId=$referenceDatasetId, startTime=$startTime, traceTier=$traceTier, additionalProperties=$additionalProperties}"
+        "TracerSessionWithoutVirtualFields{id=$id, tenantId=$tenantId, defaultDatasetId=$defaultDatasetId, description=$description, endTime=$endTime, extra=$extra, lastRunStartTimeLive=$lastRunStartTimeLive, longlivedTtlDays=$longlivedTtlDays, name=$name, referenceDatasetId=$referenceDatasetId, startTime=$startTime, traceTier=$traceTier, additionalProperties=$additionalProperties}"
 }

@@ -58,6 +58,17 @@ private constructor(
     fun extra(): Optional<Extra> = body.extra()
 
     /**
+     * Retention in days for traces while trace_tier is longlived. One of 30, 60, 90, 120, 150, 180,
+     * 240, 300, 365 or 400, up to the maximum of the deployment. Self-hosted also accepts its
+     * configured retention. The value is kept while trace_tier is shortlived. Null means the
+     * project uses the workspace retention. Omit the field to keep the current value.
+     *
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
+    fun longlivedTtlDays(): Optional<Long> = body.longlivedTtlDays()
+
+    /**
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
      */
@@ -97,6 +108,14 @@ private constructor(
      * Unlike [extra], this method doesn't throw if the JSON field has an unexpected type.
      */
     fun _extra(): JsonField<Extra> = body._extra()
+
+    /**
+     * Returns the raw JSON value of [longlivedTtlDays].
+     *
+     * Unlike [longlivedTtlDays], this method doesn't throw if the JSON field has an unexpected
+     * type.
+     */
+    fun _longlivedTtlDays(): JsonField<Long> = body._longlivedTtlDays()
 
     /**
      * Returns the raw JSON value of [name].
@@ -160,7 +179,7 @@ private constructor(
          * - [description]
          * - [endTime]
          * - [extra]
-         * - [name]
+         * - [longlivedTtlDays]
          * - etc.
          */
         fun body(body: Body) = apply { this.body = body.toBuilder() }
@@ -224,6 +243,38 @@ private constructor(
          * method is primarily for setting the field to an undocumented or not yet supported value.
          */
         fun extra(extra: JsonField<Extra>) = apply { body.extra(extra) }
+
+        /**
+         * Retention in days for traces while trace_tier is longlived. One of 30, 60, 90, 120, 150,
+         * 180, 240, 300, 365 or 400, up to the maximum of the deployment. Self-hosted also accepts
+         * its configured retention. The value is kept while trace_tier is shortlived. Null means
+         * the project uses the workspace retention. Omit the field to keep the current value.
+         */
+        fun longlivedTtlDays(longlivedTtlDays: Long?) = apply {
+            body.longlivedTtlDays(longlivedTtlDays)
+        }
+
+        /**
+         * Alias for [Builder.longlivedTtlDays].
+         *
+         * This unboxed primitive overload exists for backwards compatibility.
+         */
+        fun longlivedTtlDays(longlivedTtlDays: Long) = longlivedTtlDays(longlivedTtlDays as Long?)
+
+        /** Alias for calling [Builder.longlivedTtlDays] with `longlivedTtlDays.orElse(null)`. */
+        fun longlivedTtlDays(longlivedTtlDays: Optional<Long>) =
+            longlivedTtlDays(longlivedTtlDays.getOrNull())
+
+        /**
+         * Sets [Builder.longlivedTtlDays] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.longlivedTtlDays] with a well-typed [Long] value
+         * instead. This method is primarily for setting the field to an undocumented or not yet
+         * supported value.
+         */
+        fun longlivedTtlDays(longlivedTtlDays: JsonField<Long>) = apply {
+            body.longlivedTtlDays(longlivedTtlDays)
+        }
 
         fun name(name: String?) = apply { body.name(name) }
 
@@ -403,6 +454,7 @@ private constructor(
         private val description: JsonField<String>,
         private val endTime: JsonField<OffsetDateTime>,
         private val extra: JsonField<Extra>,
+        private val longlivedTtlDays: JsonField<Long>,
         private val name: JsonField<String>,
         private val traceTier: JsonField<TraceTier>,
         private val additionalProperties: MutableMap<String, JsonValue>,
@@ -420,11 +472,23 @@ private constructor(
             @ExcludeMissing
             endTime: JsonField<OffsetDateTime> = JsonMissing.of(),
             @JsonProperty("extra") @ExcludeMissing extra: JsonField<Extra> = JsonMissing.of(),
+            @JsonProperty("longlived_ttl_days")
+            @ExcludeMissing
+            longlivedTtlDays: JsonField<Long> = JsonMissing.of(),
             @JsonProperty("name") @ExcludeMissing name: JsonField<String> = JsonMissing.of(),
             @JsonProperty("trace_tier")
             @ExcludeMissing
             traceTier: JsonField<TraceTier> = JsonMissing.of(),
-        ) : this(defaultDatasetId, description, endTime, extra, name, traceTier, mutableMapOf())
+        ) : this(
+            defaultDatasetId,
+            description,
+            endTime,
+            extra,
+            longlivedTtlDays,
+            name,
+            traceTier,
+            mutableMapOf(),
+        )
 
         /**
          * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
@@ -450,6 +514,17 @@ private constructor(
          *   the server responded with an unexpected value).
          */
         fun extra(): Optional<Extra> = extra.getOptional("extra")
+
+        /**
+         * Retention in days for traces while trace_tier is longlived. One of 30, 60, 90, 120, 150,
+         * 180, 240, 300, 365 or 400, up to the maximum of the deployment. Self-hosted also accepts
+         * its configured retention. The value is kept while trace_tier is shortlived. Null means
+         * the project uses the workspace retention. Omit the field to keep the current value.
+         *
+         * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
+         *   the server responded with an unexpected value).
+         */
+        fun longlivedTtlDays(): Optional<Long> = longlivedTtlDays.getOptional("longlived_ttl_days")
 
         /**
          * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
@@ -499,6 +574,16 @@ private constructor(
         @JsonProperty("extra") @ExcludeMissing fun _extra(): JsonField<Extra> = extra
 
         /**
+         * Returns the raw JSON value of [longlivedTtlDays].
+         *
+         * Unlike [longlivedTtlDays], this method doesn't throw if the JSON field has an unexpected
+         * type.
+         */
+        @JsonProperty("longlived_ttl_days")
+        @ExcludeMissing
+        fun _longlivedTtlDays(): JsonField<Long> = longlivedTtlDays
+
+        /**
          * Returns the raw JSON value of [name].
          *
          * Unlike [name], this method doesn't throw if the JSON field has an unexpected type.
@@ -539,6 +624,7 @@ private constructor(
             private var description: JsonField<String> = JsonMissing.of()
             private var endTime: JsonField<OffsetDateTime> = JsonMissing.of()
             private var extra: JsonField<Extra> = JsonMissing.of()
+            private var longlivedTtlDays: JsonField<Long> = JsonMissing.of()
             private var name: JsonField<String> = JsonMissing.of()
             private var traceTier: JsonField<TraceTier> = JsonMissing.of()
             private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
@@ -549,6 +635,7 @@ private constructor(
                 description = body.description
                 endTime = body.endTime
                 extra = body.extra
+                longlivedTtlDays = body.longlivedTtlDays
                 name = body.name
                 traceTier = body.traceTier
                 additionalProperties = body.additionalProperties.toMutableMap()
@@ -618,6 +705,41 @@ private constructor(
              */
             fun extra(extra: JsonField<Extra>) = apply { this.extra = extra }
 
+            /**
+             * Retention in days for traces while trace_tier is longlived. One of 30, 60, 90, 120,
+             * 150, 180, 240, 300, 365 or 400, up to the maximum of the deployment. Self-hosted also
+             * accepts its configured retention. The value is kept while trace_tier is shortlived.
+             * Null means the project uses the workspace retention. Omit the field to keep the
+             * current value.
+             */
+            fun longlivedTtlDays(longlivedTtlDays: Long?) =
+                longlivedTtlDays(JsonField.ofNullable(longlivedTtlDays))
+
+            /**
+             * Alias for [Builder.longlivedTtlDays].
+             *
+             * This unboxed primitive overload exists for backwards compatibility.
+             */
+            fun longlivedTtlDays(longlivedTtlDays: Long) =
+                longlivedTtlDays(longlivedTtlDays as Long?)
+
+            /**
+             * Alias for calling [Builder.longlivedTtlDays] with `longlivedTtlDays.orElse(null)`.
+             */
+            fun longlivedTtlDays(longlivedTtlDays: Optional<Long>) =
+                longlivedTtlDays(longlivedTtlDays.getOrNull())
+
+            /**
+             * Sets [Builder.longlivedTtlDays] to an arbitrary JSON value.
+             *
+             * You should usually call [Builder.longlivedTtlDays] with a well-typed [Long] value
+             * instead. This method is primarily for setting the field to an undocumented or not yet
+             * supported value.
+             */
+            fun longlivedTtlDays(longlivedTtlDays: JsonField<Long>) = apply {
+                this.longlivedTtlDays = longlivedTtlDays
+            }
+
             fun name(name: String?) = name(JsonField.ofNullable(name))
 
             /** Alias for calling [Builder.name] with `name.orElse(null)`. */
@@ -676,6 +798,7 @@ private constructor(
                     description,
                     endTime,
                     extra,
+                    longlivedTtlDays,
                     name,
                     traceTier,
                     additionalProperties.toMutableMap(),
@@ -702,6 +825,7 @@ private constructor(
             description()
             endTime()
             extra().ifPresent { it.validate() }
+            longlivedTtlDays()
             name()
             traceTier().ifPresent { it.validate() }
             validated = true
@@ -727,6 +851,7 @@ private constructor(
                 (if (description.asKnown().isPresent) 1 else 0) +
                 (if (endTime.asKnown().isPresent) 1 else 0) +
                 (extra.asKnown().getOrNull()?.validity() ?: 0) +
+                (if (longlivedTtlDays.asKnown().isPresent) 1 else 0) +
                 (if (name.asKnown().isPresent) 1 else 0) +
                 (traceTier.asKnown().getOrNull()?.validity() ?: 0)
 
@@ -740,6 +865,7 @@ private constructor(
                 description == other.description &&
                 endTime == other.endTime &&
                 extra == other.extra &&
+                longlivedTtlDays == other.longlivedTtlDays &&
                 name == other.name &&
                 traceTier == other.traceTier &&
                 additionalProperties == other.additionalProperties
@@ -751,6 +877,7 @@ private constructor(
                 description,
                 endTime,
                 extra,
+                longlivedTtlDays,
                 name,
                 traceTier,
                 additionalProperties,
@@ -760,7 +887,7 @@ private constructor(
         override fun hashCode(): Int = hashCode
 
         override fun toString() =
-            "Body{defaultDatasetId=$defaultDatasetId, description=$description, endTime=$endTime, extra=$extra, name=$name, traceTier=$traceTier, additionalProperties=$additionalProperties}"
+            "Body{defaultDatasetId=$defaultDatasetId, description=$description, endTime=$endTime, extra=$extra, longlivedTtlDays=$longlivedTtlDays, name=$name, traceTier=$traceTier, additionalProperties=$additionalProperties}"
     }
 
     class Extra
