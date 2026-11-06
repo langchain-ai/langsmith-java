@@ -34,7 +34,6 @@ private constructor(
     private val nameContains: String?,
     private val pageSize: Long?,
     private val referenceDatasetId: List<String>?,
-    private val referenceFree: Boolean?,
     private val sortBy: SortBy?,
     private val sortByFeedbackKey: String?,
     private val sortByFeedbackSource: SortByFeedbackSource?,
@@ -43,6 +42,7 @@ private constructor(
     private val statsSelect: List<String>?,
     private val statsStartTime: OffsetDateTime?,
     private val tagValueId: List<String>?,
+    private val type: List<Type>?,
     private val useApproxStats: Boolean?,
     private val additionalHeaders: Headers,
     private val additionalQueryParams: QueryParams,
@@ -57,7 +57,7 @@ private constructor(
     /** Only return experiments run against this dataset version (RFC 3339 timestamp) */
     fun datasetVersion(): Optional<OffsetDateTime> = Optional.ofNullable(datasetVersion)
 
-    /** Filter expression, for example eq(name, \ */
+    /** Filter expression, for example eq(name, 'my-project') */
     fun filter(): Optional<String> = Optional.ofNullable(filter)
 
     /** Include run facets */
@@ -80,9 +80,6 @@ private constructor(
 
     /** Only return experiments run against these dataset IDs */
     fun referenceDatasetId(): Optional<List<String>> = Optional.ofNullable(referenceDatasetId)
-
-    /** true for tracing projects only, false for experiments only */
-    fun referenceFree(): Optional<Boolean> = Optional.ofNullable(referenceFree)
 
     /** Sort column. FEEDBACK requires reference_dataset_id */
     fun sortBy(): Optional<SortBy> = Optional.ofNullable(sortBy)
@@ -108,6 +105,9 @@ private constructor(
 
     /** Only return projects tagged with all of these tag value IDs */
     fun tagValueId(): Optional<List<String>> = Optional.ofNullable(tagValueId)
+
+    /** Only return projects of these types */
+    fun type(): Optional<List<Type>> = Optional.ofNullable(type)
 
     /** Compute statistics from pre-aggregated data, which is faster but up to an hour stale */
     fun useApproxStats(): Optional<Boolean> = Optional.ofNullable(useApproxStats)
@@ -142,7 +142,6 @@ private constructor(
         private var nameContains: String? = null
         private var pageSize: Long? = null
         private var referenceDatasetId: MutableList<String>? = null
-        private var referenceFree: Boolean? = null
         private var sortBy: SortBy? = null
         private var sortByFeedbackKey: String? = null
         private var sortByFeedbackSource: SortByFeedbackSource? = null
@@ -151,6 +150,7 @@ private constructor(
         private var statsSelect: MutableList<String>? = null
         private var statsStartTime: OffsetDateTime? = null
         private var tagValueId: MutableList<String>? = null
+        private var type: MutableList<Type>? = null
         private var useApproxStats: Boolean? = null
         private var additionalHeaders: Headers.Builder = Headers.builder()
         private var additionalQueryParams: QueryParams.Builder = QueryParams.builder()
@@ -168,7 +168,6 @@ private constructor(
             nameContains = sessionListV2Params.nameContains
             pageSize = sessionListV2Params.pageSize
             referenceDatasetId = sessionListV2Params.referenceDatasetId?.toMutableList()
-            referenceFree = sessionListV2Params.referenceFree
             sortBy = sessionListV2Params.sortBy
             sortByFeedbackKey = sessionListV2Params.sortByFeedbackKey
             sortByFeedbackSource = sessionListV2Params.sortByFeedbackSource
@@ -177,6 +176,7 @@ private constructor(
             statsSelect = sessionListV2Params.statsSelect?.toMutableList()
             statsStartTime = sessionListV2Params.statsStartTime
             tagValueId = sessionListV2Params.tagValueId?.toMutableList()
+            type = sessionListV2Params.type?.toMutableList()
             useApproxStats = sessionListV2Params.useApproxStats
             additionalHeaders = sessionListV2Params.additionalHeaders.toBuilder()
             additionalQueryParams = sessionListV2Params.additionalQueryParams.toBuilder()
@@ -210,7 +210,7 @@ private constructor(
         fun datasetVersion(datasetVersion: Optional<OffsetDateTime>) =
             datasetVersion(datasetVersion.getOrNull())
 
-        /** Filter expression, for example eq(name, \ */
+        /** Filter expression, for example eq(name, 'my-project') */
         fun filter(filter: String?) = apply { this.filter = filter }
 
         /** Alias for calling [Builder.filter] with `filter.orElse(null)`. */
@@ -295,20 +295,6 @@ private constructor(
                 (this.referenceDatasetId ?: mutableListOf()).apply { add(referenceDatasetId) }
         }
 
-        /** true for tracing projects only, false for experiments only */
-        fun referenceFree(referenceFree: Boolean?) = apply { this.referenceFree = referenceFree }
-
-        /**
-         * Alias for [Builder.referenceFree].
-         *
-         * This unboxed primitive overload exists for backwards compatibility.
-         */
-        fun referenceFree(referenceFree: Boolean) = referenceFree(referenceFree as Boolean?)
-
-        /** Alias for calling [Builder.referenceFree] with `referenceFree.orElse(null)`. */
-        fun referenceFree(referenceFree: Optional<Boolean>) =
-            referenceFree(referenceFree.getOrNull())
-
         /** Sort column. FEEDBACK requires reference_dataset_id */
         fun sortBy(sortBy: SortBy?) = apply { this.sortBy = sortBy }
 
@@ -389,6 +375,21 @@ private constructor(
          */
         fun addTagValueId(tagValueId: String) = apply {
             this.tagValueId = (this.tagValueId ?: mutableListOf()).apply { add(tagValueId) }
+        }
+
+        /** Only return projects of these types */
+        fun type(type: List<Type>?) = apply { this.type = type?.toMutableList() }
+
+        /** Alias for calling [Builder.type] with `type.orElse(null)`. */
+        fun type(type: Optional<List<Type>>) = type(type.getOrNull())
+
+        /**
+         * Adds a single [Type] to [Builder.type].
+         *
+         * @throws IllegalStateException if the field was previously set to a non-list.
+         */
+        fun addType(type: Type) = apply {
+            this.type = (this.type ?: mutableListOf()).apply { add(type) }
         }
 
         /** Compute statistics from pre-aggregated data, which is faster but up to an hour stale */
@@ -523,7 +524,6 @@ private constructor(
                 nameContains,
                 pageSize,
                 referenceDatasetId?.toImmutable(),
-                referenceFree,
                 sortBy,
                 sortByFeedbackKey,
                 sortByFeedbackSource,
@@ -532,6 +532,7 @@ private constructor(
                 statsSelect?.toImmutable(),
                 statsStartTime,
                 tagValueId?.toImmutable(),
+                type?.toImmutable(),
                 useApproxStats,
                 additionalHeaders.build(),
                 additionalQueryParams.build(),
@@ -556,7 +557,6 @@ private constructor(
                 nameContains?.let { put("name_contains", it) }
                 pageSize?.let { put("page_size", it.toString()) }
                 referenceDatasetId?.forEach { put("reference_dataset_id", it) }
-                referenceFree?.let { put("reference_free", it.toString()) }
                 sortBy?.let { put("sort_by", it.toString()) }
                 sortByFeedbackKey?.let { put("sort_by_feedback_key", it) }
                 sortByFeedbackSource?.let { put("sort_by_feedback_source", it.toString()) }
@@ -567,6 +567,7 @@ private constructor(
                     put("stats_start_time", DateTimeFormatter.ISO_OFFSET_DATE_TIME.format(it))
                 }
                 tagValueId?.forEach { put("tag_value_id", it) }
+                type?.forEach { put("type", it.toString()) }
                 useApproxStats?.let { put("use_approx_stats", it.toString()) }
                 putAll(additionalQueryParams)
             }
@@ -1021,6 +1022,148 @@ private constructor(
         override fun toString() = value.toString()
     }
 
+    class Type @JsonCreator private constructor(private val value: JsonField<String>) : Enum {
+
+        /**
+         * Returns this class instance's raw value.
+         *
+         * This is usually only useful if this instance was deserialized from data that doesn't
+         * match any known member, and you want to know that value. For example, if the SDK is on an
+         * older version than the API, then the API may respond with new members that the SDK is
+         * unaware of.
+         */
+        @com.fasterxml.jackson.annotation.JsonValue fun _value(): JsonField<String> = value
+
+        companion object {
+
+            @JvmField val PROJECT = of("PROJECT")
+
+            @JvmField val AGENT = of("AGENT")
+
+            @JvmField val EXPERIMENT = of("EXPERIMENT")
+
+            @JvmStatic fun of(value: String) = Type(JsonField.of(value))
+        }
+
+        /** An enum containing [Type]'s known values. */
+        enum class Known {
+            PROJECT,
+            AGENT,
+            EXPERIMENT,
+        }
+
+        /**
+         * An enum containing [Type]'s known values, as well as an [_UNKNOWN] member.
+         *
+         * An instance of [Type] can contain an unknown value in a couple of cases:
+         * - It was deserialized from data that doesn't match any known member. For example, if the
+         *   SDK is on an older version than the API, then the API may respond with new members that
+         *   the SDK is unaware of.
+         * - It was constructed with an arbitrary value using the [of] method.
+         */
+        enum class Value {
+            PROJECT,
+            AGENT,
+            EXPERIMENT,
+            /** An enum member indicating that [Type] was instantiated with an unknown value. */
+            _UNKNOWN,
+        }
+
+        /**
+         * Returns an enum member corresponding to this class instance's value, or [Value._UNKNOWN]
+         * if the class was instantiated with an unknown value.
+         *
+         * Use the [known] method instead if you're certain the value is always known or if you want
+         * to throw for the unknown case.
+         */
+        fun value(): Value =
+            when (this) {
+                PROJECT -> Value.PROJECT
+                AGENT -> Value.AGENT
+                EXPERIMENT -> Value.EXPERIMENT
+                else -> Value._UNKNOWN
+            }
+
+        /**
+         * Returns an enum member corresponding to this class instance's value.
+         *
+         * Use the [value] method instead if you're uncertain the value is always known and don't
+         * want to throw for the unknown case.
+         *
+         * @throws LangChainInvalidDataException if this class instance's value is a not a known
+         *   member.
+         */
+        fun known(): Known =
+            when (this) {
+                PROJECT -> Known.PROJECT
+                AGENT -> Known.AGENT
+                EXPERIMENT -> Known.EXPERIMENT
+                else -> throw LangChainInvalidDataException("Unknown Type: $value")
+            }
+
+        /**
+         * Returns this class instance's primitive wire representation.
+         *
+         * This differs from the [toString] method because that method is primarily for debugging
+         * and generally doesn't throw.
+         *
+         * @throws LangChainInvalidDataException if this class instance's value does not have the
+         *   expected primitive type.
+         */
+        fun asString(): String =
+            _value().asString().orElseThrow {
+                LangChainInvalidDataException("Value is not a String")
+            }
+
+        private var validated: Boolean = false
+
+        /**
+         * Validates that the types of all values in this object match their expected types
+         * recursively.
+         *
+         * This method is _not_ forwards compatible with new types from the API for existing fields.
+         *
+         * @throws LangChainInvalidDataException if any value type in this object doesn't match its
+         *   expected type.
+         */
+        fun validate(): Type = apply {
+            if (validated) {
+                return@apply
+            }
+
+            known()
+            validated = true
+        }
+
+        fun isValid(): Boolean =
+            try {
+                validate()
+                true
+            } catch (e: LangChainInvalidDataException) {
+                false
+            }
+
+        /**
+         * Returns a score indicating how many valid values are contained in this object
+         * recursively.
+         *
+         * Used for best match union deserialization.
+         */
+        @JvmSynthetic internal fun validity(): Int = if (value() == Value._UNKNOWN) 0 else 1
+
+        override fun equals(other: Any?): Boolean {
+            if (this === other) {
+                return true
+            }
+
+            return other is Type && value == other.value
+        }
+
+        override fun hashCode() = value.hashCode()
+
+        override fun toString() = value.toString()
+    }
+
     override fun equals(other: Any?): Boolean {
         if (this === other) {
             return true
@@ -1038,7 +1181,6 @@ private constructor(
             nameContains == other.nameContains &&
             pageSize == other.pageSize &&
             referenceDatasetId == other.referenceDatasetId &&
-            referenceFree == other.referenceFree &&
             sortBy == other.sortBy &&
             sortByFeedbackKey == other.sortByFeedbackKey &&
             sortByFeedbackSource == other.sortByFeedbackSource &&
@@ -1047,6 +1189,7 @@ private constructor(
             statsSelect == other.statsSelect &&
             statsStartTime == other.statsStartTime &&
             tagValueId == other.tagValueId &&
+            type == other.type &&
             useApproxStats == other.useApproxStats &&
             additionalHeaders == other.additionalHeaders &&
             additionalQueryParams == other.additionalQueryParams
@@ -1065,7 +1208,6 @@ private constructor(
             nameContains,
             pageSize,
             referenceDatasetId,
-            referenceFree,
             sortBy,
             sortByFeedbackKey,
             sortByFeedbackSource,
@@ -1074,11 +1216,12 @@ private constructor(
             statsSelect,
             statsStartTime,
             tagValueId,
+            type,
             useApproxStats,
             additionalHeaders,
             additionalQueryParams,
         )
 
     override fun toString() =
-        "SessionListV2Params{id=$id, cursor=$cursor, datasetVersion=$datasetVersion, filter=$filter, includeFacets=$includeFacets, includeStats=$includeStats, metadata=$metadata, name=$name, nameContains=$nameContains, pageSize=$pageSize, referenceDatasetId=$referenceDatasetId, referenceFree=$referenceFree, sortBy=$sortBy, sortByFeedbackKey=$sortByFeedbackKey, sortByFeedbackSource=$sortByFeedbackSource, sortOrder=$sortOrder, statsFilter=$statsFilter, statsSelect=$statsSelect, statsStartTime=$statsStartTime, tagValueId=$tagValueId, useApproxStats=$useApproxStats, additionalHeaders=$additionalHeaders, additionalQueryParams=$additionalQueryParams}"
+        "SessionListV2Params{id=$id, cursor=$cursor, datasetVersion=$datasetVersion, filter=$filter, includeFacets=$includeFacets, includeStats=$includeStats, metadata=$metadata, name=$name, nameContains=$nameContains, pageSize=$pageSize, referenceDatasetId=$referenceDatasetId, sortBy=$sortBy, sortByFeedbackKey=$sortByFeedbackKey, sortByFeedbackSource=$sortByFeedbackSource, sortOrder=$sortOrder, statsFilter=$statsFilter, statsSelect=$statsSelect, statsStartTime=$statsStartTime, tagValueId=$tagValueId, type=$type, useApproxStats=$useApproxStats, additionalHeaders=$additionalHeaders, additionalQueryParams=$additionalQueryParams}"
 }

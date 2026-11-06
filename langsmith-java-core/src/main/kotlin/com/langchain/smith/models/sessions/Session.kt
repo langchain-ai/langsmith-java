@@ -29,6 +29,7 @@ private constructor(
     private val name: JsonField<String>,
     private val startTime: JsonField<OffsetDateTime>,
     private val tenantId: JsonField<String>,
+    private val type: JsonField<Type>,
     private val completionCost: JsonField<Double>,
     private val completionTokens: JsonField<Long>,
     private val defaultDatasetId: JsonField<String>,
@@ -67,6 +68,7 @@ private constructor(
         @ExcludeMissing
         startTime: JsonField<OffsetDateTime> = JsonMissing.of(),
         @JsonProperty("tenant_id") @ExcludeMissing tenantId: JsonField<String> = JsonMissing.of(),
+        @JsonProperty("type") @ExcludeMissing type: JsonField<Type> = JsonMissing.of(),
         @JsonProperty("completion_cost")
         @ExcludeMissing
         completionCost: JsonField<Double> = JsonMissing.of(),
@@ -145,6 +147,7 @@ private constructor(
         name,
         startTime,
         tenantId,
+        type,
         completionCost,
         completionTokens,
         defaultDatasetId,
@@ -198,6 +201,15 @@ private constructor(
      *   unexpectedly missing or null (e.g. if the server responded with an unexpected value).
      */
     fun tenantId(): String = tenantId.getRequired("tenant_id")
+
+    /**
+     * `PROJECT` for a tracing project, `AGENT` for an Agent's tracing project, or `EXPERIMENT` for
+     * an evaluation run against a dataset.
+     *
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type or is
+     *   unexpectedly missing or null (e.g. if the server responded with an unexpected value).
+     */
+    fun type(): Type = type.getRequired("type")
 
     /**
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
@@ -403,6 +415,13 @@ private constructor(
      * Unlike [tenantId], this method doesn't throw if the JSON field has an unexpected type.
      */
     @JsonProperty("tenant_id") @ExcludeMissing fun _tenantId(): JsonField<String> = tenantId
+
+    /**
+     * Returns the raw JSON value of [type].
+     *
+     * Unlike [type], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    @JsonProperty("type") @ExcludeMissing fun _type(): JsonField<Type> = type
 
     /**
      * Returns the raw JSON value of [completionCost].
@@ -656,6 +675,7 @@ private constructor(
          * .name()
          * .startTime()
          * .tenantId()
+         * .type()
          * ```
          */
         @JvmStatic fun builder() = Builder()
@@ -668,6 +688,7 @@ private constructor(
         private var name: JsonField<String>? = null
         private var startTime: JsonField<OffsetDateTime>? = null
         private var tenantId: JsonField<String>? = null
+        private var type: JsonField<Type>? = null
         private var completionCost: JsonField<Double> = JsonMissing.of()
         private var completionTokens: JsonField<Long> = JsonMissing.of()
         private var defaultDatasetId: JsonField<String> = JsonMissing.of()
@@ -703,6 +724,7 @@ private constructor(
             name = session.name
             startTime = session.startTime
             tenantId = session.tenantId
+            type = session.type
             completionCost = session.completionCost
             completionTokens = session.completionTokens
             defaultDatasetId = session.defaultDatasetId
@@ -773,6 +795,20 @@ private constructor(
          * method is primarily for setting the field to an undocumented or not yet supported value.
          */
         fun tenantId(tenantId: JsonField<String>) = apply { this.tenantId = tenantId }
+
+        /**
+         * `PROJECT` for a tracing project, `AGENT` for an Agent's tracing project, or `EXPERIMENT`
+         * for an evaluation run against a dataset.
+         */
+        fun type(type: Type) = type(JsonField.of(type))
+
+        /**
+         * Sets [Builder.type] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.type] with a well-typed [Type] value instead. This
+         * method is primarily for setting the field to an undocumented or not yet supported value.
+         */
+        fun type(type: JsonField<Type>) = apply { this.type = type }
 
         fun completionCost(completionCost: Double?) =
             completionCost(JsonField.ofNullable(completionCost))
@@ -1371,6 +1407,7 @@ private constructor(
          * .name()
          * .startTime()
          * .tenantId()
+         * .type()
          * ```
          *
          * @throws IllegalStateException if any required field is unset.
@@ -1381,6 +1418,7 @@ private constructor(
                 checkRequired("name", name),
                 checkRequired("startTime", startTime),
                 checkRequired("tenantId", tenantId),
+                checkRequired("type", type),
                 completionCost,
                 completionTokens,
                 defaultDatasetId,
@@ -1431,6 +1469,7 @@ private constructor(
         name()
         startTime()
         tenantId()
+        type().validate()
         completionCost()
         completionTokens()
         defaultDatasetId()
@@ -1480,6 +1519,7 @@ private constructor(
             (if (name.asKnown().isPresent) 1 else 0) +
             (if (startTime.asKnown().isPresent) 1 else 0) +
             (if (tenantId.asKnown().isPresent) 1 else 0) +
+            (type.asKnown().getOrNull()?.validity() ?: 0) +
             (if (completionCost.asKnown().isPresent) 1 else 0) +
             (if (completionTokens.asKnown().isPresent) 1 else 0) +
             (if (defaultDatasetId.asKnown().isPresent) 1 else 0) +
@@ -1507,6 +1547,152 @@ private constructor(
             (if (totalCost.asKnown().isPresent) 1 else 0) +
             (if (totalTokens.asKnown().isPresent) 1 else 0) +
             (traceTier.asKnown().getOrNull()?.validity() ?: 0)
+
+    /**
+     * `PROJECT` for a tracing project, `AGENT` for an Agent's tracing project, or `EXPERIMENT` for
+     * an evaluation run against a dataset.
+     */
+    class Type @JsonCreator private constructor(private val value: JsonField<String>) : Enum {
+
+        /**
+         * Returns this class instance's raw value.
+         *
+         * This is usually only useful if this instance was deserialized from data that doesn't
+         * match any known member, and you want to know that value. For example, if the SDK is on an
+         * older version than the API, then the API may respond with new members that the SDK is
+         * unaware of.
+         */
+        @com.fasterxml.jackson.annotation.JsonValue fun _value(): JsonField<String> = value
+
+        companion object {
+
+            @JvmField val PROJECT = of("PROJECT")
+
+            @JvmField val AGENT = of("AGENT")
+
+            @JvmField val EXPERIMENT = of("EXPERIMENT")
+
+            @JvmStatic fun of(value: String) = Type(JsonField.of(value))
+        }
+
+        /** An enum containing [Type]'s known values. */
+        enum class Known {
+            PROJECT,
+            AGENT,
+            EXPERIMENT,
+        }
+
+        /**
+         * An enum containing [Type]'s known values, as well as an [_UNKNOWN] member.
+         *
+         * An instance of [Type] can contain an unknown value in a couple of cases:
+         * - It was deserialized from data that doesn't match any known member. For example, if the
+         *   SDK is on an older version than the API, then the API may respond with new members that
+         *   the SDK is unaware of.
+         * - It was constructed with an arbitrary value using the [of] method.
+         */
+        enum class Value {
+            PROJECT,
+            AGENT,
+            EXPERIMENT,
+            /** An enum member indicating that [Type] was instantiated with an unknown value. */
+            _UNKNOWN,
+        }
+
+        /**
+         * Returns an enum member corresponding to this class instance's value, or [Value._UNKNOWN]
+         * if the class was instantiated with an unknown value.
+         *
+         * Use the [known] method instead if you're certain the value is always known or if you want
+         * to throw for the unknown case.
+         */
+        fun value(): Value =
+            when (this) {
+                PROJECT -> Value.PROJECT
+                AGENT -> Value.AGENT
+                EXPERIMENT -> Value.EXPERIMENT
+                else -> Value._UNKNOWN
+            }
+
+        /**
+         * Returns an enum member corresponding to this class instance's value.
+         *
+         * Use the [value] method instead if you're uncertain the value is always known and don't
+         * want to throw for the unknown case.
+         *
+         * @throws LangChainInvalidDataException if this class instance's value is a not a known
+         *   member.
+         */
+        fun known(): Known =
+            when (this) {
+                PROJECT -> Known.PROJECT
+                AGENT -> Known.AGENT
+                EXPERIMENT -> Known.EXPERIMENT
+                else -> throw LangChainInvalidDataException("Unknown Type: $value")
+            }
+
+        /**
+         * Returns this class instance's primitive wire representation.
+         *
+         * This differs from the [toString] method because that method is primarily for debugging
+         * and generally doesn't throw.
+         *
+         * @throws LangChainInvalidDataException if this class instance's value does not have the
+         *   expected primitive type.
+         */
+        fun asString(): String =
+            _value().asString().orElseThrow {
+                LangChainInvalidDataException("Value is not a String")
+            }
+
+        private var validated: Boolean = false
+
+        /**
+         * Validates that the types of all values in this object match their expected types
+         * recursively.
+         *
+         * This method is _not_ forwards compatible with new types from the API for existing fields.
+         *
+         * @throws LangChainInvalidDataException if any value type in this object doesn't match its
+         *   expected type.
+         */
+        fun validate(): Type = apply {
+            if (validated) {
+                return@apply
+            }
+
+            known()
+            validated = true
+        }
+
+        fun isValid(): Boolean =
+            try {
+                validate()
+                true
+            } catch (e: LangChainInvalidDataException) {
+                false
+            }
+
+        /**
+         * Returns a score indicating how many valid values are contained in this object
+         * recursively.
+         *
+         * Used for best match union deserialization.
+         */
+        @JvmSynthetic internal fun validity(): Int = if (value() == Value._UNKNOWN) 0 else 1
+
+        override fun equals(other: Any?): Boolean {
+            if (this === other) {
+                return true
+            }
+
+            return other is Type && value == other.value
+        }
+
+        override fun hashCode() = value.hashCode()
+
+        override fun toString() = value.toString()
+    }
 
     class ExperimentProgress
     @JsonCreator(mode = JsonCreator.Mode.DISABLED)
@@ -2469,6 +2655,7 @@ private constructor(
             name == other.name &&
             startTime == other.startTime &&
             tenantId == other.tenantId &&
+            type == other.type &&
             completionCost == other.completionCost &&
             completionTokens == other.completionTokens &&
             defaultDatasetId == other.defaultDatasetId &&
@@ -2505,6 +2692,7 @@ private constructor(
             name,
             startTime,
             tenantId,
+            type,
             completionCost,
             completionTokens,
             defaultDatasetId,
@@ -2539,5 +2727,5 @@ private constructor(
     override fun hashCode(): Int = hashCode
 
     override fun toString() =
-        "Session{id=$id, name=$name, startTime=$startTime, tenantId=$tenantId, completionCost=$completionCost, completionTokens=$completionTokens, defaultDatasetId=$defaultDatasetId, description=$description, endTime=$endTime, errorRate=$errorRate, experimentProgress=$experimentProgress, extra=$extra, feedbackStats=$feedbackStats, firstTokenP50=$firstTokenP50, firstTokenP99=$firstTokenP99, lastRunStartTime=$lastRunStartTime, lastRunStartTimeLive=$lastRunStartTimeLive, latencyP50=$latencyP50, latencyP99=$latencyP99, longlivedTtlDays=$longlivedTtlDays, promptCost=$promptCost, promptTokens=$promptTokens, referenceDatasetId=$referenceDatasetId, runCount=$runCount, runFacets=$runFacets, sessionFeedbackStats=$sessionFeedbackStats, streamingRate=$streamingRate, testRunNumber=$testRunNumber, totalCost=$totalCost, totalTokens=$totalTokens, traceTier=$traceTier, additionalProperties=$additionalProperties}"
+        "Session{id=$id, name=$name, startTime=$startTime, tenantId=$tenantId, type=$type, completionCost=$completionCost, completionTokens=$completionTokens, defaultDatasetId=$defaultDatasetId, description=$description, endTime=$endTime, errorRate=$errorRate, experimentProgress=$experimentProgress, extra=$extra, feedbackStats=$feedbackStats, firstTokenP50=$firstTokenP50, firstTokenP99=$firstTokenP99, lastRunStartTime=$lastRunStartTime, lastRunStartTimeLive=$lastRunStartTimeLive, latencyP50=$latencyP50, latencyP99=$latencyP99, longlivedTtlDays=$longlivedTtlDays, promptCost=$promptCost, promptTokens=$promptTokens, referenceDatasetId=$referenceDatasetId, runCount=$runCount, runFacets=$runFacets, sessionFeedbackStats=$sessionFeedbackStats, streamingRate=$streamingRate, testRunNumber=$testRunNumber, totalCost=$totalCost, totalTokens=$totalTokens, traceTier=$traceTier, additionalProperties=$additionalProperties}"
 }
