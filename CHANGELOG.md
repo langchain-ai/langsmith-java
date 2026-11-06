@@ -1,5 +1,72 @@
 # Changelog
 
+## [0.1.0-beta.29](https://github.com/langchain-ai/langsmith-java/compare/v0.1.0-beta.28...v0.1.0-beta.29) (2026-11-06)
+
+
+### ⚠ BREAKING CHANGES
+
+* **sessions:** filter GET /api/v2/sessions by session type
+* **api:** hide the Missing sentinel from annotation queue and chart PATCH schemas
+* **sessions:** document project costs as numbers
+
+### Features
+
+* add evaluator metadata field ([1d9edcd](https://github.com/langchain-ai/langsmith-java/commit/1d9edcdd125605e70d51d9592c86eca29f7d5116))
+* add HTTPS destination rewrite rules for sandboxes ([56c772d](https://github.com/langchain-ai/langsmith-java/commit/56c772d3b479b019be9de323a83f8c91200d9011))
+* **agent-platform:** expose the agent's UUID on agent responses ([c3170f5](https://github.com/langchain-ai/langsmith-java/commit/c3170f5df215e61c564c056182d233d79911f68b))
+* **annotation-queues:** rubric item required_if and visible_if conditions ([233102f](https://github.com/langchain-ai/langsmith-java/commit/233102f3e8257e53030601901836bde6562ad67d))
+* **cli:** add langsmith evaluators create-decision-model ([f9421c9](https://github.com/langchain-ai/langsmith-java/commit/f9421c989fb6b89aafdb7c7b77684b2f70e47481))
+* **commits:** add cursor pagination to commits list ([1ad8b96](https://github.com/langchain-ai/langsmith-java/commit/1ad8b960a9201ed8fde651f27e82645507a677df))
+* **datasets:** deprecate PUT /datasets/{dataset_id}/splits ([5fbebc7](https://github.com/langchain-ai/langsmith-java/commit/5fbebc771e3021b63e34086bee90b2ab9584b491))
+* **engine:** add issue type (actionable | finding) ([5fb1dc7](https://github.com/langchain-ai/langsmith-java/commit/5fb1dc7b04ed69c60982f6e50b7e2eed2652ec6d))
+* **feedback:** add allows_multiple_categories flag to categorical feedback configs ([496db09](https://github.com/langchain-ai/langsmith-java/commit/496db09d9b099d52de6f47116b2a1fd9af52fd51))
+* filter evaluators by metadata ([0ce43e8](https://github.com/langchain-ai/langsmith-java/commit/0ce43e843fe7855f1a9aeb94ddf02d1e6cfd94fe))
+* generate SQL query SDK clients ([a016cb8](https://github.com/langchain-ai/langsmith-java/commit/a016cb89cfac07d5fa1b452aee8bcc3fcce0d55c))
+* **hub:** add cursor pagination to GET /api/v1/repos ([b4475b0](https://github.com/langchain-ai/langsmith-java/commit/b4475b0a28f92d4a7e5424de69f2b92586074789))
+* **run-rules:** thread-level decision-model rules ([5462f26](https://github.com/langchain-ai/langsmith-java/commit/5462f26a8617b9db17982cdf87178bd15c958e1d))
+* **sandboxes:** allow non-persistent mode for all tenants ([9282338](https://github.com/langchain-ai/langsmith-java/commit/9282338162edff2a79306e4e311232c64fc250e0))
+* **sandboxes:** AWS session tags on proxy role rules ([4c63ea8](https://github.com/langchain-ai/langsmith-java/commit/4c63ea8e2e4711c3902f2ef29bbeb0f6a514cf07))
+* **sandboxes:** narrow AWS/GCP proxy rules with match_hosts, pass through presigned URLs ([d16d353](https://github.com/langchain-ai/langsmith-java/commit/d16d353ffd4aae0dbef6f2fc1a51bca1cea086fa))
+* **sandboxes:** show granular usage instead of dollar estimates ([4446bf5](https://github.com/langchain-ai/langsmith-java/commit/4446bf59cdb5a0a79ba0a47b9e9c1af52402fa27))
+* **sdk:** add bulk example metadata update to the SDKs ([42a819d](https://github.com/langchain-ai/langsmith-java/commit/42a819d903a0b13326202af9d5a3f33cb0b277e6))
+* **sdk:** add datasets.listV2 for GET /api/v2/datasets ([405ab37](https://github.com/langchain-ai/langsmith-java/commit/405ab371d755af8527576cc6a0ae9e2e394ff7bd))
+* **sdk:** read profile api_key_env in Python, JS and Java SDKs ([a331bb3](https://github.com/langchain-ai/langsmith-java/commit/a331bb3f2debe4d083aa2fa3806cec1db1b900d1))
+* **sdks:** add create_decision_model to the generated SDKs ([a1acc44](https://github.com/langchain-ai/langsmith-java/commit/a1acc449313c7602bd5c43f4456fcd1776a7e3a2))
+* **sessions:** accept longlived_ttl_days on POST and PATCH /sessions ([9644a11](https://github.com/langchain-ai/langsmith-java/commit/9644a11105b45555c29063f7ce9a8ebbad38918e))
+* **sessions:** add cursor-paginated GET /api/v2/sessions ([823124d](https://github.com/langchain-ai/langsmith-java/commit/823124d9b586d94cedd42c6aef6a128efad7cc59))
+* **sessions:** filter GET /api/v2/sessions by session type ([32668af](https://github.com/langchain-ai/langsmith-java/commit/32668affc4ee41efb3eb7d8505b9d0033fd2c518))
+* show dataplane name in workspace selector ([e3406e1](https://github.com/langchain-ai/langsmith-java/commit/e3406e121e746c591e8a5188447f8ca31c9d3522))
+* **ttl:** make the allowed long-lived retention days configurable ([3a74757](https://github.com/langchain-ai/langsmith-java/commit/3a74757135dcb75b46e61f70f47ddfd27a3c95ac))
+
+
+### Bug Fixes
+
+* **api:** hide the Missing sentinel from annotation queue and chart PATCH schemas ([86ba932](https://github.com/langchain-ai/langsmith-java/commit/86ba932f58f25579defda2a9f15c98f36ef1daab))
+* **api:** return the canonical workspace model from GET /api/v1/settings ([d067e8e](https://github.com/langchain-ai/langsmith-java/commit/d067e8e507d08bec91e2fca84cbaf024cb06f2ce))
+* **evaluators:** show the effective spend limit in the evaluator tables ([f3ab49b](https://github.com/langchain-ai/langsmith-java/commit/f3ab49b5dcebe2ef4ea3e7da5589f78c999d2653))
+* expose session dashboards in Python and TypeScript SDKs ([15984f4](https://github.com/langchain-ai/langsmith-java/commit/15984f4308fcc7fc49be6242eb20d2733bc9d172))
+* **sandboxes:** cap non-persistent sandbox disk at 16 GiB per vCPU ([d048411](https://github.com/langchain-ai/langsmith-java/commit/d048411c10df551bf3bbad507040c878f19a7ef2))
+* **sandboxes:** retain recorded storage across sampling gaps ([152379b](https://github.com/langchain-ai/langsmith-java/commit/152379b488155cb26d8125e902c0e1206e0b2407))
+* **sdks:** unify shared-profile OAuth refresh locking ([90cf3d2](https://github.com/langchain-ai/langsmith-java/commit/90cf3d27f0b0bf2e24d6bedcce74d6815413a761))
+* **sessions:** document project costs as numbers ([b8fe56f](https://github.com/langchain-ai/langsmith-java/commit/b8fe56fb5d6169469d3bedbd8e52315e08add93e))
+
+
+### Chores
+
+* **java:** bump guava test pin to 33.7.2-jre for security fix ([7d1c187](https://github.com/langchain-ai/langsmith-java/commit/7d1c1871f1bea59f51977269a2cdeeddf3268b8f))
+
+
+### Documentation
+
+* **annotation-queues:** document extend_trace_retention default on add items ([4087916](https://github.com/langchain-ai/langsmith-java/commit/40879162dd971c1922cb582531bffda7b65362b6))
+* **api:** describe the annotation queue, example and feedback token CLI flags ([a948176](https://github.com/langchain-ai/langsmith-java/commit/a94817681b2deee63a4729dec3d4e57c48ea17f4))
+* **sandboxes:** document match_paths on proxy rules ([83d876c](https://github.com/langchain-ai/langsmith-java/commit/83d876cb7bf73f0c30bf6f4620458165cbae4662))
+
+
+### Build System
+
+* refresh CA bundles for dev ops ([67df18c](https://github.com/langchain-ai/langsmith-java/commit/67df18c23be8b6a5c5012dd97ca82c18d2847411))
+
 ## [0.1.0-beta.28](https://github.com/langchain-ai/langsmith-java/compare/v0.1.0-beta.27...v0.1.0-beta.28) (2026-10-27)
 
 
