@@ -26,6 +26,7 @@ private constructor(
     private val cursor: String?,
     private val name: String?,
     private val pageSize: Long?,
+    private val search: String?,
     private val sortBy: SortBy?,
     private val sortOrder: SortOrder?,
     private val sourceType: SourceType?,
@@ -39,13 +40,21 @@ private constructor(
     /** Opaque pagination cursor */
     fun cursor(): Optional<String> = Optional.ofNullable(cursor)
 
-    /** Case-insensitive partial Agent name */
+    /**
+     * Deprecated: use search. Case-insensitive partial Agent name. Ignored when search is provided.
+     */
     fun name(): Optional<String> = Optional.ofNullable(name)
 
     /** Maximum number of Agents to return */
     fun pageSize(): Optional<Long> = Optional.ofNullable(pageSize)
 
-    /** Field to sort by. When name is set, exact name matches still come first. */
+    /**
+     * Case-insensitive partial Agent name or ID, ignoring hyphens and spaces. When provided, name
+     * is ignored.
+     */
+    fun search(): Optional<String> = Optional.ofNullable(search)
+
+    /** Field to sort by. When name or search is set, exact matches still come first. */
     fun sortBy(): Optional<SortBy> = Optional.ofNullable(sortBy)
 
     /** Sort direction */
@@ -77,6 +86,7 @@ private constructor(
         private var cursor: String? = null
         private var name: String? = null
         private var pageSize: Long? = null
+        private var search: String? = null
         private var sortBy: SortBy? = null
         private var sortOrder: SortOrder? = null
         private var sourceType: SourceType? = null
@@ -89,6 +99,7 @@ private constructor(
             cursor = agentListParams.cursor
             name = agentListParams.name
             pageSize = agentListParams.pageSize
+            search = agentListParams.search
             sortBy = agentListParams.sortBy
             sortOrder = agentListParams.sortOrder
             sourceType = agentListParams.sourceType
@@ -115,7 +126,10 @@ private constructor(
         /** Alias for calling [Builder.cursor] with `cursor.orElse(null)`. */
         fun cursor(cursor: Optional<String>) = cursor(cursor.getOrNull())
 
-        /** Case-insensitive partial Agent name */
+        /**
+         * Deprecated: use search. Case-insensitive partial Agent name. Ignored when search is
+         * provided.
+         */
         fun name(name: String?) = apply { this.name = name }
 
         /** Alias for calling [Builder.name] with `name.orElse(null)`. */
@@ -134,7 +148,16 @@ private constructor(
         /** Alias for calling [Builder.pageSize] with `pageSize.orElse(null)`. */
         fun pageSize(pageSize: Optional<Long>) = pageSize(pageSize.getOrNull())
 
-        /** Field to sort by. When name is set, exact name matches still come first. */
+        /**
+         * Case-insensitive partial Agent name or ID, ignoring hyphens and spaces. When provided,
+         * name is ignored.
+         */
+        fun search(search: String?) = apply { this.search = search }
+
+        /** Alias for calling [Builder.search] with `search.orElse(null)`. */
+        fun search(search: Optional<String>) = search(search.getOrNull())
+
+        /** Field to sort by. When name or search is set, exact matches still come first. */
         fun sortBy(sortBy: SortBy?) = apply { this.sortBy = sortBy }
 
         /** Alias for calling [Builder.sortBy] with `sortBy.orElse(null)`. */
@@ -261,6 +284,7 @@ private constructor(
                 cursor,
                 name,
                 pageSize,
+                search,
                 sortBy,
                 sortOrder,
                 sourceType,
@@ -278,6 +302,7 @@ private constructor(
                 cursor?.let { put("cursor", it) }
                 name?.let { put("name", it) }
                 pageSize?.let { put("page_size", it.toString()) }
+                search?.let { put("search", it) }
                 sortBy?.let { put("sort_by", it.toString()) }
                 sortOrder?.let { put("sort_order", it.toString()) }
                 sourceType?.let { put("source_type", it.toString()) }
@@ -285,7 +310,7 @@ private constructor(
             }
             .build()
 
-    /** Field to sort by. When name is set, exact name matches still come first. */
+    /** Field to sort by. When name or search is set, exact matches still come first. */
     class SortBy @JsonCreator private constructor(private val value: JsonField<String>) : Enum {
 
         /**
@@ -728,6 +753,7 @@ private constructor(
             cursor == other.cursor &&
             name == other.name &&
             pageSize == other.pageSize &&
+            search == other.search &&
             sortBy == other.sortBy &&
             sortOrder == other.sortOrder &&
             sourceType == other.sourceType &&
@@ -741,6 +767,7 @@ private constructor(
             cursor,
             name,
             pageSize,
+            search,
             sortBy,
             sortOrder,
             sourceType,
@@ -749,5 +776,5 @@ private constructor(
         )
 
     override fun toString() =
-        "AgentListParams{id=$id, cursor=$cursor, name=$name, pageSize=$pageSize, sortBy=$sortBy, sortOrder=$sortOrder, sourceType=$sourceType, additionalHeaders=$additionalHeaders, additionalQueryParams=$additionalQueryParams}"
+        "AgentListParams{id=$id, cursor=$cursor, name=$name, pageSize=$pageSize, search=$search, sortBy=$sortBy, sortOrder=$sortOrder, sourceType=$sourceType, additionalHeaders=$additionalHeaders, additionalQueryParams=$additionalQueryParams}"
 }
