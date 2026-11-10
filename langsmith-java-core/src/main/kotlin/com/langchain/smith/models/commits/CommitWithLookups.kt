@@ -29,7 +29,7 @@ private constructor(
     private val exampleRunIds: JsonField<List<String>>,
     private val fullName: JsonField<String>,
     private val manifest: JsonValue,
-    private val manifestSha: JsonField<List<Long>>,
+    private val manifestSha: JsonField<String>,
     private val numDownloads: JsonField<Long>,
     private val numViews: JsonField<Long>,
     private val parentCommitHash: JsonField<String>,
@@ -58,7 +58,7 @@ private constructor(
         @JsonProperty("manifest") @ExcludeMissing manifest: JsonValue = JsonMissing.of(),
         @JsonProperty("manifest_sha")
         @ExcludeMissing
-        manifestSha: JsonField<List<Long>> = JsonMissing.of(),
+        manifestSha: JsonField<String> = JsonMissing.of(),
         @JsonProperty("num_downloads")
         @ExcludeMissing
         numDownloads: JsonField<Long> = JsonMissing.of(),
@@ -148,12 +148,12 @@ private constructor(
     @JsonProperty("manifest") @ExcludeMissing fun _manifest(): JsonValue = manifest
 
     /**
-     * The SHA of the manifest
+     * The base64-encoded SHA-256 of the manifest
      *
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
      */
-    fun manifestSha(): Optional<List<Long>> = manifestSha.getOptional("manifest_sha")
+    fun manifestSha(): Optional<String> = manifestSha.getOptional("manifest_sha")
 
     /**
      * Number of API downloads
@@ -256,7 +256,7 @@ private constructor(
      */
     @JsonProperty("manifest_sha")
     @ExcludeMissing
-    fun _manifestSha(): JsonField<List<Long>> = manifestSha
+    fun _manifestSha(): JsonField<String> = manifestSha
 
     /**
      * Returns the raw JSON value of [numDownloads].
@@ -335,7 +335,7 @@ private constructor(
         private var exampleRunIds: JsonField<MutableList<String>>? = null
         private var fullName: JsonField<String> = JsonMissing.of()
         private var manifest: JsonValue = JsonMissing.of()
-        private var manifestSha: JsonField<MutableList<Long>>? = null
+        private var manifestSha: JsonField<String> = JsonMissing.of()
         private var numDownloads: JsonField<Long> = JsonMissing.of()
         private var numViews: JsonField<Long> = JsonMissing.of()
         private var parentCommitHash: JsonField<String> = JsonMissing.of()
@@ -353,7 +353,7 @@ private constructor(
             exampleRunIds = commitWithLookups.exampleRunIds.map { it.toMutableList() }
             fullName = commitWithLookups.fullName
             manifest = commitWithLookups.manifest
-            manifestSha = commitWithLookups.manifestSha.map { it.toMutableList() }
+            manifestSha = commitWithLookups.manifestSha
             numDownloads = commitWithLookups.numDownloads
             numViews = commitWithLookups.numViews
             parentCommitHash = commitWithLookups.parentCommitHash
@@ -450,31 +450,17 @@ private constructor(
         /** The manifest of the commit */
         fun manifest(manifest: JsonValue) = apply { this.manifest = manifest }
 
-        /** The SHA of the manifest */
-        fun manifestSha(manifestSha: List<Long>) = manifestSha(JsonField.of(manifestSha))
+        /** The base64-encoded SHA-256 of the manifest */
+        fun manifestSha(manifestSha: String) = manifestSha(JsonField.of(manifestSha))
 
         /**
          * Sets [Builder.manifestSha] to an arbitrary JSON value.
          *
-         * You should usually call [Builder.manifestSha] with a well-typed `List<Long>` value
-         * instead. This method is primarily for setting the field to an undocumented or not yet
-         * supported value.
+         * You should usually call [Builder.manifestSha] with a well-typed [String] value instead.
+         * This method is primarily for setting the field to an undocumented or not yet supported
+         * value.
          */
-        fun manifestSha(manifestSha: JsonField<List<Long>>) = apply {
-            this.manifestSha = manifestSha.map { it.toMutableList() }
-        }
-
-        /**
-         * Adds a single [Long] to [Builder.manifestSha].
-         *
-         * @throws IllegalStateException if the field was previously set to a non-list.
-         */
-        fun addManifestSha(manifestSha: Long) = apply {
-            this.manifestSha =
-                (this.manifestSha ?: JsonField.of(mutableListOf())).also {
-                    checkKnown("manifestSha", it).add(manifestSha)
-                }
-        }
+        fun manifestSha(manifestSha: JsonField<String>) = apply { this.manifestSha = manifestSha }
 
         /** Number of API downloads */
         fun numDownloads(numDownloads: Long) = numDownloads(JsonField.of(numDownloads))
@@ -581,7 +567,7 @@ private constructor(
                 (exampleRunIds ?: JsonMissing.of()).map { it.toImmutable() },
                 fullName,
                 manifest,
-                (manifestSha ?: JsonMissing.of()).map { it.toImmutable() },
+                manifestSha,
                 numDownloads,
                 numViews,
                 parentCommitHash,
@@ -644,7 +630,7 @@ private constructor(
             (if (description.asKnown().isPresent) 1 else 0) +
             (exampleRunIds.asKnown().getOrNull()?.size ?: 0) +
             (if (fullName.asKnown().isPresent) 1 else 0) +
-            (manifestSha.asKnown().getOrNull()?.size ?: 0) +
+            (if (manifestSha.asKnown().isPresent) 1 else 0) +
             (if (numDownloads.asKnown().isPresent) 1 else 0) +
             (if (numViews.asKnown().isPresent) 1 else 0) +
             (if (parentCommitHash.asKnown().isPresent) 1 else 0) +

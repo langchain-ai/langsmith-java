@@ -13,8 +13,8 @@ internal class CommitCreateParamsTest {
         CommitCreateParams.builder()
             .owner("owner")
             .repo("repo")
-            .description("description")
             .manifest(JsonValue.from(mapOf<String, Any>()))
+            .description("description")
             .parentCommit("parent_commit")
             .skipWebhooks(JsonValue.from(mapOf<String, Any>()))
             .build()
@@ -22,7 +22,12 @@ internal class CommitCreateParamsTest {
 
     @Test
     fun pathParams() {
-        val params = CommitCreateParams.builder().owner("owner").repo("repo").build()
+        val params =
+            CommitCreateParams.builder()
+                .owner("owner")
+                .repo("repo")
+                .manifest(JsonValue.from(mapOf<String, Any>()))
+                .build()
 
         assertThat(params._pathParam(0)).isEqualTo("owner")
         assertThat(params._pathParam(1)).isEqualTo("repo")
@@ -36,24 +41,31 @@ internal class CommitCreateParamsTest {
             CommitCreateParams.builder()
                 .owner("owner")
                 .repo("repo")
-                .description("description")
                 .manifest(JsonValue.from(mapOf<String, Any>()))
+                .description("description")
                 .parentCommit("parent_commit")
                 .skipWebhooks(JsonValue.from(mapOf<String, Any>()))
                 .build()
 
         val body = params._body()
 
-        assertThat(body.description()).contains("description")
         assertThat(body._manifest()).isEqualTo(JsonValue.from(mapOf<String, Any>()))
+        assertThat(body.description()).contains("description")
         assertThat(body.parentCommit()).contains("parent_commit")
         assertThat(body._skipWebhooks()).isEqualTo(JsonValue.from(mapOf<String, Any>()))
     }
 
     @Test
     fun bodyWithoutOptionalFields() {
-        val params = CommitCreateParams.builder().owner("owner").repo("repo").build()
+        val params =
+            CommitCreateParams.builder()
+                .owner("owner")
+                .repo("repo")
+                .manifest(JsonValue.from(mapOf<String, Any>()))
+                .build()
 
         val body = params._body()
+
+        assertThat(body._manifest()).isEqualTo(JsonValue.from(mapOf<String, Any>()))
     }
 }

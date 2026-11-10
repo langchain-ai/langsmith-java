@@ -37,18 +37,18 @@ private constructor(
     fun repo(): Optional<String> = Optional.ofNullable(repo)
 
     /**
-     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
-     *   server responded with an unexpected value).
-     */
-    fun description(): Optional<String> = body.description()
-
-    /**
      * This arbitrary value can be deserialized into a custom type using the `convert` method:
      * ```java
      * MyClass myObject = commitCreateParams.manifest().convert(MyClass.class);
      * ```
      */
     fun _manifest(): JsonValue = body._manifest()
+
+    /**
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
+    fun description(): Optional<String> = body.description()
 
     /**
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
@@ -99,6 +99,7 @@ private constructor(
          * The following fields are required:
          * ```java
          * .owner()
+         * .manifest()
          * ```
          */
         @JvmStatic fun builder() = Builder()
@@ -134,12 +135,14 @@ private constructor(
          *
          * This is generally only useful if you are already constructing the body separately.
          * Otherwise, it's more convenient to use the top-level setters instead:
-         * - [description]
          * - [manifest]
+         * - [description]
          * - [parentCommit]
          * - [skipWebhooks]
          */
         fun body(body: Body) = apply { this.body = body.toBuilder() }
+
+        fun manifest(manifest: JsonValue) = apply { body.manifest(manifest) }
 
         fun description(description: String) = apply { body.description(description) }
 
@@ -151,8 +154,6 @@ private constructor(
          * value.
          */
         fun description(description: JsonField<String>) = apply { body.description(description) }
-
-        fun manifest(manifest: JsonValue) = apply { body.manifest(manifest) }
 
         fun parentCommit(parentCommit: String) = apply { body.parentCommit(parentCommit) }
 
@@ -298,6 +299,7 @@ private constructor(
          * The following fields are required:
          * ```java
          * .owner()
+         * .manifest()
          * ```
          *
          * @throws IllegalStateException if any required field is unset.
@@ -328,8 +330,8 @@ private constructor(
     class Body
     @JsonCreator(mode = JsonCreator.Mode.DISABLED)
     private constructor(
-        private val description: JsonField<String>,
         private val manifest: JsonValue,
+        private val description: JsonField<String>,
         private val parentCommit: JsonField<String>,
         private val skipWebhooks: JsonValue,
         private val additionalProperties: MutableMap<String, JsonValue>,
@@ -337,23 +339,17 @@ private constructor(
 
         @JsonCreator
         private constructor(
+            @JsonProperty("manifest") @ExcludeMissing manifest: JsonValue = JsonMissing.of(),
             @JsonProperty("description")
             @ExcludeMissing
             description: JsonField<String> = JsonMissing.of(),
-            @JsonProperty("manifest") @ExcludeMissing manifest: JsonValue = JsonMissing.of(),
             @JsonProperty("parent_commit")
             @ExcludeMissing
             parentCommit: JsonField<String> = JsonMissing.of(),
             @JsonProperty("skip_webhooks")
             @ExcludeMissing
             skipWebhooks: JsonValue = JsonMissing.of(),
-        ) : this(description, manifest, parentCommit, skipWebhooks, mutableMapOf())
-
-        /**
-         * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
-         *   the server responded with an unexpected value).
-         */
-        fun description(): Optional<String> = description.getOptional("description")
+        ) : this(manifest, description, parentCommit, skipWebhooks, mutableMapOf())
 
         /**
          * This arbitrary value can be deserialized into a custom type using the `convert` method:
@@ -362,6 +358,12 @@ private constructor(
          * ```
          */
         @JsonProperty("manifest") @ExcludeMissing fun _manifest(): JsonValue = manifest
+
+        /**
+         * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
+         *   the server responded with an unexpected value).
+         */
+        fun description(): Optional<String> = description.getOptional("description")
 
         /**
          * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
@@ -413,27 +415,36 @@ private constructor(
 
         companion object {
 
-            /** Returns a mutable builder for constructing an instance of [Body]. */
+            /**
+             * Returns a mutable builder for constructing an instance of [Body].
+             *
+             * The following fields are required:
+             * ```java
+             * .manifest()
+             * ```
+             */
             @JvmStatic fun builder() = Builder()
         }
 
         /** A builder for [Body]. */
         class Builder internal constructor() {
 
+            private var manifest: JsonValue? = null
             private var description: JsonField<String> = JsonMissing.of()
-            private var manifest: JsonValue = JsonMissing.of()
             private var parentCommit: JsonField<String> = JsonMissing.of()
             private var skipWebhooks: JsonValue = JsonMissing.of()
             private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
 
             @JvmSynthetic
             internal fun from(body: Body) = apply {
-                description = body.description
                 manifest = body.manifest
+                description = body.description
                 parentCommit = body.parentCommit
                 skipWebhooks = body.skipWebhooks
                 additionalProperties = body.additionalProperties.toMutableMap()
             }
+
+            fun manifest(manifest: JsonValue) = apply { this.manifest = manifest }
 
             fun description(description: String) = description(JsonField.of(description))
 
@@ -447,8 +458,6 @@ private constructor(
             fun description(description: JsonField<String>) = apply {
                 this.description = description
             }
-
-            fun manifest(manifest: JsonValue) = apply { this.manifest = manifest }
 
             fun parentCommit(parentCommit: String) = parentCommit(JsonField.of(parentCommit))
 
@@ -492,11 +501,18 @@ private constructor(
              * Returns an immutable instance of [Body].
              *
              * Further updates to this [Builder] will not mutate the returned instance.
+             *
+             * The following fields are required:
+             * ```java
+             * .manifest()
+             * ```
+             *
+             * @throws IllegalStateException if any required field is unset.
              */
             fun build(): Body =
                 Body(
+                    checkRequired("manifest", manifest),
                     description,
-                    manifest,
                     parentCommit,
                     skipWebhooks,
                     additionalProperties.toMutableMap(),
@@ -549,21 +565,21 @@ private constructor(
             }
 
             return other is Body &&
-                description == other.description &&
                 manifest == other.manifest &&
+                description == other.description &&
                 parentCommit == other.parentCommit &&
                 skipWebhooks == other.skipWebhooks &&
                 additionalProperties == other.additionalProperties
         }
 
         private val hashCode: Int by lazy {
-            Objects.hash(description, manifest, parentCommit, skipWebhooks, additionalProperties)
+            Objects.hash(manifest, description, parentCommit, skipWebhooks, additionalProperties)
         }
 
         override fun hashCode(): Int = hashCode
 
         override fun toString() =
-            "Body{description=$description, manifest=$manifest, parentCommit=$parentCommit, skipWebhooks=$skipWebhooks, additionalProperties=$additionalProperties}"
+            "Body{manifest=$manifest, description=$description, parentCommit=$parentCommit, skipWebhooks=$skipWebhooks, additionalProperties=$additionalProperties}"
     }
 
     override fun equals(other: Any?): Boolean {
