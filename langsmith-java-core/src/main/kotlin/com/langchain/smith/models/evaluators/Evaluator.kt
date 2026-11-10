@@ -71,6 +71,7 @@ private constructor(
     private val sessionName: JsonField<String>,
     private val spendLimit: JsonField<SpendLimit>,
     private val spendUsd: JsonField<Double>,
+    private val threadFilter: JsonField<String>,
     private val traceCount: JsonField<Long>,
     private val traceFilter: JsonField<String>,
     private val isTransient: JsonField<Boolean>,
@@ -205,6 +206,9 @@ private constructor(
         @ExcludeMissing
         spendLimit: JsonField<SpendLimit> = JsonMissing.of(),
         @JsonProperty("spend_usd") @ExcludeMissing spendUsd: JsonField<Double> = JsonMissing.of(),
+        @JsonProperty("thread_filter")
+        @ExcludeMissing
+        threadFilter: JsonField<String> = JsonMissing.of(),
         @JsonProperty("trace_count") @ExcludeMissing traceCount: JsonField<Long> = JsonMissing.of(),
         @JsonProperty("trace_filter")
         @ExcludeMissing
@@ -265,6 +269,7 @@ private constructor(
         sessionName,
         spendLimit,
         spendUsd,
+        threadFilter,
         traceCount,
         traceFilter,
         isTransient,
@@ -567,6 +572,12 @@ private constructor(
      *   server responded with an unexpected value).
      */
     fun spendUsd(): Optional<Double> = spendUsd.getOptional("spend_usd")
+
+    /**
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
+    fun threadFilter(): Optional<String> = threadFilter.getOptional("thread_filter")
 
     /**
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
@@ -1013,6 +1024,15 @@ private constructor(
     @JsonProperty("spend_usd") @ExcludeMissing fun _spendUsd(): JsonField<Double> = spendUsd
 
     /**
+     * Returns the raw JSON value of [threadFilter].
+     *
+     * Unlike [threadFilter], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    @JsonProperty("thread_filter")
+    @ExcludeMissing
+    fun _threadFilter(): JsonField<String> = threadFilter
+
+    /**
      * Returns the raw JSON value of [traceCount].
      *
      * Unlike [traceCount], this method doesn't throw if the JSON field has an unexpected type.
@@ -1133,6 +1153,7 @@ private constructor(
         private var sessionName: JsonField<String> = JsonMissing.of()
         private var spendLimit: JsonField<SpendLimit> = JsonMissing.of()
         private var spendUsd: JsonField<Double> = JsonMissing.of()
+        private var threadFilter: JsonField<String> = JsonMissing.of()
         private var traceCount: JsonField<Long> = JsonMissing.of()
         private var traceFilter: JsonField<String> = JsonMissing.of()
         private var isTransient: JsonField<Boolean> = JsonMissing.of()
@@ -1188,6 +1209,7 @@ private constructor(
             sessionName = evaluator.sessionName
             spendLimit = evaluator.spendLimit
             spendUsd = evaluator.spendUsd
+            threadFilter = evaluator.threadFilter
             traceCount = evaluator.traceCount
             traceFilter = evaluator.traceFilter
             isTransient = evaluator.isTransient
@@ -2042,6 +2064,22 @@ private constructor(
          */
         fun spendUsd(spendUsd: JsonField<Double>) = apply { this.spendUsd = spendUsd }
 
+        fun threadFilter(threadFilter: String?) = threadFilter(JsonField.ofNullable(threadFilter))
+
+        /** Alias for calling [Builder.threadFilter] with `threadFilter.orElse(null)`. */
+        fun threadFilter(threadFilter: Optional<String>) = threadFilter(threadFilter.getOrNull())
+
+        /**
+         * Sets [Builder.threadFilter] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.threadFilter] with a well-typed [String] value instead.
+         * This method is primarily for setting the field to an undocumented or not yet supported
+         * value.
+         */
+        fun threadFilter(threadFilter: JsonField<String>) = apply {
+            this.threadFilter = threadFilter
+        }
+
         fun traceCount(traceCount: Long?) = traceCount(JsonField.ofNullable(traceCount))
 
         /**
@@ -2201,6 +2239,7 @@ private constructor(
                 sessionName,
                 spendLimit,
                 spendUsd,
+                threadFilter,
                 traceCount,
                 traceFilter,
                 isTransient,
@@ -2271,6 +2310,7 @@ private constructor(
         sessionName()
         spendLimit().ifPresent { it.validate() }
         spendUsd()
+        threadFilter()
         traceCount()
         traceFilter()
         isTransient()
@@ -2340,6 +2380,7 @@ private constructor(
             (if (sessionName.asKnown().isPresent) 1 else 0) +
             (spendLimit.asKnown().getOrNull()?.validity() ?: 0) +
             (if (spendUsd.asKnown().isPresent) 1 else 0) +
+            (if (threadFilter.asKnown().isPresent) 1 else 0) +
             (if (traceCount.asKnown().isPresent) 1 else 0) +
             (if (traceFilter.asKnown().isPresent) 1 else 0) +
             (if (isTransient.asKnown().isPresent) 1 else 0) +
@@ -3210,6 +3251,7 @@ private constructor(
             sessionName == other.sessionName &&
             spendLimit == other.spendLimit &&
             spendUsd == other.spendUsd &&
+            threadFilter == other.threadFilter &&
             traceCount == other.traceCount &&
             traceFilter == other.traceFilter &&
             isTransient == other.isTransient &&
@@ -3266,6 +3308,7 @@ private constructor(
             sessionName,
             spendLimit,
             spendUsd,
+            threadFilter,
             traceCount,
             traceFilter,
             isTransient,
@@ -3278,5 +3321,5 @@ private constructor(
     override fun hashCode(): Int = hashCode
 
     override fun toString() =
-        "Evaluator{id=$id, createdAt=$createdAt, displayName=$displayName, evaluatorVersion=$evaluatorVersion, samplingRate=$samplingRate, tenantId=$tenantId, updatedAt=$updatedAt, webhooks=$webhooks, addToAnnotationQueueId=$addToAnnotationQueueId, addToAnnotationQueueName=$addToAnnotationQueueName, addToDatasetId=$addToDatasetId, addToDatasetName=$addToDatasetName, addToDatasetPreferCorrection=$addToDatasetPreferCorrection, alerts=$alerts, alignmentAnnotationQueueId=$alignmentAnnotationQueueId, backfillCompletedAt=$backfillCompletedAt, backfillError=$backfillError, backfillFrom=$backfillFrom, backfillId=$backfillId, backfillProgress=$backfillProgress, backfillStatus=$backfillStatus, codeEvaluators=$codeEvaluators, correctionsDatasetId=$correctionsDatasetId, datasetId=$datasetId, datasetName=$datasetName, effectiveSpendLimit=$effectiveSpendLimit, evaluatorId=$evaluatorId, evaluatorName=$evaluatorName, evaluatorType=$evaluatorType, evaluators=$evaluators, extendAnnotationQueueTraceRetention=$extendAnnotationQueueTraceRetention, extendDatasetTraceRetention=$extendDatasetTraceRetention, extendEvaluatorTraceRetention=$extendEvaluatorTraceRetention, extendOnly=$extendOnly, extendWebhookTraceRetention=$extendWebhookTraceRetention, filter=$filter, groupBy=$groupBy, includeExtendedStats=$includeExtendedStats, isEnabled=$isEnabled, isManagedEvaluator=$isManagedEvaluator, isTracingDisabled=$isTracingDisabled, numFewShotExamples=$numFewShotExamples, sessionId=$sessionId, sessionName=$sessionName, spendLimit=$spendLimit, spendUsd=$spendUsd, traceCount=$traceCount, traceFilter=$traceFilter, isTransient=$isTransient, treeFilter=$treeFilter, useCorrectionsDataset=$useCorrectionsDataset, additionalProperties=$additionalProperties}"
+        "Evaluator{id=$id, createdAt=$createdAt, displayName=$displayName, evaluatorVersion=$evaluatorVersion, samplingRate=$samplingRate, tenantId=$tenantId, updatedAt=$updatedAt, webhooks=$webhooks, addToAnnotationQueueId=$addToAnnotationQueueId, addToAnnotationQueueName=$addToAnnotationQueueName, addToDatasetId=$addToDatasetId, addToDatasetName=$addToDatasetName, addToDatasetPreferCorrection=$addToDatasetPreferCorrection, alerts=$alerts, alignmentAnnotationQueueId=$alignmentAnnotationQueueId, backfillCompletedAt=$backfillCompletedAt, backfillError=$backfillError, backfillFrom=$backfillFrom, backfillId=$backfillId, backfillProgress=$backfillProgress, backfillStatus=$backfillStatus, codeEvaluators=$codeEvaluators, correctionsDatasetId=$correctionsDatasetId, datasetId=$datasetId, datasetName=$datasetName, effectiveSpendLimit=$effectiveSpendLimit, evaluatorId=$evaluatorId, evaluatorName=$evaluatorName, evaluatorType=$evaluatorType, evaluators=$evaluators, extendAnnotationQueueTraceRetention=$extendAnnotationQueueTraceRetention, extendDatasetTraceRetention=$extendDatasetTraceRetention, extendEvaluatorTraceRetention=$extendEvaluatorTraceRetention, extendOnly=$extendOnly, extendWebhookTraceRetention=$extendWebhookTraceRetention, filter=$filter, groupBy=$groupBy, includeExtendedStats=$includeExtendedStats, isEnabled=$isEnabled, isManagedEvaluator=$isManagedEvaluator, isTracingDisabled=$isTracingDisabled, numFewShotExamples=$numFewShotExamples, sessionId=$sessionId, sessionName=$sessionName, spendLimit=$spendLimit, spendUsd=$spendUsd, threadFilter=$threadFilter, traceCount=$traceCount, traceFilter=$traceFilter, isTransient=$isTransient, treeFilter=$treeFilter, useCorrectionsDataset=$useCorrectionsDataset, additionalProperties=$additionalProperties}"
 }
