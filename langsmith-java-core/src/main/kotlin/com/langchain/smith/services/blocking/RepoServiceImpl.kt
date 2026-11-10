@@ -60,10 +60,7 @@ class RepoServiceImpl internal constructor(private val clientOptions: ClientOpti
         // get /api/v1/repos/{owner}/{repo}
         withRawResponse().retrieve(params, requestOptions).parse()
 
-    override fun update(
-        params: RepoUpdateParams,
-        requestOptions: RequestOptions,
-    ): CreateRepoResponse =
+    override fun update(params: RepoUpdateParams, requestOptions: RequestOptions): GetRepoResponse =
         // patch /api/v1/repos/{owner}/{repo}
         withRawResponse().update(params, requestOptions).parse()
 
@@ -161,13 +158,13 @@ class RepoServiceImpl internal constructor(private val clientOptions: ClientOpti
             }
         }
 
-        private val updateHandler: Handler<CreateRepoResponse> =
-            jsonHandler<CreateRepoResponse>(clientOptions.jsonMapper)
+        private val updateHandler: Handler<GetRepoResponse> =
+            jsonHandler<GetRepoResponse>(clientOptions.jsonMapper)
 
         override fun update(
             params: RepoUpdateParams,
             requestOptions: RequestOptions,
-        ): HttpResponseFor<CreateRepoResponse> {
+        ): HttpResponseFor<GetRepoResponse> {
             // We check here instead of in the params builder because this can be specified
             // positionally or in the params class.
             checkRequired("repo", params.repo().getOrNull())

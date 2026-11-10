@@ -57,7 +57,7 @@ internal class RepoServiceTest {
             LangsmithOkHttpClient.builder().apiKey("My API Key").tenantId("My Tenant ID").build()
         val repoService = client.repos()
 
-        val createRepoResponse =
+        val getRepoResponse =
             repoService.update(
                 RepoUpdateParams.builder()
                     .owner("owner")
@@ -71,7 +71,7 @@ internal class RepoServiceTest {
                     .build()
             )
 
-        createRepoResponse.validate()
+        getRepoResponse.validate()
     }
 
     @Disabled("Mock server tests are disabled")

@@ -70,7 +70,7 @@ internal class RepoServiceAsyncTest {
                 .build()
         val repoServiceAsync = client.repos()
 
-        val createRepoResponseFuture =
+        val getRepoResponseFuture =
             repoServiceAsync.update(
                 RepoUpdateParams.builder()
                     .owner("owner")
@@ -84,8 +84,8 @@ internal class RepoServiceAsyncTest {
                     .build()
             )
 
-        val createRepoResponse = createRepoResponseFuture.get()
-        createRepoResponse.validate()
+        val getRepoResponse = getRepoResponseFuture.get()
+        getRepoResponse.validate()
     }
 
     @Disabled("Mock server tests are disabled")

@@ -67,7 +67,7 @@ class RepoServiceAsyncImpl internal constructor(private val clientOptions: Clien
     override fun update(
         params: RepoUpdateParams,
         requestOptions: RequestOptions,
-    ): CompletableFuture<CreateRepoResponse> =
+    ): CompletableFuture<GetRepoResponse> =
         // patch /api/v1/repos/{owner}/{repo}
         withRawResponse().update(params, requestOptions).thenApply { it.parse() }
 
@@ -174,13 +174,13 @@ class RepoServiceAsyncImpl internal constructor(private val clientOptions: Clien
                 }
         }
 
-        private val updateHandler: Handler<CreateRepoResponse> =
-            jsonHandler<CreateRepoResponse>(clientOptions.jsonMapper)
+        private val updateHandler: Handler<GetRepoResponse> =
+            jsonHandler<GetRepoResponse>(clientOptions.jsonMapper)
 
         override fun update(
             params: RepoUpdateParams,
             requestOptions: RequestOptions,
-        ): CompletableFuture<HttpResponseFor<CreateRepoResponse>> {
+        ): CompletableFuture<HttpResponseFor<GetRepoResponse>> {
             // We check here instead of in the params builder because this can be specified
             // positionally or in the params class.
             checkRequired("repo", params.repo().getOrNull())

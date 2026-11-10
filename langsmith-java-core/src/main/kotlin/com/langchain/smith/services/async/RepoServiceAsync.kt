@@ -67,7 +67,7 @@ interface RepoServiceAsync {
     ): CompletableFuture<GetRepoResponse>
 
     /** Update a repo. */
-    fun update(repo: String, params: RepoUpdateParams): CompletableFuture<CreateRepoResponse> =
+    fun update(repo: String, params: RepoUpdateParams): CompletableFuture<GetRepoResponse> =
         update(repo, params, RequestOptions.none())
 
     /** @see update */
@@ -75,18 +75,18 @@ interface RepoServiceAsync {
         repo: String,
         params: RepoUpdateParams,
         requestOptions: RequestOptions = RequestOptions.none(),
-    ): CompletableFuture<CreateRepoResponse> =
+    ): CompletableFuture<GetRepoResponse> =
         update(params.toBuilder().repo(repo).build(), requestOptions)
 
     /** @see update */
-    fun update(params: RepoUpdateParams): CompletableFuture<CreateRepoResponse> =
+    fun update(params: RepoUpdateParams): CompletableFuture<GetRepoResponse> =
         update(params, RequestOptions.none())
 
     /** @see update */
     fun update(
         params: RepoUpdateParams,
         requestOptions: RequestOptions = RequestOptions.none(),
-    ): CompletableFuture<CreateRepoResponse>
+    ): CompletableFuture<GetRepoResponse>
 
     /** Get all repos. */
     fun list(): CompletableFuture<RepoListPageAsync> = list(RepoListParams.none())
@@ -191,7 +191,7 @@ interface RepoServiceAsync {
         fun update(
             repo: String,
             params: RepoUpdateParams,
-        ): CompletableFuture<HttpResponseFor<CreateRepoResponse>> =
+        ): CompletableFuture<HttpResponseFor<GetRepoResponse>> =
             update(repo, params, RequestOptions.none())
 
         /** @see update */
@@ -199,20 +199,18 @@ interface RepoServiceAsync {
             repo: String,
             params: RepoUpdateParams,
             requestOptions: RequestOptions = RequestOptions.none(),
-        ): CompletableFuture<HttpResponseFor<CreateRepoResponse>> =
+        ): CompletableFuture<HttpResponseFor<GetRepoResponse>> =
             update(params.toBuilder().repo(repo).build(), requestOptions)
 
         /** @see update */
-        fun update(
-            params: RepoUpdateParams
-        ): CompletableFuture<HttpResponseFor<CreateRepoResponse>> =
+        fun update(params: RepoUpdateParams): CompletableFuture<HttpResponseFor<GetRepoResponse>> =
             update(params, RequestOptions.none())
 
         /** @see update */
         fun update(
             params: RepoUpdateParams,
             requestOptions: RequestOptions = RequestOptions.none(),
-        ): CompletableFuture<HttpResponseFor<CreateRepoResponse>>
+        ): CompletableFuture<HttpResponseFor<GetRepoResponse>>
 
         /**
          * Returns a raw HTTP response for `get /api/v1/repos`, but is otherwise the same as

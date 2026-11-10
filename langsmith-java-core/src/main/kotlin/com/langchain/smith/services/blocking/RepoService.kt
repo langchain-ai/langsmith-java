@@ -65,7 +65,7 @@ interface RepoService {
     ): GetRepoResponse
 
     /** Update a repo. */
-    fun update(repo: String, params: RepoUpdateParams): CreateRepoResponse =
+    fun update(repo: String, params: RepoUpdateParams): GetRepoResponse =
         update(repo, params, RequestOptions.none())
 
     /** @see update */
@@ -73,16 +73,16 @@ interface RepoService {
         repo: String,
         params: RepoUpdateParams,
         requestOptions: RequestOptions = RequestOptions.none(),
-    ): CreateRepoResponse = update(params.toBuilder().repo(repo).build(), requestOptions)
+    ): GetRepoResponse = update(params.toBuilder().repo(repo).build(), requestOptions)
 
     /** @see update */
-    fun update(params: RepoUpdateParams): CreateRepoResponse = update(params, RequestOptions.none())
+    fun update(params: RepoUpdateParams): GetRepoResponse = update(params, RequestOptions.none())
 
     /** @see update */
     fun update(
         params: RepoUpdateParams,
         requestOptions: RequestOptions = RequestOptions.none(),
-    ): CreateRepoResponse
+    ): GetRepoResponse
 
     /** Get all repos. */
     fun list(): RepoListPage = list(RepoListParams.none())
@@ -182,7 +182,7 @@ interface RepoService {
          * the same as [RepoService.update].
          */
         @MustBeClosed
-        fun update(repo: String, params: RepoUpdateParams): HttpResponseFor<CreateRepoResponse> =
+        fun update(repo: String, params: RepoUpdateParams): HttpResponseFor<GetRepoResponse> =
             update(repo, params, RequestOptions.none())
 
         /** @see update */
@@ -191,12 +191,12 @@ interface RepoService {
             repo: String,
             params: RepoUpdateParams,
             requestOptions: RequestOptions = RequestOptions.none(),
-        ): HttpResponseFor<CreateRepoResponse> =
+        ): HttpResponseFor<GetRepoResponse> =
             update(params.toBuilder().repo(repo).build(), requestOptions)
 
         /** @see update */
         @MustBeClosed
-        fun update(params: RepoUpdateParams): HttpResponseFor<CreateRepoResponse> =
+        fun update(params: RepoUpdateParams): HttpResponseFor<GetRepoResponse> =
             update(params, RequestOptions.none())
 
         /** @see update */
@@ -204,7 +204,7 @@ interface RepoService {
         fun update(
             params: RepoUpdateParams,
             requestOptions: RequestOptions = RequestOptions.none(),
-        ): HttpResponseFor<CreateRepoResponse>
+        ): HttpResponseFor<GetRepoResponse>
 
         /**
          * Returns a raw HTTP response for `get /api/v1/repos`, but is otherwise the same as
