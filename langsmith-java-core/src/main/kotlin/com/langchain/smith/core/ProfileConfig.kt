@@ -84,7 +84,10 @@ internal fun loadProfileClientConfig(
     val oauthAccessToken = text(oauth?.get("access_token"))
     val oauthRefreshToken = text(oauth?.get("refresh_token"))
     val apiKey = text(profile["api_key"])
-    val hasApiKeyRef = text(profile["api_key_env"]) != null || text(profile["api_key_cmd"]) != null
+    val hasApiKeyRef =
+        text(profile["api_key_env"]) != null ||
+            text(profile["api_key_cmd"]) != null ||
+            text(profile["secret_store"]) == "keychain"
 
     return ProfileClientConfig(
         baseUrl = text(profile["api_url"]),
@@ -410,10 +413,12 @@ private fun String.trimQuotes(): String = trim().trim('"', '\'')
  * Returns the profile's API key. Instead of storing the key, a profile can name where it lives:
  * `api_key_env` is an environment variable, and `api_key_cmd` is a shell command that prints the
  * key. `api_key` wins over `api_key_env`, which wins over `api_key_cmd`. The CLI and Go SDK run
- * `api_key_cmd`; this SDK reports it as unsupported instead of sending unauthenticated requests.
+ * `api_key_cmd`; this SDK reports it as unsupported instead of sending unauthenticated requests. It
+ * does the same for a profile whose secrets the CLI or Go SDK keep in the OS keychain
+ * (`secret_store` "keychain").
  *
  * @throws LangChainException if the named environment variable is not set, or the profile uses
- *   `api_key_cmd`.
+ *   `api_key_cmd` or the OS keychain.
  */
 private fun profileApiKey(
     profileName: String,
@@ -422,6 +427,13 @@ private fun profileApiKey(
 ): String? {
     text(profile["api_key"])?.let {
         return it
+    }
+    if (text(profile["secret_store"]) == "keychain") {
+        throw LangChainException(
+            "LangSmith profile \"$profileName\" keeps its credentials in the OS keychain (secret_store), " +
+                "which the Java SDK does not support yet. Set LANGSMITH_API_KEY, " +
+                "or recreate the profile without --keychain."
+        )
     }
     text(profile["api_key_env"])?.let { apiKeyEnv ->
         getenv(apiKeyEnv)

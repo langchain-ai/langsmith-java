@@ -188,6 +188,9 @@ internal class ProfileConfigTest {
                 """{ "api_key_cmd": "op read op://vault/langsmith/key" }""" to
                     "LangSmith profile \"prod\" gets its API key from a command (api_key_cmd), " +
                         "which the Java SDK does not support yet",
+                """{ "secret_store": "keychain" }""" to
+                    "LangSmith profile \"prod\" keeps its credentials in the OS keychain (secret_store), " +
+                        "which the Java SDK does not support yet",
             )
         for ((profile, message) in cases) {
             val configPath =
