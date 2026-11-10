@@ -78,11 +78,12 @@ interface AgentService {
     /**
      * Updates an Agent's name, source_type, agent_type, or owner_id. Omitted fields keep their
      * values. Changing or clearing owner_id additionally requires workspaces:manage; assigning an
-     * owner also requires workspaces:read and active workspace membership. Fleet ownership cannot
-     * be changed through this endpoint. Changing agent_type requires workspaces:manage in addition
-     * to project update access; repeating the current type is a no-op. Source type can change only
-     * for an EXTERNAL Agent without runtime bindings. The id is immutable and is rejected when
-     * present. Requires update permission on every environment project.
+     * owner also requires workspaces:read and active workspace membership. Owner changes update the
+     * Agent registry only; Fleet runtime ownership, access, and connected accounts are unchanged.
+     * Changing agent_type requires workspaces:manage in addition to project update access;
+     * repeating the current type is a no-op. Source type can change only for an EXTERNAL Agent
+     * without runtime bindings. The id is immutable and is rejected when present. Requires update
+     * permission on every environment project.
      */
     fun update(agentId: String): Agent = update(agentId, AgentUpdateParams.none())
 
