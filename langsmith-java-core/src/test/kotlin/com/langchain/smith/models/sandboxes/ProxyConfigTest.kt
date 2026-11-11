@@ -23,10 +23,11 @@ internal class ProxyConfigTest {
                 )
                 .addCallback(
                     ProxyConfig.Callback.builder()
-                        .addMatchHost("string")
                         .ttlSeconds(60L)
                         .url("url")
+                        .addAttributionHeader("string")
                         .fullRequest(true)
+                        .addMatchHost("string")
                         .addRequestHeader(
                             ProxyConfig.Callback.RequestHeader.builder()
                                 .name("name")
@@ -117,10 +118,11 @@ internal class ProxyConfigTest {
         assertThat(proxyConfig.callbacks().getOrNull())
             .containsExactly(
                 ProxyConfig.Callback.builder()
-                    .addMatchHost("string")
                     .ttlSeconds(60L)
                     .url("url")
+                    .addAttributionHeader("string")
                     .fullRequest(true)
+                    .addMatchHost("string")
                     .addRequestHeader(
                         ProxyConfig.Callback.RequestHeader.builder()
                             .name("name")
@@ -214,10 +216,11 @@ internal class ProxyConfigTest {
                 )
                 .addCallback(
                     ProxyConfig.Callback.builder()
-                        .addMatchHost("string")
                         .ttlSeconds(60L)
                         .url("url")
+                        .addAttributionHeader("string")
                         .fullRequest(true)
+                        .addMatchHost("string")
                         .addRequestHeader(
                             ProxyConfig.Callback.RequestHeader.builder()
                                 .name("name")

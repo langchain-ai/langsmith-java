@@ -175,10 +175,11 @@ internal class SandboxListResponseTest {
                                 )
                                 .addCallback(
                                     ProxyConfig.Callback.builder()
-                                        .addMatchHost("string")
                                         .ttlSeconds(60L)
                                         .url("url")
+                                        .addAttributionHeader("string")
                                         .fullRequest(true)
+                                        .addMatchHost("string")
                                         .addRequestHeader(
                                             ProxyConfig.Callback.RequestHeader.builder()
                                                 .name("name")
@@ -473,10 +474,11 @@ internal class SandboxListResponseTest {
                                 )
                                 .addCallback(
                                     ProxyConfig.Callback.builder()
-                                        .addMatchHost("string")
                                         .ttlSeconds(60L)
                                         .url("url")
+                                        .addAttributionHeader("string")
                                         .fullRequest(true)
+                                        .addMatchHost("string")
                                         .addRequestHeader(
                                             ProxyConfig.Callback.RequestHeader.builder()
                                                 .name("name")
@@ -768,10 +770,11 @@ internal class SandboxListResponseTest {
                             )
                             .addCallback(
                                 ProxyConfig.Callback.builder()
-                                    .addMatchHost("string")
                                     .ttlSeconds(60L)
                                     .url("url")
+                                    .addAttributionHeader("string")
                                     .fullRequest(true)
+                                    .addMatchHost("string")
                                     .addRequestHeader(
                                         ProxyConfig.Callback.RequestHeader.builder()
                                             .name("name")
@@ -1053,10 +1056,11 @@ internal class SandboxListResponseTest {
                             )
                             .addCallback(
                                 ProxyConfig.Callback.builder()
-                                    .addMatchHost("string")
                                     .ttlSeconds(60L)
                                     .url("url")
+                                    .addAttributionHeader("string")
                                     .fullRequest(true)
+                                    .addMatchHost("string")
                                     .addRequestHeader(
                                         ProxyConfig.Callback.RequestHeader.builder()
                                             .name("name")
@@ -1346,10 +1350,11 @@ internal class SandboxListResponseTest {
                                 )
                                 .addCallback(
                                     ProxyConfig.Callback.builder()
-                                        .addMatchHost("string")
                                         .ttlSeconds(60L)
                                         .url("url")
+                                        .addAttributionHeader("string")
                                         .fullRequest(true)
+                                        .addMatchHost("string")
                                         .addRequestHeader(
                                             ProxyConfig.Callback.RequestHeader.builder()
                                                 .name("name")
@@ -1644,10 +1649,11 @@ internal class SandboxListResponseTest {
                                 )
                                 .addCallback(
                                     ProxyConfig.Callback.builder()
-                                        .addMatchHost("string")
                                         .ttlSeconds(60L)
                                         .url("url")
+                                        .addAttributionHeader("string")
                                         .fullRequest(true)
+                                        .addMatchHost("string")
                                         .addRequestHeader(
                                             ProxyConfig.Callback.RequestHeader.builder()
                                                 .name("name")

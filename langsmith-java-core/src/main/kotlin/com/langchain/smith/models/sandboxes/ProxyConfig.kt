@@ -575,36 +575,42 @@ private constructor(
     class Callback
     @JsonCreator(mode = JsonCreator.Mode.DISABLED)
     private constructor(
-        private val matchHosts: JsonField<List<String>>,
         private val ttlSeconds: JsonField<Long>,
         private val url: JsonField<String>,
+        private val attributionHeaders: JsonField<List<String>>,
         private val fullRequest: JsonField<Boolean>,
+        private val matchHosts: JsonField<List<String>>,
         private val requestHeaders: JsonField<List<RequestHeader>>,
         private val additionalProperties: MutableMap<String, JsonValue>,
     ) {
 
         @JsonCreator
         private constructor(
-            @JsonProperty("match_hosts")
-            @ExcludeMissing
-            matchHosts: JsonField<List<String>> = JsonMissing.of(),
             @JsonProperty("ttl_seconds")
             @ExcludeMissing
             ttlSeconds: JsonField<Long> = JsonMissing.of(),
             @JsonProperty("url") @ExcludeMissing url: JsonField<String> = JsonMissing.of(),
+            @JsonProperty("attribution_headers")
+            @ExcludeMissing
+            attributionHeaders: JsonField<List<String>> = JsonMissing.of(),
             @JsonProperty("full_request")
             @ExcludeMissing
             fullRequest: JsonField<Boolean> = JsonMissing.of(),
+            @JsonProperty("match_hosts")
+            @ExcludeMissing
+            matchHosts: JsonField<List<String>> = JsonMissing.of(),
             @JsonProperty("request_headers")
             @ExcludeMissing
             requestHeaders: JsonField<List<RequestHeader>> = JsonMissing.of(),
-        ) : this(matchHosts, ttlSeconds, url, fullRequest, requestHeaders, mutableMapOf())
-
-        /**
-         * @throws LangChainInvalidDataException if the JSON field has an unexpected type or is
-         *   unexpectedly missing or null (e.g. if the server responded with an unexpected value).
-         */
-        fun matchHosts(): List<String> = matchHosts.getRequired("match_hosts")
+        ) : this(
+            ttlSeconds,
+            url,
+            attributionHeaders,
+            fullRequest,
+            matchHosts,
+            requestHeaders,
+            mutableMapOf(),
+        )
 
         /**
          * @throws LangChainInvalidDataException if the JSON field has an unexpected type or is
@@ -619,6 +625,16 @@ private constructor(
         fun url(): String = url.getRequired("url")
 
         /**
+         * AttributionHeaders selects required all-egress response headers instead of destination
+         * credentials; omit match_hosts and full_request, and return expires_at with the headers.
+         *
+         * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
+         *   the server responded with an unexpected value).
+         */
+        fun attributionHeaders(): Optional<List<String>> =
+            attributionHeaders.getOptional("attribution_headers")
+
+        /**
          * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
          *   the server responded with an unexpected value).
          */
@@ -628,17 +644,14 @@ private constructor(
          * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
          *   the server responded with an unexpected value).
          */
-        fun requestHeaders(): Optional<List<RequestHeader>> =
-            requestHeaders.getOptional("request_headers")
+        fun matchHosts(): Optional<List<String>> = matchHosts.getOptional("match_hosts")
 
         /**
-         * Returns the raw JSON value of [matchHosts].
-         *
-         * Unlike [matchHosts], this method doesn't throw if the JSON field has an unexpected type.
+         * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
+         *   the server responded with an unexpected value).
          */
-        @JsonProperty("match_hosts")
-        @ExcludeMissing
-        fun _matchHosts(): JsonField<List<String>> = matchHosts
+        fun requestHeaders(): Optional<List<RequestHeader>> =
+            requestHeaders.getOptional("request_headers")
 
         /**
          * Returns the raw JSON value of [ttlSeconds].
@@ -655,6 +668,16 @@ private constructor(
         @JsonProperty("url") @ExcludeMissing fun _url(): JsonField<String> = url
 
         /**
+         * Returns the raw JSON value of [attributionHeaders].
+         *
+         * Unlike [attributionHeaders], this method doesn't throw if the JSON field has an
+         * unexpected type.
+         */
+        @JsonProperty("attribution_headers")
+        @ExcludeMissing
+        fun _attributionHeaders(): JsonField<List<String>> = attributionHeaders
+
+        /**
          * Returns the raw JSON value of [fullRequest].
          *
          * Unlike [fullRequest], this method doesn't throw if the JSON field has an unexpected type.
@@ -662,6 +685,15 @@ private constructor(
         @JsonProperty("full_request")
         @ExcludeMissing
         fun _fullRequest(): JsonField<Boolean> = fullRequest
+
+        /**
+         * Returns the raw JSON value of [matchHosts].
+         *
+         * Unlike [matchHosts], this method doesn't throw if the JSON field has an unexpected type.
+         */
+        @JsonProperty("match_hosts")
+        @ExcludeMissing
+        fun _matchHosts(): JsonField<List<String>> = matchHosts
 
         /**
          * Returns the raw JSON value of [requestHeaders].
@@ -692,7 +724,6 @@ private constructor(
              *
              * The following fields are required:
              * ```java
-             * .matchHosts()
              * .ttlSeconds()
              * .url()
              * ```
@@ -703,21 +734,89 @@ private constructor(
         /** A builder for [Callback]. */
         class Builder internal constructor() {
 
-            private var matchHosts: JsonField<MutableList<String>>? = null
             private var ttlSeconds: JsonField<Long>? = null
             private var url: JsonField<String>? = null
+            private var attributionHeaders: JsonField<MutableList<String>>? = null
             private var fullRequest: JsonField<Boolean> = JsonMissing.of()
+            private var matchHosts: JsonField<MutableList<String>>? = null
             private var requestHeaders: JsonField<MutableList<RequestHeader>>? = null
             private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
 
             @JvmSynthetic
             internal fun from(callback: Callback) = apply {
-                matchHosts = callback.matchHosts.map { it.toMutableList() }
                 ttlSeconds = callback.ttlSeconds
                 url = callback.url
+                attributionHeaders = callback.attributionHeaders.map { it.toMutableList() }
                 fullRequest = callback.fullRequest
+                matchHosts = callback.matchHosts.map { it.toMutableList() }
                 requestHeaders = callback.requestHeaders.map { it.toMutableList() }
                 additionalProperties = callback.additionalProperties.toMutableMap()
+            }
+
+            fun ttlSeconds(ttlSeconds: Long) = ttlSeconds(JsonField.of(ttlSeconds))
+
+            /**
+             * Sets [Builder.ttlSeconds] to an arbitrary JSON value.
+             *
+             * You should usually call [Builder.ttlSeconds] with a well-typed [Long] value instead.
+             * This method is primarily for setting the field to an undocumented or not yet
+             * supported value.
+             */
+            fun ttlSeconds(ttlSeconds: JsonField<Long>) = apply { this.ttlSeconds = ttlSeconds }
+
+            fun url(url: String) = url(JsonField.of(url))
+
+            /**
+             * Sets [Builder.url] to an arbitrary JSON value.
+             *
+             * You should usually call [Builder.url] with a well-typed [String] value instead. This
+             * method is primarily for setting the field to an undocumented or not yet supported
+             * value.
+             */
+            fun url(url: JsonField<String>) = apply { this.url = url }
+
+            /**
+             * AttributionHeaders selects required all-egress response headers instead of
+             * destination credentials; omit match_hosts and full_request, and return expires_at
+             * with the headers.
+             */
+            fun attributionHeaders(attributionHeaders: List<String>) =
+                attributionHeaders(JsonField.of(attributionHeaders))
+
+            /**
+             * Sets [Builder.attributionHeaders] to an arbitrary JSON value.
+             *
+             * You should usually call [Builder.attributionHeaders] with a well-typed `List<String>`
+             * value instead. This method is primarily for setting the field to an undocumented or
+             * not yet supported value.
+             */
+            fun attributionHeaders(attributionHeaders: JsonField<List<String>>) = apply {
+                this.attributionHeaders = attributionHeaders.map { it.toMutableList() }
+            }
+
+            /**
+             * Adds a single [String] to [attributionHeaders].
+             *
+             * @throws IllegalStateException if the field was previously set to a non-list.
+             */
+            fun addAttributionHeader(attributionHeader: String) = apply {
+                attributionHeaders =
+                    (attributionHeaders ?: JsonField.of(mutableListOf())).also {
+                        checkKnown("attributionHeaders", it).add(attributionHeader)
+                    }
+            }
+
+            fun fullRequest(fullRequest: Boolean) = fullRequest(JsonField.of(fullRequest))
+
+            /**
+             * Sets [Builder.fullRequest] to an arbitrary JSON value.
+             *
+             * You should usually call [Builder.fullRequest] with a well-typed [Boolean] value
+             * instead. This method is primarily for setting the field to an undocumented or not yet
+             * supported value.
+             */
+            fun fullRequest(fullRequest: JsonField<Boolean>) = apply {
+                this.fullRequest = fullRequest
             }
 
             fun matchHosts(matchHosts: List<String>) = matchHosts(JsonField.of(matchHosts))
@@ -743,41 +842,6 @@ private constructor(
                     (matchHosts ?: JsonField.of(mutableListOf())).also {
                         checkKnown("matchHosts", it).add(matchHost)
                     }
-            }
-
-            fun ttlSeconds(ttlSeconds: Long) = ttlSeconds(JsonField.of(ttlSeconds))
-
-            /**
-             * Sets [Builder.ttlSeconds] to an arbitrary JSON value.
-             *
-             * You should usually call [Builder.ttlSeconds] with a well-typed [Long] value instead.
-             * This method is primarily for setting the field to an undocumented or not yet
-             * supported value.
-             */
-            fun ttlSeconds(ttlSeconds: JsonField<Long>) = apply { this.ttlSeconds = ttlSeconds }
-
-            fun url(url: String) = url(JsonField.of(url))
-
-            /**
-             * Sets [Builder.url] to an arbitrary JSON value.
-             *
-             * You should usually call [Builder.url] with a well-typed [String] value instead. This
-             * method is primarily for setting the field to an undocumented or not yet supported
-             * value.
-             */
-            fun url(url: JsonField<String>) = apply { this.url = url }
-
-            fun fullRequest(fullRequest: Boolean) = fullRequest(JsonField.of(fullRequest))
-
-            /**
-             * Sets [Builder.fullRequest] to an arbitrary JSON value.
-             *
-             * You should usually call [Builder.fullRequest] with a well-typed [Boolean] value
-             * instead. This method is primarily for setting the field to an undocumented or not yet
-             * supported value.
-             */
-            fun fullRequest(fullRequest: JsonField<Boolean>) = apply {
-                this.fullRequest = fullRequest
             }
 
             fun requestHeaders(requestHeaders: List<RequestHeader>) =
@@ -832,7 +896,6 @@ private constructor(
              *
              * The following fields are required:
              * ```java
-             * .matchHosts()
              * .ttlSeconds()
              * .url()
              * ```
@@ -841,10 +904,11 @@ private constructor(
              */
             fun build(): Callback =
                 Callback(
-                    checkRequired("matchHosts", matchHosts).map { it.toImmutable() },
                     checkRequired("ttlSeconds", ttlSeconds),
                     checkRequired("url", url),
+                    (attributionHeaders ?: JsonMissing.of()).map { it.toImmutable() },
                     fullRequest,
+                    (matchHosts ?: JsonMissing.of()).map { it.toImmutable() },
                     (requestHeaders ?: JsonMissing.of()).map { it.toImmutable() },
                     additionalProperties.toMutableMap(),
                 )
@@ -866,10 +930,11 @@ private constructor(
                 return@apply
             }
 
-            matchHosts()
             ttlSeconds()
             url()
+            attributionHeaders()
             fullRequest()
+            matchHosts()
             requestHeaders().ifPresent { it.forEach { it.validate() } }
             validated = true
         }
@@ -890,10 +955,11 @@ private constructor(
          */
         @JvmSynthetic
         internal fun validity(): Int =
-            (matchHosts.asKnown().getOrNull()?.size ?: 0) +
-                (if (ttlSeconds.asKnown().isPresent) 1 else 0) +
+            (if (ttlSeconds.asKnown().isPresent) 1 else 0) +
                 (if (url.asKnown().isPresent) 1 else 0) +
+                (attributionHeaders.asKnown().getOrNull()?.size ?: 0) +
                 (if (fullRequest.asKnown().isPresent) 1 else 0) +
+                (matchHosts.asKnown().getOrNull()?.size ?: 0) +
                 (requestHeaders.asKnown().getOrNull()?.sumOf { it.validity().toInt() } ?: 0)
 
         class RequestHeader
@@ -1323,20 +1389,22 @@ private constructor(
             }
 
             return other is Callback &&
-                matchHosts == other.matchHosts &&
                 ttlSeconds == other.ttlSeconds &&
                 url == other.url &&
+                attributionHeaders == other.attributionHeaders &&
                 fullRequest == other.fullRequest &&
+                matchHosts == other.matchHosts &&
                 requestHeaders == other.requestHeaders &&
                 additionalProperties == other.additionalProperties
         }
 
         private val hashCode: Int by lazy {
             Objects.hash(
-                matchHosts,
                 ttlSeconds,
                 url,
+                attributionHeaders,
                 fullRequest,
+                matchHosts,
                 requestHeaders,
                 additionalProperties,
             )
@@ -1345,7 +1413,7 @@ private constructor(
         override fun hashCode(): Int = hashCode
 
         override fun toString() =
-            "Callback{matchHosts=$matchHosts, ttlSeconds=$ttlSeconds, url=$url, fullRequest=$fullRequest, requestHeaders=$requestHeaders, additionalProperties=$additionalProperties}"
+            "Callback{ttlSeconds=$ttlSeconds, url=$url, attributionHeaders=$attributionHeaders, fullRequest=$fullRequest, matchHosts=$matchHosts, requestHeaders=$requestHeaders, additionalProperties=$additionalProperties}"
     }
 
     class Rule
@@ -1532,6 +1600,11 @@ private constructor(
         fun rewrite(): Optional<Rewrite> = rewrite.getOptional("rewrite")
 
         /**
+         * Type selects the rule action; attribution adds up to 16 literal plaintext X- metadata
+         * headers to every proxy-handled HTTP(S) destination, independently of credential rules. At
+         * most one attribution rule is allowed, without matching, provider, relay, rewrite or
+         * environment fields.
+         *
          * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
          *   the server responded with an unexpected value).
          */
@@ -2026,6 +2099,12 @@ private constructor(
              */
             fun rewrite(rewrite: JsonField<Rewrite>) = apply { this.rewrite = rewrite }
 
+            /**
+             * Type selects the rule action; attribution adds up to 16 literal plaintext X- metadata
+             * headers to every proxy-handled HTTP(S) destination, independently of credential
+             * rules. At most one attribution rule is allowed, without matching, provider, relay,
+             * rewrite or environment fields.
+             */
             fun type(type: String) = type(JsonField.of(type))
 
             /**
