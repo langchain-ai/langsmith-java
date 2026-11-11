@@ -12,7 +12,7 @@ buildscript {
 plugins {
     application
     kotlin("jvm")
-    id("org.jetbrains.kotlin.plugin.spring") version "2.4.10"
+    id("org.jetbrains.kotlin.plugin.spring") version "2.4.21"
     id("org.springframework.boot") version "4.1.1" apply false
 }
 
