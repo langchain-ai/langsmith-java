@@ -11,7 +11,15 @@ import java.util.Objects
 import java.util.Optional
 import kotlin.jvm.optionals.getOrNull
 
-/** Get a specific project. */
+/**
+ * Get a specific project.
+ *
+ * Deprecated: use GET /api/v2/sessions/{session_id}. The v1 endpoint is scheduled for removal on
+ * Jul 1, 2027.
+ */
+@Deprecated(
+    "Deprecated: use retrieveV2 instead, which calls GET /api/v2/sessions/{session_id}. The v1 endpoint is scheduled for removal on Jul 1, 2027."
+)
 class SessionRetrieveParams
 private constructor(
     private val sessionId: String?,

@@ -22,7 +22,15 @@ import java.util.Objects
 import java.util.Optional
 import kotlin.jvm.optionals.getOrNull
 
-/** Update a project. */
+/**
+ * Update a project.
+ *
+ * Deprecated: use PATCH /api/v2/sessions/{session_id}. The v1 endpoint is scheduled for removal on
+ * Jul 1, 2027.
+ */
+@Deprecated(
+    "Deprecated: use updateV2 instead, which calls PATCH /api/v2/sessions/{session_id}. The v1 endpoint is scheduled for removal on Jul 1, 2027."
+)
 class SessionUpdateParams
 private constructor(
     private val sessionId: String?,

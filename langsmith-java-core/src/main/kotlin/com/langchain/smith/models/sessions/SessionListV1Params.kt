@@ -19,11 +19,11 @@ import kotlin.jvm.optionals.getOrNull
 /**
  * List all projects.
  *
- * Deprecated: use GET /api/v2/sessions, which pages with a cursor. Will be removed after Jun
- * 1, 2027.
+ * Deprecated: use GET /api/v2/sessions, which pages with a cursor. The v1 endpoint is scheduled for
+ * removal on Jul 1, 2027.
  */
 @Deprecated(
-    "Deprecated: use listV2 instead, which calls GET /api/v2/sessions and pages with a cursor. Will be removed after Apr 1, 2027."
+    "Deprecated: use listV2 instead, which calls GET /api/v2/sessions and pages with a cursor. The v1 endpoint is scheduled for removal on Jul 1, 2027."
 )
 class SessionListV1Params
 private constructor(

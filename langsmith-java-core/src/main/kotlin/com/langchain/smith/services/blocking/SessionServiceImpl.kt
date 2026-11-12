@@ -59,6 +59,9 @@ class SessionServiceImpl internal constructor(private val clientOptions: ClientO
 
     override fun insights(): InsightService = insights
 
+    @Deprecated(
+        "Deprecated: use createV2 instead, which calls POST /api/v2/sessions. The v1 endpoint is scheduled for removal on Jul 1, 2027."
+    )
     override fun create(
         params: SessionCreateParams,
         requestOptions: RequestOptions,
@@ -66,6 +69,9 @@ class SessionServiceImpl internal constructor(private val clientOptions: ClientO
         // post /api/v1/sessions
         withRawResponse().create(params, requestOptions).parse()
 
+    @Deprecated(
+        "Deprecated: use retrieveV2 instead, which calls GET /api/v2/sessions/{session_id}. The v1 endpoint is scheduled for removal on Jul 1, 2027."
+    )
     override fun retrieve(
         params: SessionRetrieveParams,
         requestOptions: RequestOptions,
@@ -73,6 +79,9 @@ class SessionServiceImpl internal constructor(private val clientOptions: ClientO
         // get /api/v1/sessions/{session_id}
         withRawResponse().retrieve(params, requestOptions).parse()
 
+    @Deprecated(
+        "Deprecated: use updateV2 instead, which calls PATCH /api/v2/sessions/{session_id}. The v1 endpoint is scheduled for removal on Jul 1, 2027."
+    )
     override fun update(
         params: SessionUpdateParams,
         requestOptions: RequestOptions,
@@ -97,7 +106,7 @@ class SessionServiceImpl internal constructor(private val clientOptions: ClientO
         withRawResponse().dashboard(params, requestOptions).parse()
 
     @Deprecated(
-        "Deprecated: use listV2 instead, which calls GET /api/v2/sessions and pages with a cursor. Will be removed after Apr 1, 2027."
+        "Deprecated: use listV2 instead, which calls GET /api/v2/sessions and pages with a cursor. The v1 endpoint is scheduled for removal on Jul 1, 2027."
     )
     override fun listV1(
         params: SessionListV1Params,
@@ -157,6 +166,9 @@ class SessionServiceImpl internal constructor(private val clientOptions: ClientO
         private val createHandler: Handler<TracerSessionWithoutVirtualFields> =
             jsonHandler<TracerSessionWithoutVirtualFields>(clientOptions.jsonMapper)
 
+        @Deprecated(
+            "Deprecated: use createV2 instead, which calls POST /api/v2/sessions. The v1 endpoint is scheduled for removal on Jul 1, 2027."
+        )
         override fun create(
             params: SessionCreateParams,
             requestOptions: RequestOptions,
@@ -185,6 +197,9 @@ class SessionServiceImpl internal constructor(private val clientOptions: ClientO
         private val retrieveHandler: Handler<TracerSession> =
             jsonHandler<TracerSession>(clientOptions.jsonMapper)
 
+        @Deprecated(
+            "Deprecated: use retrieveV2 instead, which calls GET /api/v2/sessions/{session_id}. The v1 endpoint is scheduled for removal on Jul 1, 2027."
+        )
         override fun retrieve(
             params: SessionRetrieveParams,
             requestOptions: RequestOptions,
@@ -215,6 +230,9 @@ class SessionServiceImpl internal constructor(private val clientOptions: ClientO
         private val updateHandler: Handler<TracerSessionWithoutVirtualFields> =
             jsonHandler<TracerSessionWithoutVirtualFields>(clientOptions.jsonMapper)
 
+        @Deprecated(
+            "Deprecated: use updateV2 instead, which calls PATCH /api/v2/sessions/{session_id}. The v1 endpoint is scheduled for removal on Jul 1, 2027."
+        )
         override fun update(
             params: SessionUpdateParams,
             requestOptions: RequestOptions,
@@ -330,7 +348,7 @@ class SessionServiceImpl internal constructor(private val clientOptions: ClientO
             jsonHandler<List<TracerSession>>(clientOptions.jsonMapper)
 
         @Deprecated(
-            "Deprecated: use listV2 instead, which calls GET /api/v2/sessions and pages with a cursor. Will be removed after Apr 1, 2027."
+            "Deprecated: use listV2 instead, which calls GET /api/v2/sessions and pages with a cursor. The v1 endpoint is scheduled for removal on Jul 1, 2027."
         )
         override fun listV1(
             params: SessionListV1Params,

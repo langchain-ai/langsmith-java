@@ -11,7 +11,7 @@ import kotlin.jvm.optionals.getOrDefault
 
 /** @see SessionService.listV1 */
 @Deprecated(
-    "Deprecated: use listV2 instead, which calls GET /api/v2/sessions and pages with a cursor. Will be removed after Apr 1, 2027."
+    "Deprecated: use listV2 instead, which calls GET /api/v2/sessions and pages with a cursor. The v1 endpoint is scheduled for removal on Jul 1, 2027."
 )
 class SessionListV1Page
 private constructor(

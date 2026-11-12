@@ -46,29 +46,57 @@ interface SessionService {
 
     fun insights(): InsightService
 
-    /** Create a new project. */
+    /**
+     * Create a new project.
+     *
+     * Deprecated: use POST /api/v2/sessions. The v1 endpoint is scheduled for removal on Jul
+     * 1, 2027.
+     */
+    @Deprecated(
+        "Deprecated: use createV2 instead, which calls POST /api/v2/sessions. The v1 endpoint is scheduled for removal on Jul 1, 2027."
+    )
     fun create(): TracerSessionWithoutVirtualFields = create(SessionCreateParams.none())
 
     /** @see create */
+    @Deprecated(
+        "Deprecated: use createV2 instead, which calls POST /api/v2/sessions. The v1 endpoint is scheduled for removal on Jul 1, 2027."
+    )
     fun create(
         params: SessionCreateParams = SessionCreateParams.none(),
         requestOptions: RequestOptions = RequestOptions.none(),
     ): TracerSessionWithoutVirtualFields
 
     /** @see create */
+    @Deprecated(
+        "Deprecated: use createV2 instead, which calls POST /api/v2/sessions. The v1 endpoint is scheduled for removal on Jul 1, 2027."
+    )
     fun create(
         params: SessionCreateParams = SessionCreateParams.none()
     ): TracerSessionWithoutVirtualFields = create(params, RequestOptions.none())
 
     /** @see create */
+    @Deprecated(
+        "Deprecated: use createV2 instead, which calls POST /api/v2/sessions. The v1 endpoint is scheduled for removal on Jul 1, 2027."
+    )
     fun create(requestOptions: RequestOptions): TracerSessionWithoutVirtualFields =
         create(SessionCreateParams.none(), requestOptions)
 
-    /** Get a specific project. */
+    /**
+     * Get a specific project.
+     *
+     * Deprecated: use GET /api/v2/sessions/{session_id}. The v1 endpoint is scheduled for removal
+     * on Jul 1, 2027.
+     */
+    @Deprecated(
+        "Deprecated: use retrieveV2 instead, which calls GET /api/v2/sessions/{session_id}. The v1 endpoint is scheduled for removal on Jul 1, 2027."
+    )
     fun retrieve(sessionId: String): TracerSession =
         retrieve(sessionId, SessionRetrieveParams.none())
 
     /** @see retrieve */
+    @Deprecated(
+        "Deprecated: use retrieveV2 instead, which calls GET /api/v2/sessions/{session_id}. The v1 endpoint is scheduled for removal on Jul 1, 2027."
+    )
     fun retrieve(
         sessionId: String,
         params: SessionRetrieveParams = SessionRetrieveParams.none(),
@@ -76,30 +104,53 @@ interface SessionService {
     ): TracerSession = retrieve(params.toBuilder().sessionId(sessionId).build(), requestOptions)
 
     /** @see retrieve */
+    @Deprecated(
+        "Deprecated: use retrieveV2 instead, which calls GET /api/v2/sessions/{session_id}. The v1 endpoint is scheduled for removal on Jul 1, 2027."
+    )
     fun retrieve(
         sessionId: String,
         params: SessionRetrieveParams = SessionRetrieveParams.none(),
     ): TracerSession = retrieve(sessionId, params, RequestOptions.none())
 
     /** @see retrieve */
+    @Deprecated(
+        "Deprecated: use retrieveV2 instead, which calls GET /api/v2/sessions/{session_id}. The v1 endpoint is scheduled for removal on Jul 1, 2027."
+    )
     fun retrieve(
         params: SessionRetrieveParams,
         requestOptions: RequestOptions = RequestOptions.none(),
     ): TracerSession
 
     /** @see retrieve */
+    @Deprecated(
+        "Deprecated: use retrieveV2 instead, which calls GET /api/v2/sessions/{session_id}. The v1 endpoint is scheduled for removal on Jul 1, 2027."
+    )
     fun retrieve(params: SessionRetrieveParams): TracerSession =
         retrieve(params, RequestOptions.none())
 
     /** @see retrieve */
+    @Deprecated(
+        "Deprecated: use retrieveV2 instead, which calls GET /api/v2/sessions/{session_id}. The v1 endpoint is scheduled for removal on Jul 1, 2027."
+    )
     fun retrieve(sessionId: String, requestOptions: RequestOptions): TracerSession =
         retrieve(sessionId, SessionRetrieveParams.none(), requestOptions)
 
-    /** Update a project. */
+    /**
+     * Update a project.
+     *
+     * Deprecated: use PATCH /api/v2/sessions/{session_id}. The v1 endpoint is scheduled for removal
+     * on Jul 1, 2027.
+     */
+    @Deprecated(
+        "Deprecated: use updateV2 instead, which calls PATCH /api/v2/sessions/{session_id}. The v1 endpoint is scheduled for removal on Jul 1, 2027."
+    )
     fun update(sessionId: String): TracerSessionWithoutVirtualFields =
         update(sessionId, SessionUpdateParams.none())
 
     /** @see update */
+    @Deprecated(
+        "Deprecated: use updateV2 instead, which calls PATCH /api/v2/sessions/{session_id}. The v1 endpoint is scheduled for removal on Jul 1, 2027."
+    )
     fun update(
         sessionId: String,
         params: SessionUpdateParams = SessionUpdateParams.none(),
@@ -108,22 +159,34 @@ interface SessionService {
         update(params.toBuilder().sessionId(sessionId).build(), requestOptions)
 
     /** @see update */
+    @Deprecated(
+        "Deprecated: use updateV2 instead, which calls PATCH /api/v2/sessions/{session_id}. The v1 endpoint is scheduled for removal on Jul 1, 2027."
+    )
     fun update(
         sessionId: String,
         params: SessionUpdateParams = SessionUpdateParams.none(),
     ): TracerSessionWithoutVirtualFields = update(sessionId, params, RequestOptions.none())
 
     /** @see update */
+    @Deprecated(
+        "Deprecated: use updateV2 instead, which calls PATCH /api/v2/sessions/{session_id}. The v1 endpoint is scheduled for removal on Jul 1, 2027."
+    )
     fun update(
         params: SessionUpdateParams,
         requestOptions: RequestOptions = RequestOptions.none(),
     ): TracerSessionWithoutVirtualFields
 
     /** @see update */
+    @Deprecated(
+        "Deprecated: use updateV2 instead, which calls PATCH /api/v2/sessions/{session_id}. The v1 endpoint is scheduled for removal on Jul 1, 2027."
+    )
     fun update(params: SessionUpdateParams): TracerSessionWithoutVirtualFields =
         update(params, RequestOptions.none())
 
     /** @see update */
+    @Deprecated(
+        "Deprecated: use updateV2 instead, which calls PATCH /api/v2/sessions/{session_id}. The v1 endpoint is scheduled for removal on Jul 1, 2027."
+    )
     fun update(
         sessionId: String,
         requestOptions: RequestOptions,
@@ -202,17 +265,17 @@ interface SessionService {
     /**
      * List all projects.
      *
-     * Deprecated: use GET /api/v2/sessions, which pages with a cursor. Will be removed after Jun
-     * 1, 2027.
+     * Deprecated: use GET /api/v2/sessions, which pages with a cursor. The v1 endpoint is scheduled
+     * for removal on Jul 1, 2027.
      */
     @Deprecated(
-        "Deprecated: use listV2 instead, which calls GET /api/v2/sessions and pages with a cursor. Will be removed after Apr 1, 2027."
+        "Deprecated: use listV2 instead, which calls GET /api/v2/sessions and pages with a cursor. The v1 endpoint is scheduled for removal on Jul 1, 2027."
     )
     fun listV1(): SessionListV1Page = listV1(SessionListV1Params.none())
 
     /** @see listV1 */
     @Deprecated(
-        "Deprecated: use listV2 instead, which calls GET /api/v2/sessions and pages with a cursor. Will be removed after Apr 1, 2027."
+        "Deprecated: use listV2 instead, which calls GET /api/v2/sessions and pages with a cursor. The v1 endpoint is scheduled for removal on Jul 1, 2027."
     )
     fun listV1(
         params: SessionListV1Params = SessionListV1Params.none(),
@@ -221,14 +284,14 @@ interface SessionService {
 
     /** @see listV1 */
     @Deprecated(
-        "Deprecated: use listV2 instead, which calls GET /api/v2/sessions and pages with a cursor. Will be removed after Apr 1, 2027."
+        "Deprecated: use listV2 instead, which calls GET /api/v2/sessions and pages with a cursor. The v1 endpoint is scheduled for removal on Jul 1, 2027."
     )
     fun listV1(params: SessionListV1Params = SessionListV1Params.none()): SessionListV1Page =
         listV1(params, RequestOptions.none())
 
     /** @see listV1 */
     @Deprecated(
-        "Deprecated: use listV2 instead, which calls GET /api/v2/sessions and pages with a cursor. Will be removed after Apr 1, 2027."
+        "Deprecated: use listV2 instead, which calls GET /api/v2/sessions and pages with a cursor. The v1 endpoint is scheduled for removal on Jul 1, 2027."
     )
     fun listV1(requestOptions: RequestOptions): SessionListV1Page =
         listV1(SessionListV1Params.none(), requestOptions)
@@ -342,8 +405,8 @@ interface SessionService {
     /**
      * List all projects.
      *
-     * Deprecated: use GET /api/v2/sessions, which pages with a cursor. Will be removed after Jun
-     * 1, 2027.
+     * Deprecated: use GET /api/v2/sessions, which pages with a cursor. The v1 endpoint is scheduled
+     * for removal on Jul 1, 2027.
      */
     fun list(): SessionListPage = list(SessionListParams.none())
 
@@ -377,11 +440,17 @@ interface SessionService {
          * Returns a raw HTTP response for `post /api/v1/sessions`, but is otherwise the same as
          * [SessionService.create].
          */
+        @Deprecated(
+            "Deprecated: use createV2 instead, which calls POST /api/v2/sessions. The v1 endpoint is scheduled for removal on Jul 1, 2027."
+        )
         @MustBeClosed
         fun create(): HttpResponseFor<TracerSessionWithoutVirtualFields> =
             create(SessionCreateParams.none())
 
         /** @see create */
+        @Deprecated(
+            "Deprecated: use createV2 instead, which calls POST /api/v2/sessions. The v1 endpoint is scheduled for removal on Jul 1, 2027."
+        )
         @MustBeClosed
         fun create(
             params: SessionCreateParams = SessionCreateParams.none(),
@@ -389,6 +458,9 @@ interface SessionService {
         ): HttpResponseFor<TracerSessionWithoutVirtualFields>
 
         /** @see create */
+        @Deprecated(
+            "Deprecated: use createV2 instead, which calls POST /api/v2/sessions. The v1 endpoint is scheduled for removal on Jul 1, 2027."
+        )
         @MustBeClosed
         fun create(
             params: SessionCreateParams = SessionCreateParams.none()
@@ -396,6 +468,9 @@ interface SessionService {
             create(params, RequestOptions.none())
 
         /** @see create */
+        @Deprecated(
+            "Deprecated: use createV2 instead, which calls POST /api/v2/sessions. The v1 endpoint is scheduled for removal on Jul 1, 2027."
+        )
         @MustBeClosed
         fun create(
             requestOptions: RequestOptions
@@ -406,11 +481,17 @@ interface SessionService {
          * Returns a raw HTTP response for `get /api/v1/sessions/{session_id}`, but is otherwise the
          * same as [SessionService.retrieve].
          */
+        @Deprecated(
+            "Deprecated: use retrieveV2 instead, which calls GET /api/v2/sessions/{session_id}. The v1 endpoint is scheduled for removal on Jul 1, 2027."
+        )
         @MustBeClosed
         fun retrieve(sessionId: String): HttpResponseFor<TracerSession> =
             retrieve(sessionId, SessionRetrieveParams.none())
 
         /** @see retrieve */
+        @Deprecated(
+            "Deprecated: use retrieveV2 instead, which calls GET /api/v2/sessions/{session_id}. The v1 endpoint is scheduled for removal on Jul 1, 2027."
+        )
         @MustBeClosed
         fun retrieve(
             sessionId: String,
@@ -420,6 +501,9 @@ interface SessionService {
             retrieve(params.toBuilder().sessionId(sessionId).build(), requestOptions)
 
         /** @see retrieve */
+        @Deprecated(
+            "Deprecated: use retrieveV2 instead, which calls GET /api/v2/sessions/{session_id}. The v1 endpoint is scheduled for removal on Jul 1, 2027."
+        )
         @MustBeClosed
         fun retrieve(
             sessionId: String,
@@ -427,6 +511,9 @@ interface SessionService {
         ): HttpResponseFor<TracerSession> = retrieve(sessionId, params, RequestOptions.none())
 
         /** @see retrieve */
+        @Deprecated(
+            "Deprecated: use retrieveV2 instead, which calls GET /api/v2/sessions/{session_id}. The v1 endpoint is scheduled for removal on Jul 1, 2027."
+        )
         @MustBeClosed
         fun retrieve(
             params: SessionRetrieveParams,
@@ -434,11 +521,17 @@ interface SessionService {
         ): HttpResponseFor<TracerSession>
 
         /** @see retrieve */
+        @Deprecated(
+            "Deprecated: use retrieveV2 instead, which calls GET /api/v2/sessions/{session_id}. The v1 endpoint is scheduled for removal on Jul 1, 2027."
+        )
         @MustBeClosed
         fun retrieve(params: SessionRetrieveParams): HttpResponseFor<TracerSession> =
             retrieve(params, RequestOptions.none())
 
         /** @see retrieve */
+        @Deprecated(
+            "Deprecated: use retrieveV2 instead, which calls GET /api/v2/sessions/{session_id}. The v1 endpoint is scheduled for removal on Jul 1, 2027."
+        )
         @MustBeClosed
         fun retrieve(
             sessionId: String,
@@ -450,11 +543,17 @@ interface SessionService {
          * Returns a raw HTTP response for `patch /api/v1/sessions/{session_id}`, but is otherwise
          * the same as [SessionService.update].
          */
+        @Deprecated(
+            "Deprecated: use updateV2 instead, which calls PATCH /api/v2/sessions/{session_id}. The v1 endpoint is scheduled for removal on Jul 1, 2027."
+        )
         @MustBeClosed
         fun update(sessionId: String): HttpResponseFor<TracerSessionWithoutVirtualFields> =
             update(sessionId, SessionUpdateParams.none())
 
         /** @see update */
+        @Deprecated(
+            "Deprecated: use updateV2 instead, which calls PATCH /api/v2/sessions/{session_id}. The v1 endpoint is scheduled for removal on Jul 1, 2027."
+        )
         @MustBeClosed
         fun update(
             sessionId: String,
@@ -464,6 +563,9 @@ interface SessionService {
             update(params.toBuilder().sessionId(sessionId).build(), requestOptions)
 
         /** @see update */
+        @Deprecated(
+            "Deprecated: use updateV2 instead, which calls PATCH /api/v2/sessions/{session_id}. The v1 endpoint is scheduled for removal on Jul 1, 2027."
+        )
         @MustBeClosed
         fun update(
             sessionId: String,
@@ -472,6 +574,9 @@ interface SessionService {
             update(sessionId, params, RequestOptions.none())
 
         /** @see update */
+        @Deprecated(
+            "Deprecated: use updateV2 instead, which calls PATCH /api/v2/sessions/{session_id}. The v1 endpoint is scheduled for removal on Jul 1, 2027."
+        )
         @MustBeClosed
         fun update(
             params: SessionUpdateParams,
@@ -479,6 +584,9 @@ interface SessionService {
         ): HttpResponseFor<TracerSessionWithoutVirtualFields>
 
         /** @see update */
+        @Deprecated(
+            "Deprecated: use updateV2 instead, which calls PATCH /api/v2/sessions/{session_id}. The v1 endpoint is scheduled for removal on Jul 1, 2027."
+        )
         @MustBeClosed
         fun update(
             params: SessionUpdateParams
@@ -486,6 +594,9 @@ interface SessionService {
             update(params, RequestOptions.none())
 
         /** @see update */
+        @Deprecated(
+            "Deprecated: use updateV2 instead, which calls PATCH /api/v2/sessions/{session_id}. The v1 endpoint is scheduled for removal on Jul 1, 2027."
+        )
         @MustBeClosed
         fun update(
             sessionId: String,
@@ -584,14 +695,14 @@ interface SessionService {
          * [SessionService.listV1].
          */
         @Deprecated(
-            "Deprecated: use listV2 instead, which calls GET /api/v2/sessions and pages with a cursor. Will be removed after Apr 1, 2027."
+            "Deprecated: use listV2 instead, which calls GET /api/v2/sessions and pages with a cursor. The v1 endpoint is scheduled for removal on Jul 1, 2027."
         )
         @MustBeClosed
         fun listV1(): HttpResponseFor<SessionListV1Page> = listV1(SessionListV1Params.none())
 
         /** @see listV1 */
         @Deprecated(
-            "Deprecated: use listV2 instead, which calls GET /api/v2/sessions and pages with a cursor. Will be removed after Apr 1, 2027."
+            "Deprecated: use listV2 instead, which calls GET /api/v2/sessions and pages with a cursor. The v1 endpoint is scheduled for removal on Jul 1, 2027."
         )
         @MustBeClosed
         fun listV1(
@@ -601,7 +712,7 @@ interface SessionService {
 
         /** @see listV1 */
         @Deprecated(
-            "Deprecated: use listV2 instead, which calls GET /api/v2/sessions and pages with a cursor. Will be removed after Apr 1, 2027."
+            "Deprecated: use listV2 instead, which calls GET /api/v2/sessions and pages with a cursor. The v1 endpoint is scheduled for removal on Jul 1, 2027."
         )
         @MustBeClosed
         fun listV1(
@@ -610,7 +721,7 @@ interface SessionService {
 
         /** @see listV1 */
         @Deprecated(
-            "Deprecated: use listV2 instead, which calls GET /api/v2/sessions and pages with a cursor. Will be removed after Apr 1, 2027."
+            "Deprecated: use listV2 instead, which calls GET /api/v2/sessions and pages with a cursor. The v1 endpoint is scheduled for removal on Jul 1, 2027."
         )
         @MustBeClosed
         fun listV1(requestOptions: RequestOptions): HttpResponseFor<SessionListV1Page> =

@@ -23,7 +23,14 @@ import java.util.Objects
 import java.util.Optional
 import kotlin.jvm.optionals.getOrNull
 
-/** Create a new project. */
+/**
+ * Create a new project.
+ *
+ * Deprecated: use POST /api/v2/sessions. The v1 endpoint is scheduled for removal on Jul 1, 2027.
+ */
+@Deprecated(
+    "Deprecated: use createV2 instead, which calls POST /api/v2/sessions. The v1 endpoint is scheduled for removal on Jul 1, 2027."
+)
 class SessionCreateParams
 private constructor(
     private val upsert: Boolean?,
