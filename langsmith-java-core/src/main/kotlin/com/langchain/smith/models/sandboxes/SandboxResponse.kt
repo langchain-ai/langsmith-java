@@ -1094,10 +1094,10 @@ private constructor(
         fun mode(): Mode = mode.getRequired("mode")
 
         /**
-         * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
-         *   the server responded with an unexpected value).
+         * @throws LangChainInvalidDataException if the JSON field has an unexpected type or is
+         *   unexpectedly missing or null (e.g. if the server responded with an unexpected value).
          */
-        fun permissions(): Optional<List<String>> = permissions.getOptional("permissions")
+        fun permissions(): List<String> = permissions.getRequired("permissions")
 
         /**
          * Returns the raw JSON value of [mode].
@@ -1135,6 +1135,7 @@ private constructor(
              * The following fields are required:
              * ```java
              * .mode()
+             * .permissions()
              * ```
              */
             @JvmStatic fun builder() = Builder()
@@ -1217,6 +1218,7 @@ private constructor(
              * The following fields are required:
              * ```java
              * .mode()
+             * .permissions()
              * ```
              *
              * @throws IllegalStateException if any required field is unset.
@@ -1224,7 +1226,7 @@ private constructor(
             fun build(): AccessDelegation =
                 AccessDelegation(
                     checkRequired("mode", mode),
-                    (permissions ?: JsonMissing.of()).map { it.toImmutable() },
+                    checkRequired("permissions", permissions).map { it.toImmutable() },
                     additionalProperties.toMutableMap(),
                 )
         }
@@ -1283,8 +1285,6 @@ private constructor(
 
             companion object {
 
-                @JvmField val INHERIT = of("INHERIT")
-
                 @JvmField val EXPLICIT = of("EXPLICIT")
 
                 @JvmStatic fun of(value: String) = Mode(JsonField.of(value))
@@ -1292,8 +1292,7 @@ private constructor(
 
             /** An enum containing [Mode]'s known values. */
             enum class Known {
-                INHERIT,
-                EXPLICIT,
+                EXPLICIT
             }
 
             /**
@@ -1306,7 +1305,6 @@ private constructor(
              * - It was constructed with an arbitrary value using the [of] method.
              */
             enum class Value {
-                INHERIT,
                 EXPLICIT,
                 /** An enum member indicating that [Mode] was instantiated with an unknown value. */
                 _UNKNOWN,
@@ -1321,7 +1319,6 @@ private constructor(
              */
             fun value(): Value =
                 when (this) {
-                    INHERIT -> Value.INHERIT
                     EXPLICIT -> Value.EXPLICIT
                     else -> Value._UNKNOWN
                 }
@@ -1337,7 +1334,6 @@ private constructor(
              */
             fun known(): Known =
                 when (this) {
-                    INHERIT -> Known.INHERIT
                     EXPLICIT -> Known.EXPLICIT
                     else -> throw LangChainInvalidDataException("Unknown Mode: $value")
                 }

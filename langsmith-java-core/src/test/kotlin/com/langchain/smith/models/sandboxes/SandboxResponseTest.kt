@@ -18,7 +18,7 @@ internal class SandboxResponseTest {
                 .id("id")
                 .accessDelegation(
                     SandboxResponse.AccessDelegation.builder()
-                        .mode(SandboxResponse.AccessDelegation.Mode.INHERIT)
+                        .mode(SandboxResponse.AccessDelegation.Mode.EXPLICIT)
                         .addPermission("string")
                         .build()
                 )
@@ -283,7 +283,7 @@ internal class SandboxResponseTest {
         assertThat(sandboxResponse.accessDelegation())
             .contains(
                 SandboxResponse.AccessDelegation.builder()
-                    .mode(SandboxResponse.AccessDelegation.Mode.INHERIT)
+                    .mode(SandboxResponse.AccessDelegation.Mode.EXPLICIT)
                     .addPermission("string")
                     .build()
             )
@@ -546,7 +546,7 @@ internal class SandboxResponseTest {
                 .id("id")
                 .accessDelegation(
                     SandboxResponse.AccessDelegation.builder()
-                        .mode(SandboxResponse.AccessDelegation.Mode.INHERIT)
+                        .mode(SandboxResponse.AccessDelegation.Mode.EXPLICIT)
                         .addPermission("string")
                         .build()
                 )

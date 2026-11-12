@@ -20,7 +20,7 @@ internal class SandboxListResponseTest {
                         .id("id")
                         .accessDelegation(
                             SandboxResponse.AccessDelegation.builder()
-                                .mode(SandboxResponse.AccessDelegation.Mode.INHERIT)
+                                .mode(SandboxResponse.AccessDelegation.Mode.EXPLICIT)
                                 .addPermission("string")
                                 .build()
                         )
@@ -321,7 +321,7 @@ internal class SandboxListResponseTest {
                         .id("id")
                         .accessDelegation(
                             SandboxResponse.AccessDelegation.builder()
-                                .mode(SandboxResponse.AccessDelegation.Mode.INHERIT)
+                                .mode(SandboxResponse.AccessDelegation.Mode.EXPLICIT)
                                 .addPermission("string")
                                 .build()
                         )
@@ -623,7 +623,7 @@ internal class SandboxListResponseTest {
                     .id("id")
                     .accessDelegation(
                         SandboxResponse.AccessDelegation.builder()
-                            .mode(SandboxResponse.AccessDelegation.Mode.INHERIT)
+                            .mode(SandboxResponse.AccessDelegation.Mode.EXPLICIT)
                             .addPermission("string")
                             .build()
                     )
@@ -911,7 +911,7 @@ internal class SandboxListResponseTest {
                     .id("id")
                     .accessDelegation(
                         SandboxResponse.AccessDelegation.builder()
-                            .mode(SandboxResponse.AccessDelegation.Mode.INHERIT)
+                            .mode(SandboxResponse.AccessDelegation.Mode.EXPLICIT)
                             .addPermission("string")
                             .build()
                     )
@@ -1203,7 +1203,7 @@ internal class SandboxListResponseTest {
                         .id("id")
                         .accessDelegation(
                             SandboxResponse.AccessDelegation.builder()
-                                .mode(SandboxResponse.AccessDelegation.Mode.INHERIT)
+                                .mode(SandboxResponse.AccessDelegation.Mode.EXPLICIT)
                                 .addPermission("string")
                                 .build()
                         )
@@ -1504,7 +1504,7 @@ internal class SandboxListResponseTest {
                         .id("id")
                         .accessDelegation(
                             SandboxResponse.AccessDelegation.builder()
-                                .mode(SandboxResponse.AccessDelegation.Mode.INHERIT)
+                                .mode(SandboxResponse.AccessDelegation.Mode.EXPLICIT)
                                 .addPermission("string")
                                 .build()
                         )

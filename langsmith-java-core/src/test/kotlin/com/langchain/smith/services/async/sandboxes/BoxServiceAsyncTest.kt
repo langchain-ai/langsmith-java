@@ -32,7 +32,7 @@ internal class BoxServiceAsyncTest {
                 BoxCreateParams.builder()
                     .accessDelegation(
                         BoxCreateParams.AccessDelegation.builder()
-                            .mode(BoxCreateParams.AccessDelegation.Mode.INHERIT)
+                            .mode(BoxCreateParams.AccessDelegation.Mode.EXPLICIT)
                             .addPermission("string")
                             .build()
                     )

@@ -16,7 +16,7 @@ internal class BoxCreateParamsTest {
         BoxCreateParams.builder()
             .accessDelegation(
                 BoxCreateParams.AccessDelegation.builder()
-                    .mode(BoxCreateParams.AccessDelegation.Mode.INHERIT)
+                    .mode(BoxCreateParams.AccessDelegation.Mode.EXPLICIT)
                     .addPermission("string")
                     .build()
             )
@@ -272,7 +272,7 @@ internal class BoxCreateParamsTest {
             BoxCreateParams.builder()
                 .accessDelegation(
                     BoxCreateParams.AccessDelegation.builder()
-                        .mode(BoxCreateParams.AccessDelegation.Mode.INHERIT)
+                        .mode(BoxCreateParams.AccessDelegation.Mode.EXPLICIT)
                         .addPermission("string")
                         .build()
                 )
@@ -537,7 +537,7 @@ internal class BoxCreateParamsTest {
         assertThat(body.accessDelegation())
             .contains(
                 BoxCreateParams.AccessDelegation.builder()
-                    .mode(BoxCreateParams.AccessDelegation.Mode.INHERIT)
+                    .mode(BoxCreateParams.AccessDelegation.Mode.EXPLICIT)
                     .addPermission("string")
                     .build()
             )
