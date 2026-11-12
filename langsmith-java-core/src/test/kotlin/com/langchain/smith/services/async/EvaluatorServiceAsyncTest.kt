@@ -6,6 +6,7 @@ import com.langchain.smith.client.okhttp.LangsmithOkHttpClientAsync
 import com.langchain.smith.core.JsonValue
 import com.langchain.smith.models.evaluators.EvaluatorCreateDecisionModelParams
 import com.langchain.smith.models.evaluators.EvaluatorListParams
+import com.langchain.smith.models.evaluators.EvaluatorListV1Params
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 
@@ -105,5 +106,51 @@ internal class EvaluatorServiceAsyncTest {
 
         val evaluator = evaluatorFuture.get()
         evaluator.validate()
+    }
+
+    @Disabled("Mock server tests are disabled")
+    @Test
+    fun listV2() {
+        val client =
+            LangsmithOkHttpClientAsync.builder()
+                .apiKey("My API Key")
+                .tenantId("My Tenant ID")
+                .build()
+        val evaluatorServiceAsync = client.evaluators()
+
+        val pageFuture = evaluatorServiceAsync.listV2()
+
+        val page = pageFuture.get()
+        page.response().validate()
+    }
+
+    @Disabled("Mock server tests are disabled")
+    @Test
+    fun listV1() {
+        val client =
+            LangsmithOkHttpClientAsync.builder()
+                .apiKey("My API Key")
+                .tenantId("My Tenant ID")
+                .build()
+        val evaluatorServiceAsync = client.evaluators()
+
+        val evaluatorsFuture =
+            evaluatorServiceAsync.listV1(
+                EvaluatorListV1Params.builder()
+                    .addId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                    .addId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                    .datasetId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                    .evaluatorId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                    .includeBackfillProgress(true)
+                    .nameContains("name_contains")
+                    .sessionId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                    .addTagValueId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                    .addTagValueId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                    .type(EvaluatorListV1Params.Type.SESSION)
+                    .build()
+            )
+
+        val evaluators = evaluatorsFuture.get()
+        evaluators.forEach { it.validate() }
     }
 }

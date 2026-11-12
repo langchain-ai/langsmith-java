@@ -18,6 +18,10 @@ import com.langchain.smith.core.prepare
 import com.langchain.smith.models.evaluators.Evaluator
 import com.langchain.smith.models.evaluators.EvaluatorCreateDecisionModelParams
 import com.langchain.smith.models.evaluators.EvaluatorListParams
+import com.langchain.smith.models.evaluators.EvaluatorListV1Params
+import com.langchain.smith.models.evaluators.EvaluatorListV2Page
+import com.langchain.smith.models.evaluators.EvaluatorListV2PageResponse
+import com.langchain.smith.models.evaluators.EvaluatorListV2Params
 import java.util.function.Consumer
 
 class EvaluatorServiceImpl internal constructor(private val clientOptions: ClientOptions) :
@@ -45,6 +49,20 @@ class EvaluatorServiceImpl internal constructor(private val clientOptions: Clien
     ): Evaluator =
         // post /api/v1/runs/rules/decision-models
         withRawResponse().createDecisionModel(params, requestOptions).parse()
+
+    override fun listV2(
+        params: EvaluatorListV2Params,
+        requestOptions: RequestOptions,
+    ): EvaluatorListV2Page =
+        // get /api/v2/runs/rules
+        withRawResponse().listV2(params, requestOptions).parse()
+
+    override fun listV1(
+        params: EvaluatorListV1Params,
+        requestOptions: RequestOptions,
+    ): List<Evaluator> =
+        // get /api/v1/runs/rules
+        withRawResponse().listV1(params, requestOptions).parse()
 
     class WithRawResponseImpl internal constructor(private val clientOptions: ClientOptions) :
         EvaluatorService.WithRawResponse {
@@ -109,6 +127,68 @@ class EvaluatorServiceImpl internal constructor(private val clientOptions: Clien
                     .also {
                         if (requestOptions.responseValidation!!) {
                             it.validate()
+                        }
+                    }
+            }
+        }
+
+        private val listV2Handler: Handler<EvaluatorListV2PageResponse> =
+            jsonHandler<EvaluatorListV2PageResponse>(clientOptions.jsonMapper)
+
+        override fun listV2(
+            params: EvaluatorListV2Params,
+            requestOptions: RequestOptions,
+        ): HttpResponseFor<EvaluatorListV2Page> {
+            val request =
+                HttpRequest.builder()
+                    .method(HttpMethod.GET)
+                    .baseUrl(clientOptions.baseUrl())
+                    .addPathSegments("api", "v2", "runs", "rules")
+                    .build()
+                    .prepare(clientOptions, params)
+            val requestOptions = requestOptions.applyDefaults(RequestOptions.from(clientOptions))
+            val response = clientOptions.httpClient.execute(request, requestOptions)
+            return errorHandler.handle(response).parseable {
+                response
+                    .use { listV2Handler.handle(it) }
+                    .also {
+                        if (requestOptions.responseValidation!!) {
+                            it.validate()
+                        }
+                    }
+                    .let {
+                        EvaluatorListV2Page.builder()
+                            .service(EvaluatorServiceImpl(clientOptions))
+                            .params(params)
+                            .requestOptions(requestOptions)
+                            .response(it)
+                            .build()
+                    }
+            }
+        }
+
+        private val listV1Handler: Handler<List<Evaluator>> =
+            jsonHandler<List<Evaluator>>(clientOptions.jsonMapper)
+
+        override fun listV1(
+            params: EvaluatorListV1Params,
+            requestOptions: RequestOptions,
+        ): HttpResponseFor<List<Evaluator>> {
+            val request =
+                HttpRequest.builder()
+                    .method(HttpMethod.GET)
+                    .baseUrl(clientOptions.baseUrl())
+                    .addPathSegments("api", "v1", "runs", "rules")
+                    .build()
+                    .prepare(clientOptions, params)
+            val requestOptions = requestOptions.applyDefaults(RequestOptions.from(clientOptions))
+            val response = clientOptions.httpClient.execute(request, requestOptions)
+            return errorHandler.handle(response).parseable {
+                response
+                    .use { listV1Handler.handle(it) }
+                    .also {
+                        if (requestOptions.responseValidation!!) {
+                            it.forEach { it.validate() }
                         }
                     }
             }

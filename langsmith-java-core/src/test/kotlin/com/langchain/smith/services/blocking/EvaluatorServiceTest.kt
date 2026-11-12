@@ -6,6 +6,7 @@ import com.langchain.smith.client.okhttp.LangsmithOkHttpClient
 import com.langchain.smith.core.JsonValue
 import com.langchain.smith.models.evaluators.EvaluatorCreateDecisionModelParams
 import com.langchain.smith.models.evaluators.EvaluatorListParams
+import com.langchain.smith.models.evaluators.EvaluatorListV1Params
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 
@@ -97,5 +98,43 @@ internal class EvaluatorServiceTest {
             )
 
         evaluator.validate()
+    }
+
+    @Disabled("Mock server tests are disabled")
+    @Test
+    fun listV2() {
+        val client =
+            LangsmithOkHttpClient.builder().apiKey("My API Key").tenantId("My Tenant ID").build()
+        val evaluatorService = client.evaluators()
+
+        val page = evaluatorService.listV2()
+
+        page.response().validate()
+    }
+
+    @Disabled("Mock server tests are disabled")
+    @Test
+    fun listV1() {
+        val client =
+            LangsmithOkHttpClient.builder().apiKey("My API Key").tenantId("My Tenant ID").build()
+        val evaluatorService = client.evaluators()
+
+        val evaluators =
+            evaluatorService.listV1(
+                EvaluatorListV1Params.builder()
+                    .addId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                    .addId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                    .datasetId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                    .evaluatorId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                    .includeBackfillProgress(true)
+                    .nameContains("name_contains")
+                    .sessionId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                    .addTagValueId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                    .addTagValueId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                    .type(EvaluatorListV1Params.Type.SESSION)
+                    .build()
+            )
+
+        evaluators.forEach { it.validate() }
     }
 }
