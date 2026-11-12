@@ -201,13 +201,10 @@ internal class RulePaginationCompatibilityTest {
                     client.async().evaluators().list(params).get(10, TimeUnit.SECONDS).single().id()
                 )
                 .isEqualTo(FIRST_RULE_ID)
-            assertThat(client.evaluators().listV1().single().id()).isEqualTo(FIRST_RULE_ID)
-            assertThat(client.async().evaluators().listV1().get(10, TimeUnit.SECONDS).single().id())
-                .isEqualTo(FIRST_RULE_ID)
         } finally {
             client.close()
         }
-        verify(4, getRequestedFor(urlPathEqualTo("/api/v1/runs/rules")))
+        verify(2, getRequestedFor(urlPathEqualTo("/api/v1/runs/rules")))
         verify(
             2,
             getRequestedFor(urlPathEqualTo("/api/v1/runs/rules"))

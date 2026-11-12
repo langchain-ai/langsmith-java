@@ -9,7 +9,6 @@ import com.langchain.smith.core.http.HttpResponseFor
 import com.langchain.smith.models.evaluators.Evaluator
 import com.langchain.smith.models.evaluators.EvaluatorCreateDecisionModelParams
 import com.langchain.smith.models.evaluators.EvaluatorListParams
-import com.langchain.smith.models.evaluators.EvaluatorListV1Params
 import com.langchain.smith.models.evaluators.EvaluatorListV2Page
 import com.langchain.smith.models.evaluators.EvaluatorListV2Params
 import java.util.function.Consumer
@@ -28,20 +27,36 @@ interface EvaluatorService {
      */
     fun withOptions(modifier: Consumer<ClientOptions.Builder>): EvaluatorService
 
-    /** List all run rules. */
+    /**
+     * List all run rules.
+     *
+     * Deprecated: use GET /api/v2/runs/rules, which returns cursor-paginated results.
+     */
+    @Deprecated(
+        "Use listV2 instead, which calls GET /api/v2/runs/rules and returns cursor-paginated results. Will be removed on Apr 1, 2027."
+    )
     fun list(): List<Evaluator> = list(EvaluatorListParams.none())
 
     /** @see list */
+    @Deprecated(
+        "Use listV2 instead, which calls GET /api/v2/runs/rules and returns cursor-paginated results. Will be removed on Apr 1, 2027."
+    )
     fun list(
         params: EvaluatorListParams = EvaluatorListParams.none(),
         requestOptions: RequestOptions = RequestOptions.none(),
     ): List<Evaluator>
 
     /** @see list */
+    @Deprecated(
+        "Use listV2 instead, which calls GET /api/v2/runs/rules and returns cursor-paginated results. Will be removed on Apr 1, 2027."
+    )
     fun list(params: EvaluatorListParams = EvaluatorListParams.none()): List<Evaluator> =
         list(params, RequestOptions.none())
 
     /** @see list */
+    @Deprecated(
+        "Use listV2 instead, which calls GET /api/v2/runs/rules and returns cursor-paginated results. Will be removed on Apr 1, 2027."
+    )
     fun list(requestOptions: RequestOptions): List<Evaluator> =
         list(EvaluatorListParams.none(), requestOptions)
 
@@ -79,23 +94,6 @@ interface EvaluatorService {
     fun listV2(requestOptions: RequestOptions): EvaluatorListV2Page =
         listV2(EvaluatorListV2Params.none(), requestOptions)
 
-    /** List all run rules. */
-    fun listV1(): List<Evaluator> = listV1(EvaluatorListV1Params.none())
-
-    /** @see listV1 */
-    fun listV1(
-        params: EvaluatorListV1Params = EvaluatorListV1Params.none(),
-        requestOptions: RequestOptions = RequestOptions.none(),
-    ): List<Evaluator>
-
-    /** @see listV1 */
-    fun listV1(params: EvaluatorListV1Params = EvaluatorListV1Params.none()): List<Evaluator> =
-        listV1(params, RequestOptions.none())
-
-    /** @see listV1 */
-    fun listV1(requestOptions: RequestOptions): List<Evaluator> =
-        listV1(EvaluatorListV1Params.none(), requestOptions)
-
     /** A view of [EvaluatorService] that provides access to raw HTTP responses for each method. */
     interface WithRawResponse {
 
@@ -110,10 +108,16 @@ interface EvaluatorService {
          * Returns a raw HTTP response for `get /api/v1/runs/rules`, but is otherwise the same as
          * [EvaluatorService.list].
          */
+        @Deprecated(
+            "Use listV2 instead, which calls GET /api/v2/runs/rules and returns cursor-paginated results. Will be removed on Apr 1, 2027."
+        )
         @MustBeClosed
         fun list(): HttpResponseFor<List<Evaluator>> = list(EvaluatorListParams.none())
 
         /** @see list */
+        @Deprecated(
+            "Use listV2 instead, which calls GET /api/v2/runs/rules and returns cursor-paginated results. Will be removed on Apr 1, 2027."
+        )
         @MustBeClosed
         fun list(
             params: EvaluatorListParams = EvaluatorListParams.none(),
@@ -121,12 +125,18 @@ interface EvaluatorService {
         ): HttpResponseFor<List<Evaluator>>
 
         /** @see list */
+        @Deprecated(
+            "Use listV2 instead, which calls GET /api/v2/runs/rules and returns cursor-paginated results. Will be removed on Apr 1, 2027."
+        )
         @MustBeClosed
         fun list(
             params: EvaluatorListParams = EvaluatorListParams.none()
         ): HttpResponseFor<List<Evaluator>> = list(params, RequestOptions.none())
 
         /** @see list */
+        @Deprecated(
+            "Use listV2 instead, which calls GET /api/v2/runs/rules and returns cursor-paginated results. Will be removed on Apr 1, 2027."
+        )
         @MustBeClosed
         fun list(requestOptions: RequestOptions): HttpResponseFor<List<Evaluator>> =
             list(EvaluatorListParams.none(), requestOptions)
@@ -171,30 +181,5 @@ interface EvaluatorService {
         @MustBeClosed
         fun listV2(requestOptions: RequestOptions): HttpResponseFor<EvaluatorListV2Page> =
             listV2(EvaluatorListV2Params.none(), requestOptions)
-
-        /**
-         * Returns a raw HTTP response for `get /api/v1/runs/rules`, but is otherwise the same as
-         * [EvaluatorService.listV1].
-         */
-        @MustBeClosed
-        fun listV1(): HttpResponseFor<List<Evaluator>> = listV1(EvaluatorListV1Params.none())
-
-        /** @see listV1 */
-        @MustBeClosed
-        fun listV1(
-            params: EvaluatorListV1Params = EvaluatorListV1Params.none(),
-            requestOptions: RequestOptions = RequestOptions.none(),
-        ): HttpResponseFor<List<Evaluator>>
-
-        /** @see listV1 */
-        @MustBeClosed
-        fun listV1(
-            params: EvaluatorListV1Params = EvaluatorListV1Params.none()
-        ): HttpResponseFor<List<Evaluator>> = listV1(params, RequestOptions.none())
-
-        /** @see listV1 */
-        @MustBeClosed
-        fun listV1(requestOptions: RequestOptions): HttpResponseFor<List<Evaluator>> =
-            listV1(EvaluatorListV1Params.none(), requestOptions)
     }
 }

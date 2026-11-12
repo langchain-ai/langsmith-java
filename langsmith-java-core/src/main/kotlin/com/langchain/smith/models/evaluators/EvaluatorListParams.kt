@@ -14,7 +14,14 @@ import java.util.Objects
 import java.util.Optional
 import kotlin.jvm.optionals.getOrNull
 
-/** List all run rules. */
+/**
+ * List all run rules.
+ *
+ * Deprecated: use GET /api/v2/runs/rules, which returns cursor-paginated results.
+ */
+@Deprecated(
+    "Use listV2 instead, which calls GET /api/v2/runs/rules and returns cursor-paginated results. Will be removed on Apr 1, 2027."
+)
 class EvaluatorListParams
 private constructor(
     private val id: List<String>?,

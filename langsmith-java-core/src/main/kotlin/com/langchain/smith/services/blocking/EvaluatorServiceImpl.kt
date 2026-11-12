@@ -18,7 +18,6 @@ import com.langchain.smith.core.prepare
 import com.langchain.smith.models.evaluators.Evaluator
 import com.langchain.smith.models.evaluators.EvaluatorCreateDecisionModelParams
 import com.langchain.smith.models.evaluators.EvaluatorListParams
-import com.langchain.smith.models.evaluators.EvaluatorListV1Params
 import com.langchain.smith.models.evaluators.EvaluatorListV2Page
 import com.langchain.smith.models.evaluators.EvaluatorListV2PageResponse
 import com.langchain.smith.models.evaluators.EvaluatorListV2Params
@@ -36,6 +35,9 @@ class EvaluatorServiceImpl internal constructor(private val clientOptions: Clien
     override fun withOptions(modifier: Consumer<ClientOptions.Builder>): EvaluatorService =
         EvaluatorServiceImpl(clientOptions.toBuilder().apply(modifier::accept).build())
 
+    @Deprecated(
+        "Use listV2 instead, which calls GET /api/v2/runs/rules and returns cursor-paginated results. Will be removed on Apr 1, 2027."
+    )
     override fun list(
         params: EvaluatorListParams,
         requestOptions: RequestOptions,
@@ -57,13 +59,6 @@ class EvaluatorServiceImpl internal constructor(private val clientOptions: Clien
         // get /api/v2/runs/rules
         withRawResponse().listV2(params, requestOptions).parse()
 
-    override fun listV1(
-        params: EvaluatorListV1Params,
-        requestOptions: RequestOptions,
-    ): List<Evaluator> =
-        // get /api/v1/runs/rules
-        withRawResponse().listV1(params, requestOptions).parse()
-
     class WithRawResponseImpl internal constructor(private val clientOptions: ClientOptions) :
         EvaluatorService.WithRawResponse {
 
@@ -80,6 +75,9 @@ class EvaluatorServiceImpl internal constructor(private val clientOptions: Clien
         private val listHandler: Handler<List<Evaluator>> =
             jsonHandler<List<Evaluator>>(clientOptions.jsonMapper)
 
+        @Deprecated(
+            "Use listV2 instead, which calls GET /api/v2/runs/rules and returns cursor-paginated results. Will be removed on Apr 1, 2027."
+        )
         override fun list(
             params: EvaluatorListParams,
             requestOptions: RequestOptions,
@@ -163,33 +161,6 @@ class EvaluatorServiceImpl internal constructor(private val clientOptions: Clien
                             .requestOptions(requestOptions)
                             .response(it)
                             .build()
-                    }
-            }
-        }
-
-        private val listV1Handler: Handler<List<Evaluator>> =
-            jsonHandler<List<Evaluator>>(clientOptions.jsonMapper)
-
-        override fun listV1(
-            params: EvaluatorListV1Params,
-            requestOptions: RequestOptions,
-        ): HttpResponseFor<List<Evaluator>> {
-            val request =
-                HttpRequest.builder()
-                    .method(HttpMethod.GET)
-                    .baseUrl(clientOptions.baseUrl())
-                    .addPathSegments("api", "v1", "runs", "rules")
-                    .build()
-                    .prepare(clientOptions, params)
-            val requestOptions = requestOptions.applyDefaults(RequestOptions.from(clientOptions))
-            val response = clientOptions.httpClient.execute(request, requestOptions)
-            return errorHandler.handle(response).parseable {
-                response
-                    .use { listV1Handler.handle(it) }
-                    .also {
-                        if (requestOptions.responseValidation!!) {
-                            it.forEach { it.validate() }
-                        }
                     }
             }
         }

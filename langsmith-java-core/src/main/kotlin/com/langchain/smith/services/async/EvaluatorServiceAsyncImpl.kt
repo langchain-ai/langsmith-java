@@ -18,7 +18,6 @@ import com.langchain.smith.core.prepareAsync
 import com.langchain.smith.models.evaluators.Evaluator
 import com.langchain.smith.models.evaluators.EvaluatorCreateDecisionModelParams
 import com.langchain.smith.models.evaluators.EvaluatorListParams
-import com.langchain.smith.models.evaluators.EvaluatorListV1Params
 import com.langchain.smith.models.evaluators.EvaluatorListV2PageAsync
 import com.langchain.smith.models.evaluators.EvaluatorListV2PageResponse
 import com.langchain.smith.models.evaluators.EvaluatorListV2Params
@@ -37,6 +36,9 @@ class EvaluatorServiceAsyncImpl internal constructor(private val clientOptions: 
     override fun withOptions(modifier: Consumer<ClientOptions.Builder>): EvaluatorServiceAsync =
         EvaluatorServiceAsyncImpl(clientOptions.toBuilder().apply(modifier::accept).build())
 
+    @Deprecated(
+        "Use listV2 instead, which calls GET /api/v2/runs/rules and returns cursor-paginated results. Will be removed on Apr 1, 2027."
+    )
     override fun list(
         params: EvaluatorListParams,
         requestOptions: RequestOptions,
@@ -58,13 +60,6 @@ class EvaluatorServiceAsyncImpl internal constructor(private val clientOptions: 
         // get /api/v2/runs/rules
         withRawResponse().listV2(params, requestOptions).thenApply { it.parse() }
 
-    override fun listV1(
-        params: EvaluatorListV1Params,
-        requestOptions: RequestOptions,
-    ): CompletableFuture<List<Evaluator>> =
-        // get /api/v1/runs/rules
-        withRawResponse().listV1(params, requestOptions).thenApply { it.parse() }
-
     class WithRawResponseImpl internal constructor(private val clientOptions: ClientOptions) :
         EvaluatorServiceAsync.WithRawResponse {
 
@@ -81,6 +76,9 @@ class EvaluatorServiceAsyncImpl internal constructor(private val clientOptions: 
         private val listHandler: Handler<List<Evaluator>> =
             jsonHandler<List<Evaluator>>(clientOptions.jsonMapper)
 
+        @Deprecated(
+            "Use listV2 instead, which calls GET /api/v2/runs/rules and returns cursor-paginated results. Will be removed on Apr 1, 2027."
+        )
         override fun list(
             params: EvaluatorListParams,
             requestOptions: RequestOptions,
@@ -173,36 +171,6 @@ class EvaluatorServiceAsyncImpl internal constructor(private val clientOptions: 
                                     .requestOptions(requestOptions)
                                     .response(it)
                                     .build()
-                            }
-                    }
-                }
-        }
-
-        private val listV1Handler: Handler<List<Evaluator>> =
-            jsonHandler<List<Evaluator>>(clientOptions.jsonMapper)
-
-        override fun listV1(
-            params: EvaluatorListV1Params,
-            requestOptions: RequestOptions,
-        ): CompletableFuture<HttpResponseFor<List<Evaluator>>> {
-            val request =
-                HttpRequest.builder()
-                    .method(HttpMethod.GET)
-                    .baseUrl(clientOptions.baseUrl())
-                    .addPathSegments("api", "v1", "runs", "rules")
-                    .build()
-                    .prepareAsync(clientOptions, params)
-            val requestOptions = requestOptions.applyDefaults(RequestOptions.from(clientOptions))
-            return request
-                .thenComposeAsync { clientOptions.httpClient.executeAsync(it, requestOptions) }
-                .thenApply { response ->
-                    errorHandler.handle(response).parseable {
-                        response
-                            .use { listV1Handler.handle(it) }
-                            .also {
-                                if (requestOptions.responseValidation!!) {
-                                    it.forEach { it.validate() }
-                                }
                             }
                     }
                 }
