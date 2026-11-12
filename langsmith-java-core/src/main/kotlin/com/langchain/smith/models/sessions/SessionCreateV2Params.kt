@@ -1,0 +1,1909 @@
+// File generated from our OpenAPI spec by Stainless.
+
+package com.langchain.smith.models.sessions
+
+import com.fasterxml.jackson.annotation.JsonAnyGetter
+import com.fasterxml.jackson.annotation.JsonAnySetter
+import com.fasterxml.jackson.annotation.JsonCreator
+import com.fasterxml.jackson.annotation.JsonProperty
+import com.langchain.smith.core.Enum
+import com.langchain.smith.core.ExcludeMissing
+import com.langchain.smith.core.JsonField
+import com.langchain.smith.core.JsonMissing
+import com.langchain.smith.core.JsonValue
+import com.langchain.smith.core.Params
+import com.langchain.smith.core.checkKnown
+import com.langchain.smith.core.checkRequired
+import com.langchain.smith.core.http.Headers
+import com.langchain.smith.core.http.QueryParams
+import com.langchain.smith.core.toImmutable
+import com.langchain.smith.errors.LangChainInvalidDataException
+import java.time.OffsetDateTime
+import java.util.Collections
+import java.util.Objects
+import java.util.Optional
+import kotlin.jvm.optionals.getOrNull
+
+/**
+ * Create a session, or update an existing session with the same name when upsert is true. Returns
+ * the refreshed session representation without optional run statistics.
+ */
+class SessionCreateV2Params
+private constructor(
+    private val upsert: Boolean?,
+    private val body: Body,
+    private val additionalHeaders: Headers,
+    private val additionalQueryParams: QueryParams,
+) : Params {
+
+    /** Update an existing session with the same name */
+    fun upsert(): Optional<Boolean> = Optional.ofNullable(upsert)
+
+    /**
+     * Type identifies a tracing project, Agent tracing project, or experiment.
+     *
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type or is
+     *   unexpectedly missing or null (e.g. if the server responded with an unexpected value).
+     */
+    fun type(): Type = body.type()
+
+    /**
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
+    fun id(): Optional<String> = body.id()
+
+    /**
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
+    fun defaultDatasetId(): Optional<String> = body.defaultDatasetId()
+
+    /**
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
+    fun description(): Optional<String> = body.description()
+
+    /**
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
+    fun endTime(): Optional<OffsetDateTime> = body.endTime()
+
+    /**
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
+    fun evaluatorKeys(): Optional<List<String>> = body.evaluatorKeys()
+
+    /**
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
+    fun extra(): Optional<Extra> = body.extra()
+
+    /**
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
+    fun kickedOffBy(): Optional<String> = body.kickedOffBy()
+
+    /**
+     * LonglivedTTLDays overrides long-lived trace retention. Null restores the workspace default.
+     *
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
+    fun longlivedTtlDays(): Optional<Long> = body.longlivedTtlDays()
+
+    /**
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
+    fun name(): Optional<String> = body.name()
+
+    /**
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
+    fun numExamples(): Optional<Long> = body.numExamples()
+
+    /**
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
+    fun numRepetitions(): Optional<Long> = body.numRepetitions()
+
+    /**
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
+    fun referenceDatasetId(): Optional<String> = body.referenceDatasetId()
+
+    /**
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
+    fun startTime(): Optional<OffsetDateTime> = body.startTime()
+
+    /**
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
+    fun tagValueIds(): Optional<List<String>> = body.tagValueIds()
+
+    /**
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
+    fun traceTier(): Optional<TraceTier> = body.traceTier()
+
+    /**
+     * Returns the raw JSON value of [type].
+     *
+     * Unlike [type], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    fun _type(): JsonField<Type> = body._type()
+
+    /**
+     * Returns the raw JSON value of [id].
+     *
+     * Unlike [id], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    fun _id(): JsonField<String> = body._id()
+
+    /**
+     * Returns the raw JSON value of [defaultDatasetId].
+     *
+     * Unlike [defaultDatasetId], this method doesn't throw if the JSON field has an unexpected
+     * type.
+     */
+    fun _defaultDatasetId(): JsonField<String> = body._defaultDatasetId()
+
+    /**
+     * Returns the raw JSON value of [description].
+     *
+     * Unlike [description], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    fun _description(): JsonField<String> = body._description()
+
+    /**
+     * Returns the raw JSON value of [endTime].
+     *
+     * Unlike [endTime], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    fun _endTime(): JsonField<OffsetDateTime> = body._endTime()
+
+    /**
+     * Returns the raw JSON value of [evaluatorKeys].
+     *
+     * Unlike [evaluatorKeys], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    fun _evaluatorKeys(): JsonField<List<String>> = body._evaluatorKeys()
+
+    /**
+     * Returns the raw JSON value of [extra].
+     *
+     * Unlike [extra], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    fun _extra(): JsonField<Extra> = body._extra()
+
+    /**
+     * Returns the raw JSON value of [kickedOffBy].
+     *
+     * Unlike [kickedOffBy], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    fun _kickedOffBy(): JsonField<String> = body._kickedOffBy()
+
+    /**
+     * Returns the raw JSON value of [longlivedTtlDays].
+     *
+     * Unlike [longlivedTtlDays], this method doesn't throw if the JSON field has an unexpected
+     * type.
+     */
+    fun _longlivedTtlDays(): JsonField<Long> = body._longlivedTtlDays()
+
+    /**
+     * Returns the raw JSON value of [name].
+     *
+     * Unlike [name], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    fun _name(): JsonField<String> = body._name()
+
+    /**
+     * Returns the raw JSON value of [numExamples].
+     *
+     * Unlike [numExamples], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    fun _numExamples(): JsonField<Long> = body._numExamples()
+
+    /**
+     * Returns the raw JSON value of [numRepetitions].
+     *
+     * Unlike [numRepetitions], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    fun _numRepetitions(): JsonField<Long> = body._numRepetitions()
+
+    /**
+     * Returns the raw JSON value of [referenceDatasetId].
+     *
+     * Unlike [referenceDatasetId], this method doesn't throw if the JSON field has an unexpected
+     * type.
+     */
+    fun _referenceDatasetId(): JsonField<String> = body._referenceDatasetId()
+
+    /**
+     * Returns the raw JSON value of [startTime].
+     *
+     * Unlike [startTime], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    fun _startTime(): JsonField<OffsetDateTime> = body._startTime()
+
+    /**
+     * Returns the raw JSON value of [tagValueIds].
+     *
+     * Unlike [tagValueIds], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    fun _tagValueIds(): JsonField<List<String>> = body._tagValueIds()
+
+    /**
+     * Returns the raw JSON value of [traceTier].
+     *
+     * Unlike [traceTier], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    fun _traceTier(): JsonField<TraceTier> = body._traceTier()
+
+    fun _additionalBodyProperties(): Map<String, JsonValue> = body._additionalProperties()
+
+    /** Additional headers to send with the request. */
+    fun _additionalHeaders(): Headers = additionalHeaders
+
+    /** Additional query param to send with the request. */
+    fun _additionalQueryParams(): QueryParams = additionalQueryParams
+
+    fun toBuilder() = Builder().from(this)
+
+    companion object {
+
+        /**
+         * Returns a mutable builder for constructing an instance of [SessionCreateV2Params].
+         *
+         * The following fields are required:
+         * ```java
+         * .type()
+         * ```
+         */
+        @JvmStatic fun builder() = Builder()
+    }
+
+    /** A builder for [SessionCreateV2Params]. */
+    class Builder internal constructor() {
+
+        private var upsert: Boolean? = null
+        private var body: Body.Builder = Body.builder()
+        private var additionalHeaders: Headers.Builder = Headers.builder()
+        private var additionalQueryParams: QueryParams.Builder = QueryParams.builder()
+
+        @JvmSynthetic
+        internal fun from(sessionCreateV2Params: SessionCreateV2Params) = apply {
+            upsert = sessionCreateV2Params.upsert
+            body = sessionCreateV2Params.body.toBuilder()
+            additionalHeaders = sessionCreateV2Params.additionalHeaders.toBuilder()
+            additionalQueryParams = sessionCreateV2Params.additionalQueryParams.toBuilder()
+        }
+
+        /** Update an existing session with the same name */
+        fun upsert(upsert: Boolean?) = apply { this.upsert = upsert }
+
+        /**
+         * Alias for [Builder.upsert].
+         *
+         * This unboxed primitive overload exists for backwards compatibility.
+         */
+        fun upsert(upsert: Boolean) = upsert(upsert as Boolean?)
+
+        /** Alias for calling [Builder.upsert] with `upsert.orElse(null)`. */
+        fun upsert(upsert: Optional<Boolean>) = upsert(upsert.getOrNull())
+
+        /**
+         * Sets the entire request body.
+         *
+         * This is generally only useful if you are already constructing the body separately.
+         * Otherwise, it's more convenient to use the top-level setters instead:
+         * - [type]
+         * - [id]
+         * - [defaultDatasetId]
+         * - [description]
+         * - [endTime]
+         * - etc.
+         */
+        fun body(body: Body) = apply { this.body = body.toBuilder() }
+
+        /** Type identifies a tracing project, Agent tracing project, or experiment. */
+        fun type(type: Type) = apply { body.type(type) }
+
+        /**
+         * Sets [Builder.type] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.type] with a well-typed [Type] value instead. This
+         * method is primarily for setting the field to an undocumented or not yet supported value.
+         */
+        fun type(type: JsonField<Type>) = apply { body.type(type) }
+
+        fun id(id: String) = apply { body.id(id) }
+
+        /**
+         * Sets [Builder.id] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.id] with a well-typed [String] value instead. This
+         * method is primarily for setting the field to an undocumented or not yet supported value.
+         */
+        fun id(id: JsonField<String>) = apply { body.id(id) }
+
+        fun defaultDatasetId(defaultDatasetId: String) = apply {
+            body.defaultDatasetId(defaultDatasetId)
+        }
+
+        /**
+         * Sets [Builder.defaultDatasetId] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.defaultDatasetId] with a well-typed [String] value
+         * instead. This method is primarily for setting the field to an undocumented or not yet
+         * supported value.
+         */
+        fun defaultDatasetId(defaultDatasetId: JsonField<String>) = apply {
+            body.defaultDatasetId(defaultDatasetId)
+        }
+
+        fun description(description: String) = apply { body.description(description) }
+
+        /**
+         * Sets [Builder.description] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.description] with a well-typed [String] value instead.
+         * This method is primarily for setting the field to an undocumented or not yet supported
+         * value.
+         */
+        fun description(description: JsonField<String>) = apply { body.description(description) }
+
+        fun endTime(endTime: OffsetDateTime) = apply { body.endTime(endTime) }
+
+        /**
+         * Sets [Builder.endTime] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.endTime] with a well-typed [OffsetDateTime] value
+         * instead. This method is primarily for setting the field to an undocumented or not yet
+         * supported value.
+         */
+        fun endTime(endTime: JsonField<OffsetDateTime>) = apply { body.endTime(endTime) }
+
+        fun evaluatorKeys(evaluatorKeys: List<String>) = apply { body.evaluatorKeys(evaluatorKeys) }
+
+        /**
+         * Sets [Builder.evaluatorKeys] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.evaluatorKeys] with a well-typed `List<String>` value
+         * instead. This method is primarily for setting the field to an undocumented or not yet
+         * supported value.
+         */
+        fun evaluatorKeys(evaluatorKeys: JsonField<List<String>>) = apply {
+            body.evaluatorKeys(evaluatorKeys)
+        }
+
+        /**
+         * Adds a single [String] to [evaluatorKeys].
+         *
+         * @throws IllegalStateException if the field was previously set to a non-list.
+         */
+        fun addEvaluatorKey(evaluatorKey: String) = apply { body.addEvaluatorKey(evaluatorKey) }
+
+        fun extra(extra: Extra) = apply { body.extra(extra) }
+
+        /**
+         * Sets [Builder.extra] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.extra] with a well-typed [Extra] value instead. This
+         * method is primarily for setting the field to an undocumented or not yet supported value.
+         */
+        fun extra(extra: JsonField<Extra>) = apply { body.extra(extra) }
+
+        fun kickedOffBy(kickedOffBy: String) = apply { body.kickedOffBy(kickedOffBy) }
+
+        /**
+         * Sets [Builder.kickedOffBy] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.kickedOffBy] with a well-typed [String] value instead.
+         * This method is primarily for setting the field to an undocumented or not yet supported
+         * value.
+         */
+        fun kickedOffBy(kickedOffBy: JsonField<String>) = apply { body.kickedOffBy(kickedOffBy) }
+
+        /**
+         * LonglivedTTLDays overrides long-lived trace retention. Null restores the workspace
+         * default.
+         */
+        fun longlivedTtlDays(longlivedTtlDays: Long?) = apply {
+            body.longlivedTtlDays(longlivedTtlDays)
+        }
+
+        /**
+         * Alias for [Builder.longlivedTtlDays].
+         *
+         * This unboxed primitive overload exists for backwards compatibility.
+         */
+        fun longlivedTtlDays(longlivedTtlDays: Long) = longlivedTtlDays(longlivedTtlDays as Long?)
+
+        /** Alias for calling [Builder.longlivedTtlDays] with `longlivedTtlDays.orElse(null)`. */
+        fun longlivedTtlDays(longlivedTtlDays: Optional<Long>) =
+            longlivedTtlDays(longlivedTtlDays.getOrNull())
+
+        /**
+         * Sets [Builder.longlivedTtlDays] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.longlivedTtlDays] with a well-typed [Long] value
+         * instead. This method is primarily for setting the field to an undocumented or not yet
+         * supported value.
+         */
+        fun longlivedTtlDays(longlivedTtlDays: JsonField<Long>) = apply {
+            body.longlivedTtlDays(longlivedTtlDays)
+        }
+
+        fun name(name: String) = apply { body.name(name) }
+
+        /**
+         * Sets [Builder.name] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.name] with a well-typed [String] value instead. This
+         * method is primarily for setting the field to an undocumented or not yet supported value.
+         */
+        fun name(name: JsonField<String>) = apply { body.name(name) }
+
+        fun numExamples(numExamples: Long) = apply { body.numExamples(numExamples) }
+
+        /**
+         * Sets [Builder.numExamples] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.numExamples] with a well-typed [Long] value instead.
+         * This method is primarily for setting the field to an undocumented or not yet supported
+         * value.
+         */
+        fun numExamples(numExamples: JsonField<Long>) = apply { body.numExamples(numExamples) }
+
+        fun numRepetitions(numRepetitions: Long) = apply { body.numRepetitions(numRepetitions) }
+
+        /**
+         * Sets [Builder.numRepetitions] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.numRepetitions] with a well-typed [Long] value instead.
+         * This method is primarily for setting the field to an undocumented or not yet supported
+         * value.
+         */
+        fun numRepetitions(numRepetitions: JsonField<Long>) = apply {
+            body.numRepetitions(numRepetitions)
+        }
+
+        fun referenceDatasetId(referenceDatasetId: String) = apply {
+            body.referenceDatasetId(referenceDatasetId)
+        }
+
+        /**
+         * Sets [Builder.referenceDatasetId] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.referenceDatasetId] with a well-typed [String] value
+         * instead. This method is primarily for setting the field to an undocumented or not yet
+         * supported value.
+         */
+        fun referenceDatasetId(referenceDatasetId: JsonField<String>) = apply {
+            body.referenceDatasetId(referenceDatasetId)
+        }
+
+        fun startTime(startTime: OffsetDateTime) = apply { body.startTime(startTime) }
+
+        /**
+         * Sets [Builder.startTime] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.startTime] with a well-typed [OffsetDateTime] value
+         * instead. This method is primarily for setting the field to an undocumented or not yet
+         * supported value.
+         */
+        fun startTime(startTime: JsonField<OffsetDateTime>) = apply { body.startTime(startTime) }
+
+        fun tagValueIds(tagValueIds: List<String>) = apply { body.tagValueIds(tagValueIds) }
+
+        /**
+         * Sets [Builder.tagValueIds] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.tagValueIds] with a well-typed `List<String>` value
+         * instead. This method is primarily for setting the field to an undocumented or not yet
+         * supported value.
+         */
+        fun tagValueIds(tagValueIds: JsonField<List<String>>) = apply {
+            body.tagValueIds(tagValueIds)
+        }
+
+        /**
+         * Adds a single [String] to [tagValueIds].
+         *
+         * @throws IllegalStateException if the field was previously set to a non-list.
+         */
+        fun addTagValueId(tagValueId: String) = apply { body.addTagValueId(tagValueId) }
+
+        fun traceTier(traceTier: TraceTier) = apply { body.traceTier(traceTier) }
+
+        /**
+         * Sets [Builder.traceTier] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.traceTier] with a well-typed [TraceTier] value instead.
+         * This method is primarily for setting the field to an undocumented or not yet supported
+         * value.
+         */
+        fun traceTier(traceTier: JsonField<TraceTier>) = apply { body.traceTier(traceTier) }
+
+        fun additionalBodyProperties(additionalBodyProperties: Map<String, JsonValue>) = apply {
+            body.additionalProperties(additionalBodyProperties)
+        }
+
+        fun putAdditionalBodyProperty(key: String, value: JsonValue) = apply {
+            body.putAdditionalProperty(key, value)
+        }
+
+        fun putAllAdditionalBodyProperties(additionalBodyProperties: Map<String, JsonValue>) =
+            apply {
+                body.putAllAdditionalProperties(additionalBodyProperties)
+            }
+
+        fun removeAdditionalBodyProperty(key: String) = apply { body.removeAdditionalProperty(key) }
+
+        fun removeAllAdditionalBodyProperties(keys: Set<String>) = apply {
+            body.removeAllAdditionalProperties(keys)
+        }
+
+        fun additionalHeaders(additionalHeaders: Headers) = apply {
+            this.additionalHeaders.clear()
+            putAllAdditionalHeaders(additionalHeaders)
+        }
+
+        fun additionalHeaders(additionalHeaders: Map<String, Iterable<String>>) = apply {
+            this.additionalHeaders.clear()
+            putAllAdditionalHeaders(additionalHeaders)
+        }
+
+        fun putAdditionalHeader(name: String, value: String) = apply {
+            additionalHeaders.put(name, value)
+        }
+
+        fun putAdditionalHeaders(name: String, values: Iterable<String>) = apply {
+            additionalHeaders.put(name, values)
+        }
+
+        fun putAllAdditionalHeaders(additionalHeaders: Headers) = apply {
+            this.additionalHeaders.putAll(additionalHeaders)
+        }
+
+        fun putAllAdditionalHeaders(additionalHeaders: Map<String, Iterable<String>>) = apply {
+            this.additionalHeaders.putAll(additionalHeaders)
+        }
+
+        fun replaceAdditionalHeaders(name: String, value: String) = apply {
+            additionalHeaders.replace(name, value)
+        }
+
+        fun replaceAdditionalHeaders(name: String, values: Iterable<String>) = apply {
+            additionalHeaders.replace(name, values)
+        }
+
+        fun replaceAllAdditionalHeaders(additionalHeaders: Headers) = apply {
+            this.additionalHeaders.replaceAll(additionalHeaders)
+        }
+
+        fun replaceAllAdditionalHeaders(additionalHeaders: Map<String, Iterable<String>>) = apply {
+            this.additionalHeaders.replaceAll(additionalHeaders)
+        }
+
+        fun removeAdditionalHeaders(name: String) = apply { additionalHeaders.remove(name) }
+
+        fun removeAllAdditionalHeaders(names: Set<String>) = apply {
+            additionalHeaders.removeAll(names)
+        }
+
+        fun additionalQueryParams(additionalQueryParams: QueryParams) = apply {
+            this.additionalQueryParams.clear()
+            putAllAdditionalQueryParams(additionalQueryParams)
+        }
+
+        fun additionalQueryParams(additionalQueryParams: Map<String, Iterable<String>>) = apply {
+            this.additionalQueryParams.clear()
+            putAllAdditionalQueryParams(additionalQueryParams)
+        }
+
+        fun putAdditionalQueryParam(key: String, value: String) = apply {
+            additionalQueryParams.put(key, value)
+        }
+
+        fun putAdditionalQueryParams(key: String, values: Iterable<String>) = apply {
+            additionalQueryParams.put(key, values)
+        }
+
+        fun putAllAdditionalQueryParams(additionalQueryParams: QueryParams) = apply {
+            this.additionalQueryParams.putAll(additionalQueryParams)
+        }
+
+        fun putAllAdditionalQueryParams(additionalQueryParams: Map<String, Iterable<String>>) =
+            apply {
+                this.additionalQueryParams.putAll(additionalQueryParams)
+            }
+
+        fun replaceAdditionalQueryParams(key: String, value: String) = apply {
+            additionalQueryParams.replace(key, value)
+        }
+
+        fun replaceAdditionalQueryParams(key: String, values: Iterable<String>) = apply {
+            additionalQueryParams.replace(key, values)
+        }
+
+        fun replaceAllAdditionalQueryParams(additionalQueryParams: QueryParams) = apply {
+            this.additionalQueryParams.replaceAll(additionalQueryParams)
+        }
+
+        fun replaceAllAdditionalQueryParams(additionalQueryParams: Map<String, Iterable<String>>) =
+            apply {
+                this.additionalQueryParams.replaceAll(additionalQueryParams)
+            }
+
+        fun removeAdditionalQueryParams(key: String) = apply { additionalQueryParams.remove(key) }
+
+        fun removeAllAdditionalQueryParams(keys: Set<String>) = apply {
+            additionalQueryParams.removeAll(keys)
+        }
+
+        /**
+         * Returns an immutable instance of [SessionCreateV2Params].
+         *
+         * Further updates to this [Builder] will not mutate the returned instance.
+         *
+         * The following fields are required:
+         * ```java
+         * .type()
+         * ```
+         *
+         * @throws IllegalStateException if any required field is unset.
+         */
+        fun build(): SessionCreateV2Params =
+            SessionCreateV2Params(
+                upsert,
+                body.build(),
+                additionalHeaders.build(),
+                additionalQueryParams.build(),
+            )
+    }
+
+    fun _body(): Body = body
+
+    override fun _headers(): Headers = additionalHeaders
+
+    override fun _queryParams(): QueryParams =
+        QueryParams.builder()
+            .apply {
+                upsert?.let { put("upsert", it.toString()) }
+                putAll(additionalQueryParams)
+            }
+            .build()
+
+    class Body
+    @JsonCreator(mode = JsonCreator.Mode.DISABLED)
+    private constructor(
+        private val type: JsonField<Type>,
+        private val id: JsonField<String>,
+        private val defaultDatasetId: JsonField<String>,
+        private val description: JsonField<String>,
+        private val endTime: JsonField<OffsetDateTime>,
+        private val evaluatorKeys: JsonField<List<String>>,
+        private val extra: JsonField<Extra>,
+        private val kickedOffBy: JsonField<String>,
+        private val longlivedTtlDays: JsonField<Long>,
+        private val name: JsonField<String>,
+        private val numExamples: JsonField<Long>,
+        private val numRepetitions: JsonField<Long>,
+        private val referenceDatasetId: JsonField<String>,
+        private val startTime: JsonField<OffsetDateTime>,
+        private val tagValueIds: JsonField<List<String>>,
+        private val traceTier: JsonField<TraceTier>,
+        private val additionalProperties: MutableMap<String, JsonValue>,
+    ) {
+
+        @JsonCreator
+        private constructor(
+            @JsonProperty("type") @ExcludeMissing type: JsonField<Type> = JsonMissing.of(),
+            @JsonProperty("id") @ExcludeMissing id: JsonField<String> = JsonMissing.of(),
+            @JsonProperty("default_dataset_id")
+            @ExcludeMissing
+            defaultDatasetId: JsonField<String> = JsonMissing.of(),
+            @JsonProperty("description")
+            @ExcludeMissing
+            description: JsonField<String> = JsonMissing.of(),
+            @JsonProperty("end_time")
+            @ExcludeMissing
+            endTime: JsonField<OffsetDateTime> = JsonMissing.of(),
+            @JsonProperty("evaluator_keys")
+            @ExcludeMissing
+            evaluatorKeys: JsonField<List<String>> = JsonMissing.of(),
+            @JsonProperty("extra") @ExcludeMissing extra: JsonField<Extra> = JsonMissing.of(),
+            @JsonProperty("kicked_off_by")
+            @ExcludeMissing
+            kickedOffBy: JsonField<String> = JsonMissing.of(),
+            @JsonProperty("longlived_ttl_days")
+            @ExcludeMissing
+            longlivedTtlDays: JsonField<Long> = JsonMissing.of(),
+            @JsonProperty("name") @ExcludeMissing name: JsonField<String> = JsonMissing.of(),
+            @JsonProperty("num_examples")
+            @ExcludeMissing
+            numExamples: JsonField<Long> = JsonMissing.of(),
+            @JsonProperty("num_repetitions")
+            @ExcludeMissing
+            numRepetitions: JsonField<Long> = JsonMissing.of(),
+            @JsonProperty("reference_dataset_id")
+            @ExcludeMissing
+            referenceDatasetId: JsonField<String> = JsonMissing.of(),
+            @JsonProperty("start_time")
+            @ExcludeMissing
+            startTime: JsonField<OffsetDateTime> = JsonMissing.of(),
+            @JsonProperty("tag_value_ids")
+            @ExcludeMissing
+            tagValueIds: JsonField<List<String>> = JsonMissing.of(),
+            @JsonProperty("trace_tier")
+            @ExcludeMissing
+            traceTier: JsonField<TraceTier> = JsonMissing.of(),
+        ) : this(
+            type,
+            id,
+            defaultDatasetId,
+            description,
+            endTime,
+            evaluatorKeys,
+            extra,
+            kickedOffBy,
+            longlivedTtlDays,
+            name,
+            numExamples,
+            numRepetitions,
+            referenceDatasetId,
+            startTime,
+            tagValueIds,
+            traceTier,
+            mutableMapOf(),
+        )
+
+        /**
+         * Type identifies a tracing project, Agent tracing project, or experiment.
+         *
+         * @throws LangChainInvalidDataException if the JSON field has an unexpected type or is
+         *   unexpectedly missing or null (e.g. if the server responded with an unexpected value).
+         */
+        fun type(): Type = type.getRequired("type")
+
+        /**
+         * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
+         *   the server responded with an unexpected value).
+         */
+        fun id(): Optional<String> = id.getOptional("id")
+
+        /**
+         * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
+         *   the server responded with an unexpected value).
+         */
+        fun defaultDatasetId(): Optional<String> =
+            defaultDatasetId.getOptional("default_dataset_id")
+
+        /**
+         * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
+         *   the server responded with an unexpected value).
+         */
+        fun description(): Optional<String> = description.getOptional("description")
+
+        /**
+         * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
+         *   the server responded with an unexpected value).
+         */
+        fun endTime(): Optional<OffsetDateTime> = endTime.getOptional("end_time")
+
+        /**
+         * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
+         *   the server responded with an unexpected value).
+         */
+        fun evaluatorKeys(): Optional<List<String>> = evaluatorKeys.getOptional("evaluator_keys")
+
+        /**
+         * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
+         *   the server responded with an unexpected value).
+         */
+        fun extra(): Optional<Extra> = extra.getOptional("extra")
+
+        /**
+         * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
+         *   the server responded with an unexpected value).
+         */
+        fun kickedOffBy(): Optional<String> = kickedOffBy.getOptional("kicked_off_by")
+
+        /**
+         * LonglivedTTLDays overrides long-lived trace retention. Null restores the workspace
+         * default.
+         *
+         * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
+         *   the server responded with an unexpected value).
+         */
+        fun longlivedTtlDays(): Optional<Long> = longlivedTtlDays.getOptional("longlived_ttl_days")
+
+        /**
+         * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
+         *   the server responded with an unexpected value).
+         */
+        fun name(): Optional<String> = name.getOptional("name")
+
+        /**
+         * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
+         *   the server responded with an unexpected value).
+         */
+        fun numExamples(): Optional<Long> = numExamples.getOptional("num_examples")
+
+        /**
+         * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
+         *   the server responded with an unexpected value).
+         */
+        fun numRepetitions(): Optional<Long> = numRepetitions.getOptional("num_repetitions")
+
+        /**
+         * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
+         *   the server responded with an unexpected value).
+         */
+        fun referenceDatasetId(): Optional<String> =
+            referenceDatasetId.getOptional("reference_dataset_id")
+
+        /**
+         * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
+         *   the server responded with an unexpected value).
+         */
+        fun startTime(): Optional<OffsetDateTime> = startTime.getOptional("start_time")
+
+        /**
+         * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
+         *   the server responded with an unexpected value).
+         */
+        fun tagValueIds(): Optional<List<String>> = tagValueIds.getOptional("tag_value_ids")
+
+        /**
+         * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
+         *   the server responded with an unexpected value).
+         */
+        fun traceTier(): Optional<TraceTier> = traceTier.getOptional("trace_tier")
+
+        /**
+         * Returns the raw JSON value of [type].
+         *
+         * Unlike [type], this method doesn't throw if the JSON field has an unexpected type.
+         */
+        @JsonProperty("type") @ExcludeMissing fun _type(): JsonField<Type> = type
+
+        /**
+         * Returns the raw JSON value of [id].
+         *
+         * Unlike [id], this method doesn't throw if the JSON field has an unexpected type.
+         */
+        @JsonProperty("id") @ExcludeMissing fun _id(): JsonField<String> = id
+
+        /**
+         * Returns the raw JSON value of [defaultDatasetId].
+         *
+         * Unlike [defaultDatasetId], this method doesn't throw if the JSON field has an unexpected
+         * type.
+         */
+        @JsonProperty("default_dataset_id")
+        @ExcludeMissing
+        fun _defaultDatasetId(): JsonField<String> = defaultDatasetId
+
+        /**
+         * Returns the raw JSON value of [description].
+         *
+         * Unlike [description], this method doesn't throw if the JSON field has an unexpected type.
+         */
+        @JsonProperty("description")
+        @ExcludeMissing
+        fun _description(): JsonField<String> = description
+
+        /**
+         * Returns the raw JSON value of [endTime].
+         *
+         * Unlike [endTime], this method doesn't throw if the JSON field has an unexpected type.
+         */
+        @JsonProperty("end_time")
+        @ExcludeMissing
+        fun _endTime(): JsonField<OffsetDateTime> = endTime
+
+        /**
+         * Returns the raw JSON value of [evaluatorKeys].
+         *
+         * Unlike [evaluatorKeys], this method doesn't throw if the JSON field has an unexpected
+         * type.
+         */
+        @JsonProperty("evaluator_keys")
+        @ExcludeMissing
+        fun _evaluatorKeys(): JsonField<List<String>> = evaluatorKeys
+
+        /**
+         * Returns the raw JSON value of [extra].
+         *
+         * Unlike [extra], this method doesn't throw if the JSON field has an unexpected type.
+         */
+        @JsonProperty("extra") @ExcludeMissing fun _extra(): JsonField<Extra> = extra
+
+        /**
+         * Returns the raw JSON value of [kickedOffBy].
+         *
+         * Unlike [kickedOffBy], this method doesn't throw if the JSON field has an unexpected type.
+         */
+        @JsonProperty("kicked_off_by")
+        @ExcludeMissing
+        fun _kickedOffBy(): JsonField<String> = kickedOffBy
+
+        /**
+         * Returns the raw JSON value of [longlivedTtlDays].
+         *
+         * Unlike [longlivedTtlDays], this method doesn't throw if the JSON field has an unexpected
+         * type.
+         */
+        @JsonProperty("longlived_ttl_days")
+        @ExcludeMissing
+        fun _longlivedTtlDays(): JsonField<Long> = longlivedTtlDays
+
+        /**
+         * Returns the raw JSON value of [name].
+         *
+         * Unlike [name], this method doesn't throw if the JSON field has an unexpected type.
+         */
+        @JsonProperty("name") @ExcludeMissing fun _name(): JsonField<String> = name
+
+        /**
+         * Returns the raw JSON value of [numExamples].
+         *
+         * Unlike [numExamples], this method doesn't throw if the JSON field has an unexpected type.
+         */
+        @JsonProperty("num_examples")
+        @ExcludeMissing
+        fun _numExamples(): JsonField<Long> = numExamples
+
+        /**
+         * Returns the raw JSON value of [numRepetitions].
+         *
+         * Unlike [numRepetitions], this method doesn't throw if the JSON field has an unexpected
+         * type.
+         */
+        @JsonProperty("num_repetitions")
+        @ExcludeMissing
+        fun _numRepetitions(): JsonField<Long> = numRepetitions
+
+        /**
+         * Returns the raw JSON value of [referenceDatasetId].
+         *
+         * Unlike [referenceDatasetId], this method doesn't throw if the JSON field has an
+         * unexpected type.
+         */
+        @JsonProperty("reference_dataset_id")
+        @ExcludeMissing
+        fun _referenceDatasetId(): JsonField<String> = referenceDatasetId
+
+        /**
+         * Returns the raw JSON value of [startTime].
+         *
+         * Unlike [startTime], this method doesn't throw if the JSON field has an unexpected type.
+         */
+        @JsonProperty("start_time")
+        @ExcludeMissing
+        fun _startTime(): JsonField<OffsetDateTime> = startTime
+
+        /**
+         * Returns the raw JSON value of [tagValueIds].
+         *
+         * Unlike [tagValueIds], this method doesn't throw if the JSON field has an unexpected type.
+         */
+        @JsonProperty("tag_value_ids")
+        @ExcludeMissing
+        fun _tagValueIds(): JsonField<List<String>> = tagValueIds
+
+        /**
+         * Returns the raw JSON value of [traceTier].
+         *
+         * Unlike [traceTier], this method doesn't throw if the JSON field has an unexpected type.
+         */
+        @JsonProperty("trace_tier")
+        @ExcludeMissing
+        fun _traceTier(): JsonField<TraceTier> = traceTier
+
+        @JsonAnySetter
+        private fun putAdditionalProperty(key: String, value: JsonValue) {
+            additionalProperties.put(key, value)
+        }
+
+        @JsonAnyGetter
+        @ExcludeMissing
+        fun _additionalProperties(): Map<String, JsonValue> =
+            Collections.unmodifiableMap(additionalProperties)
+
+        fun toBuilder() = Builder().from(this)
+
+        companion object {
+
+            /**
+             * Returns a mutable builder for constructing an instance of [Body].
+             *
+             * The following fields are required:
+             * ```java
+             * .type()
+             * ```
+             */
+            @JvmStatic fun builder() = Builder()
+        }
+
+        /** A builder for [Body]. */
+        class Builder internal constructor() {
+
+            private var type: JsonField<Type>? = null
+            private var id: JsonField<String> = JsonMissing.of()
+            private var defaultDatasetId: JsonField<String> = JsonMissing.of()
+            private var description: JsonField<String> = JsonMissing.of()
+            private var endTime: JsonField<OffsetDateTime> = JsonMissing.of()
+            private var evaluatorKeys: JsonField<MutableList<String>>? = null
+            private var extra: JsonField<Extra> = JsonMissing.of()
+            private var kickedOffBy: JsonField<String> = JsonMissing.of()
+            private var longlivedTtlDays: JsonField<Long> = JsonMissing.of()
+            private var name: JsonField<String> = JsonMissing.of()
+            private var numExamples: JsonField<Long> = JsonMissing.of()
+            private var numRepetitions: JsonField<Long> = JsonMissing.of()
+            private var referenceDatasetId: JsonField<String> = JsonMissing.of()
+            private var startTime: JsonField<OffsetDateTime> = JsonMissing.of()
+            private var tagValueIds: JsonField<MutableList<String>>? = null
+            private var traceTier: JsonField<TraceTier> = JsonMissing.of()
+            private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
+
+            @JvmSynthetic
+            internal fun from(body: Body) = apply {
+                type = body.type
+                id = body.id
+                defaultDatasetId = body.defaultDatasetId
+                description = body.description
+                endTime = body.endTime
+                evaluatorKeys = body.evaluatorKeys.map { it.toMutableList() }
+                extra = body.extra
+                kickedOffBy = body.kickedOffBy
+                longlivedTtlDays = body.longlivedTtlDays
+                name = body.name
+                numExamples = body.numExamples
+                numRepetitions = body.numRepetitions
+                referenceDatasetId = body.referenceDatasetId
+                startTime = body.startTime
+                tagValueIds = body.tagValueIds.map { it.toMutableList() }
+                traceTier = body.traceTier
+                additionalProperties = body.additionalProperties.toMutableMap()
+            }
+
+            /** Type identifies a tracing project, Agent tracing project, or experiment. */
+            fun type(type: Type) = type(JsonField.of(type))
+
+            /**
+             * Sets [Builder.type] to an arbitrary JSON value.
+             *
+             * You should usually call [Builder.type] with a well-typed [Type] value instead. This
+             * method is primarily for setting the field to an undocumented or not yet supported
+             * value.
+             */
+            fun type(type: JsonField<Type>) = apply { this.type = type }
+
+            fun id(id: String) = id(JsonField.of(id))
+
+            /**
+             * Sets [Builder.id] to an arbitrary JSON value.
+             *
+             * You should usually call [Builder.id] with a well-typed [String] value instead. This
+             * method is primarily for setting the field to an undocumented or not yet supported
+             * value.
+             */
+            fun id(id: JsonField<String>) = apply { this.id = id }
+
+            fun defaultDatasetId(defaultDatasetId: String) =
+                defaultDatasetId(JsonField.of(defaultDatasetId))
+
+            /**
+             * Sets [Builder.defaultDatasetId] to an arbitrary JSON value.
+             *
+             * You should usually call [Builder.defaultDatasetId] with a well-typed [String] value
+             * instead. This method is primarily for setting the field to an undocumented or not yet
+             * supported value.
+             */
+            fun defaultDatasetId(defaultDatasetId: JsonField<String>) = apply {
+                this.defaultDatasetId = defaultDatasetId
+            }
+
+            fun description(description: String) = description(JsonField.of(description))
+
+            /**
+             * Sets [Builder.description] to an arbitrary JSON value.
+             *
+             * You should usually call [Builder.description] with a well-typed [String] value
+             * instead. This method is primarily for setting the field to an undocumented or not yet
+             * supported value.
+             */
+            fun description(description: JsonField<String>) = apply {
+                this.description = description
+            }
+
+            fun endTime(endTime: OffsetDateTime) = endTime(JsonField.of(endTime))
+
+            /**
+             * Sets [Builder.endTime] to an arbitrary JSON value.
+             *
+             * You should usually call [Builder.endTime] with a well-typed [OffsetDateTime] value
+             * instead. This method is primarily for setting the field to an undocumented or not yet
+             * supported value.
+             */
+            fun endTime(endTime: JsonField<OffsetDateTime>) = apply { this.endTime = endTime }
+
+            fun evaluatorKeys(evaluatorKeys: List<String>) =
+                evaluatorKeys(JsonField.of(evaluatorKeys))
+
+            /**
+             * Sets [Builder.evaluatorKeys] to an arbitrary JSON value.
+             *
+             * You should usually call [Builder.evaluatorKeys] with a well-typed `List<String>`
+             * value instead. This method is primarily for setting the field to an undocumented or
+             * not yet supported value.
+             */
+            fun evaluatorKeys(evaluatorKeys: JsonField<List<String>>) = apply {
+                this.evaluatorKeys = evaluatorKeys.map { it.toMutableList() }
+            }
+
+            /**
+             * Adds a single [String] to [evaluatorKeys].
+             *
+             * @throws IllegalStateException if the field was previously set to a non-list.
+             */
+            fun addEvaluatorKey(evaluatorKey: String) = apply {
+                evaluatorKeys =
+                    (evaluatorKeys ?: JsonField.of(mutableListOf())).also {
+                        checkKnown("evaluatorKeys", it).add(evaluatorKey)
+                    }
+            }
+
+            fun extra(extra: Extra) = extra(JsonField.of(extra))
+
+            /**
+             * Sets [Builder.extra] to an arbitrary JSON value.
+             *
+             * You should usually call [Builder.extra] with a well-typed [Extra] value instead. This
+             * method is primarily for setting the field to an undocumented or not yet supported
+             * value.
+             */
+            fun extra(extra: JsonField<Extra>) = apply { this.extra = extra }
+
+            fun kickedOffBy(kickedOffBy: String) = kickedOffBy(JsonField.of(kickedOffBy))
+
+            /**
+             * Sets [Builder.kickedOffBy] to an arbitrary JSON value.
+             *
+             * You should usually call [Builder.kickedOffBy] with a well-typed [String] value
+             * instead. This method is primarily for setting the field to an undocumented or not yet
+             * supported value.
+             */
+            fun kickedOffBy(kickedOffBy: JsonField<String>) = apply {
+                this.kickedOffBy = kickedOffBy
+            }
+
+            /**
+             * LonglivedTTLDays overrides long-lived trace retention. Null restores the workspace
+             * default.
+             */
+            fun longlivedTtlDays(longlivedTtlDays: Long?) =
+                longlivedTtlDays(JsonField.ofNullable(longlivedTtlDays))
+
+            /**
+             * Alias for [Builder.longlivedTtlDays].
+             *
+             * This unboxed primitive overload exists for backwards compatibility.
+             */
+            fun longlivedTtlDays(longlivedTtlDays: Long) =
+                longlivedTtlDays(longlivedTtlDays as Long?)
+
+            /**
+             * Alias for calling [Builder.longlivedTtlDays] with `longlivedTtlDays.orElse(null)`.
+             */
+            fun longlivedTtlDays(longlivedTtlDays: Optional<Long>) =
+                longlivedTtlDays(longlivedTtlDays.getOrNull())
+
+            /**
+             * Sets [Builder.longlivedTtlDays] to an arbitrary JSON value.
+             *
+             * You should usually call [Builder.longlivedTtlDays] with a well-typed [Long] value
+             * instead. This method is primarily for setting the field to an undocumented or not yet
+             * supported value.
+             */
+            fun longlivedTtlDays(longlivedTtlDays: JsonField<Long>) = apply {
+                this.longlivedTtlDays = longlivedTtlDays
+            }
+
+            fun name(name: String) = name(JsonField.of(name))
+
+            /**
+             * Sets [Builder.name] to an arbitrary JSON value.
+             *
+             * You should usually call [Builder.name] with a well-typed [String] value instead. This
+             * method is primarily for setting the field to an undocumented or not yet supported
+             * value.
+             */
+            fun name(name: JsonField<String>) = apply { this.name = name }
+
+            fun numExamples(numExamples: Long) = numExamples(JsonField.of(numExamples))
+
+            /**
+             * Sets [Builder.numExamples] to an arbitrary JSON value.
+             *
+             * You should usually call [Builder.numExamples] with a well-typed [Long] value instead.
+             * This method is primarily for setting the field to an undocumented or not yet
+             * supported value.
+             */
+            fun numExamples(numExamples: JsonField<Long>) = apply { this.numExamples = numExamples }
+
+            fun numRepetitions(numRepetitions: Long) = numRepetitions(JsonField.of(numRepetitions))
+
+            /**
+             * Sets [Builder.numRepetitions] to an arbitrary JSON value.
+             *
+             * You should usually call [Builder.numRepetitions] with a well-typed [Long] value
+             * instead. This method is primarily for setting the field to an undocumented or not yet
+             * supported value.
+             */
+            fun numRepetitions(numRepetitions: JsonField<Long>) = apply {
+                this.numRepetitions = numRepetitions
+            }
+
+            fun referenceDatasetId(referenceDatasetId: String) =
+                referenceDatasetId(JsonField.of(referenceDatasetId))
+
+            /**
+             * Sets [Builder.referenceDatasetId] to an arbitrary JSON value.
+             *
+             * You should usually call [Builder.referenceDatasetId] with a well-typed [String] value
+             * instead. This method is primarily for setting the field to an undocumented or not yet
+             * supported value.
+             */
+            fun referenceDatasetId(referenceDatasetId: JsonField<String>) = apply {
+                this.referenceDatasetId = referenceDatasetId
+            }
+
+            fun startTime(startTime: OffsetDateTime) = startTime(JsonField.of(startTime))
+
+            /**
+             * Sets [Builder.startTime] to an arbitrary JSON value.
+             *
+             * You should usually call [Builder.startTime] with a well-typed [OffsetDateTime] value
+             * instead. This method is primarily for setting the field to an undocumented or not yet
+             * supported value.
+             */
+            fun startTime(startTime: JsonField<OffsetDateTime>) = apply {
+                this.startTime = startTime
+            }
+
+            fun tagValueIds(tagValueIds: List<String>) = tagValueIds(JsonField.of(tagValueIds))
+
+            /**
+             * Sets [Builder.tagValueIds] to an arbitrary JSON value.
+             *
+             * You should usually call [Builder.tagValueIds] with a well-typed `List<String>` value
+             * instead. This method is primarily for setting the field to an undocumented or not yet
+             * supported value.
+             */
+            fun tagValueIds(tagValueIds: JsonField<List<String>>) = apply {
+                this.tagValueIds = tagValueIds.map { it.toMutableList() }
+            }
+
+            /**
+             * Adds a single [String] to [tagValueIds].
+             *
+             * @throws IllegalStateException if the field was previously set to a non-list.
+             */
+            fun addTagValueId(tagValueId: String) = apply {
+                tagValueIds =
+                    (tagValueIds ?: JsonField.of(mutableListOf())).also {
+                        checkKnown("tagValueIds", it).add(tagValueId)
+                    }
+            }
+
+            fun traceTier(traceTier: TraceTier) = traceTier(JsonField.of(traceTier))
+
+            /**
+             * Sets [Builder.traceTier] to an arbitrary JSON value.
+             *
+             * You should usually call [Builder.traceTier] with a well-typed [TraceTier] value
+             * instead. This method is primarily for setting the field to an undocumented or not yet
+             * supported value.
+             */
+            fun traceTier(traceTier: JsonField<TraceTier>) = apply { this.traceTier = traceTier }
+
+            fun additionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
+                this.additionalProperties.clear()
+                putAllAdditionalProperties(additionalProperties)
+            }
+
+            fun putAdditionalProperty(key: String, value: JsonValue) = apply {
+                additionalProperties.put(key, value)
+            }
+
+            fun putAllAdditionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
+                this.additionalProperties.putAll(additionalProperties)
+            }
+
+            fun removeAdditionalProperty(key: String) = apply { additionalProperties.remove(key) }
+
+            fun removeAllAdditionalProperties(keys: Set<String>) = apply {
+                keys.forEach(::removeAdditionalProperty)
+            }
+
+            /**
+             * Returns an immutable instance of [Body].
+             *
+             * Further updates to this [Builder] will not mutate the returned instance.
+             *
+             * The following fields are required:
+             * ```java
+             * .type()
+             * ```
+             *
+             * @throws IllegalStateException if any required field is unset.
+             */
+            fun build(): Body =
+                Body(
+                    checkRequired("type", type),
+                    id,
+                    defaultDatasetId,
+                    description,
+                    endTime,
+                    (evaluatorKeys ?: JsonMissing.of()).map { it.toImmutable() },
+                    extra,
+                    kickedOffBy,
+                    longlivedTtlDays,
+                    name,
+                    numExamples,
+                    numRepetitions,
+                    referenceDatasetId,
+                    startTime,
+                    (tagValueIds ?: JsonMissing.of()).map { it.toImmutable() },
+                    traceTier,
+                    additionalProperties.toMutableMap(),
+                )
+        }
+
+        private var validated: Boolean = false
+
+        /**
+         * Validates that the types of all values in this object match their expected types
+         * recursively.
+         *
+         * This method is _not_ forwards compatible with new types from the API for existing fields.
+         *
+         * @throws LangChainInvalidDataException if any value type in this object doesn't match its
+         *   expected type.
+         */
+        fun validate(): Body = apply {
+            if (validated) {
+                return@apply
+            }
+
+            type().validate()
+            id()
+            defaultDatasetId()
+            description()
+            endTime()
+            evaluatorKeys()
+            extra().ifPresent { it.validate() }
+            kickedOffBy()
+            longlivedTtlDays()
+            name()
+            numExamples()
+            numRepetitions()
+            referenceDatasetId()
+            startTime()
+            tagValueIds()
+            traceTier().ifPresent { it.validate() }
+            validated = true
+        }
+
+        fun isValid(): Boolean =
+            try {
+                validate()
+                true
+            } catch (e: LangChainInvalidDataException) {
+                false
+            }
+
+        /**
+         * Returns a score indicating how many valid values are contained in this object
+         * recursively.
+         *
+         * Used for best match union deserialization.
+         */
+        @JvmSynthetic
+        internal fun validity(): Int =
+            (type.asKnown().getOrNull()?.validity() ?: 0) +
+                (if (id.asKnown().isPresent) 1 else 0) +
+                (if (defaultDatasetId.asKnown().isPresent) 1 else 0) +
+                (if (description.asKnown().isPresent) 1 else 0) +
+                (if (endTime.asKnown().isPresent) 1 else 0) +
+                (evaluatorKeys.asKnown().getOrNull()?.size ?: 0) +
+                (extra.asKnown().getOrNull()?.validity() ?: 0) +
+                (if (kickedOffBy.asKnown().isPresent) 1 else 0) +
+                (if (longlivedTtlDays.asKnown().isPresent) 1 else 0) +
+                (if (name.asKnown().isPresent) 1 else 0) +
+                (if (numExamples.asKnown().isPresent) 1 else 0) +
+                (if (numRepetitions.asKnown().isPresent) 1 else 0) +
+                (if (referenceDatasetId.asKnown().isPresent) 1 else 0) +
+                (if (startTime.asKnown().isPresent) 1 else 0) +
+                (tagValueIds.asKnown().getOrNull()?.size ?: 0) +
+                (traceTier.asKnown().getOrNull()?.validity() ?: 0)
+
+        override fun equals(other: Any?): Boolean {
+            if (this === other) {
+                return true
+            }
+
+            return other is Body &&
+                type == other.type &&
+                id == other.id &&
+                defaultDatasetId == other.defaultDatasetId &&
+                description == other.description &&
+                endTime == other.endTime &&
+                evaluatorKeys == other.evaluatorKeys &&
+                extra == other.extra &&
+                kickedOffBy == other.kickedOffBy &&
+                longlivedTtlDays == other.longlivedTtlDays &&
+                name == other.name &&
+                numExamples == other.numExamples &&
+                numRepetitions == other.numRepetitions &&
+                referenceDatasetId == other.referenceDatasetId &&
+                startTime == other.startTime &&
+                tagValueIds == other.tagValueIds &&
+                traceTier == other.traceTier &&
+                additionalProperties == other.additionalProperties
+        }
+
+        private val hashCode: Int by lazy {
+            Objects.hash(
+                type,
+                id,
+                defaultDatasetId,
+                description,
+                endTime,
+                evaluatorKeys,
+                extra,
+                kickedOffBy,
+                longlivedTtlDays,
+                name,
+                numExamples,
+                numRepetitions,
+                referenceDatasetId,
+                startTime,
+                tagValueIds,
+                traceTier,
+                additionalProperties,
+            )
+        }
+
+        override fun hashCode(): Int = hashCode
+
+        override fun toString() =
+            "Body{type=$type, id=$id, defaultDatasetId=$defaultDatasetId, description=$description, endTime=$endTime, evaluatorKeys=$evaluatorKeys, extra=$extra, kickedOffBy=$kickedOffBy, longlivedTtlDays=$longlivedTtlDays, name=$name, numExamples=$numExamples, numRepetitions=$numRepetitions, referenceDatasetId=$referenceDatasetId, startTime=$startTime, tagValueIds=$tagValueIds, traceTier=$traceTier, additionalProperties=$additionalProperties}"
+    }
+
+    /** Type identifies a tracing project, Agent tracing project, or experiment. */
+    class Type @JsonCreator private constructor(private val value: JsonField<String>) : Enum {
+
+        /**
+         * Returns this class instance's raw value.
+         *
+         * This is usually only useful if this instance was deserialized from data that doesn't
+         * match any known member, and you want to know that value. For example, if the SDK is on an
+         * older version than the API, then the API may respond with new members that the SDK is
+         * unaware of.
+         */
+        @com.fasterxml.jackson.annotation.JsonValue fun _value(): JsonField<String> = value
+
+        companion object {
+
+            @JvmField val PROJECT = of("PROJECT")
+
+            @JvmField val AGENT = of("AGENT")
+
+            @JvmField val EXPERIMENT = of("EXPERIMENT")
+
+            @JvmStatic fun of(value: String) = Type(JsonField.of(value))
+        }
+
+        /** An enum containing [Type]'s known values. */
+        enum class Known {
+            PROJECT,
+            AGENT,
+            EXPERIMENT,
+        }
+
+        /**
+         * An enum containing [Type]'s known values, as well as an [_UNKNOWN] member.
+         *
+         * An instance of [Type] can contain an unknown value in a couple of cases:
+         * - It was deserialized from data that doesn't match any known member. For example, if the
+         *   SDK is on an older version than the API, then the API may respond with new members that
+         *   the SDK is unaware of.
+         * - It was constructed with an arbitrary value using the [of] method.
+         */
+        enum class Value {
+            PROJECT,
+            AGENT,
+            EXPERIMENT,
+            /** An enum member indicating that [Type] was instantiated with an unknown value. */
+            _UNKNOWN,
+        }
+
+        /**
+         * Returns an enum member corresponding to this class instance's value, or [Value._UNKNOWN]
+         * if the class was instantiated with an unknown value.
+         *
+         * Use the [known] method instead if you're certain the value is always known or if you want
+         * to throw for the unknown case.
+         */
+        fun value(): Value =
+            when (this) {
+                PROJECT -> Value.PROJECT
+                AGENT -> Value.AGENT
+                EXPERIMENT -> Value.EXPERIMENT
+                else -> Value._UNKNOWN
+            }
+
+        /**
+         * Returns an enum member corresponding to this class instance's value.
+         *
+         * Use the [value] method instead if you're uncertain the value is always known and don't
+         * want to throw for the unknown case.
+         *
+         * @throws LangChainInvalidDataException if this class instance's value is a not a known
+         *   member.
+         */
+        fun known(): Known =
+            when (this) {
+                PROJECT -> Known.PROJECT
+                AGENT -> Known.AGENT
+                EXPERIMENT -> Known.EXPERIMENT
+                else -> throw LangChainInvalidDataException("Unknown Type: $value")
+            }
+
+        /**
+         * Returns this class instance's primitive wire representation.
+         *
+         * This differs from the [toString] method because that method is primarily for debugging
+         * and generally doesn't throw.
+         *
+         * @throws LangChainInvalidDataException if this class instance's value does not have the
+         *   expected primitive type.
+         */
+        fun asString(): String =
+            _value().asString().orElseThrow {
+                LangChainInvalidDataException("Value is not a String")
+            }
+
+        private var validated: Boolean = false
+
+        /**
+         * Validates that the types of all values in this object match their expected types
+         * recursively.
+         *
+         * This method is _not_ forwards compatible with new types from the API for existing fields.
+         *
+         * @throws LangChainInvalidDataException if any value type in this object doesn't match its
+         *   expected type.
+         */
+        fun validate(): Type = apply {
+            if (validated) {
+                return@apply
+            }
+
+            known()
+            validated = true
+        }
+
+        fun isValid(): Boolean =
+            try {
+                validate()
+                true
+            } catch (e: LangChainInvalidDataException) {
+                false
+            }
+
+        /**
+         * Returns a score indicating how many valid values are contained in this object
+         * recursively.
+         *
+         * Used for best match union deserialization.
+         */
+        @JvmSynthetic internal fun validity(): Int = if (value() == Value._UNKNOWN) 0 else 1
+
+        override fun equals(other: Any?): Boolean {
+            if (this === other) {
+                return true
+            }
+
+            return other is Type && value == other.value
+        }
+
+        override fun hashCode() = value.hashCode()
+
+        override fun toString() = value.toString()
+    }
+
+    class Extra
+    @JsonCreator
+    private constructor(
+        @com.fasterxml.jackson.annotation.JsonValue
+        private val additionalProperties: Map<String, JsonValue>
+    ) {
+
+        @JsonAnyGetter
+        @ExcludeMissing
+        fun _additionalProperties(): Map<String, JsonValue> = additionalProperties
+
+        fun toBuilder() = Builder().from(this)
+
+        companion object {
+
+            /** Returns a mutable builder for constructing an instance of [Extra]. */
+            @JvmStatic fun builder() = Builder()
+        }
+
+        /** A builder for [Extra]. */
+        class Builder internal constructor() {
+
+            private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
+
+            @JvmSynthetic
+            internal fun from(extra: Extra) = apply {
+                additionalProperties = extra.additionalProperties.toMutableMap()
+            }
+
+            fun additionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
+                this.additionalProperties.clear()
+                putAllAdditionalProperties(additionalProperties)
+            }
+
+            fun putAdditionalProperty(key: String, value: JsonValue) = apply {
+                additionalProperties.put(key, value)
+            }
+
+            fun putAllAdditionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
+                this.additionalProperties.putAll(additionalProperties)
+            }
+
+            fun removeAdditionalProperty(key: String) = apply { additionalProperties.remove(key) }
+
+            fun removeAllAdditionalProperties(keys: Set<String>) = apply {
+                keys.forEach(::removeAdditionalProperty)
+            }
+
+            /**
+             * Returns an immutable instance of [Extra].
+             *
+             * Further updates to this [Builder] will not mutate the returned instance.
+             */
+            fun build(): Extra = Extra(additionalProperties.toImmutable())
+        }
+
+        private var validated: Boolean = false
+
+        /**
+         * Validates that the types of all values in this object match their expected types
+         * recursively.
+         *
+         * This method is _not_ forwards compatible with new types from the API for existing fields.
+         *
+         * @throws LangChainInvalidDataException if any value type in this object doesn't match its
+         *   expected type.
+         */
+        fun validate(): Extra = apply {
+            if (validated) {
+                return@apply
+            }
+
+            validated = true
+        }
+
+        fun isValid(): Boolean =
+            try {
+                validate()
+                true
+            } catch (e: LangChainInvalidDataException) {
+                false
+            }
+
+        /**
+         * Returns a score indicating how many valid values are contained in this object
+         * recursively.
+         *
+         * Used for best match union deserialization.
+         */
+        @JvmSynthetic
+        internal fun validity(): Int =
+            additionalProperties.count { (_, value) -> !value.isNull() && !value.isMissing() }
+
+        override fun equals(other: Any?): Boolean {
+            if (this === other) {
+                return true
+            }
+
+            return other is Extra && additionalProperties == other.additionalProperties
+        }
+
+        private val hashCode: Int by lazy { Objects.hash(additionalProperties) }
+
+        override fun hashCode(): Int = hashCode
+
+        override fun toString() = "Extra{additionalProperties=$additionalProperties}"
+    }
+
+    class TraceTier @JsonCreator private constructor(private val value: JsonField<String>) : Enum {
+
+        /**
+         * Returns this class instance's raw value.
+         *
+         * This is usually only useful if this instance was deserialized from data that doesn't
+         * match any known member, and you want to know that value. For example, if the SDK is on an
+         * older version than the API, then the API may respond with new members that the SDK is
+         * unaware of.
+         */
+        @com.fasterxml.jackson.annotation.JsonValue fun _value(): JsonField<String> = value
+
+        companion object {
+
+            @JvmField val LONG_LIVED = of("LONG_LIVED")
+
+            @JvmField val SHORT_LIVED = of("SHORT_LIVED")
+
+            @JvmStatic fun of(value: String) = TraceTier(JsonField.of(value))
+        }
+
+        /** An enum containing [TraceTier]'s known values. */
+        enum class Known {
+            LONG_LIVED,
+            SHORT_LIVED,
+        }
+
+        /**
+         * An enum containing [TraceTier]'s known values, as well as an [_UNKNOWN] member.
+         *
+         * An instance of [TraceTier] can contain an unknown value in a couple of cases:
+         * - It was deserialized from data that doesn't match any known member. For example, if the
+         *   SDK is on an older version than the API, then the API may respond with new members that
+         *   the SDK is unaware of.
+         * - It was constructed with an arbitrary value using the [of] method.
+         */
+        enum class Value {
+            LONG_LIVED,
+            SHORT_LIVED,
+            /**
+             * An enum member indicating that [TraceTier] was instantiated with an unknown value.
+             */
+            _UNKNOWN,
+        }
+
+        /**
+         * Returns an enum member corresponding to this class instance's value, or [Value._UNKNOWN]
+         * if the class was instantiated with an unknown value.
+         *
+         * Use the [known] method instead if you're certain the value is always known or if you want
+         * to throw for the unknown case.
+         */
+        fun value(): Value =
+            when (this) {
+                LONG_LIVED -> Value.LONG_LIVED
+                SHORT_LIVED -> Value.SHORT_LIVED
+                else -> Value._UNKNOWN
+            }
+
+        /**
+         * Returns an enum member corresponding to this class instance's value.
+         *
+         * Use the [value] method instead if you're uncertain the value is always known and don't
+         * want to throw for the unknown case.
+         *
+         * @throws LangChainInvalidDataException if this class instance's value is a not a known
+         *   member.
+         */
+        fun known(): Known =
+            when (this) {
+                LONG_LIVED -> Known.LONG_LIVED
+                SHORT_LIVED -> Known.SHORT_LIVED
+                else -> throw LangChainInvalidDataException("Unknown TraceTier: $value")
+            }
+
+        /**
+         * Returns this class instance's primitive wire representation.
+         *
+         * This differs from the [toString] method because that method is primarily for debugging
+         * and generally doesn't throw.
+         *
+         * @throws LangChainInvalidDataException if this class instance's value does not have the
+         *   expected primitive type.
+         */
+        fun asString(): String =
+            _value().asString().orElseThrow {
+                LangChainInvalidDataException("Value is not a String")
+            }
+
+        private var validated: Boolean = false
+
+        /**
+         * Validates that the types of all values in this object match their expected types
+         * recursively.
+         *
+         * This method is _not_ forwards compatible with new types from the API for existing fields.
+         *
+         * @throws LangChainInvalidDataException if any value type in this object doesn't match its
+         *   expected type.
+         */
+        fun validate(): TraceTier = apply {
+            if (validated) {
+                return@apply
+            }
+
+            known()
+            validated = true
+        }
+
+        fun isValid(): Boolean =
+            try {
+                validate()
+                true
+            } catch (e: LangChainInvalidDataException) {
+                false
+            }
+
+        /**
+         * Returns a score indicating how many valid values are contained in this object
+         * recursively.
+         *
+         * Used for best match union deserialization.
+         */
+        @JvmSynthetic internal fun validity(): Int = if (value() == Value._UNKNOWN) 0 else 1
+
+        override fun equals(other: Any?): Boolean {
+            if (this === other) {
+                return true
+            }
+
+            return other is TraceTier && value == other.value
+        }
+
+        override fun hashCode() = value.hashCode()
+
+        override fun toString() = value.toString()
+    }
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) {
+            return true
+        }
+
+        return other is SessionCreateV2Params &&
+            upsert == other.upsert &&
+            body == other.body &&
+            additionalHeaders == other.additionalHeaders &&
+            additionalQueryParams == other.additionalQueryParams
+    }
+
+    override fun hashCode(): Int =
+        Objects.hash(upsert, body, additionalHeaders, additionalQueryParams)
+
+    override fun toString() =
+        "SessionCreateV2Params{upsert=$upsert, body=$body, additionalHeaders=$additionalHeaders, additionalQueryParams=$additionalQueryParams}"
+}

@@ -18,7 +18,9 @@ import com.langchain.smith.core.http.json
 import com.langchain.smith.core.http.parseable
 import com.langchain.smith.core.prepare
 import com.langchain.smith.models.sessions.CustomChartsSection
+import com.langchain.smith.models.sessions.Session
 import com.langchain.smith.models.sessions.SessionCreateParams
+import com.langchain.smith.models.sessions.SessionCreateV2Params
 import com.langchain.smith.models.sessions.SessionDashboardParams
 import com.langchain.smith.models.sessions.SessionDeleteParams
 import com.langchain.smith.models.sessions.SessionListPage
@@ -31,7 +33,9 @@ import com.langchain.smith.models.sessions.SessionListV2Params
 import com.langchain.smith.models.sessions.SessionResolveParams
 import com.langchain.smith.models.sessions.SessionResolveResponse
 import com.langchain.smith.models.sessions.SessionRetrieveParams
+import com.langchain.smith.models.sessions.SessionRetrieveV2Params
 import com.langchain.smith.models.sessions.SessionUpdateParams
+import com.langchain.smith.models.sessions.SessionUpdateV2Params
 import com.langchain.smith.models.sessions.TracerSession
 import com.langchain.smith.models.sessions.TracerSessionWithoutVirtualFields
 import com.langchain.smith.services.blocking.sessions.InsightService
@@ -81,6 +85,10 @@ class SessionServiceImpl internal constructor(private val clientOptions: ClientO
         withRawResponse().delete(params, requestOptions)
     }
 
+    override fun createV2(params: SessionCreateV2Params, requestOptions: RequestOptions): Session =
+        // post /api/v2/sessions
+        withRawResponse().createV2(params, requestOptions).parse()
+
     override fun dashboard(
         params: SessionDashboardParams,
         requestOptions: RequestOptions,
@@ -111,6 +119,17 @@ class SessionServiceImpl internal constructor(private val clientOptions: ClientO
     ): SessionResolveResponse =
         // get /api/v1/sessions/resolutions
         withRawResponse().resolve(params, requestOptions).parse()
+
+    override fun retrieveV2(
+        params: SessionRetrieveV2Params,
+        requestOptions: RequestOptions,
+    ): Session =
+        // get /api/v2/sessions/{session_id}
+        withRawResponse().retrieveV2(params, requestOptions).parse()
+
+    override fun updateV2(params: SessionUpdateV2Params, requestOptions: RequestOptions): Session =
+        // patch /api/v2/sessions/{session_id}
+        withRawResponse().updateV2(params, requestOptions).parse()
 
     override fun list(params: SessionListParams, requestOptions: RequestOptions): SessionListPage =
         // get /api/v1/sessions
@@ -248,6 +267,34 @@ class SessionServiceImpl internal constructor(private val clientOptions: ClientO
             }
         }
 
+        private val createV2Handler: Handler<Session> =
+            jsonHandler<Session>(clientOptions.jsonMapper)
+
+        override fun createV2(
+            params: SessionCreateV2Params,
+            requestOptions: RequestOptions,
+        ): HttpResponseFor<Session> {
+            val request =
+                HttpRequest.builder()
+                    .method(HttpMethod.POST)
+                    .baseUrl(clientOptions.baseUrl())
+                    .addPathSegments("api", "v2", "sessions")
+                    .body(json(clientOptions.jsonMapper, params._body()))
+                    .build()
+                    .prepare(clientOptions, params)
+            val requestOptions = requestOptions.applyDefaults(RequestOptions.from(clientOptions))
+            val response = clientOptions.httpClient.execute(request, requestOptions)
+            return errorHandler.handle(response).parseable {
+                response
+                    .use { createV2Handler.handle(it) }
+                    .also {
+                        if (requestOptions.responseValidation!!) {
+                            it.validate()
+                        }
+                    }
+            }
+        }
+
         private val dashboardHandler: Handler<CustomChartsSection> =
             jsonHandler<CustomChartsSection>(clientOptions.jsonMapper)
 
@@ -369,6 +416,67 @@ class SessionServiceImpl internal constructor(private val clientOptions: ClientO
             return errorHandler.handle(response).parseable {
                 response
                     .use { resolveHandler.handle(it) }
+                    .also {
+                        if (requestOptions.responseValidation!!) {
+                            it.validate()
+                        }
+                    }
+            }
+        }
+
+        private val retrieveV2Handler: Handler<Session> =
+            jsonHandler<Session>(clientOptions.jsonMapper)
+
+        override fun retrieveV2(
+            params: SessionRetrieveV2Params,
+            requestOptions: RequestOptions,
+        ): HttpResponseFor<Session> {
+            // We check here instead of in the params builder because this can be specified
+            // positionally or in the params class.
+            checkRequired("sessionId", params.sessionId().getOrNull())
+            val request =
+                HttpRequest.builder()
+                    .method(HttpMethod.GET)
+                    .baseUrl(clientOptions.baseUrl())
+                    .addPathSegments("api", "v2", "sessions", params._pathParam(0))
+                    .build()
+                    .prepare(clientOptions, params)
+            val requestOptions = requestOptions.applyDefaults(RequestOptions.from(clientOptions))
+            val response = clientOptions.httpClient.execute(request, requestOptions)
+            return errorHandler.handle(response).parseable {
+                response
+                    .use { retrieveV2Handler.handle(it) }
+                    .also {
+                        if (requestOptions.responseValidation!!) {
+                            it.validate()
+                        }
+                    }
+            }
+        }
+
+        private val updateV2Handler: Handler<Session> =
+            jsonHandler<Session>(clientOptions.jsonMapper)
+
+        override fun updateV2(
+            params: SessionUpdateV2Params,
+            requestOptions: RequestOptions,
+        ): HttpResponseFor<Session> {
+            // We check here instead of in the params builder because this can be specified
+            // positionally or in the params class.
+            checkRequired("sessionId", params.sessionId().getOrNull())
+            val request =
+                HttpRequest.builder()
+                    .method(HttpMethod.PATCH)
+                    .baseUrl(clientOptions.baseUrl())
+                    .addPathSegments("api", "v2", "sessions", params._pathParam(0))
+                    .body(json(clientOptions.jsonMapper, params._body()))
+                    .build()
+                    .prepare(clientOptions, params)
+            val requestOptions = requestOptions.applyDefaults(RequestOptions.from(clientOptions))
+            val response = clientOptions.httpClient.execute(request, requestOptions)
+            return errorHandler.handle(response).parseable {
+                response
+                    .use { updateV2Handler.handle(it) }
                     .also {
                         if (requestOptions.responseValidation!!) {
                             it.validate()

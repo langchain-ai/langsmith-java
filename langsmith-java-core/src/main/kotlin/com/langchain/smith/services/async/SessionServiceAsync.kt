@@ -7,7 +7,9 @@ import com.langchain.smith.core.RequestOptions
 import com.langchain.smith.core.http.HttpResponse
 import com.langchain.smith.core.http.HttpResponseFor
 import com.langchain.smith.models.sessions.CustomChartsSection
+import com.langchain.smith.models.sessions.Session
 import com.langchain.smith.models.sessions.SessionCreateParams
+import com.langchain.smith.models.sessions.SessionCreateV2Params
 import com.langchain.smith.models.sessions.SessionDashboardParams
 import com.langchain.smith.models.sessions.SessionDeleteParams
 import com.langchain.smith.models.sessions.SessionListPageAsync
@@ -19,7 +21,9 @@ import com.langchain.smith.models.sessions.SessionListV2Params
 import com.langchain.smith.models.sessions.SessionResolveParams
 import com.langchain.smith.models.sessions.SessionResolveResponse
 import com.langchain.smith.models.sessions.SessionRetrieveParams
+import com.langchain.smith.models.sessions.SessionRetrieveV2Params
 import com.langchain.smith.models.sessions.SessionUpdateParams
+import com.langchain.smith.models.sessions.SessionUpdateV2Params
 import com.langchain.smith.models.sessions.TracerSession
 import com.langchain.smith.models.sessions.TracerSessionWithoutVirtualFields
 import com.langchain.smith.services.async.sessions.InsightServiceAsync
@@ -175,6 +179,19 @@ interface SessionServiceAsync {
         delete(sessionId, SessionDeleteParams.none(), requestOptions)
 
     /**
+     * Create a session, or update an existing session with the same name when upsert is true.
+     * Returns the refreshed session representation without optional run statistics.
+     */
+    fun createV2(params: SessionCreateV2Params): CompletableFuture<Session> =
+        createV2(params, RequestOptions.none())
+
+    /** @see createV2 */
+    fun createV2(
+        params: SessionCreateV2Params,
+        requestOptions: RequestOptions = RequestOptions.none(),
+    ): CompletableFuture<Session>
+
+    /**
      * GET with body payload — no resources created. Returns the prebuilt dashboard for the tracing
      * project matching the query passed as the request payload.
      */
@@ -275,6 +292,77 @@ interface SessionServiceAsync {
         params: SessionResolveParams,
         requestOptions: RequestOptions = RequestOptions.none(),
     ): CompletableFuture<SessionResolveResponse>
+
+    /**
+     * Returns one tracing project or experiment by ID. Pass include_stats=true to include run
+     * statistics.
+     */
+    fun retrieveV2(sessionId: String): CompletableFuture<Session> =
+        retrieveV2(sessionId, SessionRetrieveV2Params.none())
+
+    /** @see retrieveV2 */
+    fun retrieveV2(
+        sessionId: String,
+        params: SessionRetrieveV2Params = SessionRetrieveV2Params.none(),
+        requestOptions: RequestOptions = RequestOptions.none(),
+    ): CompletableFuture<Session> =
+        retrieveV2(params.toBuilder().sessionId(sessionId).build(), requestOptions)
+
+    /** @see retrieveV2 */
+    fun retrieveV2(
+        sessionId: String,
+        params: SessionRetrieveV2Params = SessionRetrieveV2Params.none(),
+    ): CompletableFuture<Session> = retrieveV2(sessionId, params, RequestOptions.none())
+
+    /** @see retrieveV2 */
+    fun retrieveV2(
+        params: SessionRetrieveV2Params,
+        requestOptions: RequestOptions = RequestOptions.none(),
+    ): CompletableFuture<Session>
+
+    /** @see retrieveV2 */
+    fun retrieveV2(params: SessionRetrieveV2Params): CompletableFuture<Session> =
+        retrieveV2(params, RequestOptions.none())
+
+    /** @see retrieveV2 */
+    fun retrieveV2(sessionId: String, requestOptions: RequestOptions): CompletableFuture<Session> =
+        retrieveV2(sessionId, SessionRetrieveV2Params.none(), requestOptions)
+
+    /**
+     * Updates supplied fields and returns the refreshed resource without optional run statistics.
+     * Omitted fields remain unchanged. Null clears description, default_dataset_id, end_time, or
+     * extra. Extra merges top-level keys; null values remove keys.
+     */
+    fun updateV2(sessionId: String): CompletableFuture<Session> =
+        updateV2(sessionId, SessionUpdateV2Params.none())
+
+    /** @see updateV2 */
+    fun updateV2(
+        sessionId: String,
+        params: SessionUpdateV2Params = SessionUpdateV2Params.none(),
+        requestOptions: RequestOptions = RequestOptions.none(),
+    ): CompletableFuture<Session> =
+        updateV2(params.toBuilder().sessionId(sessionId).build(), requestOptions)
+
+    /** @see updateV2 */
+    fun updateV2(
+        sessionId: String,
+        params: SessionUpdateV2Params = SessionUpdateV2Params.none(),
+    ): CompletableFuture<Session> = updateV2(sessionId, params, RequestOptions.none())
+
+    /** @see updateV2 */
+    fun updateV2(
+        params: SessionUpdateV2Params,
+        requestOptions: RequestOptions = RequestOptions.none(),
+    ): CompletableFuture<Session>
+
+    /** @see updateV2 */
+    fun updateV2(params: SessionUpdateV2Params): CompletableFuture<Session> =
+        updateV2(params, RequestOptions.none())
+
+    /** @see updateV2 */
+    fun updateV2(sessionId: String, requestOptions: RequestOptions): CompletableFuture<Session> =
+        updateV2(sessionId, SessionUpdateV2Params.none(), requestOptions)
 
     /**
      * List all projects.
@@ -463,6 +551,19 @@ interface SessionServiceAsync {
             delete(sessionId, SessionDeleteParams.none(), requestOptions)
 
         /**
+         * Returns a raw HTTP response for `post /api/v2/sessions`, but is otherwise the same as
+         * [SessionServiceAsync.createV2].
+         */
+        fun createV2(params: SessionCreateV2Params): CompletableFuture<HttpResponseFor<Session>> =
+            createV2(params, RequestOptions.none())
+
+        /** @see createV2 */
+        fun createV2(
+            params: SessionCreateV2Params,
+            requestOptions: RequestOptions = RequestOptions.none(),
+        ): CompletableFuture<HttpResponseFor<Session>>
+
+        /**
          * Returns a raw HTTP response for `post /api/v1/sessions/{session_id}/dashboard`, but is
          * otherwise the same as [SessionServiceAsync.dashboard].
          */
@@ -568,6 +669,85 @@ interface SessionServiceAsync {
             params: SessionResolveParams,
             requestOptions: RequestOptions = RequestOptions.none(),
         ): CompletableFuture<HttpResponseFor<SessionResolveResponse>>
+
+        /**
+         * Returns a raw HTTP response for `get /api/v2/sessions/{session_id}`, but is otherwise the
+         * same as [SessionServiceAsync.retrieveV2].
+         */
+        fun retrieveV2(sessionId: String): CompletableFuture<HttpResponseFor<Session>> =
+            retrieveV2(sessionId, SessionRetrieveV2Params.none())
+
+        /** @see retrieveV2 */
+        fun retrieveV2(
+            sessionId: String,
+            params: SessionRetrieveV2Params = SessionRetrieveV2Params.none(),
+            requestOptions: RequestOptions = RequestOptions.none(),
+        ): CompletableFuture<HttpResponseFor<Session>> =
+            retrieveV2(params.toBuilder().sessionId(sessionId).build(), requestOptions)
+
+        /** @see retrieveV2 */
+        fun retrieveV2(
+            sessionId: String,
+            params: SessionRetrieveV2Params = SessionRetrieveV2Params.none(),
+        ): CompletableFuture<HttpResponseFor<Session>> =
+            retrieveV2(sessionId, params, RequestOptions.none())
+
+        /** @see retrieveV2 */
+        fun retrieveV2(
+            params: SessionRetrieveV2Params,
+            requestOptions: RequestOptions = RequestOptions.none(),
+        ): CompletableFuture<HttpResponseFor<Session>>
+
+        /** @see retrieveV2 */
+        fun retrieveV2(
+            params: SessionRetrieveV2Params
+        ): CompletableFuture<HttpResponseFor<Session>> = retrieveV2(params, RequestOptions.none())
+
+        /** @see retrieveV2 */
+        fun retrieveV2(
+            sessionId: String,
+            requestOptions: RequestOptions,
+        ): CompletableFuture<HttpResponseFor<Session>> =
+            retrieveV2(sessionId, SessionRetrieveV2Params.none(), requestOptions)
+
+        /**
+         * Returns a raw HTTP response for `patch /api/v2/sessions/{session_id}`, but is otherwise
+         * the same as [SessionServiceAsync.updateV2].
+         */
+        fun updateV2(sessionId: String): CompletableFuture<HttpResponseFor<Session>> =
+            updateV2(sessionId, SessionUpdateV2Params.none())
+
+        /** @see updateV2 */
+        fun updateV2(
+            sessionId: String,
+            params: SessionUpdateV2Params = SessionUpdateV2Params.none(),
+            requestOptions: RequestOptions = RequestOptions.none(),
+        ): CompletableFuture<HttpResponseFor<Session>> =
+            updateV2(params.toBuilder().sessionId(sessionId).build(), requestOptions)
+
+        /** @see updateV2 */
+        fun updateV2(
+            sessionId: String,
+            params: SessionUpdateV2Params = SessionUpdateV2Params.none(),
+        ): CompletableFuture<HttpResponseFor<Session>> =
+            updateV2(sessionId, params, RequestOptions.none())
+
+        /** @see updateV2 */
+        fun updateV2(
+            params: SessionUpdateV2Params,
+            requestOptions: RequestOptions = RequestOptions.none(),
+        ): CompletableFuture<HttpResponseFor<Session>>
+
+        /** @see updateV2 */
+        fun updateV2(params: SessionUpdateV2Params): CompletableFuture<HttpResponseFor<Session>> =
+            updateV2(params, RequestOptions.none())
+
+        /** @see updateV2 */
+        fun updateV2(
+            sessionId: String,
+            requestOptions: RequestOptions,
+        ): CompletableFuture<HttpResponseFor<Session>> =
+            updateV2(sessionId, SessionUpdateV2Params.none(), requestOptions)
 
         /**
          * Returns a raw HTTP response for `get /api/v1/sessions`, but is otherwise the same as

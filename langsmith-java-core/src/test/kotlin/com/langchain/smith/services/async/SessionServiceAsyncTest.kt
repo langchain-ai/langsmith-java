@@ -7,10 +7,13 @@ import com.langchain.smith.core.JsonValue
 import com.langchain.smith.models.sessions.CustomChartsSectionRequest
 import com.langchain.smith.models.sessions.RunStatsGroupBy
 import com.langchain.smith.models.sessions.SessionCreateParams
+import com.langchain.smith.models.sessions.SessionCreateV2Params
 import com.langchain.smith.models.sessions.SessionDashboardParams
 import com.langchain.smith.models.sessions.SessionResolveParams
 import com.langchain.smith.models.sessions.SessionRetrieveParams
+import com.langchain.smith.models.sessions.SessionRetrieveV2Params
 import com.langchain.smith.models.sessions.SessionUpdateParams
+import com.langchain.smith.models.sessions.SessionUpdateV2Params
 import com.langchain.smith.models.sessions.TimedeltaInput
 import java.time.OffsetDateTime
 import org.junit.jupiter.api.Disabled
@@ -131,6 +134,47 @@ internal class SessionServiceAsyncTest {
 
     @Disabled("Mock server tests are disabled")
     @Test
+    fun createV2() {
+        val client =
+            LangsmithOkHttpClientAsync.builder()
+                .apiKey("My API Key")
+                .tenantId("My Tenant ID")
+                .build()
+        val sessionServiceAsync = client.sessions()
+
+        val sessionFuture =
+            sessionServiceAsync.createV2(
+                SessionCreateV2Params.builder()
+                    .upsert(true)
+                    .type(SessionCreateV2Params.Type.PROJECT)
+                    .id("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                    .defaultDatasetId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                    .description("description")
+                    .endTime(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
+                    .addEvaluatorKey("string")
+                    .extra(
+                        SessionCreateV2Params.Extra.builder()
+                            .putAdditionalProperty("foo", JsonValue.from("bar"))
+                            .build()
+                    )
+                    .kickedOffBy("kicked_off_by")
+                    .longlivedTtlDays(0L)
+                    .name("name")
+                    .numExamples(0L)
+                    .numRepetitions(0L)
+                    .referenceDatasetId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                    .startTime(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
+                    .addTagValueId("string")
+                    .traceTier(SessionCreateV2Params.TraceTier.LONG_LIVED)
+                    .build()
+            )
+
+        val session = sessionFuture.get()
+        session.validate()
+    }
+
+    @Disabled("Mock server tests are disabled")
+    @Test
     fun dashboard() {
         val client =
             LangsmithOkHttpClientAsync.builder()
@@ -220,6 +264,57 @@ internal class SessionServiceAsyncTest {
 
         val response = responseFuture.get()
         response.validate()
+    }
+
+    @Disabled("Mock server tests are disabled")
+    @Test
+    fun retrieveV2() {
+        val client =
+            LangsmithOkHttpClientAsync.builder()
+                .apiKey("My API Key")
+                .tenantId("My Tenant ID")
+                .build()
+        val sessionServiceAsync = client.sessions()
+
+        val sessionFuture =
+            sessionServiceAsync.retrieveV2(
+                SessionRetrieveV2Params.builder()
+                    .sessionId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                    .includeStats(true)
+                    .statsStartTime(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
+                    .build()
+            )
+
+        val session = sessionFuture.get()
+        session.validate()
+    }
+
+    @Disabled("Mock server tests are disabled")
+    @Test
+    fun updateV2() {
+        val client =
+            LangsmithOkHttpClientAsync.builder()
+                .apiKey("My API Key")
+                .tenantId("My Tenant ID")
+                .build()
+        val sessionServiceAsync = client.sessions()
+
+        val sessionFuture =
+            sessionServiceAsync.updateV2(
+                SessionUpdateV2Params.builder()
+                    .sessionId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                    .defaultDatasetId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                    .description("description")
+                    .endTime(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
+                    .extra(JsonValue.from(mapOf<String, Any>()))
+                    .longlivedTtlDays(0L)
+                    .name("name")
+                    .traceTier(SessionUpdateV2Params.TraceTier.LONG_LIVED)
+                    .build()
+            )
+
+        val session = sessionFuture.get()
+        session.validate()
     }
 
     @Disabled("Mock server tests are disabled")

@@ -8,7 +8,9 @@ import com.langchain.smith.core.RequestOptions
 import com.langchain.smith.core.http.HttpResponse
 import com.langchain.smith.core.http.HttpResponseFor
 import com.langchain.smith.models.sessions.CustomChartsSection
+import com.langchain.smith.models.sessions.Session
 import com.langchain.smith.models.sessions.SessionCreateParams
+import com.langchain.smith.models.sessions.SessionCreateV2Params
 import com.langchain.smith.models.sessions.SessionDashboardParams
 import com.langchain.smith.models.sessions.SessionDeleteParams
 import com.langchain.smith.models.sessions.SessionListPage
@@ -20,7 +22,9 @@ import com.langchain.smith.models.sessions.SessionListV2Params
 import com.langchain.smith.models.sessions.SessionResolveParams
 import com.langchain.smith.models.sessions.SessionResolveResponse
 import com.langchain.smith.models.sessions.SessionRetrieveParams
+import com.langchain.smith.models.sessions.SessionRetrieveV2Params
 import com.langchain.smith.models.sessions.SessionUpdateParams
+import com.langchain.smith.models.sessions.SessionUpdateV2Params
 import com.langchain.smith.models.sessions.TracerSession
 import com.langchain.smith.models.sessions.TracerSessionWithoutVirtualFields
 import com.langchain.smith.services.blocking.sessions.InsightService
@@ -159,6 +163,18 @@ interface SessionService {
         delete(sessionId, SessionDeleteParams.none(), requestOptions)
 
     /**
+     * Create a session, or update an existing session with the same name when upsert is true.
+     * Returns the refreshed session representation without optional run statistics.
+     */
+    fun createV2(params: SessionCreateV2Params): Session = createV2(params, RequestOptions.none())
+
+    /** @see createV2 */
+    fun createV2(
+        params: SessionCreateV2Params,
+        requestOptions: RequestOptions = RequestOptions.none(),
+    ): Session
+
+    /**
      * GET with body payload — no resources created. Returns the prebuilt dashboard for the tracing
      * project matching the query passed as the request payload.
      */
@@ -255,6 +271,73 @@ interface SessionService {
         params: SessionResolveParams,
         requestOptions: RequestOptions = RequestOptions.none(),
     ): SessionResolveResponse
+
+    /**
+     * Returns one tracing project or experiment by ID. Pass include_stats=true to include run
+     * statistics.
+     */
+    fun retrieveV2(sessionId: String): Session =
+        retrieveV2(sessionId, SessionRetrieveV2Params.none())
+
+    /** @see retrieveV2 */
+    fun retrieveV2(
+        sessionId: String,
+        params: SessionRetrieveV2Params = SessionRetrieveV2Params.none(),
+        requestOptions: RequestOptions = RequestOptions.none(),
+    ): Session = retrieveV2(params.toBuilder().sessionId(sessionId).build(), requestOptions)
+
+    /** @see retrieveV2 */
+    fun retrieveV2(
+        sessionId: String,
+        params: SessionRetrieveV2Params = SessionRetrieveV2Params.none(),
+    ): Session = retrieveV2(sessionId, params, RequestOptions.none())
+
+    /** @see retrieveV2 */
+    fun retrieveV2(
+        params: SessionRetrieveV2Params,
+        requestOptions: RequestOptions = RequestOptions.none(),
+    ): Session
+
+    /** @see retrieveV2 */
+    fun retrieveV2(params: SessionRetrieveV2Params): Session =
+        retrieveV2(params, RequestOptions.none())
+
+    /** @see retrieveV2 */
+    fun retrieveV2(sessionId: String, requestOptions: RequestOptions): Session =
+        retrieveV2(sessionId, SessionRetrieveV2Params.none(), requestOptions)
+
+    /**
+     * Updates supplied fields and returns the refreshed resource without optional run statistics.
+     * Omitted fields remain unchanged. Null clears description, default_dataset_id, end_time, or
+     * extra. Extra merges top-level keys; null values remove keys.
+     */
+    fun updateV2(sessionId: String): Session = updateV2(sessionId, SessionUpdateV2Params.none())
+
+    /** @see updateV2 */
+    fun updateV2(
+        sessionId: String,
+        params: SessionUpdateV2Params = SessionUpdateV2Params.none(),
+        requestOptions: RequestOptions = RequestOptions.none(),
+    ): Session = updateV2(params.toBuilder().sessionId(sessionId).build(), requestOptions)
+
+    /** @see updateV2 */
+    fun updateV2(
+        sessionId: String,
+        params: SessionUpdateV2Params = SessionUpdateV2Params.none(),
+    ): Session = updateV2(sessionId, params, RequestOptions.none())
+
+    /** @see updateV2 */
+    fun updateV2(
+        params: SessionUpdateV2Params,
+        requestOptions: RequestOptions = RequestOptions.none(),
+    ): Session
+
+    /** @see updateV2 */
+    fun updateV2(params: SessionUpdateV2Params): Session = updateV2(params, RequestOptions.none())
+
+    /** @see updateV2 */
+    fun updateV2(sessionId: String, requestOptions: RequestOptions): Session =
+        updateV2(sessionId, SessionUpdateV2Params.none(), requestOptions)
 
     /**
      * List all projects.
@@ -450,6 +533,21 @@ interface SessionService {
             delete(sessionId, SessionDeleteParams.none(), requestOptions)
 
         /**
+         * Returns a raw HTTP response for `post /api/v2/sessions`, but is otherwise the same as
+         * [SessionService.createV2].
+         */
+        @MustBeClosed
+        fun createV2(params: SessionCreateV2Params): HttpResponseFor<Session> =
+            createV2(params, RequestOptions.none())
+
+        /** @see createV2 */
+        @MustBeClosed
+        fun createV2(
+            params: SessionCreateV2Params,
+            requestOptions: RequestOptions = RequestOptions.none(),
+        ): HttpResponseFor<Session>
+
+        /**
          * Returns a raw HTTP response for `post /api/v1/sessions/{session_id}/dashboard`, but is
          * otherwise the same as [SessionService.dashboard].
          */
@@ -557,6 +655,91 @@ interface SessionService {
             params: SessionResolveParams,
             requestOptions: RequestOptions = RequestOptions.none(),
         ): HttpResponseFor<SessionResolveResponse>
+
+        /**
+         * Returns a raw HTTP response for `get /api/v2/sessions/{session_id}`, but is otherwise the
+         * same as [SessionService.retrieveV2].
+         */
+        @MustBeClosed
+        fun retrieveV2(sessionId: String): HttpResponseFor<Session> =
+            retrieveV2(sessionId, SessionRetrieveV2Params.none())
+
+        /** @see retrieveV2 */
+        @MustBeClosed
+        fun retrieveV2(
+            sessionId: String,
+            params: SessionRetrieveV2Params = SessionRetrieveV2Params.none(),
+            requestOptions: RequestOptions = RequestOptions.none(),
+        ): HttpResponseFor<Session> =
+            retrieveV2(params.toBuilder().sessionId(sessionId).build(), requestOptions)
+
+        /** @see retrieveV2 */
+        @MustBeClosed
+        fun retrieveV2(
+            sessionId: String,
+            params: SessionRetrieveV2Params = SessionRetrieveV2Params.none(),
+        ): HttpResponseFor<Session> = retrieveV2(sessionId, params, RequestOptions.none())
+
+        /** @see retrieveV2 */
+        @MustBeClosed
+        fun retrieveV2(
+            params: SessionRetrieveV2Params,
+            requestOptions: RequestOptions = RequestOptions.none(),
+        ): HttpResponseFor<Session>
+
+        /** @see retrieveV2 */
+        @MustBeClosed
+        fun retrieveV2(params: SessionRetrieveV2Params): HttpResponseFor<Session> =
+            retrieveV2(params, RequestOptions.none())
+
+        /** @see retrieveV2 */
+        @MustBeClosed
+        fun retrieveV2(
+            sessionId: String,
+            requestOptions: RequestOptions,
+        ): HttpResponseFor<Session> =
+            retrieveV2(sessionId, SessionRetrieveV2Params.none(), requestOptions)
+
+        /**
+         * Returns a raw HTTP response for `patch /api/v2/sessions/{session_id}`, but is otherwise
+         * the same as [SessionService.updateV2].
+         */
+        @MustBeClosed
+        fun updateV2(sessionId: String): HttpResponseFor<Session> =
+            updateV2(sessionId, SessionUpdateV2Params.none())
+
+        /** @see updateV2 */
+        @MustBeClosed
+        fun updateV2(
+            sessionId: String,
+            params: SessionUpdateV2Params = SessionUpdateV2Params.none(),
+            requestOptions: RequestOptions = RequestOptions.none(),
+        ): HttpResponseFor<Session> =
+            updateV2(params.toBuilder().sessionId(sessionId).build(), requestOptions)
+
+        /** @see updateV2 */
+        @MustBeClosed
+        fun updateV2(
+            sessionId: String,
+            params: SessionUpdateV2Params = SessionUpdateV2Params.none(),
+        ): HttpResponseFor<Session> = updateV2(sessionId, params, RequestOptions.none())
+
+        /** @see updateV2 */
+        @MustBeClosed
+        fun updateV2(
+            params: SessionUpdateV2Params,
+            requestOptions: RequestOptions = RequestOptions.none(),
+        ): HttpResponseFor<Session>
+
+        /** @see updateV2 */
+        @MustBeClosed
+        fun updateV2(params: SessionUpdateV2Params): HttpResponseFor<Session> =
+            updateV2(params, RequestOptions.none())
+
+        /** @see updateV2 */
+        @MustBeClosed
+        fun updateV2(sessionId: String, requestOptions: RequestOptions): HttpResponseFor<Session> =
+            updateV2(sessionId, SessionUpdateV2Params.none(), requestOptions)
 
         /**
          * Returns a raw HTTP response for `get /api/v1/sessions`, but is otherwise the same as
