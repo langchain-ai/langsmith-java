@@ -24,6 +24,7 @@ class AgentListPageResponse
 private constructor(
     private val items: JsonField<List<Agent>>,
     private val nextCursor: JsonField<String>,
+    private val totalCount: JsonField<Long>,
     private val additionalProperties: MutableMap<String, JsonValue>,
 ) {
 
@@ -33,7 +34,8 @@ private constructor(
         @JsonProperty("next_cursor")
         @ExcludeMissing
         nextCursor: JsonField<String> = JsonMissing.of(),
-    ) : this(items, nextCursor, mutableMapOf())
+        @JsonProperty("total_count") @ExcludeMissing totalCount: JsonField<Long> = JsonMissing.of(),
+    ) : this(items, nextCursor, totalCount, mutableMapOf())
 
     /**
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type or is
@@ -48,6 +50,15 @@ private constructor(
     fun nextCursor(): Optional<String> = nextCursor.getOptional("next_cursor")
 
     /**
+     * Total visible Agents matching the filters, independently of the cursor. Omitted unless
+     * include_count is true.
+     *
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
+    fun totalCount(): Optional<Long> = totalCount.getOptional("total_count")
+
+    /**
      * Returns the raw JSON value of [items].
      *
      * Unlike [items], this method doesn't throw if the JSON field has an unexpected type.
@@ -60,6 +71,13 @@ private constructor(
      * Unlike [nextCursor], this method doesn't throw if the JSON field has an unexpected type.
      */
     @JsonProperty("next_cursor") @ExcludeMissing fun _nextCursor(): JsonField<String> = nextCursor
+
+    /**
+     * Returns the raw JSON value of [totalCount].
+     *
+     * Unlike [totalCount], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    @JsonProperty("total_count") @ExcludeMissing fun _totalCount(): JsonField<Long> = totalCount
 
     @JsonAnySetter
     private fun putAdditionalProperty(key: String, value: JsonValue) {
@@ -92,12 +110,14 @@ private constructor(
 
         private var items: JsonField<MutableList<Agent>>? = null
         private var nextCursor: JsonField<String>? = null
+        private var totalCount: JsonField<Long> = JsonMissing.of()
         private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
 
         @JvmSynthetic
         internal fun from(agentListPageResponse: AgentListPageResponse) = apply {
             items = agentListPageResponse.items.map { it.toMutableList() }
             nextCursor = agentListPageResponse.nextCursor
+            totalCount = agentListPageResponse.totalCount
             additionalProperties = agentListPageResponse.additionalProperties.toMutableMap()
         }
 
@@ -138,6 +158,20 @@ private constructor(
          */
         fun nextCursor(nextCursor: JsonField<String>) = apply { this.nextCursor = nextCursor }
 
+        /**
+         * Total visible Agents matching the filters, independently of the cursor. Omitted unless
+         * include_count is true.
+         */
+        fun totalCount(totalCount: Long) = totalCount(JsonField.of(totalCount))
+
+        /**
+         * Sets [Builder.totalCount] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.totalCount] with a well-typed [Long] value instead. This
+         * method is primarily for setting the field to an undocumented or not yet supported value.
+         */
+        fun totalCount(totalCount: JsonField<Long>) = apply { this.totalCount = totalCount }
+
         fun additionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
             this.additionalProperties.clear()
             putAllAdditionalProperties(additionalProperties)
@@ -174,6 +208,7 @@ private constructor(
             AgentListPageResponse(
                 checkRequired("items", items).map { it.toImmutable() },
                 checkRequired("nextCursor", nextCursor),
+                totalCount,
                 additionalProperties.toMutableMap(),
             )
     }
@@ -195,6 +230,7 @@ private constructor(
 
         items().forEach { it.validate() }
         nextCursor()
+        totalCount()
         validated = true
     }
 
@@ -214,7 +250,8 @@ private constructor(
     @JvmSynthetic
     internal fun validity(): Int =
         (items.asKnown().getOrNull()?.sumOf { it.validity().toInt() } ?: 0) +
-            (if (nextCursor.asKnown().isPresent) 1 else 0)
+            (if (nextCursor.asKnown().isPresent) 1 else 0) +
+            (if (totalCount.asKnown().isPresent) 1 else 0)
 
     override fun equals(other: Any?): Boolean {
         if (this === other) {
@@ -224,13 +261,16 @@ private constructor(
         return other is AgentListPageResponse &&
             items == other.items &&
             nextCursor == other.nextCursor &&
+            totalCount == other.totalCount &&
             additionalProperties == other.additionalProperties
     }
 
-    private val hashCode: Int by lazy { Objects.hash(items, nextCursor, additionalProperties) }
+    private val hashCode: Int by lazy {
+        Objects.hash(items, nextCursor, totalCount, additionalProperties)
+    }
 
     override fun hashCode(): Int = hashCode
 
     override fun toString() =
-        "AgentListPageResponse{items=$items, nextCursor=$nextCursor, additionalProperties=$additionalProperties}"
+        "AgentListPageResponse{items=$items, nextCursor=$nextCursor, totalCount=$totalCount, additionalProperties=$additionalProperties}"
 }

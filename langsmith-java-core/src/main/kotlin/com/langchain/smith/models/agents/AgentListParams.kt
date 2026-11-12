@@ -24,6 +24,7 @@ class AgentListParams
 private constructor(
     private val id: List<String>?,
     private val cursor: String?,
+    private val includeCount: Boolean?,
     private val name: String?,
     private val pageSize: Long?,
     private val search: String?,
@@ -39,6 +40,11 @@ private constructor(
 
     /** Opaque pagination cursor */
     fun cursor(): Optional<String> = Optional.ofNullable(cursor)
+
+    /**
+     * Include the total number of visible Agents matching the filters, independent of pagination
+     */
+    fun includeCount(): Optional<Boolean> = Optional.ofNullable(includeCount)
 
     /**
      * Deprecated: use search. Case-insensitive partial Agent name. Ignored when search is provided.
@@ -84,6 +90,7 @@ private constructor(
 
         private var id: MutableList<String>? = null
         private var cursor: String? = null
+        private var includeCount: Boolean? = null
         private var name: String? = null
         private var pageSize: Long? = null
         private var search: String? = null
@@ -97,6 +104,7 @@ private constructor(
         internal fun from(agentListParams: AgentListParams) = apply {
             id = agentListParams.id?.toMutableList()
             cursor = agentListParams.cursor
+            includeCount = agentListParams.includeCount
             name = agentListParams.name
             pageSize = agentListParams.pageSize
             search = agentListParams.search
@@ -125,6 +133,22 @@ private constructor(
 
         /** Alias for calling [Builder.cursor] with `cursor.orElse(null)`. */
         fun cursor(cursor: Optional<String>) = cursor(cursor.getOrNull())
+
+        /**
+         * Include the total number of visible Agents matching the filters, independent of
+         * pagination
+         */
+        fun includeCount(includeCount: Boolean?) = apply { this.includeCount = includeCount }
+
+        /**
+         * Alias for [Builder.includeCount].
+         *
+         * This unboxed primitive overload exists for backwards compatibility.
+         */
+        fun includeCount(includeCount: Boolean) = includeCount(includeCount as Boolean?)
+
+        /** Alias for calling [Builder.includeCount] with `includeCount.orElse(null)`. */
+        fun includeCount(includeCount: Optional<Boolean>) = includeCount(includeCount.getOrNull())
 
         /**
          * Deprecated: use search. Case-insensitive partial Agent name. Ignored when search is
@@ -282,6 +306,7 @@ private constructor(
             AgentListParams(
                 id?.toImmutable(),
                 cursor,
+                includeCount,
                 name,
                 pageSize,
                 search,
@@ -300,6 +325,7 @@ private constructor(
             .apply {
                 id?.forEach { put("id", it) }
                 cursor?.let { put("cursor", it) }
+                includeCount?.let { put("include_count", it.toString()) }
                 name?.let { put("name", it) }
                 pageSize?.let { put("page_size", it.toString()) }
                 search?.let { put("search", it) }
@@ -751,6 +777,7 @@ private constructor(
         return other is AgentListParams &&
             id == other.id &&
             cursor == other.cursor &&
+            includeCount == other.includeCount &&
             name == other.name &&
             pageSize == other.pageSize &&
             search == other.search &&
@@ -765,6 +792,7 @@ private constructor(
         Objects.hash(
             id,
             cursor,
+            includeCount,
             name,
             pageSize,
             search,
@@ -776,5 +804,5 @@ private constructor(
         )
 
     override fun toString() =
-        "AgentListParams{id=$id, cursor=$cursor, name=$name, pageSize=$pageSize, search=$search, sortBy=$sortBy, sortOrder=$sortOrder, sourceType=$sourceType, additionalHeaders=$additionalHeaders, additionalQueryParams=$additionalQueryParams}"
+        "AgentListParams{id=$id, cursor=$cursor, includeCount=$includeCount, name=$name, pageSize=$pageSize, search=$search, sortBy=$sortBy, sortOrder=$sortOrder, sourceType=$sourceType, additionalHeaders=$additionalHeaders, additionalQueryParams=$additionalQueryParams}"
 }

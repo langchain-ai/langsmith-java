@@ -46,6 +46,7 @@ internal class AgentListPageResponseTest {
                         .build()
                 )
                 .nextCursor("next_cursor")
+                .totalCount(0L)
                 .build()
 
         assertThat(agentListPageResponse.items())
@@ -81,6 +82,7 @@ internal class AgentListPageResponseTest {
                     .build()
             )
         assertThat(agentListPageResponse.nextCursor()).contains("next_cursor")
+        assertThat(agentListPageResponse.totalCount()).contains(0L)
     }
 
     @Test
@@ -120,6 +122,7 @@ internal class AgentListPageResponseTest {
                         .build()
                 )
                 .nextCursor("next_cursor")
+                .totalCount(0L)
                 .build()
 
         val roundtrippedAgentListPageResponse =
