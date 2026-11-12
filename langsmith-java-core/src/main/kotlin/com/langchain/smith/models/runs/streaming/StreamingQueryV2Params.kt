@@ -28,9 +28,13 @@ import kotlin.jvm.optionals.getOrNull
  * Returns a paginated list of runs for the given projects within min/max start_time. Supports
  * filters, cursor pagination, and `selects` to select fields to return.
  *
- * When `ai_search` is set, `Accept: text/event-stream` is required; requests without it return 406.
- * AI search is unavailable on deployments that route queries to the v1 backend and returns 501
- * there.
+ * `ai_search` cannot be combined with `sem_filter`. With full AI search enabled, `ai_search`
+ * translates natural language into query filters and time bounds and cannot be combined with
+ * explicit filter expressions. Otherwise, `ai_search` retains legacy semantic-only behavior. Use
+ * `sem_filter` for semantic-only matching combined with structured filters. AI search requires
+ * organization consent. When semantic matching is needed, `Accept: text/event-stream` is required;
+ * requests without it return 406. AI search is unavailable on deployments that route queries to the
+ * v1 backend and returns 501 there.
  *
  * Self-hosted deployments require LangSmith `v0.16` or later.
  */
@@ -45,10 +49,11 @@ private constructor(
     fun accept(): Optional<String> = Optional.ofNullable(accept)
 
     /**
-     * `ai_search` is a plain-language criterion evaluated against the messages from the agent
-     * trajectory scoped to the run. AND-ed with the ordinary filters. Requires semantic filtering
-     * enabled for the deployment. Must contain nonempty text of at most 2000 UTF-8 bytes. Not
-     * supported on public dataset queries.
+     * `ai_search` translates natural language into structured filters, semantic criteria and time
+     * bounds. Cannot be combined with sem_filter. With full AI search enabled, also cannot be
+     * combined with explicit filter expressions; otherwise retains legacy semantic-only behavior.
+     * Must contain nonempty text of at most 2000 UTF-8 bytes. Not supported on public dataset
+     * queries.
      *
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
@@ -201,6 +206,15 @@ private constructor(
      *   server responded with an unexpected value).
      */
     fun selects(): Optional<List<RunSelectField>> = body.selects()
+
+    /**
+     * SemFilter evaluates a plain-language criterion against trajectory messages, AND-ed with
+     * structured filters.
+     *
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
+    fun semFilter(): Optional<String> = body.semFilter()
 
     /**
      * `trace_filter` narrows results to runs whose root trace matches this LangSmith filter
@@ -358,6 +372,13 @@ private constructor(
     fun _selects(): JsonField<List<RunSelectField>> = body._selects()
 
     /**
+     * Returns the raw JSON value of [semFilter].
+     *
+     * Unlike [semFilter], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    fun _semFilter(): JsonField<String> = body._semFilter()
+
+    /**
      * Returns the raw JSON value of [traceFilter].
      *
      * Unlike [traceFilter], this method doesn't throw if the JSON field has an unexpected type.
@@ -432,10 +453,11 @@ private constructor(
         fun body(body: Body) = apply { this.body = body.toBuilder() }
 
         /**
-         * `ai_search` is a plain-language criterion evaluated against the messages from the agent
-         * trajectory scoped to the run. AND-ed with the ordinary filters. Requires semantic
-         * filtering enabled for the deployment. Must contain nonempty text of at most 2000 UTF-8
-         * bytes. Not supported on public dataset queries.
+         * `ai_search` translates natural language into structured filters, semantic criteria and
+         * time bounds. Cannot be combined with sem_filter. With full AI search enabled, also cannot
+         * be combined with explicit filter expressions; otherwise retains legacy semantic-only
+         * behavior. Must contain nonempty text of at most 2000 UTF-8 bytes. Not supported on public
+         * dataset queries.
          */
         fun aiSearch(aiSearch: String) = apply { body.aiSearch(aiSearch) }
 
@@ -731,6 +753,21 @@ private constructor(
         fun addSelect(select: RunSelectField) = apply { body.addSelect(select) }
 
         /**
+         * SemFilter evaluates a plain-language criterion against trajectory messages, AND-ed with
+         * structured filters.
+         */
+        fun semFilter(semFilter: String) = apply { body.semFilter(semFilter) }
+
+        /**
+         * Sets [Builder.semFilter] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.semFilter] with a well-typed [String] value instead.
+         * This method is primarily for setting the field to an undocumented or not yet supported
+         * value.
+         */
+        fun semFilter(semFilter: JsonField<String>) = apply { body.semFilter(semFilter) }
+
+        /**
          * `trace_filter` narrows results to runs whose root trace matches this LangSmith filter
          * expression. Use this to filter by properties of the trace's root run — for example
          * eq(status, "success") to include only traces that completed without error. See
@@ -939,6 +976,7 @@ private constructor(
         private val referenceExamples: JsonField<List<String>>,
         private val runType: JsonField<RunType>,
         private val selects: JsonField<List<RunSelectField>>,
+        private val semFilter: JsonField<String>,
         private val traceFilter: JsonField<String>,
         private val traceId: JsonField<String>,
         private val treeFilter: JsonField<String>,
@@ -988,6 +1026,9 @@ private constructor(
             @JsonProperty("selects")
             @ExcludeMissing
             selects: JsonField<List<RunSelectField>> = JsonMissing.of(),
+            @JsonProperty("sem_filter")
+            @ExcludeMissing
+            semFilter: JsonField<String> = JsonMissing.of(),
             @JsonProperty("trace_filter")
             @ExcludeMissing
             traceFilter: JsonField<String> = JsonMissing.of(),
@@ -1013,6 +1054,7 @@ private constructor(
             referenceExamples,
             runType,
             selects,
+            semFilter,
             traceFilter,
             traceId,
             treeFilter,
@@ -1020,10 +1062,11 @@ private constructor(
         )
 
         /**
-         * `ai_search` is a plain-language criterion evaluated against the messages from the agent
-         * trajectory scoped to the run. AND-ed with the ordinary filters. Requires semantic
-         * filtering enabled for the deployment. Must contain nonempty text of at most 2000 UTF-8
-         * bytes. Not supported on public dataset queries.
+         * `ai_search` translates natural language into structured filters, semantic criteria and
+         * time bounds. Cannot be combined with sem_filter. With full AI search enabled, also cannot
+         * be combined with explicit filter expressions; otherwise retains legacy semantic-only
+         * behavior. Must contain nonempty text of at most 2000 UTF-8 bytes. Not supported on public
+         * dataset queries.
          *
          * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
          *   the server responded with an unexpected value).
@@ -1184,6 +1227,15 @@ private constructor(
          *   the server responded with an unexpected value).
          */
         fun selects(): Optional<List<RunSelectField>> = selects.getOptional("selects")
+
+        /**
+         * SemFilter evaluates a plain-language criterion against trajectory messages, AND-ed with
+         * structured filters.
+         *
+         * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
+         *   the server responded with an unexpected value).
+         */
+        fun semFilter(): Optional<String> = semFilter.getOptional("sem_filter")
 
         /**
          * `trace_filter` narrows results to runs whose root trace matches this LangSmith filter
@@ -1361,6 +1413,13 @@ private constructor(
         fun _selects(): JsonField<List<RunSelectField>> = selects
 
         /**
+         * Returns the raw JSON value of [semFilter].
+         *
+         * Unlike [semFilter], this method doesn't throw if the JSON field has an unexpected type.
+         */
+        @JsonProperty("sem_filter") @ExcludeMissing fun _semFilter(): JsonField<String> = semFilter
+
+        /**
          * Returns the raw JSON value of [traceFilter].
          *
          * Unlike [traceFilter], this method doesn't throw if the JSON field has an unexpected type.
@@ -1423,6 +1482,7 @@ private constructor(
             private var referenceExamples: JsonField<MutableList<String>>? = null
             private var runType: JsonField<RunType> = JsonMissing.of()
             private var selects: JsonField<MutableList<RunSelectField>>? = null
+            private var semFilter: JsonField<String> = JsonMissing.of()
             private var traceFilter: JsonField<String> = JsonMissing.of()
             private var traceId: JsonField<String> = JsonMissing.of()
             private var treeFilter: JsonField<String> = JsonMissing.of()
@@ -1447,6 +1507,7 @@ private constructor(
                 referenceExamples = body.referenceExamples.map { it.toMutableList() }
                 runType = body.runType
                 selects = body.selects.map { it.toMutableList() }
+                semFilter = body.semFilter
                 traceFilter = body.traceFilter
                 traceId = body.traceId
                 treeFilter = body.treeFilter
@@ -1454,10 +1515,11 @@ private constructor(
             }
 
             /**
-             * `ai_search` is a plain-language criterion evaluated against the messages from the
-             * agent trajectory scoped to the run. AND-ed with the ordinary filters. Requires
-             * semantic filtering enabled for the deployment. Must contain nonempty text of at most
-             * 2000 UTF-8 bytes. Not supported on public dataset queries.
+             * `ai_search` translates natural language into structured filters, semantic criteria
+             * and time bounds. Cannot be combined with sem_filter. With full AI search enabled,
+             * also cannot be combined with explicit filter expressions; otherwise retains legacy
+             * semantic-only behavior. Must contain nonempty text of at most 2000 UTF-8 bytes. Not
+             * supported on public dataset queries.
              */
             fun aiSearch(aiSearch: String) = aiSearch(JsonField.of(aiSearch))
 
@@ -1786,6 +1848,21 @@ private constructor(
             }
 
             /**
+             * SemFilter evaluates a plain-language criterion against trajectory messages, AND-ed
+             * with structured filters.
+             */
+            fun semFilter(semFilter: String) = semFilter(JsonField.of(semFilter))
+
+            /**
+             * Sets [Builder.semFilter] to an arbitrary JSON value.
+             *
+             * You should usually call [Builder.semFilter] with a well-typed [String] value instead.
+             * This method is primarily for setting the field to an undocumented or not yet
+             * supported value.
+             */
+            fun semFilter(semFilter: JsonField<String>) = apply { this.semFilter = semFilter }
+
+            /**
              * `trace_filter` narrows results to runs whose root trace matches this LangSmith filter
              * expression. Use this to filter by properties of the trace's root run — for example
              * eq(status, "success") to include only traces that completed without error. See
@@ -1879,6 +1956,7 @@ private constructor(
                     (referenceExamples ?: JsonMissing.of()).map { it.toImmutable() },
                     runType,
                     (selects ?: JsonMissing.of()).map { it.toImmutable() },
+                    semFilter,
                     traceFilter,
                     traceId,
                     treeFilter,
@@ -1919,6 +1997,7 @@ private constructor(
             referenceExamples()
             runType().ifPresent { it.validate() }
             selects().ifPresent { it.forEach { it.validate() } }
+            semFilter()
             traceFilter()
             traceId()
             treeFilter()
@@ -1958,6 +2037,7 @@ private constructor(
                 (referenceExamples.asKnown().getOrNull()?.size ?: 0) +
                 (runType.asKnown().getOrNull()?.validity() ?: 0) +
                 (selects.asKnown().getOrNull()?.sumOf { it.validity().toInt() } ?: 0) +
+                (if (semFilter.asKnown().isPresent) 1 else 0) +
                 (if (traceFilter.asKnown().isPresent) 1 else 0) +
                 (if (traceId.asKnown().isPresent) 1 else 0) +
                 (if (treeFilter.asKnown().isPresent) 1 else 0)
@@ -1985,6 +2065,7 @@ private constructor(
                 referenceExamples == other.referenceExamples &&
                 runType == other.runType &&
                 selects == other.selects &&
+                semFilter == other.semFilter &&
                 traceFilter == other.traceFilter &&
                 traceId == other.traceId &&
                 treeFilter == other.treeFilter &&
@@ -2010,6 +2091,7 @@ private constructor(
                 referenceExamples,
                 runType,
                 selects,
+                semFilter,
                 traceFilter,
                 traceId,
                 treeFilter,
@@ -2020,7 +2102,7 @@ private constructor(
         override fun hashCode(): Int = hashCode
 
         override fun toString() =
-            "Body{aiSearch=$aiSearch, cursor=$cursor, filter=$filter, hasError=$hasError, ids=$ids, includeSubtreeUsage=$includeSubtreeUsage, isRoot=$isRoot, maxFeedbackModifiedAt=$maxFeedbackModifiedAt, maxStartTime=$maxStartTime, minFeedbackModifiedAt=$minFeedbackModifiedAt, minStartTime=$minStartTime, pageSize=$pageSize, projectIds=$projectIds, referenceDatasetId=$referenceDatasetId, referenceExamples=$referenceExamples, runType=$runType, selects=$selects, traceFilter=$traceFilter, traceId=$traceId, treeFilter=$treeFilter, additionalProperties=$additionalProperties}"
+            "Body{aiSearch=$aiSearch, cursor=$cursor, filter=$filter, hasError=$hasError, ids=$ids, includeSubtreeUsage=$includeSubtreeUsage, isRoot=$isRoot, maxFeedbackModifiedAt=$maxFeedbackModifiedAt, maxStartTime=$maxStartTime, minFeedbackModifiedAt=$minFeedbackModifiedAt, minStartTime=$minStartTime, pageSize=$pageSize, projectIds=$projectIds, referenceDatasetId=$referenceDatasetId, referenceExamples=$referenceExamples, runType=$runType, selects=$selects, semFilter=$semFilter, traceFilter=$traceFilter, traceId=$traceId, treeFilter=$treeFilter, additionalProperties=$additionalProperties}"
     }
 
     override fun equals(other: Any?): Boolean {

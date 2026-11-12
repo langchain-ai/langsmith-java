@@ -47,6 +47,7 @@ internal class StreamingQueryV2ParamsTest {
                     RunSelectField.STATUS,
                 )
             )
+            .semFilter("x")
             .traceFilter("eq(status, \"success\")")
             .traceId("f47ac10b-58cc-4372-a567-0e02b2c3d479")
             .treeFilter("has(tags, \"production\")")
@@ -89,6 +90,7 @@ internal class StreamingQueryV2ParamsTest {
                         RunSelectField.STATUS,
                     )
                 )
+                .semFilter("x")
                 .traceFilter("eq(status, \"success\")")
                 .traceId("f47ac10b-58cc-4372-a567-0e02b2c3d479")
                 .treeFilter("has(tags, \"production\")")
@@ -144,6 +146,7 @@ internal class StreamingQueryV2ParamsTest {
                         RunSelectField.STATUS,
                     )
                 )
+                .semFilter("x")
                 .traceFilter("eq(status, \"success\")")
                 .traceId("f47ac10b-58cc-4372-a567-0e02b2c3d479")
                 .treeFilter("has(tags, \"production\")")
@@ -193,6 +196,7 @@ internal class StreamingQueryV2ParamsTest {
                 RunSelectField.RUN_TYPE,
                 RunSelectField.STATUS,
             )
+        assertThat(body.semFilter()).contains("x")
         assertThat(body.traceFilter()).contains("eq(status, \"success\")")
         assertThat(body.traceId()).contains("f47ac10b-58cc-4372-a567-0e02b2c3d479")
         assertThat(body.treeFilter()).contains("has(tags, \"production\")")

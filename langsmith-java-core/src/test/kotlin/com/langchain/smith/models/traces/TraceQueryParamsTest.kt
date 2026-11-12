@@ -34,6 +34,7 @@ internal class TraceQueryParamsTest {
                     RunSelectField.FIRST_TOKEN_TIME,
                 )
             )
+            .semFilter("x")
             .traceFilter("eq(status, \"error\")")
             .addTraceId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
             .treeFilter("has(tags, \"production\")")
@@ -64,6 +65,7 @@ internal class TraceQueryParamsTest {
                         RunSelectField.FIRST_TOKEN_TIME,
                     )
                 )
+                .semFilter("x")
                 .traceFilter("eq(status, \"error\")")
                 .addTraceId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                 .treeFilter("has(tags, \"production\")")
@@ -107,6 +109,7 @@ internal class TraceQueryParamsTest {
                         RunSelectField.FIRST_TOKEN_TIME,
                     )
                 )
+                .semFilter("x")
                 .traceFilter("eq(status, \"error\")")
                 .addTraceId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                 .treeFilter("has(tags, \"production\")")
@@ -134,6 +137,7 @@ internal class TraceQueryParamsTest {
                 RunSelectField.TOTAL_COST,
                 RunSelectField.FIRST_TOKEN_TIME,
             )
+        assertThat(body.semFilter()).contains("x")
         assertThat(body.traceFilter()).contains("eq(status, \"error\")")
         assertThat(body.traceIds().getOrNull())
             .containsExactly("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")

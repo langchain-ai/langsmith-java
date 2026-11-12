@@ -25,9 +25,13 @@ import kotlin.jvm.optionals.getOrNull
  * the query passed as the request payload. Results are filtered by the given time range and
  * optional filters, with cursor-based pagination.
  *
- * When `ai_search` is set, `Accept: text/event-stream` is required; requests without it return 406.
- * AI search is unavailable on deployments that route queries to the v1 backend and returns 501
- * there.
+ * `ai_search` cannot be combined with `sem_filter`. With full AI search enabled, `ai_search`
+ * translates natural language into query filters and time bounds and cannot be combined with
+ * explicit filter expressions. Otherwise, `ai_search` retains legacy semantic-only behavior. Use
+ * `sem_filter` for semantic-only matching combined with structured filters. AI search requires
+ * organization consent. When semantic matching is needed, `Accept: text/event-stream` is required;
+ * requests without it return 406. AI search is unavailable on deployments that route queries to the
+ * v1 backend and returns 501 there.
  *
  * Self-hosted deployments require LangSmith `v0.16` or later.
  */
@@ -42,9 +46,10 @@ private constructor(
     fun accept(): Optional<String> = Optional.ofNullable(accept)
 
     /**
-     * `ai_search` is a plain-language criterion evaluated against the messages from the agent
-     * trajectory scoped to the thread. AND-ed with the ordinary filters. Requires semantic
-     * filtering enabled for the deployment. Must contain nonempty text of at most 2000 UTF-8 bytes.
+     * `ai_search` translates natural language into structured filters, semantic criteria and time
+     * bounds. Cannot be combined with sem_filter. With full AI search enabled, also cannot be
+     * combined with explicit filter expressions; otherwise retains legacy semantic-only behavior.
+     * Must contain nonempty text of at most 2000 UTF-8 bytes.
      *
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
@@ -105,6 +110,15 @@ private constructor(
      *   server responded with an unexpected value).
      */
     fun projectId(): Optional<String> = body.projectId()
+
+    /**
+     * SemFilter evaluates a plain-language criterion against trajectory messages, AND-ed with
+     * structured filters.
+     *
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
+    fun semFilter(): Optional<String> = body.semFilter()
 
     /**
      * `thread_filter` narrows results using a LangSmith filter expression evaluated against each
@@ -190,6 +204,13 @@ private constructor(
     fun _projectId(): JsonField<String> = body._projectId()
 
     /**
+     * Returns the raw JSON value of [semFilter].
+     *
+     * Unlike [semFilter], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    fun _semFilter(): JsonField<String> = body._semFilter()
+
+    /**
      * Returns the raw JSON value of [threadFilter].
      *
      * Unlike [threadFilter], this method doesn't throw if the JSON field has an unexpected type.
@@ -264,10 +285,10 @@ private constructor(
         fun body(body: Body) = apply { this.body = body.toBuilder() }
 
         /**
-         * `ai_search` is a plain-language criterion evaluated against the messages from the agent
-         * trajectory scoped to the thread. AND-ed with the ordinary filters. Requires semantic
-         * filtering enabled for the deployment. Must contain nonempty text of at most 2000 UTF-8
-         * bytes.
+         * `ai_search` translates natural language into structured filters, semantic criteria and
+         * time bounds. Cannot be combined with sem_filter. With full AI search enabled, also cannot
+         * be combined with explicit filter expressions; otherwise retains legacy semantic-only
+         * behavior. Must contain nonempty text of at most 2000 UTF-8 bytes.
          */
         fun aiSearch(aiSearch: String) = apply { body.aiSearch(aiSearch) }
 
@@ -369,6 +390,21 @@ private constructor(
          * value.
          */
         fun projectId(projectId: JsonField<String>) = apply { body.projectId(projectId) }
+
+        /**
+         * SemFilter evaluates a plain-language criterion against trajectory messages, AND-ed with
+         * structured filters.
+         */
+        fun semFilter(semFilter: String) = apply { body.semFilter(semFilter) }
+
+        /**
+         * Sets [Builder.semFilter] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.semFilter] with a well-typed [String] value instead.
+         * This method is primarily for setting the field to an undocumented or not yet supported
+         * value.
+         */
+        fun semFilter(semFilter: JsonField<String>) = apply { body.semFilter(semFilter) }
 
         /**
          * `thread_filter` narrows results using a LangSmith filter expression evaluated against
@@ -577,6 +613,7 @@ private constructor(
         private val minStartTime: JsonField<OffsetDateTime>,
         private val pageSize: JsonField<Long>,
         private val projectId: JsonField<String>,
+        private val semFilter: JsonField<String>,
         private val threadFilter: JsonField<String>,
         private val traceFilter: JsonField<String>,
         private val treeFilter: JsonField<String>,
@@ -600,6 +637,9 @@ private constructor(
             @JsonProperty("project_id")
             @ExcludeMissing
             projectId: JsonField<String> = JsonMissing.of(),
+            @JsonProperty("sem_filter")
+            @ExcludeMissing
+            semFilter: JsonField<String> = JsonMissing.of(),
             @JsonProperty("thread_filter")
             @ExcludeMissing
             threadFilter: JsonField<String> = JsonMissing.of(),
@@ -617,6 +657,7 @@ private constructor(
             minStartTime,
             pageSize,
             projectId,
+            semFilter,
             threadFilter,
             traceFilter,
             treeFilter,
@@ -624,10 +665,10 @@ private constructor(
         )
 
         /**
-         * `ai_search` is a plain-language criterion evaluated against the messages from the agent
-         * trajectory scoped to the thread. AND-ed with the ordinary filters. Requires semantic
-         * filtering enabled for the deployment. Must contain nonempty text of at most 2000 UTF-8
-         * bytes.
+         * `ai_search` translates natural language into structured filters, semantic criteria and
+         * time bounds. Cannot be combined with sem_filter. With full AI search enabled, also cannot
+         * be combined with explicit filter expressions; otherwise retains legacy semantic-only
+         * behavior. Must contain nonempty text of at most 2000 UTF-8 bytes.
          *
          * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
          *   the server responded with an unexpected value).
@@ -689,6 +730,15 @@ private constructor(
          *   the server responded with an unexpected value).
          */
         fun projectId(): Optional<String> = projectId.getOptional("project_id")
+
+        /**
+         * SemFilter evaluates a plain-language criterion against trajectory messages, AND-ed with
+         * structured filters.
+         *
+         * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
+         *   the server responded with an unexpected value).
+         */
+        fun semFilter(): Optional<String> = semFilter.getOptional("sem_filter")
 
         /**
          * `thread_filter` narrows results using a LangSmith filter expression evaluated against
@@ -780,6 +830,13 @@ private constructor(
         @JsonProperty("project_id") @ExcludeMissing fun _projectId(): JsonField<String> = projectId
 
         /**
+         * Returns the raw JSON value of [semFilter].
+         *
+         * Unlike [semFilter], this method doesn't throw if the JSON field has an unexpected type.
+         */
+        @JsonProperty("sem_filter") @ExcludeMissing fun _semFilter(): JsonField<String> = semFilter
+
+        /**
          * Returns the raw JSON value of [threadFilter].
          *
          * Unlike [threadFilter], this method doesn't throw if the JSON field has an unexpected
@@ -835,6 +892,7 @@ private constructor(
             private var minStartTime: JsonField<OffsetDateTime> = JsonMissing.of()
             private var pageSize: JsonField<Long> = JsonMissing.of()
             private var projectId: JsonField<String> = JsonMissing.of()
+            private var semFilter: JsonField<String> = JsonMissing.of()
             private var threadFilter: JsonField<String> = JsonMissing.of()
             private var traceFilter: JsonField<String> = JsonMissing.of()
             private var treeFilter: JsonField<String> = JsonMissing.of()
@@ -849,6 +907,7 @@ private constructor(
                 minStartTime = body.minStartTime
                 pageSize = body.pageSize
                 projectId = body.projectId
+                semFilter = body.semFilter
                 threadFilter = body.threadFilter
                 traceFilter = body.traceFilter
                 treeFilter = body.treeFilter
@@ -856,10 +915,10 @@ private constructor(
             }
 
             /**
-             * `ai_search` is a plain-language criterion evaluated against the messages from the
-             * agent trajectory scoped to the thread. AND-ed with the ordinary filters. Requires
-             * semantic filtering enabled for the deployment. Must contain nonempty text of at most
-             * 2000 UTF-8 bytes.
+             * `ai_search` translates natural language into structured filters, semantic criteria
+             * and time bounds. Cannot be combined with sem_filter. With full AI search enabled,
+             * also cannot be combined with explicit filter expressions; otherwise retains legacy
+             * semantic-only behavior. Must contain nonempty text of at most 2000 UTF-8 bytes.
              */
             fun aiSearch(aiSearch: String) = aiSearch(JsonField.of(aiSearch))
 
@@ -970,6 +1029,21 @@ private constructor(
             fun projectId(projectId: JsonField<String>) = apply { this.projectId = projectId }
 
             /**
+             * SemFilter evaluates a plain-language criterion against trajectory messages, AND-ed
+             * with structured filters.
+             */
+            fun semFilter(semFilter: String) = semFilter(JsonField.of(semFilter))
+
+            /**
+             * Sets [Builder.semFilter] to an arbitrary JSON value.
+             *
+             * You should usually call [Builder.semFilter] with a well-typed [String] value instead.
+             * This method is primarily for setting the field to an undocumented or not yet
+             * supported value.
+             */
+            fun semFilter(semFilter: JsonField<String>) = apply { this.semFilter = semFilter }
+
+            /**
              * `thread_filter` narrows results using a LangSmith filter expression evaluated against
              * each complete thread summary. Self-hosted deployments require LangSmith v0.17 or
              * later; unsupported deployments return 501. See
@@ -1061,6 +1135,7 @@ private constructor(
                     minStartTime,
                     pageSize,
                     projectId,
+                    semFilter,
                     threadFilter,
                     traceFilter,
                     treeFilter,
@@ -1091,6 +1166,7 @@ private constructor(
             minStartTime()
             pageSize()
             projectId()
+            semFilter()
             threadFilter()
             traceFilter()
             treeFilter()
@@ -1120,6 +1196,7 @@ private constructor(
                 (if (minStartTime.asKnown().isPresent) 1 else 0) +
                 (if (pageSize.asKnown().isPresent) 1 else 0) +
                 (if (projectId.asKnown().isPresent) 1 else 0) +
+                (if (semFilter.asKnown().isPresent) 1 else 0) +
                 (if (threadFilter.asKnown().isPresent) 1 else 0) +
                 (if (traceFilter.asKnown().isPresent) 1 else 0) +
                 (if (treeFilter.asKnown().isPresent) 1 else 0)
@@ -1137,6 +1214,7 @@ private constructor(
                 minStartTime == other.minStartTime &&
                 pageSize == other.pageSize &&
                 projectId == other.projectId &&
+                semFilter == other.semFilter &&
                 threadFilter == other.threadFilter &&
                 traceFilter == other.traceFilter &&
                 treeFilter == other.treeFilter &&
@@ -1152,6 +1230,7 @@ private constructor(
                 minStartTime,
                 pageSize,
                 projectId,
+                semFilter,
                 threadFilter,
                 traceFilter,
                 treeFilter,
@@ -1162,7 +1241,7 @@ private constructor(
         override fun hashCode(): Int = hashCode
 
         override fun toString() =
-            "Body{aiSearch=$aiSearch, cursor=$cursor, filter=$filter, maxStartTime=$maxStartTime, minStartTime=$minStartTime, pageSize=$pageSize, projectId=$projectId, threadFilter=$threadFilter, traceFilter=$traceFilter, treeFilter=$treeFilter, additionalProperties=$additionalProperties}"
+            "Body{aiSearch=$aiSearch, cursor=$cursor, filter=$filter, maxStartTime=$maxStartTime, minStartTime=$minStartTime, pageSize=$pageSize, projectId=$projectId, semFilter=$semFilter, threadFilter=$threadFilter, traceFilter=$traceFilter, treeFilter=$treeFilter, additionalProperties=$additionalProperties}"
     }
 
     override fun equals(other: Any?): Boolean {

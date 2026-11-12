@@ -31,6 +31,7 @@ internal class StreamingServiceAsyncTest {
                     .minStartTime(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
                     .pageSize(20L)
                     .projectId("0190a1b2-c3d4-7ef0-a5b6-6ea3a82e9328")
+                    .semFilter("x")
                     .threadFilter("gte(turn_count, 3)")
                     .traceFilter("eq(status, \"error\")")
                     .treeFilter("has(tags, \"production\")")

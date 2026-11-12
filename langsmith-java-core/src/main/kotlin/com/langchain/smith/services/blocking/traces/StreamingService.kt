@@ -39,9 +39,13 @@ interface StreamingService {
      * Supports filters (`trace_filter`, `tree_filter`), cursor pagination (`cursor`), and field
      * projection (`selects`).
      *
-     * When `ai_search` is set, `Accept: text/event-stream` is required; requests without it
-     * return 406. AI search is unavailable on deployments that route queries to the v1 backend and
-     * returns 501 there.
+     * `ai_search` cannot be combined with `sem_filter`. With full AI search enabled, `ai_search`
+     * translates natural language into query filters and time bounds and cannot be combined with
+     * explicit filter expressions. Otherwise, `ai_search` retains legacy semantic-only behavior.
+     * Use `sem_filter` for semantic-only matching combined with structured filters. AI search
+     * requires organization consent. When semantic matching is needed, `Accept: text/event-stream`
+     * is required; requests without it return 406. AI search is unavailable on deployments that
+     * route queries to the v1 backend and returns 501 there.
      *
      * Self-hosted deployments require LangSmith `v0.16` or later.
      */
