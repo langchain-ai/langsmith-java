@@ -1430,6 +1430,8 @@ private constructor(
         private val matchHeaders: JsonField<List<String>>,
         private val matchHosts: JsonField<List<String>>,
         private val matchPaths: JsonField<List<String>>,
+        private val matchPort: JsonField<Long>,
+        private val matchScheme: JsonField<MatchScheme>,
         private val relayId: JsonField<String>,
         private val rewrite: JsonField<Rewrite>,
         private val type: JsonField<String>,
@@ -1461,6 +1463,12 @@ private constructor(
             @JsonProperty("match_paths")
             @ExcludeMissing
             matchPaths: JsonField<List<String>> = JsonMissing.of(),
+            @JsonProperty("match_port")
+            @ExcludeMissing
+            matchPort: JsonField<Long> = JsonMissing.of(),
+            @JsonProperty("match_scheme")
+            @ExcludeMissing
+            matchScheme: JsonField<MatchScheme> = JsonMissing.of(),
             @JsonProperty("relay_id") @ExcludeMissing relayId: JsonField<String> = JsonMissing.of(),
             @JsonProperty("rewrite") @ExcludeMissing rewrite: JsonField<Rewrite> = JsonMissing.of(),
             @JsonProperty("type") @ExcludeMissing type: JsonField<String> = JsonMissing.of(),
@@ -1476,6 +1484,8 @@ private constructor(
             matchHeaders,
             matchHosts,
             matchPaths,
+            matchPort,
+            matchScheme,
             relayId,
             rewrite,
             type,
@@ -1580,6 +1590,18 @@ private constructor(
          *   the server responded with an unexpected value).
          */
         fun matchPaths(): Optional<List<String>> = matchPaths.getOptional("match_paths")
+
+        /**
+         * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
+         *   the server responded with an unexpected value).
+         */
+        fun matchPort(): Optional<Long> = matchPort.getOptional("match_port")
+
+        /**
+         * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
+         *   the server responded with an unexpected value).
+         */
+        fun matchScheme(): Optional<MatchScheme> = matchScheme.getOptional("match_scheme")
 
         /**
          * RelayID is the ID of the LangSmith relay (a connection of kind relay) that carries
@@ -1697,6 +1719,22 @@ private constructor(
         fun _matchPaths(): JsonField<List<String>> = matchPaths
 
         /**
+         * Returns the raw JSON value of [matchPort].
+         *
+         * Unlike [matchPort], this method doesn't throw if the JSON field has an unexpected type.
+         */
+        @JsonProperty("match_port") @ExcludeMissing fun _matchPort(): JsonField<Long> = matchPort
+
+        /**
+         * Returns the raw JSON value of [matchScheme].
+         *
+         * Unlike [matchScheme], this method doesn't throw if the JSON field has an unexpected type.
+         */
+        @JsonProperty("match_scheme")
+        @ExcludeMissing
+        fun _matchScheme(): JsonField<MatchScheme> = matchScheme
+
+        /**
          * Returns the raw JSON value of [relayId].
          *
          * Unlike [relayId], this method doesn't throw if the JSON field has an unexpected type.
@@ -1756,6 +1794,8 @@ private constructor(
             private var matchHeaders: JsonField<MutableList<String>>? = null
             private var matchHosts: JsonField<MutableList<String>>? = null
             private var matchPaths: JsonField<MutableList<String>>? = null
+            private var matchPort: JsonField<Long> = JsonMissing.of()
+            private var matchScheme: JsonField<MatchScheme> = JsonMissing.of()
             private var relayId: JsonField<String> = JsonMissing.of()
             private var rewrite: JsonField<Rewrite> = JsonMissing.of()
             private var type: JsonField<String> = JsonMissing.of()
@@ -1774,6 +1814,8 @@ private constructor(
                 matchHeaders = rule.matchHeaders.map { it.toMutableList() }
                 matchHosts = rule.matchHosts.map { it.toMutableList() }
                 matchPaths = rule.matchPaths.map { it.toMutableList() }
+                matchPort = rule.matchPort
+                matchScheme = rule.matchScheme
                 relayId = rule.relayId
                 rewrite = rule.rewrite
                 type = rule.type
@@ -2070,6 +2112,30 @@ private constructor(
                     }
             }
 
+            fun matchPort(matchPort: Long) = matchPort(JsonField.of(matchPort))
+
+            /**
+             * Sets [Builder.matchPort] to an arbitrary JSON value.
+             *
+             * You should usually call [Builder.matchPort] with a well-typed [Long] value instead.
+             * This method is primarily for setting the field to an undocumented or not yet
+             * supported value.
+             */
+            fun matchPort(matchPort: JsonField<Long>) = apply { this.matchPort = matchPort }
+
+            fun matchScheme(matchScheme: MatchScheme) = matchScheme(JsonField.of(matchScheme))
+
+            /**
+             * Sets [Builder.matchScheme] to an arbitrary JSON value.
+             *
+             * You should usually call [Builder.matchScheme] with a well-typed [MatchScheme] value
+             * instead. This method is primarily for setting the field to an undocumented or not yet
+             * supported value.
+             */
+            fun matchScheme(matchScheme: JsonField<MatchScheme>) = apply {
+                this.matchScheme = matchScheme
+            }
+
             /**
              * RelayID is the ID of the LangSmith relay (a connection of kind relay) that carries
              * connections to match_hosts when type is relay. Those connections leave from the
@@ -2160,6 +2226,8 @@ private constructor(
                     (matchHeaders ?: JsonMissing.of()).map { it.toImmutable() },
                     (matchHosts ?: JsonMissing.of()).map { it.toImmutable() },
                     (matchPaths ?: JsonMissing.of()).map { it.toImmutable() },
+                    matchPort,
+                    matchScheme,
                     relayId,
                     rewrite,
                     type,
@@ -2194,6 +2262,8 @@ private constructor(
             matchHeaders()
             matchHosts()
             matchPaths()
+            matchPort()
+            matchScheme().ifPresent { it.validate() }
             relayId()
             rewrite().ifPresent { it.validate() }
             type()
@@ -2227,6 +2297,8 @@ private constructor(
                 (matchHeaders.asKnown().getOrNull()?.size ?: 0) +
                 (matchHosts.asKnown().getOrNull()?.size ?: 0) +
                 (matchPaths.asKnown().getOrNull()?.size ?: 0) +
+                (if (matchPort.asKnown().isPresent) 1 else 0) +
+                (matchScheme.asKnown().getOrNull()?.validity() ?: 0) +
                 (if (relayId.asKnown().isPresent) 1 else 0) +
                 (rewrite.asKnown().getOrNull()?.validity() ?: 0) +
                 (if (type.asKnown().isPresent) 1 else 0)
@@ -8103,6 +8175,141 @@ private constructor(
                 "Header{name=$name, type=$type, isSet=$isSet, value=$value, additionalProperties=$additionalProperties}"
         }
 
+        class MatchScheme @JsonCreator private constructor(private val value: JsonField<String>) :
+            Enum {
+
+            /**
+             * Returns this class instance's raw value.
+             *
+             * This is usually only useful if this instance was deserialized from data that doesn't
+             * match any known member, and you want to know that value. For example, if the SDK is
+             * on an older version than the API, then the API may respond with new members that the
+             * SDK is unaware of.
+             */
+            @com.fasterxml.jackson.annotation.JsonValue fun _value(): JsonField<String> = value
+
+            companion object {
+
+                @JvmField val HTTPS = of("https")
+
+                @JvmStatic fun of(value: String) = MatchScheme(JsonField.of(value))
+            }
+
+            /** An enum containing [MatchScheme]'s known values. */
+            enum class Known {
+                HTTPS
+            }
+
+            /**
+             * An enum containing [MatchScheme]'s known values, as well as an [_UNKNOWN] member.
+             *
+             * An instance of [MatchScheme] can contain an unknown value in a couple of cases:
+             * - It was deserialized from data that doesn't match any known member. For example, if
+             *   the SDK is on an older version than the API, then the API may respond with new
+             *   members that the SDK is unaware of.
+             * - It was constructed with an arbitrary value using the [of] method.
+             */
+            enum class Value {
+                HTTPS,
+                /**
+                 * An enum member indicating that [MatchScheme] was instantiated with an unknown
+                 * value.
+                 */
+                _UNKNOWN,
+            }
+
+            /**
+             * Returns an enum member corresponding to this class instance's value, or
+             * [Value._UNKNOWN] if the class was instantiated with an unknown value.
+             *
+             * Use the [known] method instead if you're certain the value is always known or if you
+             * want to throw for the unknown case.
+             */
+            fun value(): Value =
+                when (this) {
+                    HTTPS -> Value.HTTPS
+                    else -> Value._UNKNOWN
+                }
+
+            /**
+             * Returns an enum member corresponding to this class instance's value.
+             *
+             * Use the [value] method instead if you're uncertain the value is always known and
+             * don't want to throw for the unknown case.
+             *
+             * @throws LangChainInvalidDataException if this class instance's value is a not a known
+             *   member.
+             */
+            fun known(): Known =
+                when (this) {
+                    HTTPS -> Known.HTTPS
+                    else -> throw LangChainInvalidDataException("Unknown MatchScheme: $value")
+                }
+
+            /**
+             * Returns this class instance's primitive wire representation.
+             *
+             * This differs from the [toString] method because that method is primarily for
+             * debugging and generally doesn't throw.
+             *
+             * @throws LangChainInvalidDataException if this class instance's value does not have
+             *   the expected primitive type.
+             */
+            fun asString(): String =
+                _value().asString().orElseThrow {
+                    LangChainInvalidDataException("Value is not a String")
+                }
+
+            private var validated: Boolean = false
+
+            /**
+             * Validates that the types of all values in this object match their expected types
+             * recursively.
+             *
+             * This method is _not_ forwards compatible with new types from the API for existing
+             * fields.
+             *
+             * @throws LangChainInvalidDataException if any value type in this object doesn't match
+             *   its expected type.
+             */
+            fun validate(): MatchScheme = apply {
+                if (validated) {
+                    return@apply
+                }
+
+                known()
+                validated = true
+            }
+
+            fun isValid(): Boolean =
+                try {
+                    validate()
+                    true
+                } catch (e: LangChainInvalidDataException) {
+                    false
+                }
+
+            /**
+             * Returns a score indicating how many valid values are contained in this object
+             * recursively.
+             *
+             * Used for best match union deserialization.
+             */
+            @JvmSynthetic internal fun validity(): Int = if (value() == Value._UNKNOWN) 0 else 1
+
+            override fun equals(other: Any?): Boolean {
+                if (this === other) {
+                    return true
+                }
+
+                return other is MatchScheme && value == other.value
+            }
+
+            override fun hashCode() = value.hashCode()
+
+            override fun toString() = value.toString()
+        }
+
         class Rewrite
         @JsonCreator(mode = JsonCreator.Mode.DISABLED)
         private constructor(
@@ -8576,6 +8783,8 @@ private constructor(
                 matchHeaders == other.matchHeaders &&
                 matchHosts == other.matchHosts &&
                 matchPaths == other.matchPaths &&
+                matchPort == other.matchPort &&
+                matchScheme == other.matchScheme &&
                 relayId == other.relayId &&
                 rewrite == other.rewrite &&
                 type == other.type &&
@@ -8595,6 +8804,8 @@ private constructor(
                 matchHeaders,
                 matchHosts,
                 matchPaths,
+                matchPort,
+                matchScheme,
                 relayId,
                 rewrite,
                 type,
@@ -8605,7 +8816,7 @@ private constructor(
         override fun hashCode(): Int = hashCode
 
         override fun toString() =
-            "Rule{name=$name, aws=$aws, azure=$azure, description=$description, enabled=$enabled, envVars=$envVars, gcp=$gcp, headers=$headers, matchHeaders=$matchHeaders, matchHosts=$matchHosts, matchPaths=$matchPaths, relayId=$relayId, rewrite=$rewrite, type=$type, additionalProperties=$additionalProperties}"
+            "Rule{name=$name, aws=$aws, azure=$azure, description=$description, enabled=$enabled, envVars=$envVars, gcp=$gcp, headers=$headers, matchHeaders=$matchHeaders, matchHosts=$matchHosts, matchPaths=$matchPaths, matchPort=$matchPort, matchScheme=$matchScheme, relayId=$relayId, rewrite=$rewrite, type=$type, additionalProperties=$additionalProperties}"
     }
 
     override fun equals(other: Any?): Boolean {

@@ -227,6 +227,8 @@ internal class SnapshotResponseTest {
                                 .addMatchHeader("string")
                                 .addMatchHost("string")
                                 .addMatchPath("string")
+                                .matchPort(1L)
+                                .matchScheme(ProxyConfig.Rule.MatchScheme.HTTPS)
                                 .relayId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                                 .rewrite(
                                     ProxyConfig.Rule.Rewrite.builder()
@@ -465,6 +467,8 @@ internal class SnapshotResponseTest {
                             .addMatchHeader("string")
                             .addMatchHost("string")
                             .addMatchPath("string")
+                            .matchPort(1L)
+                            .matchScheme(ProxyConfig.Rule.MatchScheme.HTTPS)
                             .relayId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                             .rewrite(
                                 ProxyConfig.Rule.Rewrite.builder()
@@ -716,6 +720,8 @@ internal class SnapshotResponseTest {
                                 .addMatchHeader("string")
                                 .addMatchHost("string")
                                 .addMatchPath("string")
+                                .matchPort(1L)
+                                .matchScheme(ProxyConfig.Rule.MatchScheme.HTTPS)
                                 .relayId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                                 .rewrite(
                                     ProxyConfig.Rule.Rewrite.builder()
