@@ -32,6 +32,7 @@ dependencies {
 
     testImplementation(kotlin("test"))
     testImplementation("org.assertj:assertj-core:3.27.7")
+    testImplementation("org.junit.jupiter:junit-jupiter-params:5.14.4")
     testImplementation("org.bouncycastle:bcpkix-jdk18on:1.86")
     testImplementation("org.bouncycastle:bcprov-jdk18on:1.86")
     testImplementation("org.wiremock:wiremock:4.0.0-beta.38") {
