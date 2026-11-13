@@ -13,7 +13,11 @@ import java.util.Objects
 import java.util.Optional
 import kotlin.jvm.optionals.getOrNull
 
-/** List all Feedback by query params. */
+/**
+ * List feedback, newest first.
+ *
+ * At least one of run, key, or session is required.
+ */
 class FeedbackListParams
 private constructor(
     private val comparativeExperimentId: String?,
@@ -35,35 +39,54 @@ private constructor(
     private val additionalQueryParams: QueryParams,
 ) : Params {
 
+    /** Only feedback written for this comparative (pairwise) experiment. */
     fun comparativeExperimentId(): Optional<String> = Optional.ofNullable(comparativeExperimentId)
 
+    /**
+     * Only feedback on this thread. Requires exactly one session and cannot be combined with run.
+     */
     fun feedbackThreadId(): Optional<String> = Optional.ofNullable(feedbackThreadId)
 
+    /** true returns only feedback with a non-empty comment; false only feedback without one. */
     fun hasComment(): Optional<Boolean> = Optional.ofNullable(hasComment)
 
+    /** true returns only feedback with a score; false only feedback without one. */
     fun hasScore(): Optional<Boolean> = Optional.ofNullable(hasScore)
 
+    /** Whether to add the author's name to each feedback's source. */
     fun includeUserNames(): Optional<Boolean> = Optional.ofNullable(includeUserNames)
 
+    /** Only feedback with these keys. */
     fun key(): Optional<List<String>> = Optional.ofNullable(key)
 
-    /** Enum for feedback levels. */
+    /**
+     * run returns only feedback on a run; session returns only feedback on a whole tracing project,
+     * and requires session.
+     */
     fun level(): Optional<FeedbackLevel> = Optional.ofNullable(level)
 
+    /** The maximum number of feedback to return, 1 to 100. */
     fun limit(): Optional<Long> = Optional.ofNullable(limit)
 
+    /** Only feedback created at or before this ISO 8601 time. */
     fun maxCreatedAt(): Optional<OffsetDateTime> = Optional.ofNullable(maxCreatedAt)
 
+    /** Only feedback created at or after this ISO 8601 time. */
     fun minCreatedAt(): Optional<OffsetDateTime> = Optional.ofNullable(minCreatedAt)
 
+    /** The number of feedback to skip, for paging. */
     fun offset(): Optional<Long> = Optional.ofNullable(offset)
 
+    /** Only feedback on these run IDs. */
     fun run(): Optional<Run> = Optional.ofNullable(run)
 
+    /** Only feedback in these tracing project (session) IDs. */
     fun session(): Optional<Session> = Optional.ofNullable(session)
 
+    /** Only feedback from these source types: api, model, app, or auto_eval. */
     fun source(): Optional<List<SourceType>> = Optional.ofNullable(source)
 
+    /** Only feedback written by these user IDs. */
     fun user(): Optional<List<String>> = Optional.ofNullable(user)
 
     /** Additional headers to send with the request. */
@@ -124,6 +147,7 @@ private constructor(
             additionalQueryParams = feedbackListParams.additionalQueryParams.toBuilder()
         }
 
+        /** Only feedback written for this comparative (pairwise) experiment. */
         fun comparativeExperimentId(comparativeExperimentId: String?) = apply {
             this.comparativeExperimentId = comparativeExperimentId
         }
@@ -135,6 +159,10 @@ private constructor(
         fun comparativeExperimentId(comparativeExperimentId: Optional<String>) =
             comparativeExperimentId(comparativeExperimentId.getOrNull())
 
+        /**
+         * Only feedback on this thread. Requires exactly one session and cannot be combined with
+         * run.
+         */
         fun feedbackThreadId(feedbackThreadId: String?) = apply {
             this.feedbackThreadId = feedbackThreadId
         }
@@ -143,6 +171,7 @@ private constructor(
         fun feedbackThreadId(feedbackThreadId: Optional<String>) =
             feedbackThreadId(feedbackThreadId.getOrNull())
 
+        /** true returns only feedback with a non-empty comment; false only feedback without one. */
         fun hasComment(hasComment: Boolean?) = apply { this.hasComment = hasComment }
 
         /**
@@ -155,6 +184,7 @@ private constructor(
         /** Alias for calling [Builder.hasComment] with `hasComment.orElse(null)`. */
         fun hasComment(hasComment: Optional<Boolean>) = hasComment(hasComment.getOrNull())
 
+        /** true returns only feedback with a score; false only feedback without one. */
         fun hasScore(hasScore: Boolean?) = apply { this.hasScore = hasScore }
 
         /**
@@ -167,6 +197,7 @@ private constructor(
         /** Alias for calling [Builder.hasScore] with `hasScore.orElse(null)`. */
         fun hasScore(hasScore: Optional<Boolean>) = hasScore(hasScore.getOrNull())
 
+        /** Whether to add the author's name to each feedback's source. */
         fun includeUserNames(includeUserNames: Boolean?) = apply {
             this.includeUserNames = includeUserNames
         }
@@ -183,6 +214,7 @@ private constructor(
         fun includeUserNames(includeUserNames: Optional<Boolean>) =
             includeUserNames(includeUserNames.getOrNull())
 
+        /** Only feedback with these keys. */
         fun key(key: List<String>?) = apply { this.key = key?.toMutableList() }
 
         /** Alias for calling [Builder.key] with `key.orElse(null)`. */
@@ -197,12 +229,16 @@ private constructor(
             this.key = (this.key ?: mutableListOf()).apply { add(key) }
         }
 
-        /** Enum for feedback levels. */
+        /**
+         * run returns only feedback on a run; session returns only feedback on a whole tracing
+         * project, and requires session.
+         */
         fun level(level: FeedbackLevel?) = apply { this.level = level }
 
         /** Alias for calling [Builder.level] with `level.orElse(null)`. */
         fun level(level: Optional<FeedbackLevel>) = level(level.getOrNull())
 
+        /** The maximum number of feedback to return, 1 to 100. */
         fun limit(limit: Long?) = apply { this.limit = limit }
 
         /**
@@ -215,18 +251,21 @@ private constructor(
         /** Alias for calling [Builder.limit] with `limit.orElse(null)`. */
         fun limit(limit: Optional<Long>) = limit(limit.getOrNull())
 
+        /** Only feedback created at or before this ISO 8601 time. */
         fun maxCreatedAt(maxCreatedAt: OffsetDateTime?) = apply { this.maxCreatedAt = maxCreatedAt }
 
         /** Alias for calling [Builder.maxCreatedAt] with `maxCreatedAt.orElse(null)`. */
         fun maxCreatedAt(maxCreatedAt: Optional<OffsetDateTime>) =
             maxCreatedAt(maxCreatedAt.getOrNull())
 
+        /** Only feedback created at or after this ISO 8601 time. */
         fun minCreatedAt(minCreatedAt: OffsetDateTime?) = apply { this.minCreatedAt = minCreatedAt }
 
         /** Alias for calling [Builder.minCreatedAt] with `minCreatedAt.orElse(null)`. */
         fun minCreatedAt(minCreatedAt: Optional<OffsetDateTime>) =
             minCreatedAt(minCreatedAt.getOrNull())
 
+        /** The number of feedback to skip, for paging. */
         fun offset(offset: Long?) = apply { this.offset = offset }
 
         /**
@@ -239,6 +278,7 @@ private constructor(
         /** Alias for calling [Builder.offset] with `offset.orElse(null)`. */
         fun offset(offset: Optional<Long>) = offset(offset.getOrNull())
 
+        /** Only feedback on these run IDs. */
         fun run(run: Run?) = apply { this.run = run }
 
         /** Alias for calling [Builder.run] with `run.orElse(null)`. */
@@ -250,6 +290,7 @@ private constructor(
         /** Alias for calling [run] with `Run.ofString(string)`. */
         fun run(string: String) = run(Run.ofString(string))
 
+        /** Only feedback in these tracing project (session) IDs. */
         fun session(session: Session?) = apply { this.session = session }
 
         /** Alias for calling [Builder.session] with `session.orElse(null)`. */
@@ -261,6 +302,7 @@ private constructor(
         /** Alias for calling [session] with `Session.ofString(string)`. */
         fun session(string: String) = session(Session.ofString(string))
 
+        /** Only feedback from these source types: api, model, app, or auto_eval. */
         fun source(source: List<SourceType>?) = apply { this.source = source?.toMutableList() }
 
         /** Alias for calling [Builder.source] with `source.orElse(null)`. */
@@ -275,6 +317,7 @@ private constructor(
             this.source = (this.source ?: mutableListOf()).apply { add(source) }
         }
 
+        /** Only feedback written by these user IDs. */
         fun user(user: List<String>?) = apply { this.user = user?.toMutableList() }
 
         /** Alias for calling [Builder.user] with `user.orElse(null)`. */
@@ -462,6 +505,7 @@ private constructor(
             }
             .build()
 
+    /** Only feedback on these run IDs. */
     class Run
     private constructor(
         private val strings: List<String>? = null,
@@ -523,6 +567,7 @@ private constructor(
         }
     }
 
+    /** Only feedback in these tracing project (session) IDs. */
     class Session
     private constructor(
         private val strings: List<String>? = null,

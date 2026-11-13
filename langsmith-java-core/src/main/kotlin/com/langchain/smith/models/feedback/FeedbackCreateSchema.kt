@@ -134,12 +134,16 @@ private constructor(
     )
 
     /**
+     * The feedback key: the metric, tag, or aspect being scored, for example correctness.
+     *
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type or is
      *   unexpectedly missing or null (e.g. if the server responded with an unexpected value).
      */
     fun key(): String = key.getRequired("key")
 
     /**
+     * The ID to give the feedback. Defaults to a new random UUID.
+     *
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
      */
@@ -160,12 +164,16 @@ private constructor(
     fun address(): Optional<String> = address.getOptional("address")
 
     /**
+     * A free-text comment explaining the feedback. Truncated at the feedback size limit.
+     *
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
      */
     fun comment(): Optional<String> = comment.getOptional("comment")
 
     /**
+     * The ID of the comparative (pairwise) experiment this feedback was written for.
+     *
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
      */
@@ -173,19 +181,24 @@ private constructor(
         comparativeExperimentId.getOptional("comparative_experiment_id")
 
     /**
+     * The corrected output for the run, as a string or a JSON object. Dropped if it exceeds the
+     * feedback size limit.
+     *
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
      */
     fun correction(): Optional<Correction> = correction.getOptional("correction")
 
     /**
+     * When the feedback was created, as an ISO 8601 timestamp. Defaults to now.
+     *
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
      */
     fun createdAt(): Optional<OffsetDateTime> = createdAt.getOptional("created_at")
 
     /**
-     * Deprecated. Use `extra.error` instead. If both values are provided, `error` takes precedence.
+     * Deprecated. Use extra.error instead. If both values are provided, error takes precedence.
      *
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
@@ -193,6 +206,8 @@ private constructor(
     @Deprecated("deprecated") fun error(): Optional<Boolean> = error.getOptional("error")
 
     /**
+     * Whether writing this feedback may upgrade the trace to extended retention. Defaults to true.
+     *
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
      */
@@ -200,6 +215,8 @@ private constructor(
         extendTraceRetention.getOptional("extend_trace_retention")
 
     /**
+     * Additional metadata to store with the feedback, as a JSON object.
+     *
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
      */
@@ -227,13 +244,15 @@ private constructor(
     fun feedbackConfigId(): Optional<String> = feedbackConfigId.getOptional("feedback_config_id")
 
     /**
+     * Groups feedback written together, such as one comparison in a pairwise experiment.
+     *
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
      */
     fun feedbackGroupId(): Optional<String> = feedbackGroupId.getOptional("feedback_group_id")
 
     /**
-     * Feedback from the LangChainPlus App.
+     * Where the feedback came from, as an object whose type is api, app, model, or auto_eval.
      *
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
@@ -241,24 +260,35 @@ private constructor(
     fun feedbackSource(): Optional<FeedbackSource> = feedbackSource.getOptional("feedback_source")
 
     /**
+     * The ID of the thread the feedback is about. Requires session_id (or address) and cannot be
+     * combined with run_id.
+     *
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
      */
     fun feedbackThreadId(): Optional<String> = feedbackThreadId.getOptional("feedback_thread_id")
 
     /**
+     * When the feedback was last modified, as an ISO 8601 timestamp. Defaults to now.
+     *
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
      */
     fun modifiedAt(): Optional<OffsetDateTime> = modifiedAt.getOptional("modified_at")
 
     /**
+     * The ID of the run the feedback is about. Omit it for feedback on a whole tracing project or a
+     * thread.
+     *
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
      */
     fun runId(): Optional<String> = runId.getOptional("run_id")
 
     /**
+     * The numeric or boolean score. Numbers must be between -99999.9999 and 99999.9999 with at most
+     * 4 decimal places.
+     *
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
      */
@@ -274,18 +304,27 @@ private constructor(
     fun sessionId(): Optional<String> = sessionId.getOptional("session_id")
 
     /**
+     * The start time of run_id, as an ISO 8601 timestamp. With session_id and trace_id, it lets the
+     * server write run feedback without looking the run up.
+     *
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
      */
     fun startTime(): Optional<OffsetDateTime> = startTime.getOptional("start_time")
 
     /**
+     * The ID of the trace that contains run_id. With session_id and start_time, it lets the server
+     * write run feedback without looking the run up.
+     *
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
      */
     fun traceId(): Optional<String> = traceId.getOptional("trace_id")
 
     /**
+     * A non-numeric value, such as a category label or a JSON object. Dropped if it exceeds the
+     * feedback size limit.
+     *
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
      */
@@ -553,6 +592,7 @@ private constructor(
             additionalProperties = feedbackCreateSchema.additionalProperties.toMutableMap()
         }
 
+        /** The feedback key: the metric, tag, or aspect being scored, for example correctness. */
         fun key(key: String) = key(JsonField.of(key))
 
         /**
@@ -563,6 +603,7 @@ private constructor(
          */
         fun key(key: JsonField<String>) = apply { this.key = key }
 
+        /** The ID to give the feedback. Defaults to a new random UUID. */
         fun id(id: String) = id(JsonField.of(id))
 
         /**
@@ -594,6 +635,7 @@ private constructor(
          */
         fun address(address: JsonField<String>) = apply { this.address = address }
 
+        /** A free-text comment explaining the feedback. Truncated at the feedback size limit. */
         fun comment(comment: String?) = comment(JsonField.ofNullable(comment))
 
         /** Alias for calling [Builder.comment] with `comment.orElse(null)`. */
@@ -607,6 +649,7 @@ private constructor(
          */
         fun comment(comment: JsonField<String>) = apply { this.comment = comment }
 
+        /** The ID of the comparative (pairwise) experiment this feedback was written for. */
         fun comparativeExperimentId(comparativeExperimentId: String?) =
             comparativeExperimentId(JsonField.ofNullable(comparativeExperimentId))
 
@@ -628,6 +671,10 @@ private constructor(
             this.comparativeExperimentId = comparativeExperimentId
         }
 
+        /**
+         * The corrected output for the run, as a string or a JSON object. Dropped if it exceeds the
+         * feedback size limit.
+         */
         fun correction(correction: Correction?) = correction(JsonField.ofNullable(correction))
 
         /** Alias for calling [Builder.correction] with `correction.orElse(null)`. */
@@ -649,6 +696,7 @@ private constructor(
         /** Alias for calling [correction] with `Correction.ofString(string)`. */
         fun correction(string: String) = correction(Correction.ofString(string))
 
+        /** When the feedback was created, as an ISO 8601 timestamp. Defaults to now. */
         fun createdAt(createdAt: OffsetDateTime) = createdAt(JsonField.of(createdAt))
 
         /**
@@ -661,8 +709,7 @@ private constructor(
         fun createdAt(createdAt: JsonField<OffsetDateTime>) = apply { this.createdAt = createdAt }
 
         /**
-         * Deprecated. Use `extra.error` instead. If both values are provided, `error` takes
-         * precedence.
+         * Deprecated. Use extra.error instead. If both values are provided, error takes precedence.
          */
         @Deprecated("deprecated") fun error(error: Boolean?) = error(JsonField.ofNullable(error))
 
@@ -685,6 +732,10 @@ private constructor(
         @Deprecated("deprecated")
         fun error(error: JsonField<Boolean>) = apply { this.error = error }
 
+        /**
+         * Whether writing this feedback may upgrade the trace to extended retention. Defaults to
+         * true.
+         */
         fun extendTraceRetention(extendTraceRetention: Boolean) =
             extendTraceRetention(JsonField.of(extendTraceRetention))
 
@@ -699,6 +750,7 @@ private constructor(
             this.extendTraceRetention = extendTraceRetention
         }
 
+        /** Additional metadata to store with the feedback, as a JSON object. */
         fun extra(extra: Extra?) = extra(JsonField.ofNullable(extra))
 
         /** Alias for calling [Builder.extra] with `extra.orElse(null)`. */
@@ -760,6 +812,7 @@ private constructor(
             this.feedbackConfigId = feedbackConfigId
         }
 
+        /** Groups feedback written together, such as one comparison in a pairwise experiment. */
         fun feedbackGroupId(feedbackGroupId: String?) =
             feedbackGroupId(JsonField.ofNullable(feedbackGroupId))
 
@@ -778,7 +831,9 @@ private constructor(
             this.feedbackGroupId = feedbackGroupId
         }
 
-        /** Feedback from the LangChainPlus App. */
+        /**
+         * Where the feedback came from, as an object whose type is api, app, model, or auto_eval.
+         */
         fun feedbackSource(feedbackSource: FeedbackSource?) =
             feedbackSource(JsonField.ofNullable(feedbackSource))
 
@@ -811,6 +866,10 @@ private constructor(
         fun feedbackSource(autoEval: AutoEvalFeedbackSource) =
             feedbackSource(FeedbackSource.ofAutoEval(autoEval))
 
+        /**
+         * The ID of the thread the feedback is about. Requires session_id (or address) and cannot
+         * be combined with run_id.
+         */
         fun feedbackThreadId(feedbackThreadId: String?) =
             feedbackThreadId(JsonField.ofNullable(feedbackThreadId))
 
@@ -829,6 +888,7 @@ private constructor(
             this.feedbackThreadId = feedbackThreadId
         }
 
+        /** When the feedback was last modified, as an ISO 8601 timestamp. Defaults to now. */
         fun modifiedAt(modifiedAt: OffsetDateTime) = modifiedAt(JsonField.of(modifiedAt))
 
         /**
@@ -842,6 +902,10 @@ private constructor(
             this.modifiedAt = modifiedAt
         }
 
+        /**
+         * The ID of the run the feedback is about. Omit it for feedback on a whole tracing project
+         * or a thread.
+         */
         fun runId(runId: String?) = runId(JsonField.ofNullable(runId))
 
         /** Alias for calling [Builder.runId] with `runId.orElse(null)`. */
@@ -855,6 +919,10 @@ private constructor(
          */
         fun runId(runId: JsonField<String>) = apply { this.runId = runId }
 
+        /**
+         * The numeric or boolean score. Numbers must be between -99999.9999 and 99999.9999 with at
+         * most 4 decimal places.
+         */
         fun score(score: Score?) = score(JsonField.ofNullable(score))
 
         /** Alias for calling [Builder.score] with `score.orElse(null)`. */
@@ -892,6 +960,10 @@ private constructor(
          */
         fun sessionId(sessionId: JsonField<String>) = apply { this.sessionId = sessionId }
 
+        /**
+         * The start time of run_id, as an ISO 8601 timestamp. With session_id and trace_id, it lets
+         * the server write run feedback without looking the run up.
+         */
         fun startTime(startTime: OffsetDateTime?) = startTime(JsonField.ofNullable(startTime))
 
         /** Alias for calling [Builder.startTime] with `startTime.orElse(null)`. */
@@ -906,6 +978,10 @@ private constructor(
          */
         fun startTime(startTime: JsonField<OffsetDateTime>) = apply { this.startTime = startTime }
 
+        /**
+         * The ID of the trace that contains run_id. With session_id and start_time, it lets the
+         * server write run feedback without looking the run up.
+         */
         fun traceId(traceId: String?) = traceId(JsonField.ofNullable(traceId))
 
         /** Alias for calling [Builder.traceId] with `traceId.orElse(null)`. */
@@ -919,6 +995,10 @@ private constructor(
          */
         fun traceId(traceId: JsonField<String>) = apply { this.traceId = traceId }
 
+        /**
+         * A non-numeric value, such as a category label or a JSON object. Dropped if it exceeds the
+         * feedback size limit.
+         */
         fun value(value: Value?) = value(JsonField.ofNullable(value))
 
         /** Alias for calling [Builder.value] with `value.orElse(null)`. */
@@ -1081,6 +1161,10 @@ private constructor(
             (if (traceId.asKnown().isPresent) 1 else 0) +
             (value.asKnown().getOrNull()?.validity() ?: 0)
 
+    /**
+     * The corrected output for the run, as a string or a JSON object. Dropped if it exceeds the
+     * feedback size limit.
+     */
     @JsonDeserialize(using = Correction.Deserializer::class)
     @JsonSerialize(using = Correction.Serializer::class)
     class Correction
@@ -1406,6 +1490,7 @@ private constructor(
         }
     }
 
+    /** Additional metadata to store with the feedback, as a JSON object. */
     class Extra
     @JsonCreator
     private constructor(
@@ -2226,7 +2311,7 @@ private constructor(
             "FeedbackConfig{type=$type, allowsMultipleCategories=$allowsMultipleCategories, categories=$categories, max=$max, min=$min, additionalProperties=$additionalProperties}"
     }
 
-    /** Feedback from the LangChainPlus App. */
+    /** Where the feedback came from, as an object whose type is api, app, model, or auto_eval. */
     @JsonDeserialize(using = FeedbackSource.Deserializer::class)
     @JsonSerialize(using = FeedbackSource.Serializer::class)
     class FeedbackSource
@@ -2504,6 +2589,10 @@ private constructor(
         }
     }
 
+    /**
+     * The numeric or boolean score. Numbers must be between -99999.9999 and 99999.9999 with at most
+     * 4 decimal places.
+     */
     @JsonDeserialize(using = Score.Deserializer::class)
     @JsonSerialize(using = Score.Serializer::class)
     class Score
@@ -2709,6 +2798,10 @@ private constructor(
         }
     }
 
+    /**
+     * A non-numeric value, such as a category label or a JSON object. Dropped if it exceeds the
+     * feedback size limit.
+     */
     @JsonDeserialize(using = Value.Deserializer::class)
     @JsonSerialize(using = Value.Serializer::class)
     class Value

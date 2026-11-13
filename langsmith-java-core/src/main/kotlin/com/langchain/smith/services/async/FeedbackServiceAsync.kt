@@ -137,7 +137,11 @@ interface FeedbackServiceAsync {
     ): CompletableFuture<FeedbackSchema> =
         update(feedbackId, FeedbackUpdateParams.none(), requestOptions)
 
-    /** List all Feedback by query params. */
+    /**
+     * List feedback, newest first.
+     *
+     * At least one of run, key, or session is required.
+     */
     fun list(): CompletableFuture<FeedbackListPageAsync> = list(FeedbackListParams.none())
 
     /** @see list */

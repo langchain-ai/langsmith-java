@@ -115,12 +115,16 @@ private constructor(
     fun id(): Optional<String> = id.getOptional("id")
 
     /**
+     * A free-text comment explaining the feedback. Truncated at the feedback size limit.
+     *
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
      */
     fun comment(): Optional<String> = comment.getOptional("comment")
 
     /**
+     * The ID of the comparative (pairwise) experiment this feedback was written for.
+     *
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
      */
@@ -128,12 +132,17 @@ private constructor(
         comparativeExperimentId.getOptional("comparative_experiment_id")
 
     /**
+     * The corrected output for the run, as a string or a JSON object. Dropped if it exceeds the
+     * feedback size limit.
+     *
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
      */
     fun correction(): Optional<Correction> = correction.getOptional("correction")
 
     /**
+     * When the feedback was created, as an ISO 8601 timestamp. Defaults to now.
+     *
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
      */
@@ -152,6 +161,8 @@ private constructor(
     fun feedbackConfig(): Optional<FeedbackConfig> = feedbackConfig.getOptional("feedback_config")
 
     /**
+     * Groups feedback written together, such as one comparison in a pairwise experiment.
+     *
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
      */
@@ -166,18 +177,26 @@ private constructor(
     fun feedbackSource(): Optional<FeedbackSource> = feedbackSource.getOptional("feedback_source")
 
     /**
+     * When the feedback was last modified, as an ISO 8601 timestamp. Defaults to now.
+     *
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
      */
     fun modifiedAt(): Optional<OffsetDateTime> = modifiedAt.getOptional("modified_at")
 
     /**
+     * The numeric or boolean score. Numbers must be between -99999.9999 and 99999.9999 with at most
+     * 4 decimal places.
+     *
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
      */
     fun score(): Optional<Score> = score.getOptional("score")
 
     /**
+     * A non-numeric value, such as a category label or a JSON object. Dropped if it exceeds the
+     * feedback size limit.
+     *
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
      */
@@ -370,6 +389,7 @@ private constructor(
          */
         fun id(id: JsonField<String>) = apply { this.id = id }
 
+        /** A free-text comment explaining the feedback. Truncated at the feedback size limit. */
         fun comment(comment: String?) = comment(JsonField.ofNullable(comment))
 
         /** Alias for calling [Builder.comment] with `comment.orElse(null)`. */
@@ -383,6 +403,7 @@ private constructor(
          */
         fun comment(comment: JsonField<String>) = apply { this.comment = comment }
 
+        /** The ID of the comparative (pairwise) experiment this feedback was written for. */
         fun comparativeExperimentId(comparativeExperimentId: String?) =
             comparativeExperimentId(JsonField.ofNullable(comparativeExperimentId))
 
@@ -404,6 +425,10 @@ private constructor(
             this.comparativeExperimentId = comparativeExperimentId
         }
 
+        /**
+         * The corrected output for the run, as a string or a JSON object. Dropped if it exceeds the
+         * feedback size limit.
+         */
         fun correction(correction: Correction?) = correction(JsonField.ofNullable(correction))
 
         /** Alias for calling [Builder.correction] with `correction.orElse(null)`. */
@@ -425,6 +450,7 @@ private constructor(
         /** Alias for calling [correction] with `Correction.ofString(string)`. */
         fun correction(string: String) = correction(Correction.ofString(string))
 
+        /** When the feedback was created, as an ISO 8601 timestamp. Defaults to now. */
         fun createdAt(createdAt: OffsetDateTime) = createdAt(JsonField.of(createdAt))
 
         /**
@@ -467,6 +493,7 @@ private constructor(
             this.feedbackConfig = feedbackConfig
         }
 
+        /** Groups feedback written together, such as one comparison in a pairwise experiment. */
         fun feedbackGroupId(feedbackGroupId: String?) =
             feedbackGroupId(JsonField.ofNullable(feedbackGroupId))
 
@@ -518,6 +545,7 @@ private constructor(
         fun feedbackSource(autoEval: AutoEvalFeedbackSource) =
             feedbackSource(FeedbackSource.ofAutoEval(autoEval))
 
+        /** When the feedback was last modified, as an ISO 8601 timestamp. Defaults to now. */
         fun modifiedAt(modifiedAt: OffsetDateTime) = modifiedAt(JsonField.of(modifiedAt))
 
         /**
@@ -531,6 +559,10 @@ private constructor(
             this.modifiedAt = modifiedAt
         }
 
+        /**
+         * The numeric or boolean score. Numbers must be between -99999.9999 and 99999.9999 with at
+         * most 4 decimal places.
+         */
         fun score(score: Score?) = score(JsonField.ofNullable(score))
 
         /** Alias for calling [Builder.score] with `score.orElse(null)`. */
@@ -550,6 +582,10 @@ private constructor(
         /** Alias for calling [score] with `Score.ofBool(bool)`. */
         fun score(bool: Boolean) = score(Score.ofBool(bool))
 
+        /**
+         * A non-numeric value, such as a category label or a JSON object. Dropped if it exceeds the
+         * feedback size limit.
+         */
         fun value(value: Value?) = value(JsonField.ofNullable(value))
 
         /** Alias for calling [Builder.value] with `value.orElse(null)`. */
@@ -685,6 +721,10 @@ private constructor(
             (score.asKnown().getOrNull()?.validity() ?: 0) +
             (value.asKnown().getOrNull()?.validity() ?: 0)
 
+    /**
+     * The corrected output for the run, as a string or a JSON object. Dropped if it exceeds the
+     * feedback size limit.
+     */
     @JsonDeserialize(using = Correction.Deserializer::class)
     @JsonSerialize(using = Correction.Serializer::class)
     class Correction
@@ -2103,6 +2143,10 @@ private constructor(
         }
     }
 
+    /**
+     * The numeric or boolean score. Numbers must be between -99999.9999 and 99999.9999 with at most
+     * 4 decimal places.
+     */
     @JsonDeserialize(using = Score.Deserializer::class)
     @JsonSerialize(using = Score.Serializer::class)
     class Score
@@ -2308,6 +2352,10 @@ private constructor(
         }
     }
 
+    /**
+     * A non-numeric value, such as a category label or a JSON object. Dropped if it exceeds the
+     * feedback size limit.
+     */
     @JsonDeserialize(using = Value.Deserializer::class)
     @JsonSerialize(using = Value.Serializer::class)
     class Value

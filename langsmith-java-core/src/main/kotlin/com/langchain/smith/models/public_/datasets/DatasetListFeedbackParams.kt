@@ -38,7 +38,10 @@ private constructor(
 
     fun key(): Optional<List<String>> = Optional.ofNullable(key)
 
-    /** Enum for feedback levels. */
+    /**
+     * Feedback level: run for feedback on a run, session for feedback on a whole tracing project
+     * (session level requires a session filter).
+     */
     fun level(): Optional<FeedbackLevel> = Optional.ofNullable(level)
 
     fun limit(): Optional<Long> = Optional.ofNullable(limit)
@@ -148,7 +151,10 @@ private constructor(
             this.key = (this.key ?: mutableListOf()).apply { add(key) }
         }
 
-        /** Enum for feedback levels. */
+        /**
+         * Feedback level: run for feedback on a run, session for feedback on a whole tracing
+         * project (session level requires a session filter).
+         */
         fun level(level: FeedbackLevel?) = apply { this.level = level }
 
         /** Alias for calling [Builder.level] with `level.orElse(null)`. */

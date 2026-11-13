@@ -7,7 +7,10 @@ import com.langchain.smith.core.Enum
 import com.langchain.smith.core.JsonField
 import com.langchain.smith.errors.LangChainInvalidDataException
 
-/** Enum for feedback levels. */
+/**
+ * Feedback level: run for feedback on a run, session for feedback on a whole tracing project
+ * (session level requires a session filter).
+ */
 class FeedbackLevel @JsonCreator private constructor(private val value: JsonField<String>) : Enum {
 
     /**
