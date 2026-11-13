@@ -6,6 +6,8 @@ import com.langchain.smith.core.ClientOptions
 import com.langchain.smith.core.getPackageVersion
 import com.langchain.smith.services.async.AgentServiceAsync
 import com.langchain.smith.services.async.AgentServiceAsyncImpl
+import com.langchain.smith.services.async.AiSearchServiceAsync
+import com.langchain.smith.services.async.AiSearchServiceAsyncImpl
 import com.langchain.smith.services.async.AnnotationQueueServiceAsync
 import com.langchain.smith.services.async.AnnotationQueueServiceAsyncImpl
 import com.langchain.smith.services.async.ChartServiceAsync
@@ -111,6 +113,10 @@ class LangsmithClientAsyncImpl(private val clientOptions: ClientOptions) : Langs
         TraceServiceAsyncImpl(clientOptionsWithUserAgent)
     }
 
+    private val aiSearch: AiSearchServiceAsync by lazy {
+        AiSearchServiceAsyncImpl(clientOptionsWithUserAgent)
+    }
+
     private val evaluators: EvaluatorServiceAsync by lazy {
         EvaluatorServiceAsyncImpl(clientOptionsWithUserAgent)
     }
@@ -187,6 +193,8 @@ class LangsmithClientAsyncImpl(private val clientOptions: ClientOptions) : Langs
     override fun charts(): ChartServiceAsync = charts
 
     override fun traces(): TraceServiceAsync = traces
+
+    override fun aiSearch(): AiSearchServiceAsync = aiSearch
 
     override fun evaluators(): EvaluatorServiceAsync = evaluators
 
@@ -272,6 +280,10 @@ class LangsmithClientAsyncImpl(private val clientOptions: ClientOptions) : Langs
             TraceServiceAsyncImpl.WithRawResponseImpl(clientOptions)
         }
 
+        private val aiSearch: AiSearchServiceAsync.WithRawResponse by lazy {
+            AiSearchServiceAsyncImpl.WithRawResponseImpl(clientOptions)
+        }
+
         private val evaluators: EvaluatorServiceAsync.WithRawResponse by lazy {
             EvaluatorServiceAsyncImpl.WithRawResponseImpl(clientOptions)
         }
@@ -353,6 +365,8 @@ class LangsmithClientAsyncImpl(private val clientOptions: ClientOptions) : Langs
         override fun charts(): ChartServiceAsync.WithRawResponse = charts
 
         override fun traces(): TraceServiceAsync.WithRawResponse = traces
+
+        override fun aiSearch(): AiSearchServiceAsync.WithRawResponse = aiSearch
 
         override fun evaluators(): EvaluatorServiceAsync.WithRawResponse = evaluators
 

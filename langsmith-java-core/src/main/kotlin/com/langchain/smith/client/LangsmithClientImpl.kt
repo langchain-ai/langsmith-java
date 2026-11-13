@@ -6,6 +6,8 @@ import com.langchain.smith.core.ClientOptions
 import com.langchain.smith.core.getPackageVersion
 import com.langchain.smith.services.blocking.AgentService
 import com.langchain.smith.services.blocking.AgentServiceImpl
+import com.langchain.smith.services.blocking.AiSearchService
+import com.langchain.smith.services.blocking.AiSearchServiceImpl
 import com.langchain.smith.services.blocking.AnnotationQueueService
 import com.langchain.smith.services.blocking.AnnotationQueueServiceImpl
 import com.langchain.smith.services.blocking.ChartService
@@ -95,6 +97,10 @@ class LangsmithClientImpl(private val clientOptions: ClientOptions) : LangsmithC
 
     private val traces: TraceService by lazy { TraceServiceImpl(clientOptionsWithUserAgent) }
 
+    private val aiSearch: AiSearchService by lazy {
+        AiSearchServiceImpl(clientOptionsWithUserAgent)
+    }
+
     private val evaluators: EvaluatorService by lazy {
         EvaluatorServiceImpl(clientOptionsWithUserAgent)
     }
@@ -161,6 +167,8 @@ class LangsmithClientImpl(private val clientOptions: ClientOptions) : LangsmithC
     override fun charts(): ChartService = charts
 
     override fun traces(): TraceService = traces
+
+    override fun aiSearch(): AiSearchService = aiSearch
 
     override fun evaluators(): EvaluatorService = evaluators
 
@@ -240,6 +248,10 @@ class LangsmithClientImpl(private val clientOptions: ClientOptions) : LangsmithC
 
         private val traces: TraceService.WithRawResponse by lazy {
             TraceServiceImpl.WithRawResponseImpl(clientOptions)
+        }
+
+        private val aiSearch: AiSearchService.WithRawResponse by lazy {
+            AiSearchServiceImpl.WithRawResponseImpl(clientOptions)
         }
 
         private val evaluators: EvaluatorService.WithRawResponse by lazy {
@@ -322,6 +334,8 @@ class LangsmithClientImpl(private val clientOptions: ClientOptions) : LangsmithC
         override fun charts(): ChartService.WithRawResponse = charts
 
         override fun traces(): TraceService.WithRawResponse = traces
+
+        override fun aiSearch(): AiSearchService.WithRawResponse = aiSearch
 
         override fun evaluators(): EvaluatorService.WithRawResponse = evaluators
 
