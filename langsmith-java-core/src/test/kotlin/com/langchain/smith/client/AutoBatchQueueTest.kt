@@ -47,6 +47,18 @@ internal class AutoBatchQueueTest {
     private fun operationCount(params: RunIngestBatchParams): Int =
         params.post().orElse(emptyList()).size + params.patch().orElse(emptyList()).size
 
+    /** The posted runs, read under the lock the capturing client writes them under. */
+    private fun postedRuns(capture: CapturingLangsmithClient): List<RunIngest> =
+        synchronized(capture) { capture.postedRuns.toList() }
+
+    /** Polls [condition] every 10 ms until it holds or [timeoutMs] passes. */
+    private fun waitUntil(timeoutMs: Long, condition: () -> Boolean) {
+        val deadline = System.nanoTime() + TimeUnit.MILLISECONDS.toNanos(timeoutMs)
+        while (!condition() && System.nanoTime() < deadline) {
+            Thread.sleep(10)
+        }
+    }
+
     private fun runIds(params: RunIngestBatchParams): List<String> =
         params.post().orElse(emptyList()).mapNotNull { it.id().getOrNull() } +
             params.patch().orElse(emptyList()).mapNotNull { it.id().getOrNull() }
@@ -184,9 +196,12 @@ internal class AutoBatchQueueTest {
         assertThat(queue.size()).isEqualTo(2)
 
         queue.post(testRun("r3"))
-        Thread.sleep(100)
+        // The size-triggered flush runs on the queue's own threads, so poll for
+        // the sent batch. 5 s stays well under the 10 s aggregation delay, so
+        // only the size limit can have sent the batch.
+        waitUntil(timeoutMs = 5_000) { postedRuns(capture).size == 3 && queue.size() == 0 }
 
-        assertThat(capture.postedRuns).hasSize(3)
+        assertThat(postedRuns(capture)).hasSize(3)
         assertThat(queue.size()).isEqualTo(0)
     }
 
