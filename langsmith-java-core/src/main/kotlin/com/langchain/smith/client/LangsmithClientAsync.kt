@@ -27,6 +27,7 @@ import com.langchain.smith.services.async.SettingServiceAsync
 import com.langchain.smith.services.async.SqlServiceAsync
 import com.langchain.smith.services.async.ThreadServiceAsync
 import com.langchain.smith.services.async.TraceServiceAsync
+import com.langchain.smith.services.async.WorkspaceSecretServiceAsync
 import com.langchain.smith.services.async.WorkspaceServiceAsync
 import java.util.function.Consumer
 
@@ -106,6 +107,8 @@ interface LangsmithClientAsync {
 
     fun workspaces(): WorkspaceServiceAsync
 
+    fun workspaceSecrets(): WorkspaceSecretServiceAsync
+
     fun repos(): RepoServiceAsync
 
     fun commits(): CommitServiceAsync
@@ -182,6 +185,8 @@ interface LangsmithClientAsync {
         fun info(): InfoServiceAsync.WithRawResponse
 
         fun workspaces(): WorkspaceServiceAsync.WithRawResponse
+
+        fun workspaceSecrets(): WorkspaceSecretServiceAsync.WithRawResponse
 
         fun repos(): RepoServiceAsync.WithRawResponse
 

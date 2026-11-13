@@ -72,6 +72,7 @@ internal class ProGuardCompatibilityTest {
         assertThat(client.promptWebhooks()).isNotNull()
         assertThat(client.info()).isNotNull()
         assertThat(client.workspaces()).isNotNull()
+        assertThat(client.workspaceSecrets()).isNotNull()
         assertThat(client.repos()).isNotNull()
         assertThat(client.commits()).isNotNull()
         assertThat(client.settings()).isNotNull()

@@ -27,6 +27,7 @@ import com.langchain.smith.services.blocking.SettingService
 import com.langchain.smith.services.blocking.SqlService
 import com.langchain.smith.services.blocking.ThreadService
 import com.langchain.smith.services.blocking.TraceService
+import com.langchain.smith.services.blocking.WorkspaceSecretService
 import com.langchain.smith.services.blocking.WorkspaceService
 import java.util.function.Consumer
 
@@ -106,6 +107,8 @@ interface LangsmithClient {
 
     fun workspaces(): WorkspaceService
 
+    fun workspaceSecrets(): WorkspaceSecretService
+
     fun repos(): RepoService
 
     fun commits(): CommitService
@@ -178,6 +181,8 @@ interface LangsmithClient {
         fun info(): InfoService.WithRawResponse
 
         fun workspaces(): WorkspaceService.WithRawResponse
+
+        fun workspaceSecrets(): WorkspaceSecretService.WithRawResponse
 
         fun repos(): RepoService.WithRawResponse
 

@@ -52,6 +52,8 @@ import com.langchain.smith.services.blocking.ThreadService
 import com.langchain.smith.services.blocking.ThreadServiceImpl
 import com.langchain.smith.services.blocking.TraceService
 import com.langchain.smith.services.blocking.TraceServiceImpl
+import com.langchain.smith.services.blocking.WorkspaceSecretService
+import com.langchain.smith.services.blocking.WorkspaceSecretServiceImpl
 import com.langchain.smith.services.blocking.WorkspaceService
 import com.langchain.smith.services.blocking.WorkspaceServiceImpl
 import java.util.function.Consumer
@@ -129,6 +131,10 @@ class LangsmithClientImpl(private val clientOptions: ClientOptions) : LangsmithC
         WorkspaceServiceImpl(clientOptionsWithUserAgent)
     }
 
+    private val workspaceSecrets: WorkspaceSecretService by lazy {
+        WorkspaceSecretServiceImpl(clientOptionsWithUserAgent)
+    }
+
     private val repos: RepoService by lazy { RepoServiceImpl(clientOptionsWithUserAgent) }
 
     private val commits: CommitService by lazy { CommitServiceImpl(clientOptionsWithUserAgent) }
@@ -185,6 +191,8 @@ class LangsmithClientImpl(private val clientOptions: ClientOptions) : LangsmithC
     override fun info(): InfoService = info
 
     override fun workspaces(): WorkspaceService = workspaces
+
+    override fun workspaceSecrets(): WorkspaceSecretService = workspaceSecrets
 
     override fun repos(): RepoService = repos
 
@@ -286,6 +294,10 @@ class LangsmithClientImpl(private val clientOptions: ClientOptions) : LangsmithC
             WorkspaceServiceImpl.WithRawResponseImpl(clientOptions)
         }
 
+        private val workspaceSecrets: WorkspaceSecretService.WithRawResponse by lazy {
+            WorkspaceSecretServiceImpl.WithRawResponseImpl(clientOptions)
+        }
+
         private val repos: RepoService.WithRawResponse by lazy {
             RepoServiceImpl.WithRawResponseImpl(clientOptions)
         }
@@ -352,6 +364,8 @@ class LangsmithClientImpl(private val clientOptions: ClientOptions) : LangsmithC
         override fun info(): InfoService.WithRawResponse = info
 
         override fun workspaces(): WorkspaceService.WithRawResponse = workspaces
+
+        override fun workspaceSecrets(): WorkspaceSecretService.WithRawResponse = workspaceSecrets
 
         override fun repos(): RepoService.WithRawResponse = repos
 
