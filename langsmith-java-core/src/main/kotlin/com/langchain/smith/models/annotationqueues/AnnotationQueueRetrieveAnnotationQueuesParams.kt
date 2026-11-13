@@ -20,6 +20,7 @@ private constructor(
     private val assignedToMe: Boolean?,
     private val datasetId: String?,
     private val ids: List<String>?,
+    private val includeRubricKeys: Boolean?,
     private val limit: Long?,
     private val name: String?,
     private val nameContains: String?,
@@ -37,6 +38,8 @@ private constructor(
     fun datasetId(): Optional<String> = Optional.ofNullable(datasetId)
 
     fun ids(): Optional<List<String>> = Optional.ofNullable(ids)
+
+    fun includeRubricKeys(): Optional<Boolean> = Optional.ofNullable(includeRubricKeys)
 
     fun limit(): Optional<Long> = Optional.ofNullable(limit)
 
@@ -79,6 +82,7 @@ private constructor(
         private var assignedToMe: Boolean? = null
         private var datasetId: String? = null
         private var ids: MutableList<String>? = null
+        private var includeRubricKeys: Boolean? = null
         private var limit: Long? = null
         private var name: String? = null
         private var nameContains: String? = null
@@ -98,6 +102,7 @@ private constructor(
             assignedToMe = annotationQueueRetrieveAnnotationQueuesParams.assignedToMe
             datasetId = annotationQueueRetrieveAnnotationQueuesParams.datasetId
             ids = annotationQueueRetrieveAnnotationQueuesParams.ids?.toMutableList()
+            includeRubricKeys = annotationQueueRetrieveAnnotationQueuesParams.includeRubricKeys
             limit = annotationQueueRetrieveAnnotationQueuesParams.limit
             name = annotationQueueRetrieveAnnotationQueuesParams.name
             nameContains = annotationQueueRetrieveAnnotationQueuesParams.nameContains
@@ -140,6 +145,22 @@ private constructor(
          * @throws IllegalStateException if the field was previously set to a non-list.
          */
         fun addId(id: String) = apply { ids = (ids ?: mutableListOf()).apply { add(id) } }
+
+        fun includeRubricKeys(includeRubricKeys: Boolean?) = apply {
+            this.includeRubricKeys = includeRubricKeys
+        }
+
+        /**
+         * Alias for [Builder.includeRubricKeys].
+         *
+         * This unboxed primitive overload exists for backwards compatibility.
+         */
+        fun includeRubricKeys(includeRubricKeys: Boolean) =
+            includeRubricKeys(includeRubricKeys as Boolean?)
+
+        /** Alias for calling [Builder.includeRubricKeys] with `includeRubricKeys.orElse(null)`. */
+        fun includeRubricKeys(includeRubricKeys: Optional<Boolean>) =
+            includeRubricKeys(includeRubricKeys.getOrNull())
 
         fun limit(limit: Long?) = apply { this.limit = limit }
 
@@ -321,6 +342,7 @@ private constructor(
                 assignedToMe,
                 datasetId,
                 ids?.toImmutable(),
+                includeRubricKeys,
                 limit,
                 name,
                 nameContains,
@@ -342,6 +364,7 @@ private constructor(
                 assignedToMe?.let { put("assigned_to_me", it.toString()) }
                 datasetId?.let { put("dataset_id", it) }
                 ids?.forEach { put("ids", it) }
+                includeRubricKeys?.let { put("include_rubric_keys", it.toString()) }
                 limit?.let { put("limit", it.toString()) }
                 name?.let { put("name", it) }
                 nameContains?.let { put("name_contains", it) }
@@ -501,6 +524,7 @@ private constructor(
             assignedToMe == other.assignedToMe &&
             datasetId == other.datasetId &&
             ids == other.ids &&
+            includeRubricKeys == other.includeRubricKeys &&
             limit == other.limit &&
             name == other.name &&
             nameContains == other.nameContains &&
@@ -518,6 +542,7 @@ private constructor(
             assignedToMe,
             datasetId,
             ids,
+            includeRubricKeys,
             limit,
             name,
             nameContains,
@@ -531,5 +556,5 @@ private constructor(
         )
 
     override fun toString() =
-        "AnnotationQueueRetrieveAnnotationQueuesParams{assignedToMe=$assignedToMe, datasetId=$datasetId, ids=$ids, limit=$limit, name=$name, nameContains=$nameContains, offset=$offset, queueType=$queueType, sortBy=$sortBy, sortByDesc=$sortByDesc, tagValueId=$tagValueId, additionalHeaders=$additionalHeaders, additionalQueryParams=$additionalQueryParams}"
+        "AnnotationQueueRetrieveAnnotationQueuesParams{assignedToMe=$assignedToMe, datasetId=$datasetId, ids=$ids, includeRubricKeys=$includeRubricKeys, limit=$limit, name=$name, nameContains=$nameContains, offset=$offset, queueType=$queueType, sortBy=$sortBy, sortByDesc=$sortByDesc, tagValueId=$tagValueId, additionalHeaders=$additionalHeaders, additionalQueryParams=$additionalQueryParams}"
 }

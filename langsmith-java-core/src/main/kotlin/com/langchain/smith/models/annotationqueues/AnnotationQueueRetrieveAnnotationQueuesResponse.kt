@@ -39,6 +39,7 @@ private constructor(
     private val numReviewersPerItem: JsonField<Long>,
     private val reservationMinutes: JsonField<Long>,
     private val reviewerAccessMode: JsonField<String>,
+    private val rubricKeys: JsonField<List<String>>,
     private val runRuleId: JsonField<String>,
     private val sourceRuleId: JsonField<String>,
     private val updatedAt: JsonField<OffsetDateTime>,
@@ -79,6 +80,9 @@ private constructor(
         @JsonProperty("reviewer_access_mode")
         @ExcludeMissing
         reviewerAccessMode: JsonField<String> = JsonMissing.of(),
+        @JsonProperty("rubric_keys")
+        @ExcludeMissing
+        rubricKeys: JsonField<List<String>> = JsonMissing.of(),
         @JsonProperty("run_rule_id")
         @ExcludeMissing
         runRuleId: JsonField<String> = JsonMissing.of(),
@@ -103,6 +107,7 @@ private constructor(
         numReviewersPerItem,
         reservationMinutes,
         reviewerAccessMode,
+        rubricKeys,
         runRuleId,
         sourceRuleId,
         updatedAt,
@@ -196,6 +201,12 @@ private constructor(
      */
     fun reviewerAccessMode(): Optional<String> =
         reviewerAccessMode.getOptional("reviewer_access_mode")
+
+    /**
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
+    fun rubricKeys(): Optional<List<String>> = rubricKeys.getOptional("rubric_keys")
 
     /**
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
@@ -333,6 +344,15 @@ private constructor(
     fun _reviewerAccessMode(): JsonField<String> = reviewerAccessMode
 
     /**
+     * Returns the raw JSON value of [rubricKeys].
+     *
+     * Unlike [rubricKeys], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    @JsonProperty("rubric_keys")
+    @ExcludeMissing
+    fun _rubricKeys(): JsonField<List<String>> = rubricKeys
+
+    /**
      * Returns the raw JSON value of [runRuleId].
      *
      * Unlike [runRuleId], this method doesn't throw if the JSON field has an unexpected type.
@@ -404,6 +424,7 @@ private constructor(
         private var numReviewersPerItem: JsonField<Long> = JsonMissing.of()
         private var reservationMinutes: JsonField<Long> = JsonMissing.of()
         private var reviewerAccessMode: JsonField<String> = JsonMissing.of()
+        private var rubricKeys: JsonField<MutableList<String>>? = null
         private var runRuleId: JsonField<String> = JsonMissing.of()
         private var sourceRuleId: JsonField<String> = JsonMissing.of()
         private var updatedAt: JsonField<OffsetDateTime> = JsonMissing.of()
@@ -432,6 +453,10 @@ private constructor(
                 annotationQueueRetrieveAnnotationQueuesResponse.numReviewersPerItem
             reservationMinutes = annotationQueueRetrieveAnnotationQueuesResponse.reservationMinutes
             reviewerAccessMode = annotationQueueRetrieveAnnotationQueuesResponse.reviewerAccessMode
+            rubricKeys =
+                annotationQueueRetrieveAnnotationQueuesResponse.rubricKeys.map {
+                    it.toMutableList()
+                }
             runRuleId = annotationQueueRetrieveAnnotationQueuesResponse.runRuleId
             sourceRuleId = annotationQueueRetrieveAnnotationQueuesResponse.sourceRuleId
             updatedAt = annotationQueueRetrieveAnnotationQueuesResponse.updatedAt
@@ -671,6 +696,31 @@ private constructor(
             this.reviewerAccessMode = reviewerAccessMode
         }
 
+        fun rubricKeys(rubricKeys: List<String>) = rubricKeys(JsonField.of(rubricKeys))
+
+        /**
+         * Sets [Builder.rubricKeys] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.rubricKeys] with a well-typed `List<String>` value
+         * instead. This method is primarily for setting the field to an undocumented or not yet
+         * supported value.
+         */
+        fun rubricKeys(rubricKeys: JsonField<List<String>>) = apply {
+            this.rubricKeys = rubricKeys.map { it.toMutableList() }
+        }
+
+        /**
+         * Adds a single [String] to [rubricKeys].
+         *
+         * @throws IllegalStateException if the field was previously set to a non-list.
+         */
+        fun addRubricKey(rubricKey: String) = apply {
+            rubricKeys =
+                (rubricKeys ?: JsonField.of(mutableListOf())).also {
+                    checkKnown("rubricKeys", it).add(rubricKey)
+                }
+        }
+
         fun runRuleId(runRuleId: String?) = runRuleId(JsonField.ofNullable(runRuleId))
 
         /** Alias for calling [Builder.runRuleId] with `runRuleId.orElse(null)`. */
@@ -763,6 +813,7 @@ private constructor(
                 numReviewersPerItem,
                 reservationMinutes,
                 reviewerAccessMode,
+                (rubricKeys ?: JsonMissing.of()).map { it.toImmutable() },
                 runRuleId,
                 sourceRuleId,
                 updatedAt,
@@ -799,6 +850,7 @@ private constructor(
         numReviewersPerItem()
         reservationMinutes()
         reviewerAccessMode()
+        rubricKeys()
         runRuleId()
         sourceRuleId()
         updatedAt()
@@ -834,6 +886,7 @@ private constructor(
             (if (numReviewersPerItem.asKnown().isPresent) 1 else 0) +
             (if (reservationMinutes.asKnown().isPresent) 1 else 0) +
             (if (reviewerAccessMode.asKnown().isPresent) 1 else 0) +
+            (rubricKeys.asKnown().getOrNull()?.size ?: 0) +
             (if (runRuleId.asKnown().isPresent) 1 else 0) +
             (if (sourceRuleId.asKnown().isPresent) 1 else 0) +
             (if (updatedAt.asKnown().isPresent) 1 else 0)
@@ -1342,6 +1395,7 @@ private constructor(
             numReviewersPerItem == other.numReviewersPerItem &&
             reservationMinutes == other.reservationMinutes &&
             reviewerAccessMode == other.reviewerAccessMode &&
+            rubricKeys == other.rubricKeys &&
             runRuleId == other.runRuleId &&
             sourceRuleId == other.sourceRuleId &&
             updatedAt == other.updatedAt &&
@@ -1364,6 +1418,7 @@ private constructor(
             numReviewersPerItem,
             reservationMinutes,
             reviewerAccessMode,
+            rubricKeys,
             runRuleId,
             sourceRuleId,
             updatedAt,
@@ -1374,5 +1429,5 @@ private constructor(
     override fun hashCode(): Int = hashCode
 
     override fun toString() =
-        "AnnotationQueueRetrieveAnnotationQueuesResponse{id=$id, name=$name, queueType=$queueType, tenantId=$tenantId, totalRuns=$totalRuns, assignedReviewers=$assignedReviewers, createdAt=$createdAt, defaultDataset=$defaultDataset, description=$description, enableReservations=$enableReservations, metadata=$metadata, numReviewersPerItem=$numReviewersPerItem, reservationMinutes=$reservationMinutes, reviewerAccessMode=$reviewerAccessMode, runRuleId=$runRuleId, sourceRuleId=$sourceRuleId, updatedAt=$updatedAt, additionalProperties=$additionalProperties}"
+        "AnnotationQueueRetrieveAnnotationQueuesResponse{id=$id, name=$name, queueType=$queueType, tenantId=$tenantId, totalRuns=$totalRuns, assignedReviewers=$assignedReviewers, createdAt=$createdAt, defaultDataset=$defaultDataset, description=$description, enableReservations=$enableReservations, metadata=$metadata, numReviewersPerItem=$numReviewersPerItem, reservationMinutes=$reservationMinutes, reviewerAccessMode=$reviewerAccessMode, rubricKeys=$rubricKeys, runRuleId=$runRuleId, sourceRuleId=$sourceRuleId, updatedAt=$updatedAt, additionalProperties=$additionalProperties}"
 }
