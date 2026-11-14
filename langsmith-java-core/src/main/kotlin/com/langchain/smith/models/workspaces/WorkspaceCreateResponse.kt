@@ -10,7 +10,9 @@ import com.langchain.smith.core.ExcludeMissing
 import com.langchain.smith.core.JsonField
 import com.langchain.smith.core.JsonMissing
 import com.langchain.smith.core.JsonValue
+import com.langchain.smith.core.checkKnown
 import com.langchain.smith.core.checkRequired
+import com.langchain.smith.core.toImmutable
 import com.langchain.smith.errors.LangChainInvalidDataException
 import java.time.OffsetDateTime
 import java.util.Collections
@@ -18,7 +20,6 @@ import java.util.Objects
 import java.util.Optional
 import kotlin.jvm.optionals.getOrNull
 
-/** Tenant schema. */
 class WorkspaceCreateResponse
 @JsonCreator(mode = JsonCreator.Mode.DISABLED)
 private constructor(
@@ -31,6 +32,10 @@ private constructor(
     private val dataPlaneRegion: JsonField<String>,
     private val dataPlaneUrl: JsonField<String>,
     private val organizationId: JsonField<String>,
+    private val permissions: JsonField<List<String>>,
+    private val readOnly: JsonField<Boolean>,
+    private val roleId: JsonField<String>,
+    private val roleName: JsonField<String>,
     private val tenantHandle: JsonField<String>,
     private val additionalProperties: MutableMap<String, JsonValue>,
 ) {
@@ -62,6 +67,12 @@ private constructor(
         @JsonProperty("organization_id")
         @ExcludeMissing
         organizationId: JsonField<String> = JsonMissing.of(),
+        @JsonProperty("permissions")
+        @ExcludeMissing
+        permissions: JsonField<List<String>> = JsonMissing.of(),
+        @JsonProperty("read_only") @ExcludeMissing readOnly: JsonField<Boolean> = JsonMissing.of(),
+        @JsonProperty("role_id") @ExcludeMissing roleId: JsonField<String> = JsonMissing.of(),
+        @JsonProperty("role_name") @ExcludeMissing roleName: JsonField<String> = JsonMissing.of(),
         @JsonProperty("tenant_handle")
         @ExcludeMissing
         tenantHandle: JsonField<String> = JsonMissing.of(),
@@ -75,6 +86,10 @@ private constructor(
         dataPlaneRegion,
         dataPlaneUrl,
         organizationId,
+        permissions,
+        readOnly,
+        roleId,
+        roleName,
         tenantHandle,
         mutableMapOf(),
     )
@@ -132,6 +147,30 @@ private constructor(
      *   server responded with an unexpected value).
      */
     fun organizationId(): Optional<String> = organizationId.getOptional("organization_id")
+
+    /**
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
+    fun permissions(): Optional<List<String>> = permissions.getOptional("permissions")
+
+    /**
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
+    @Deprecated("deprecated") fun readOnly(): Optional<Boolean> = readOnly.getOptional("read_only")
+
+    /**
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
+    fun roleId(): Optional<String> = roleId.getOptional("role_id")
+
+    /**
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
+    fun roleName(): Optional<String> = roleName.getOptional("role_name")
 
     /**
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
@@ -215,6 +254,39 @@ private constructor(
     fun _organizationId(): JsonField<String> = organizationId
 
     /**
+     * Returns the raw JSON value of [permissions].
+     *
+     * Unlike [permissions], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    @JsonProperty("permissions")
+    @ExcludeMissing
+    fun _permissions(): JsonField<List<String>> = permissions
+
+    /**
+     * Returns the raw JSON value of [readOnly].
+     *
+     * Unlike [readOnly], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    @Deprecated("deprecated")
+    @JsonProperty("read_only")
+    @ExcludeMissing
+    fun _readOnly(): JsonField<Boolean> = readOnly
+
+    /**
+     * Returns the raw JSON value of [roleId].
+     *
+     * Unlike [roleId], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    @JsonProperty("role_id") @ExcludeMissing fun _roleId(): JsonField<String> = roleId
+
+    /**
+     * Returns the raw JSON value of [roleName].
+     *
+     * Unlike [roleName], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    @JsonProperty("role_name") @ExcludeMissing fun _roleName(): JsonField<String> = roleName
+
+    /**
      * Returns the raw JSON value of [tenantHandle].
      *
      * Unlike [tenantHandle], this method doesn't throw if the JSON field has an unexpected type.
@@ -264,6 +336,10 @@ private constructor(
         private var dataPlaneRegion: JsonField<String> = JsonMissing.of()
         private var dataPlaneUrl: JsonField<String> = JsonMissing.of()
         private var organizationId: JsonField<String> = JsonMissing.of()
+        private var permissions: JsonField<MutableList<String>>? = null
+        private var readOnly: JsonField<Boolean> = JsonMissing.of()
+        private var roleId: JsonField<String> = JsonMissing.of()
+        private var roleName: JsonField<String> = JsonMissing.of()
         private var tenantHandle: JsonField<String> = JsonMissing.of()
         private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
 
@@ -278,6 +354,10 @@ private constructor(
             dataPlaneRegion = workspaceCreateResponse.dataPlaneRegion
             dataPlaneUrl = workspaceCreateResponse.dataPlaneUrl
             organizationId = workspaceCreateResponse.organizationId
+            permissions = workspaceCreateResponse.permissions.map { it.toMutableList() }
+            readOnly = workspaceCreateResponse.readOnly
+            roleId = workspaceCreateResponse.roleId
+            roleName = workspaceCreateResponse.roleName
             tenantHandle = workspaceCreateResponse.tenantHandle
             additionalProperties = workspaceCreateResponse.additionalProperties.toMutableMap()
         }
@@ -406,6 +486,72 @@ private constructor(
             this.organizationId = organizationId
         }
 
+        fun permissions(permissions: List<String>?) = permissions(JsonField.ofNullable(permissions))
+
+        /** Alias for calling [Builder.permissions] with `permissions.orElse(null)`. */
+        fun permissions(permissions: Optional<List<String>>) = permissions(permissions.getOrNull())
+
+        /**
+         * Sets [Builder.permissions] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.permissions] with a well-typed `List<String>` value
+         * instead. This method is primarily for setting the field to an undocumented or not yet
+         * supported value.
+         */
+        fun permissions(permissions: JsonField<List<String>>) = apply {
+            this.permissions = permissions.map { it.toMutableList() }
+        }
+
+        /**
+         * Adds a single [String] to [permissions].
+         *
+         * @throws IllegalStateException if the field was previously set to a non-list.
+         */
+        fun addPermission(permission: String) = apply {
+            permissions =
+                (permissions ?: JsonField.of(mutableListOf())).also {
+                    checkKnown("permissions", it).add(permission)
+                }
+        }
+
+        @Deprecated("deprecated") fun readOnly(readOnly: Boolean) = readOnly(JsonField.of(readOnly))
+
+        /**
+         * Sets [Builder.readOnly] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.readOnly] with a well-typed [Boolean] value instead.
+         * This method is primarily for setting the field to an undocumented or not yet supported
+         * value.
+         */
+        @Deprecated("deprecated")
+        fun readOnly(readOnly: JsonField<Boolean>) = apply { this.readOnly = readOnly }
+
+        fun roleId(roleId: String?) = roleId(JsonField.ofNullable(roleId))
+
+        /** Alias for calling [Builder.roleId] with `roleId.orElse(null)`. */
+        fun roleId(roleId: Optional<String>) = roleId(roleId.getOrNull())
+
+        /**
+         * Sets [Builder.roleId] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.roleId] with a well-typed [String] value instead. This
+         * method is primarily for setting the field to an undocumented or not yet supported value.
+         */
+        fun roleId(roleId: JsonField<String>) = apply { this.roleId = roleId }
+
+        fun roleName(roleName: String?) = roleName(JsonField.ofNullable(roleName))
+
+        /** Alias for calling [Builder.roleName] with `roleName.orElse(null)`. */
+        fun roleName(roleName: Optional<String>) = roleName(roleName.getOrNull())
+
+        /**
+         * Sets [Builder.roleName] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.roleName] with a well-typed [String] value instead. This
+         * method is primarily for setting the field to an undocumented or not yet supported value.
+         */
+        fun roleName(roleName: JsonField<String>) = apply { this.roleName = roleName }
+
         fun tenantHandle(tenantHandle: String?) = tenantHandle(JsonField.ofNullable(tenantHandle))
 
         /** Alias for calling [Builder.tenantHandle] with `tenantHandle.orElse(null)`. */
@@ -468,6 +614,10 @@ private constructor(
                 dataPlaneRegion,
                 dataPlaneUrl,
                 organizationId,
+                (permissions ?: JsonMissing.of()).map { it.toImmutable() },
+                readOnly,
+                roleId,
+                roleName,
                 tenantHandle,
                 additionalProperties.toMutableMap(),
             )
@@ -497,6 +647,10 @@ private constructor(
         dataPlaneRegion()
         dataPlaneUrl()
         organizationId()
+        permissions()
+        readOnly()
+        roleId()
+        roleName()
         tenantHandle()
         validated = true
     }
@@ -525,6 +679,10 @@ private constructor(
             (if (dataPlaneRegion.asKnown().isPresent) 1 else 0) +
             (if (dataPlaneUrl.asKnown().isPresent) 1 else 0) +
             (if (organizationId.asKnown().isPresent) 1 else 0) +
+            (permissions.asKnown().getOrNull()?.size ?: 0) +
+            (if (readOnly.asKnown().isPresent) 1 else 0) +
+            (if (roleId.asKnown().isPresent) 1 else 0) +
+            (if (roleName.asKnown().isPresent) 1 else 0) +
             (if (tenantHandle.asKnown().isPresent) 1 else 0)
 
     override fun equals(other: Any?): Boolean {
@@ -542,6 +700,10 @@ private constructor(
             dataPlaneRegion == other.dataPlaneRegion &&
             dataPlaneUrl == other.dataPlaneUrl &&
             organizationId == other.organizationId &&
+            permissions == other.permissions &&
+            readOnly == other.readOnly &&
+            roleId == other.roleId &&
+            roleName == other.roleName &&
             tenantHandle == other.tenantHandle &&
             additionalProperties == other.additionalProperties
     }
@@ -557,6 +719,10 @@ private constructor(
             dataPlaneRegion,
             dataPlaneUrl,
             organizationId,
+            permissions,
+            readOnly,
+            roleId,
+            roleName,
             tenantHandle,
             additionalProperties,
         )
@@ -565,5 +731,5 @@ private constructor(
     override fun hashCode(): Int = hashCode
 
     override fun toString() =
-        "WorkspaceCreateResponse{id=$id, createdAt=$createdAt, displayName=$displayName, isDeleted=$isDeleted, isPersonal=$isPersonal, dataPlaneName=$dataPlaneName, dataPlaneRegion=$dataPlaneRegion, dataPlaneUrl=$dataPlaneUrl, organizationId=$organizationId, tenantHandle=$tenantHandle, additionalProperties=$additionalProperties}"
+        "WorkspaceCreateResponse{id=$id, createdAt=$createdAt, displayName=$displayName, isDeleted=$isDeleted, isPersonal=$isPersonal, dataPlaneName=$dataPlaneName, dataPlaneRegion=$dataPlaneRegion, dataPlaneUrl=$dataPlaneUrl, organizationId=$organizationId, permissions=$permissions, readOnly=$readOnly, roleId=$roleId, roleName=$roleName, tenantHandle=$tenantHandle, additionalProperties=$additionalProperties}"
 }

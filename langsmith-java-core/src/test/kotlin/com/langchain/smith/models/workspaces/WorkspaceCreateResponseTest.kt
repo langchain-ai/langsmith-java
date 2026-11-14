@@ -5,6 +5,7 @@ package com.langchain.smith.models.workspaces
 import com.fasterxml.jackson.module.kotlin.jacksonTypeRef
 import com.langchain.smith.core.jsonMapper
 import java.time.OffsetDateTime
+import kotlin.jvm.optionals.getOrNull
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
@@ -23,6 +24,10 @@ internal class WorkspaceCreateResponseTest {
                 .dataPlaneRegion("data_plane_region")
                 .dataPlaneUrl("data_plane_url")
                 .organizationId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                .addPermission("string")
+                .readOnly(true)
+                .roleId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                .roleName("role_name")
                 .tenantHandle("tenant_handle")
                 .build()
 
@@ -37,6 +42,11 @@ internal class WorkspaceCreateResponseTest {
         assertThat(workspaceCreateResponse.dataPlaneUrl()).contains("data_plane_url")
         assertThat(workspaceCreateResponse.organizationId())
             .contains("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+        assertThat(workspaceCreateResponse.permissions().getOrNull()).containsExactly("string")
+        assertThat(workspaceCreateResponse.readOnly()).contains(true)
+        assertThat(workspaceCreateResponse.roleId())
+            .contains("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+        assertThat(workspaceCreateResponse.roleName()).contains("role_name")
         assertThat(workspaceCreateResponse.tenantHandle()).contains("tenant_handle")
     }
 
@@ -54,6 +64,10 @@ internal class WorkspaceCreateResponseTest {
                 .dataPlaneRegion("data_plane_region")
                 .dataPlaneUrl("data_plane_url")
                 .organizationId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                .addPermission("string")
+                .readOnly(true)
+                .roleId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                .roleName("role_name")
                 .tenantHandle("tenant_handle")
                 .build()
 
