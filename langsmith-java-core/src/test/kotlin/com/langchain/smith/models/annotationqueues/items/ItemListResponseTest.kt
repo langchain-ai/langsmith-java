@@ -16,6 +16,7 @@ internal class ItemListResponseTest {
             ItemListResponse.builder()
                 .id("id")
                 .addedAt("added_at")
+                .addAssignedTo("string")
                 .addCompletedBy("string")
                 .effectiveAddedAt("effective_added_at")
                 .itemType(ItemListResponse.ItemType.RUN)
@@ -31,6 +32,7 @@ internal class ItemListResponseTest {
 
         assertThat(itemListResponse.id()).contains("id")
         assertThat(itemListResponse.addedAt()).contains("added_at")
+        assertThat(itemListResponse.assignedTo().getOrNull()).containsExactly("string")
         assertThat(itemListResponse.completedBy().getOrNull()).containsExactly("string")
         assertThat(itemListResponse.effectiveAddedAt()).contains("effective_added_at")
         assertThat(itemListResponse.itemType()).contains(ItemListResponse.ItemType.RUN)
@@ -52,6 +54,7 @@ internal class ItemListResponseTest {
             ItemListResponse.builder()
                 .id("id")
                 .addedAt("added_at")
+                .addAssignedTo("string")
                 .addCompletedBy("string")
                 .effectiveAddedAt("effective_added_at")
                 .itemType(ItemListResponse.ItemType.RUN)

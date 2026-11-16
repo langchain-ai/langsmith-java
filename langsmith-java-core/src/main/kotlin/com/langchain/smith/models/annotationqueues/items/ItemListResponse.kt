@@ -24,6 +24,7 @@ class ItemListResponse
 private constructor(
     private val id: JsonField<String>,
     private val addedAt: JsonField<String>,
+    private val assignedTo: JsonField<List<String>>,
     private val completedBy: JsonField<List<String>>,
     private val effectiveAddedAt: JsonField<String>,
     private val itemType: JsonField<ItemType>,
@@ -42,6 +43,9 @@ private constructor(
     private constructor(
         @JsonProperty("id") @ExcludeMissing id: JsonField<String> = JsonMissing.of(),
         @JsonProperty("added_at") @ExcludeMissing addedAt: JsonField<String> = JsonMissing.of(),
+        @JsonProperty("assigned_to")
+        @ExcludeMissing
+        assignedTo: JsonField<List<String>> = JsonMissing.of(),
         @JsonProperty("completed_by")
         @ExcludeMissing
         completedBy: JsonField<List<String>> = JsonMissing.of(),
@@ -66,6 +70,7 @@ private constructor(
     ) : this(
         id,
         addedAt,
+        assignedTo,
         completedBy,
         effectiveAddedAt,
         itemType,
@@ -91,6 +96,12 @@ private constructor(
      *   server responded with an unexpected value).
      */
     fun addedAt(): Optional<String> = addedAt.getOptional("added_at")
+
+    /**
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
+    fun assignedTo(): Optional<List<String>> = assignedTo.getOptional("assigned_to")
 
     /**
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
@@ -174,6 +185,15 @@ private constructor(
      * Unlike [addedAt], this method doesn't throw if the JSON field has an unexpected type.
      */
     @JsonProperty("added_at") @ExcludeMissing fun _addedAt(): JsonField<String> = addedAt
+
+    /**
+     * Returns the raw JSON value of [assignedTo].
+     *
+     * Unlike [assignedTo], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    @JsonProperty("assigned_to")
+    @ExcludeMissing
+    fun _assignedTo(): JsonField<List<String>> = assignedTo
 
     /**
      * Returns the raw JSON value of [completedBy].
@@ -288,6 +308,7 @@ private constructor(
 
         private var id: JsonField<String> = JsonMissing.of()
         private var addedAt: JsonField<String> = JsonMissing.of()
+        private var assignedTo: JsonField<MutableList<String>>? = null
         private var completedBy: JsonField<MutableList<String>>? = null
         private var effectiveAddedAt: JsonField<String> = JsonMissing.of()
         private var itemType: JsonField<ItemType> = JsonMissing.of()
@@ -305,6 +326,7 @@ private constructor(
         internal fun from(itemListResponse: ItemListResponse) = apply {
             id = itemListResponse.id
             addedAt = itemListResponse.addedAt
+            assignedTo = itemListResponse.assignedTo.map { it.toMutableList() }
             completedBy = itemListResponse.completedBy.map { it.toMutableList() }
             effectiveAddedAt = itemListResponse.effectiveAddedAt
             itemType = itemListResponse.itemType
@@ -338,6 +360,31 @@ private constructor(
          * method is primarily for setting the field to an undocumented or not yet supported value.
          */
         fun addedAt(addedAt: JsonField<String>) = apply { this.addedAt = addedAt }
+
+        fun assignedTo(assignedTo: List<String>) = assignedTo(JsonField.of(assignedTo))
+
+        /**
+         * Sets [Builder.assignedTo] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.assignedTo] with a well-typed `List<String>` value
+         * instead. This method is primarily for setting the field to an undocumented or not yet
+         * supported value.
+         */
+        fun assignedTo(assignedTo: JsonField<List<String>>) = apply {
+            this.assignedTo = assignedTo.map { it.toMutableList() }
+        }
+
+        /**
+         * Adds a single [String] to [Builder.assignedTo].
+         *
+         * @throws IllegalStateException if the field was previously set to a non-list.
+         */
+        fun addAssignedTo(assignedTo: String) = apply {
+            this.assignedTo =
+                (this.assignedTo ?: JsonField.of(mutableListOf())).also {
+                    checkKnown("assignedTo", it).add(assignedTo)
+                }
+        }
 
         fun completedBy(completedBy: List<String>) = completedBy(JsonField.of(completedBy))
 
@@ -523,6 +570,7 @@ private constructor(
             ItemListResponse(
                 id,
                 addedAt,
+                (assignedTo ?: JsonMissing.of()).map { it.toImmutable() },
                 (completedBy ?: JsonMissing.of()).map { it.toImmutable() },
                 effectiveAddedAt,
                 itemType,
@@ -555,6 +603,7 @@ private constructor(
 
         id()
         addedAt()
+        assignedTo()
         completedBy()
         effectiveAddedAt()
         itemType().ifPresent { it.validate() }
@@ -586,6 +635,7 @@ private constructor(
     internal fun validity(): Int =
         (if (id.asKnown().isPresent) 1 else 0) +
             (if (addedAt.asKnown().isPresent) 1 else 0) +
+            (assignedTo.asKnown().getOrNull()?.size ?: 0) +
             (completedBy.asKnown().getOrNull()?.size ?: 0) +
             (if (effectiveAddedAt.asKnown().isPresent) 1 else 0) +
             (itemType.asKnown().getOrNull()?.validity() ?: 0) +
@@ -742,6 +792,7 @@ private constructor(
         return other is ItemListResponse &&
             id == other.id &&
             addedAt == other.addedAt &&
+            assignedTo == other.assignedTo &&
             completedBy == other.completedBy &&
             effectiveAddedAt == other.effectiveAddedAt &&
             itemType == other.itemType &&
@@ -760,6 +811,7 @@ private constructor(
         Objects.hash(
             id,
             addedAt,
+            assignedTo,
             completedBy,
             effectiveAddedAt,
             itemType,
@@ -778,5 +830,5 @@ private constructor(
     override fun hashCode(): Int = hashCode
 
     override fun toString() =
-        "ItemListResponse{id=$id, addedAt=$addedAt, completedBy=$completedBy, effectiveAddedAt=$effectiveAddedAt, itemType=$itemType, lastReviewedTime=$lastReviewedTime, projectId=$projectId, queueId=$queueId, reservedBy=$reservedBy, runId=$runId, sourceProposedExampleId=$sourceProposedExampleId, startTime=$startTime, threadId=$threadId, additionalProperties=$additionalProperties}"
+        "ItemListResponse{id=$id, addedAt=$addedAt, assignedTo=$assignedTo, completedBy=$completedBy, effectiveAddedAt=$effectiveAddedAt, itemType=$itemType, lastReviewedTime=$lastReviewedTime, projectId=$projectId, queueId=$queueId, reservedBy=$reservedBy, runId=$runId, sourceProposedExampleId=$sourceProposedExampleId, startTime=$startTime, threadId=$threadId, additionalProperties=$additionalProperties}"
 }
