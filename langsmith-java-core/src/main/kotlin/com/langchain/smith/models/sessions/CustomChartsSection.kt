@@ -19607,6 +19607,14 @@ private constructor(
 
                         @JvmField val RUN_QUEUE_WAIT_TIME = of("run_queue_wait_time")
 
+                        @JvmField
+                        val STARTABLE_RUNS_WAIT_MAX_BY_PRIORITY =
+                            of("startable_runs_wait_max_by_priority")
+
+                        @JvmField val STARTABLE_RUNS_BY_PRIORITY = of("startable_runs_by_priority")
+
+                        @JvmField val RUNNING_RUNS_BY_PRIORITY = of("running_runs_by_priority")
+
                         @JvmStatic fun of(value: String) = ProjectMetric(JsonField.of(value))
                     }
 
@@ -19623,6 +19631,9 @@ private constructor(
                         ERROR_RESPONSES_PER_SECOND,
                         P95_LATENCY,
                         RUN_QUEUE_WAIT_TIME,
+                        STARTABLE_RUNS_WAIT_MAX_BY_PRIORITY,
+                        STARTABLE_RUNS_BY_PRIORITY,
+                        RUNNING_RUNS_BY_PRIORITY,
                     }
 
                     /**
@@ -19648,6 +19659,9 @@ private constructor(
                         ERROR_RESPONSES_PER_SECOND,
                         P95_LATENCY,
                         RUN_QUEUE_WAIT_TIME,
+                        STARTABLE_RUNS_WAIT_MAX_BY_PRIORITY,
+                        STARTABLE_RUNS_BY_PRIORITY,
+                        RUNNING_RUNS_BY_PRIORITY,
                         /**
                          * An enum member indicating that [ProjectMetric] was instantiated with an
                          * unknown value.
@@ -19675,6 +19689,10 @@ private constructor(
                             ERROR_RESPONSES_PER_SECOND -> Value.ERROR_RESPONSES_PER_SECOND
                             P95_LATENCY -> Value.P95_LATENCY
                             RUN_QUEUE_WAIT_TIME -> Value.RUN_QUEUE_WAIT_TIME
+                            STARTABLE_RUNS_WAIT_MAX_BY_PRIORITY ->
+                                Value.STARTABLE_RUNS_WAIT_MAX_BY_PRIORITY
+                            STARTABLE_RUNS_BY_PRIORITY -> Value.STARTABLE_RUNS_BY_PRIORITY
+                            RUNNING_RUNS_BY_PRIORITY -> Value.RUNNING_RUNS_BY_PRIORITY
                             else -> Value._UNKNOWN
                         }
 
@@ -19700,6 +19718,10 @@ private constructor(
                             ERROR_RESPONSES_PER_SECOND -> Known.ERROR_RESPONSES_PER_SECOND
                             P95_LATENCY -> Known.P95_LATENCY
                             RUN_QUEUE_WAIT_TIME -> Known.RUN_QUEUE_WAIT_TIME
+                            STARTABLE_RUNS_WAIT_MAX_BY_PRIORITY ->
+                                Known.STARTABLE_RUNS_WAIT_MAX_BY_PRIORITY
+                            STARTABLE_RUNS_BY_PRIORITY -> Known.STARTABLE_RUNS_BY_PRIORITY
+                            RUNNING_RUNS_BY_PRIORITY -> Known.RUNNING_RUNS_BY_PRIORITY
                             else ->
                                 throw LangChainInvalidDataException("Unknown ProjectMetric: $value")
                         }
@@ -41658,6 +41680,14 @@ private constructor(
 
                         @JvmField val RUN_QUEUE_WAIT_TIME = of("run_queue_wait_time")
 
+                        @JvmField
+                        val STARTABLE_RUNS_WAIT_MAX_BY_PRIORITY =
+                            of("startable_runs_wait_max_by_priority")
+
+                        @JvmField val STARTABLE_RUNS_BY_PRIORITY = of("startable_runs_by_priority")
+
+                        @JvmField val RUNNING_RUNS_BY_PRIORITY = of("running_runs_by_priority")
+
                         @JvmStatic fun of(value: String) = ProjectMetric(JsonField.of(value))
                     }
 
@@ -41674,6 +41704,9 @@ private constructor(
                         ERROR_RESPONSES_PER_SECOND,
                         P95_LATENCY,
                         RUN_QUEUE_WAIT_TIME,
+                        STARTABLE_RUNS_WAIT_MAX_BY_PRIORITY,
+                        STARTABLE_RUNS_BY_PRIORITY,
+                        RUNNING_RUNS_BY_PRIORITY,
                     }
 
                     /**
@@ -41699,6 +41732,9 @@ private constructor(
                         ERROR_RESPONSES_PER_SECOND,
                         P95_LATENCY,
                         RUN_QUEUE_WAIT_TIME,
+                        STARTABLE_RUNS_WAIT_MAX_BY_PRIORITY,
+                        STARTABLE_RUNS_BY_PRIORITY,
+                        RUNNING_RUNS_BY_PRIORITY,
                         /**
                          * An enum member indicating that [ProjectMetric] was instantiated with an
                          * unknown value.
@@ -41726,6 +41762,10 @@ private constructor(
                             ERROR_RESPONSES_PER_SECOND -> Value.ERROR_RESPONSES_PER_SECOND
                             P95_LATENCY -> Value.P95_LATENCY
                             RUN_QUEUE_WAIT_TIME -> Value.RUN_QUEUE_WAIT_TIME
+                            STARTABLE_RUNS_WAIT_MAX_BY_PRIORITY ->
+                                Value.STARTABLE_RUNS_WAIT_MAX_BY_PRIORITY
+                            STARTABLE_RUNS_BY_PRIORITY -> Value.STARTABLE_RUNS_BY_PRIORITY
+                            RUNNING_RUNS_BY_PRIORITY -> Value.RUNNING_RUNS_BY_PRIORITY
                             else -> Value._UNKNOWN
                         }
 
@@ -41751,6 +41791,10 @@ private constructor(
                             ERROR_RESPONSES_PER_SECOND -> Known.ERROR_RESPONSES_PER_SECOND
                             P95_LATENCY -> Known.P95_LATENCY
                             RUN_QUEUE_WAIT_TIME -> Known.RUN_QUEUE_WAIT_TIME
+                            STARTABLE_RUNS_WAIT_MAX_BY_PRIORITY ->
+                                Known.STARTABLE_RUNS_WAIT_MAX_BY_PRIORITY
+                            STARTABLE_RUNS_BY_PRIORITY -> Known.STARTABLE_RUNS_BY_PRIORITY
+                            RUNNING_RUNS_BY_PRIORITY -> Known.RUNNING_RUNS_BY_PRIORITY
                             else ->
                                 throw LangChainInvalidDataException("Unknown ProjectMetric: $value")
                         }
