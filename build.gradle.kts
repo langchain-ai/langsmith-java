@@ -45,9 +45,9 @@ allprojects {
     configurations.matching { it.name == "kotlinBouncyCastleConfiguration" }.configureEach {
         // Remove once Kotlin's publishing validation selects Bouncy Castle >= 1.86.
         resolutionStrategy.force(
-            "org.bouncycastle:bcpg-jdk18on:1.86",
-            "org.bouncycastle:bcpkix-jdk18on:1.86",
-            "org.bouncycastle:bcprov-jdk18on:1.86",
+            "org.bouncycastle:bcpg-jdk18on:1.87",
+            "org.bouncycastle:bcpkix-jdk18on:1.87",
+            "org.bouncycastle:bcprov-jdk18on:1.87",
         )
     }
 }
