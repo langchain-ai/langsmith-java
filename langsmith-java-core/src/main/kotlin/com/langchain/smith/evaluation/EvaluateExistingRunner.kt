@@ -27,7 +27,7 @@ internal class EvaluateExistingRunner(
                 IllegalStateException("Experiment $experimentId has no reference dataset")
             }
 
-        val runs = loadRunsForExperiment(client, experimentId, params.loadNested)
+        val runs = loadRunsForExperiment(client, session, params.loadNested)
         require(runs.isNotEmpty()) { "No runs found for experiment $experimentId" }
 
         val exampleIds = runs.mapNotNull { run -> run.referenceExampleId().getOrNull() }.distinct()

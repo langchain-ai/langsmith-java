@@ -7,10 +7,15 @@ import com.langchain.smith.models.examples.Example
 import com.langchain.smith.models.examples.ExampleListParams
 import com.langchain.smith.models.feedback.FeedbackCreateSchema
 import com.langchain.smith.models.feedback.ModelFeedbackSource
+import com.langchain.smith.models.runs.Run
 import com.langchain.smith.models.runs.RunIngest
 import com.langchain.smith.models.runs.RunQueryParams
+import com.langchain.smith.models.runs.RunQueryV2Params
 import com.langchain.smith.models.runs.RunSchema
+import com.langchain.smith.models.runs.RunSelectField
 import com.langchain.smith.models.sessions.TracerSession
+import com.langchain.smith.services.supportsSmithDbQuery
+import java.time.OffsetDateTime
 import java.util.UUID
 import java.util.logging.Logger
 import kotlin.jvm.optionals.getOrNull
@@ -75,14 +80,20 @@ internal fun loadExperiment(client: LangsmithClient, experiment: String): Tracer
 
 internal fun loadRunsForExperiment(
     client: LangsmithClient,
-    sessionId: String,
+    experiment: TracerSession,
     loadNested: Boolean,
 ): List<RunIngest> {
+    val useV2 = supportsSmithDbQuery(client.info().list())
     val deadlineMs = System.currentTimeMillis() + RUN_QUERY_TIMEOUT_MS
     var delayMs = RUN_QUERY_INITIAL_DELAY_MS
     while (true) {
         client.runs().flush()
-        val runs = queryRunsForExperiment(client, sessionId, loadNested)
+        val runs =
+            if (useV2) {
+                queryRunsForExperimentV2(client, experiment, loadNested)
+            } else {
+                queryRunsForExperiment(client, experiment.id(), loadNested)
+            }
         if (runs.isNotEmpty() || System.currentTimeMillis() >= deadlineMs) {
             return runs
         }
@@ -103,6 +114,56 @@ private fun queryRunsForExperiment(
     return client.runs().query(paramsBuilder.build()).autoPager().toList().map {
         it.toEvaluateRun()
     }
+}
+
+// The v2 query defaults to the last 24 hours, so bound it to the experiment's own window.
+// The server always returns start_time and lowers it to the earliest run on ingest, so the
+// one-day fallback only guards a response that omits it.
+private fun queryRunsForExperimentV2(
+    client: LangsmithClient,
+    experiment: TracerSession,
+    loadNested: Boolean,
+): List<RunIngest> {
+    val now = OffsetDateTime.now()
+    val paramsBuilder =
+        RunQueryV2Params.builder()
+            .addProjectId(experiment.id())
+            .minStartTime(experiment.startTime().orElse(now.minusDays(1)))
+            .maxStartTime(experiment.endTime().orElse(now))
+            .selects(EVALUATE_RUN_SELECTS)
+    if (!loadNested) {
+        paramsBuilder.isRoot(true)
+    }
+    return client.runs().queryV2(paramsBuilder.build()).autoPager().toList().map {
+        it.toEvaluateRun()
+    }
+}
+
+private val EVALUATE_RUN_SELECTS =
+    listOf(
+        RunSelectField.ID,
+        RunSelectField.PROJECT_ID,
+        RunSelectField.TRACE_ID,
+        RunSelectField.REFERENCE_EXAMPLE_ID,
+        RunSelectField.START_TIME,
+        RunSelectField.OUTPUTS,
+    )
+
+internal fun Run.toEvaluateRun(): RunIngest {
+    val builder = RunIngest.builder()
+    id().getOrNull()?.let { builder.id(it) }
+    projectId().getOrNull()?.let { builder.sessionId(it) }
+    traceId().getOrNull()?.let { builder.traceId(it) }
+    referenceExampleId().getOrNull()?.let { builder.referenceExampleId(it) }
+    startTime().getOrNull()?.let { builder.startTime(it.toString()) }
+    outputs().getOrNull()?.let { runOutputs ->
+        val outputsBuilder = RunIngest.Outputs.builder()
+        runOutputs._additionalProperties().forEach { (key, value) ->
+            outputsBuilder.putAdditionalProperty(key, value)
+        }
+        builder.outputs(outputsBuilder.build())
+    }
+    return builder.build()
 }
 
 internal fun RunSchema.toEvaluateRun(): RunIngest {

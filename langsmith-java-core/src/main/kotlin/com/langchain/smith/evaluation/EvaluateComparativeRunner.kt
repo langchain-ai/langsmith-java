@@ -67,9 +67,7 @@ internal class EvaluateComparativeRunner(
                 )
 
         val runsByExperiment =
-            projects.map { project ->
-                loadRunsForExperiment(client, project.id(), params.loadNested)
-            }
+            projects.map { project -> loadRunsForExperiment(client, project, params.loadNested) }
 
         val exampleIntersection =
             runsByExperiment

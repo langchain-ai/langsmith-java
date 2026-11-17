@@ -2,7 +2,9 @@ package com.langchain.smith.example
 
 import com.langchain.smith.client.LangsmithClient
 import com.langchain.smith.client.okhttp.LangsmithOkHttpClient
-import com.langchain.smith.models.runs.RunQueryParams
+import com.langchain.smith.models.runs.RunQueryV2Params
+import com.langchain.smith.models.runs.RunSelectField
+import java.time.OffsetDateTime
 import kotlin.system.exitProcess
 
 /**
@@ -40,21 +42,24 @@ fun main() {
     }
 
     // Create query parameters
-    // The API requires at least one filter (session, id, parent_run, trace, or reference_example)
-    // This example queries runs for a specific project/session
-    val params = RunQueryParams.builder()
-        .addSession(projectId) // Filter by project/session ID
-        .limit(10L) // Limit to 10 runs
+    // Without minStartTime the query only covers the last 24 hours
+    // Only the selected fields are returned; the default is the run ID alone
+    val params = RunQueryV2Params.builder()
+        .addProjectId(projectId) // Filter by project ID
+        .minStartTime(OffsetDateTime.now().minusDays(7))
+        .addSelect(RunSelectField.ID)
+        .addSelect(RunSelectField.NAME)
+        .pageSize(10L) // Return 10 runs
         .build()
 
     // Query runs
-    val response = client.runs().query(params)
+    val runs = client.runs().queryV2(params).items()
 
     // Print runs
-    println("Found ${response.runs().size} runs:")
-    response.runs().forEach { run ->
-        println("Run ID: ${run.id()}")
-        println("Run Name: ${run.name()}")
+    println("Found ${runs.size} runs:")
+    runs.forEach { run ->
+        println("Run ID: ${run.id().orElse("")}")
+        println("Run Name: ${run.name().orElse("")}")
         println("---")
     }
 }

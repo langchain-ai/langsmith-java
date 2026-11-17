@@ -2,7 +2,6 @@ package com.langchain.smith.services
 
 import com.github.luben.zstd.Zstd
 import com.langchain.smith.models.info.InfoListResponse
-import kotlin.jvm.optionals.getOrNull
 
 internal fun isRunCompressionDisabled(): Boolean =
     isTruish(System.getenv("LANGSMITH_DISABLE_RUN_COMPRESSION"))
@@ -22,13 +21,7 @@ private val zstdAvailable: Boolean by lazy {
 
 internal fun isZstdCompressionEnabled(info: InfoListResponse): Boolean =
     // Default on; the server must explicitly return false to disable compression.
-    info
-        .instanceFlags()
-        .getOrNull()
-        ?._additionalProperties()
-        ?.get("zstd_compression_enabled")
-        ?.asBoolean()
-        ?.getOrNull() ?: true
+    info.booleanInstanceFlag("zstd_compression_enabled") ?: true
 
 private val TRUISH_VALUES = setOf("1", "true", "t", "yes", "y", "on")
 
