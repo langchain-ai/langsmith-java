@@ -18211,6 +18211,8 @@ private constructor(
 
                     @JvmField val RUNNING_RUNS_BY_PRIORITY = of("running_runs_by_priority")
 
+                    @JvmField val OUT_OF_MEMORY_RESTARTS = of("out_of_memory_restarts")
+
                     @JvmStatic fun of(value: String) = ProjectMetric(JsonField.of(value))
                 }
 
@@ -18230,6 +18232,7 @@ private constructor(
                     STARTABLE_RUNS_WAIT_MAX_BY_PRIORITY,
                     STARTABLE_RUNS_BY_PRIORITY,
                     RUNNING_RUNS_BY_PRIORITY,
+                    OUT_OF_MEMORY_RESTARTS,
                 }
 
                 /**
@@ -18257,6 +18260,7 @@ private constructor(
                     STARTABLE_RUNS_WAIT_MAX_BY_PRIORITY,
                     STARTABLE_RUNS_BY_PRIORITY,
                     RUNNING_RUNS_BY_PRIORITY,
+                    OUT_OF_MEMORY_RESTARTS,
                     /**
                      * An enum member indicating that [ProjectMetric] was instantiated with an
                      * unknown value.
@@ -18288,6 +18292,7 @@ private constructor(
                             Value.STARTABLE_RUNS_WAIT_MAX_BY_PRIORITY
                         STARTABLE_RUNS_BY_PRIORITY -> Value.STARTABLE_RUNS_BY_PRIORITY
                         RUNNING_RUNS_BY_PRIORITY -> Value.RUNNING_RUNS_BY_PRIORITY
+                        OUT_OF_MEMORY_RESTARTS -> Value.OUT_OF_MEMORY_RESTARTS
                         else -> Value._UNKNOWN
                     }
 
@@ -18317,6 +18322,7 @@ private constructor(
                             Known.STARTABLE_RUNS_WAIT_MAX_BY_PRIORITY
                         STARTABLE_RUNS_BY_PRIORITY -> Known.STARTABLE_RUNS_BY_PRIORITY
                         RUNNING_RUNS_BY_PRIORITY -> Known.RUNNING_RUNS_BY_PRIORITY
+                        OUT_OF_MEMORY_RESTARTS -> Known.OUT_OF_MEMORY_RESTARTS
                         else -> throw LangChainInvalidDataException("Unknown ProjectMetric: $value")
                     }
 
