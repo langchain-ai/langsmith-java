@@ -29,8 +29,10 @@ class ItemListParams
 private constructor(
     private val queueId: String?,
     private val status: Status,
+    private val agreement: Agreement?,
     private val cursor: String?,
     private val direction: Direction?,
+    private val hasUnresolvedKeys: Boolean?,
     private val itemType: ItemType?,
     private val maxStartTime: OffsetDateTime?,
     private val minStartTime: OffsetDateTime?,
@@ -44,11 +46,24 @@ private constructor(
     /** Review section: needs_my_review, needs_others_review, or archived */
     fun status(): Status = status
 
+    /**
+     * Only completed items whose reviewers disagreed on at least one rubric key. Returns 501 unless
+     * multi-reviewer queues are on for the workspace. Requires status=archived
+     */
+    fun agreement(): Optional<Agreement> = Optional.ofNullable(agreement)
+
     /** Opaque pagination cursor */
     fun cursor(): Optional<String> = Optional.ofNullable(cursor)
 
     /** Pagination direction. backward requires cursor */
     fun direction(): Optional<Direction> = Optional.ofNullable(direction)
+
+    /**
+     * Only completed items that do (true) or do not (false) still have a disagreed rubric key with
+     * no final answer. Items with no agreement result match neither value. Returns 501 unless
+     * multi-reviewer queues are on for the workspace. Requires status=archived
+     */
+    fun hasUnresolvedKeys(): Optional<Boolean> = Optional.ofNullable(hasUnresolvedKeys)
 
     /** Filter to RUN or THREAD */
     fun itemType(): Optional<ItemType> = Optional.ofNullable(itemType)
@@ -94,8 +109,10 @@ private constructor(
 
         private var queueId: String? = null
         private var status: Status? = null
+        private var agreement: Agreement? = null
         private var cursor: String? = null
         private var direction: Direction? = null
+        private var hasUnresolvedKeys: Boolean? = null
         private var itemType: ItemType? = null
         private var maxStartTime: OffsetDateTime? = null
         private var minStartTime: OffsetDateTime? = null
@@ -107,8 +124,10 @@ private constructor(
         internal fun from(itemListParams: ItemListParams) = apply {
             queueId = itemListParams.queueId
             status = itemListParams.status
+            agreement = itemListParams.agreement
             cursor = itemListParams.cursor
             direction = itemListParams.direction
+            hasUnresolvedKeys = itemListParams.hasUnresolvedKeys
             itemType = itemListParams.itemType
             maxStartTime = itemListParams.maxStartTime
             minStartTime = itemListParams.minStartTime
@@ -125,6 +144,15 @@ private constructor(
         /** Review section: needs_my_review, needs_others_review, or archived */
         fun status(status: Status) = apply { this.status = status }
 
+        /**
+         * Only completed items whose reviewers disagreed on at least one rubric key. Returns 501
+         * unless multi-reviewer queues are on for the workspace. Requires status=archived
+         */
+        fun agreement(agreement: Agreement?) = apply { this.agreement = agreement }
+
+        /** Alias for calling [Builder.agreement] with `agreement.orElse(null)`. */
+        fun agreement(agreement: Optional<Agreement>) = agreement(agreement.getOrNull())
+
         /** Opaque pagination cursor */
         fun cursor(cursor: String?) = apply { this.cursor = cursor }
 
@@ -136,6 +164,27 @@ private constructor(
 
         /** Alias for calling [Builder.direction] with `direction.orElse(null)`. */
         fun direction(direction: Optional<Direction>) = direction(direction.getOrNull())
+
+        /**
+         * Only completed items that do (true) or do not (false) still have a disagreed rubric key
+         * with no final answer. Items with no agreement result match neither value. Returns 501
+         * unless multi-reviewer queues are on for the workspace. Requires status=archived
+         */
+        fun hasUnresolvedKeys(hasUnresolvedKeys: Boolean?) = apply {
+            this.hasUnresolvedKeys = hasUnresolvedKeys
+        }
+
+        /**
+         * Alias for [Builder.hasUnresolvedKeys].
+         *
+         * This unboxed primitive overload exists for backwards compatibility.
+         */
+        fun hasUnresolvedKeys(hasUnresolvedKeys: Boolean) =
+            hasUnresolvedKeys(hasUnresolvedKeys as Boolean?)
+
+        /** Alias for calling [Builder.hasUnresolvedKeys] with `hasUnresolvedKeys.orElse(null)`. */
+        fun hasUnresolvedKeys(hasUnresolvedKeys: Optional<Boolean>) =
+            hasUnresolvedKeys(hasUnresolvedKeys.getOrNull())
 
         /** Filter to RUN or THREAD */
         fun itemType(itemType: ItemType?) = apply { this.itemType = itemType }
@@ -290,8 +339,10 @@ private constructor(
             ItemListParams(
                 queueId,
                 checkRequired("status", status),
+                agreement,
                 cursor,
                 direction,
+                hasUnresolvedKeys,
                 itemType,
                 maxStartTime,
                 minStartTime,
@@ -313,8 +364,10 @@ private constructor(
         QueryParams.builder()
             .apply {
                 put("status", status.toString())
+                agreement?.let { put("agreement", it.toString()) }
                 cursor?.let { put("cursor", it) }
                 direction?.let { put("direction", it.toString()) }
+                hasUnresolvedKeys?.let { put("has_unresolved_keys", it.toString()) }
                 itemType?.let { put("item_type", it.toString()) }
                 maxStartTime?.let {
                     put("max_start_time", DateTimeFormatter.ISO_OFFSET_DATE_TIME.format(it))
@@ -463,6 +516,142 @@ private constructor(
             }
 
             return other is Status && value == other.value
+        }
+
+        override fun hashCode() = value.hashCode()
+
+        override fun toString() = value.toString()
+    }
+
+    /**
+     * Only completed items whose reviewers disagreed on at least one rubric key. Returns 501 unless
+     * multi-reviewer queues are on for the workspace. Requires status=archived
+     */
+    class Agreement @JsonCreator private constructor(private val value: JsonField<String>) : Enum {
+
+        /**
+         * Returns this class instance's raw value.
+         *
+         * This is usually only useful if this instance was deserialized from data that doesn't
+         * match any known member, and you want to know that value. For example, if the SDK is on an
+         * older version than the API, then the API may respond with new members that the SDK is
+         * unaware of.
+         */
+        @com.fasterxml.jackson.annotation.JsonValue fun _value(): JsonField<String> = value
+
+        companion object {
+
+            @JvmField val DISAGREED = of("disagreed")
+
+            @JvmStatic fun of(value: String) = Agreement(JsonField.of(value))
+        }
+
+        /** An enum containing [Agreement]'s known values. */
+        enum class Known {
+            DISAGREED
+        }
+
+        /**
+         * An enum containing [Agreement]'s known values, as well as an [_UNKNOWN] member.
+         *
+         * An instance of [Agreement] can contain an unknown value in a couple of cases:
+         * - It was deserialized from data that doesn't match any known member. For example, if the
+         *   SDK is on an older version than the API, then the API may respond with new members that
+         *   the SDK is unaware of.
+         * - It was constructed with an arbitrary value using the [of] method.
+         */
+        enum class Value {
+            DISAGREED,
+            /**
+             * An enum member indicating that [Agreement] was instantiated with an unknown value.
+             */
+            _UNKNOWN,
+        }
+
+        /**
+         * Returns an enum member corresponding to this class instance's value, or [Value._UNKNOWN]
+         * if the class was instantiated with an unknown value.
+         *
+         * Use the [known] method instead if you're certain the value is always known or if you want
+         * to throw for the unknown case.
+         */
+        fun value(): Value =
+            when (this) {
+                DISAGREED -> Value.DISAGREED
+                else -> Value._UNKNOWN
+            }
+
+        /**
+         * Returns an enum member corresponding to this class instance's value.
+         *
+         * Use the [value] method instead if you're uncertain the value is always known and don't
+         * want to throw for the unknown case.
+         *
+         * @throws LangChainInvalidDataException if this class instance's value is a not a known
+         *   member.
+         */
+        fun known(): Known =
+            when (this) {
+                DISAGREED -> Known.DISAGREED
+                else -> throw LangChainInvalidDataException("Unknown Agreement: $value")
+            }
+
+        /**
+         * Returns this class instance's primitive wire representation.
+         *
+         * This differs from the [toString] method because that method is primarily for debugging
+         * and generally doesn't throw.
+         *
+         * @throws LangChainInvalidDataException if this class instance's value does not have the
+         *   expected primitive type.
+         */
+        fun asString(): String =
+            _value().asString().orElseThrow {
+                LangChainInvalidDataException("Value is not a String")
+            }
+
+        private var validated: Boolean = false
+
+        /**
+         * Validates that the types of all values in this object match their expected types
+         * recursively.
+         *
+         * This method is _not_ forwards compatible with new types from the API for existing fields.
+         *
+         * @throws LangChainInvalidDataException if any value type in this object doesn't match its
+         *   expected type.
+         */
+        fun validate(): Agreement = apply {
+            if (validated) {
+                return@apply
+            }
+
+            known()
+            validated = true
+        }
+
+        fun isValid(): Boolean =
+            try {
+                validate()
+                true
+            } catch (e: LangChainInvalidDataException) {
+                false
+            }
+
+        /**
+         * Returns a score indicating how many valid values are contained in this object
+         * recursively.
+         *
+         * Used for best match union deserialization.
+         */
+        @JvmSynthetic internal fun validity(): Int = if (value() == Value._UNKNOWN) 0 else 1
+
+        override fun equals(other: Any?): Boolean {
+            if (this === other) {
+                return true
+            }
+
+            return other is Agreement && value == other.value
         }
 
         override fun hashCode() = value.hashCode()
@@ -754,8 +943,10 @@ private constructor(
         return other is ItemListParams &&
             queueId == other.queueId &&
             status == other.status &&
+            agreement == other.agreement &&
             cursor == other.cursor &&
             direction == other.direction &&
+            hasUnresolvedKeys == other.hasUnresolvedKeys &&
             itemType == other.itemType &&
             maxStartTime == other.maxStartTime &&
             minStartTime == other.minStartTime &&
@@ -768,8 +959,10 @@ private constructor(
         Objects.hash(
             queueId,
             status,
+            agreement,
             cursor,
             direction,
+            hasUnresolvedKeys,
             itemType,
             maxStartTime,
             minStartTime,
@@ -779,5 +972,5 @@ private constructor(
         )
 
     override fun toString() =
-        "ItemListParams{queueId=$queueId, status=$status, cursor=$cursor, direction=$direction, itemType=$itemType, maxStartTime=$maxStartTime, minStartTime=$minStartTime, pageSize=$pageSize, additionalHeaders=$additionalHeaders, additionalQueryParams=$additionalQueryParams}"
+        "ItemListParams{queueId=$queueId, status=$status, agreement=$agreement, cursor=$cursor, direction=$direction, hasUnresolvedKeys=$hasUnresolvedKeys, itemType=$itemType, maxStartTime=$maxStartTime, minStartTime=$minStartTime, pageSize=$pageSize, additionalHeaders=$additionalHeaders, additionalQueryParams=$additionalQueryParams}"
 }

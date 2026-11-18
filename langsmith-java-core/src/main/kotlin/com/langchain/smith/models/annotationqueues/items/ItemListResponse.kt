@@ -24,10 +24,13 @@ class ItemListResponse
 private constructor(
     private val id: JsonField<String>,
     private val addedAt: JsonField<String>,
+    private val agreementState: JsonField<AgreementState>,
     private val assignedTo: JsonField<List<String>>,
     private val completedBy: JsonField<List<String>>,
     private val effectiveAddedAt: JsonField<String>,
+    private val hasUnresolvedKeys: JsonField<Boolean>,
     private val itemType: JsonField<ItemType>,
+    private val keyAgreements: JsonField<KeyAgreements>,
     private val lastReviewedTime: JsonField<String>,
     private val projectId: JsonField<String>,
     private val queueId: JsonField<String>,
@@ -43,6 +46,9 @@ private constructor(
     private constructor(
         @JsonProperty("id") @ExcludeMissing id: JsonField<String> = JsonMissing.of(),
         @JsonProperty("added_at") @ExcludeMissing addedAt: JsonField<String> = JsonMissing.of(),
+        @JsonProperty("agreement_state")
+        @ExcludeMissing
+        agreementState: JsonField<AgreementState> = JsonMissing.of(),
         @JsonProperty("assigned_to")
         @ExcludeMissing
         assignedTo: JsonField<List<String>> = JsonMissing.of(),
@@ -52,7 +58,13 @@ private constructor(
         @JsonProperty("effective_added_at")
         @ExcludeMissing
         effectiveAddedAt: JsonField<String> = JsonMissing.of(),
+        @JsonProperty("has_unresolved_keys")
+        @ExcludeMissing
+        hasUnresolvedKeys: JsonField<Boolean> = JsonMissing.of(),
         @JsonProperty("item_type") @ExcludeMissing itemType: JsonField<ItemType> = JsonMissing.of(),
+        @JsonProperty("key_agreements")
+        @ExcludeMissing
+        keyAgreements: JsonField<KeyAgreements> = JsonMissing.of(),
         @JsonProperty("last_reviewed_time")
         @ExcludeMissing
         lastReviewedTime: JsonField<String> = JsonMissing.of(),
@@ -70,10 +82,13 @@ private constructor(
     ) : this(
         id,
         addedAt,
+        agreementState,
         assignedTo,
         completedBy,
         effectiveAddedAt,
+        hasUnresolvedKeys,
         itemType,
+        keyAgreements,
         lastReviewedTime,
         projectId,
         queueId,
@@ -98,6 +113,14 @@ private constructor(
     fun addedAt(): Optional<String> = addedAt.getOptional("added_at")
 
     /**
+     * Whether the item's reviewers agreed across its rubric keys.
+     *
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
+    fun agreementState(): Optional<AgreementState> = agreementState.getOptional("agreement_state")
+
+    /**
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
      */
@@ -116,10 +139,27 @@ private constructor(
     fun effectiveAddedAt(): Optional<String> = effectiveAddedAt.getOptional("effective_added_at")
 
     /**
+     * True while a key the reviewers disagreed on has no final answer.
+     *
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
+    fun hasUnresolvedKeys(): Optional<Boolean> =
+        hasUnresolvedKeys.getOptional("has_unresolved_keys")
+
+    /**
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
      */
     fun itemType(): Optional<ItemType> = itemType.getOptional("item_type")
+
+    /**
+     * The reviewers' result for each rubric key.
+     *
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
+    fun keyAgreements(): Optional<KeyAgreements> = keyAgreements.getOptional("key_agreements")
 
     /**
      * LastReviewedTime is always present on the wire (null until reviewed).
@@ -187,6 +227,15 @@ private constructor(
     @JsonProperty("added_at") @ExcludeMissing fun _addedAt(): JsonField<String> = addedAt
 
     /**
+     * Returns the raw JSON value of [agreementState].
+     *
+     * Unlike [agreementState], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    @JsonProperty("agreement_state")
+    @ExcludeMissing
+    fun _agreementState(): JsonField<AgreementState> = agreementState
+
+    /**
      * Returns the raw JSON value of [assignedTo].
      *
      * Unlike [assignedTo], this method doesn't throw if the JSON field has an unexpected type.
@@ -215,11 +264,30 @@ private constructor(
     fun _effectiveAddedAt(): JsonField<String> = effectiveAddedAt
 
     /**
+     * Returns the raw JSON value of [hasUnresolvedKeys].
+     *
+     * Unlike [hasUnresolvedKeys], this method doesn't throw if the JSON field has an unexpected
+     * type.
+     */
+    @JsonProperty("has_unresolved_keys")
+    @ExcludeMissing
+    fun _hasUnresolvedKeys(): JsonField<Boolean> = hasUnresolvedKeys
+
+    /**
      * Returns the raw JSON value of [itemType].
      *
      * Unlike [itemType], this method doesn't throw if the JSON field has an unexpected type.
      */
     @JsonProperty("item_type") @ExcludeMissing fun _itemType(): JsonField<ItemType> = itemType
+
+    /**
+     * Returns the raw JSON value of [keyAgreements].
+     *
+     * Unlike [keyAgreements], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    @JsonProperty("key_agreements")
+    @ExcludeMissing
+    fun _keyAgreements(): JsonField<KeyAgreements> = keyAgreements
 
     /**
      * Returns the raw JSON value of [lastReviewedTime].
@@ -308,10 +376,13 @@ private constructor(
 
         private var id: JsonField<String> = JsonMissing.of()
         private var addedAt: JsonField<String> = JsonMissing.of()
+        private var agreementState: JsonField<AgreementState> = JsonMissing.of()
         private var assignedTo: JsonField<MutableList<String>>? = null
         private var completedBy: JsonField<MutableList<String>>? = null
         private var effectiveAddedAt: JsonField<String> = JsonMissing.of()
+        private var hasUnresolvedKeys: JsonField<Boolean> = JsonMissing.of()
         private var itemType: JsonField<ItemType> = JsonMissing.of()
+        private var keyAgreements: JsonField<KeyAgreements> = JsonMissing.of()
         private var lastReviewedTime: JsonField<String> = JsonMissing.of()
         private var projectId: JsonField<String> = JsonMissing.of()
         private var queueId: JsonField<String> = JsonMissing.of()
@@ -326,10 +397,13 @@ private constructor(
         internal fun from(itemListResponse: ItemListResponse) = apply {
             id = itemListResponse.id
             addedAt = itemListResponse.addedAt
+            agreementState = itemListResponse.agreementState
             assignedTo = itemListResponse.assignedTo.map { it.toMutableList() }
             completedBy = itemListResponse.completedBy.map { it.toMutableList() }
             effectiveAddedAt = itemListResponse.effectiveAddedAt
+            hasUnresolvedKeys = itemListResponse.hasUnresolvedKeys
             itemType = itemListResponse.itemType
+            keyAgreements = itemListResponse.keyAgreements
             lastReviewedTime = itemListResponse.lastReviewedTime
             projectId = itemListResponse.projectId
             queueId = itemListResponse.queueId
@@ -360,6 +434,21 @@ private constructor(
          * method is primarily for setting the field to an undocumented or not yet supported value.
          */
         fun addedAt(addedAt: JsonField<String>) = apply { this.addedAt = addedAt }
+
+        /** Whether the item's reviewers agreed across its rubric keys. */
+        fun agreementState(agreementState: AgreementState) =
+            agreementState(JsonField.of(agreementState))
+
+        /**
+         * Sets [Builder.agreementState] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.agreementState] with a well-typed [AgreementState] value
+         * instead. This method is primarily for setting the field to an undocumented or not yet
+         * supported value.
+         */
+        fun agreementState(agreementState: JsonField<AgreementState>) = apply {
+            this.agreementState = agreementState
+        }
 
         fun assignedTo(assignedTo: List<String>) = assignedTo(JsonField.of(assignedTo))
 
@@ -425,6 +514,21 @@ private constructor(
             this.effectiveAddedAt = effectiveAddedAt
         }
 
+        /** True while a key the reviewers disagreed on has no final answer. */
+        fun hasUnresolvedKeys(hasUnresolvedKeys: Boolean) =
+            hasUnresolvedKeys(JsonField.of(hasUnresolvedKeys))
+
+        /**
+         * Sets [Builder.hasUnresolvedKeys] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.hasUnresolvedKeys] with a well-typed [Boolean] value
+         * instead. This method is primarily for setting the field to an undocumented or not yet
+         * supported value.
+         */
+        fun hasUnresolvedKeys(hasUnresolvedKeys: JsonField<Boolean>) = apply {
+            this.hasUnresolvedKeys = hasUnresolvedKeys
+        }
+
         fun itemType(itemType: ItemType) = itemType(JsonField.of(itemType))
 
         /**
@@ -435,6 +539,20 @@ private constructor(
          * value.
          */
         fun itemType(itemType: JsonField<ItemType>) = apply { this.itemType = itemType }
+
+        /** The reviewers' result for each rubric key. */
+        fun keyAgreements(keyAgreements: KeyAgreements) = keyAgreements(JsonField.of(keyAgreements))
+
+        /**
+         * Sets [Builder.keyAgreements] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.keyAgreements] with a well-typed [KeyAgreements] value
+         * instead. This method is primarily for setting the field to an undocumented or not yet
+         * supported value.
+         */
+        fun keyAgreements(keyAgreements: JsonField<KeyAgreements>) = apply {
+            this.keyAgreements = keyAgreements
+        }
 
         /** LastReviewedTime is always present on the wire (null until reviewed). */
         fun lastReviewedTime(lastReviewedTime: String) =
@@ -570,10 +688,13 @@ private constructor(
             ItemListResponse(
                 id,
                 addedAt,
+                agreementState,
                 (assignedTo ?: JsonMissing.of()).map { it.toImmutable() },
                 (completedBy ?: JsonMissing.of()).map { it.toImmutable() },
                 effectiveAddedAt,
+                hasUnresolvedKeys,
                 itemType,
+                keyAgreements,
                 lastReviewedTime,
                 projectId,
                 queueId,
@@ -603,10 +724,13 @@ private constructor(
 
         id()
         addedAt()
+        agreementState().ifPresent { it.validate() }
         assignedTo()
         completedBy()
         effectiveAddedAt()
+        hasUnresolvedKeys()
         itemType().ifPresent { it.validate() }
+        keyAgreements().ifPresent { it.validate() }
         lastReviewedTime()
         projectId()
         queueId()
@@ -635,10 +759,13 @@ private constructor(
     internal fun validity(): Int =
         (if (id.asKnown().isPresent) 1 else 0) +
             (if (addedAt.asKnown().isPresent) 1 else 0) +
+            (agreementState.asKnown().getOrNull()?.validity() ?: 0) +
             (assignedTo.asKnown().getOrNull()?.size ?: 0) +
             (completedBy.asKnown().getOrNull()?.size ?: 0) +
             (if (effectiveAddedAt.asKnown().isPresent) 1 else 0) +
+            (if (hasUnresolvedKeys.asKnown().isPresent) 1 else 0) +
             (itemType.asKnown().getOrNull()?.validity() ?: 0) +
+            (keyAgreements.asKnown().getOrNull()?.validity() ?: 0) +
             (if (lastReviewedTime.asKnown().isPresent) 1 else 0) +
             (if (projectId.asKnown().isPresent) 1 else 0) +
             (if (queueId.asKnown().isPresent) 1 else 0) +
@@ -647,6 +774,153 @@ private constructor(
             (if (sourceProposedExampleId.asKnown().isPresent) 1 else 0) +
             (if (startTime.asKnown().isPresent) 1 else 0) +
             (if (threadId.asKnown().isPresent) 1 else 0)
+
+    /** Whether the item's reviewers agreed across its rubric keys. */
+    class AgreementState @JsonCreator private constructor(private val value: JsonField<String>) :
+        Enum {
+
+        /**
+         * Returns this class instance's raw value.
+         *
+         * This is usually only useful if this instance was deserialized from data that doesn't
+         * match any known member, and you want to know that value. For example, if the SDK is on an
+         * older version than the API, then the API may respond with new members that the SDK is
+         * unaware of.
+         */
+        @com.fasterxml.jackson.annotation.JsonValue fun _value(): JsonField<String> = value
+
+        companion object {
+
+            @JvmField val AGREED = of("agreed")
+
+            @JvmField val DISAGREED = of("disagreed")
+
+            @JvmField val NONE = of("none")
+
+            @JvmStatic fun of(value: String) = AgreementState(JsonField.of(value))
+        }
+
+        /** An enum containing [AgreementState]'s known values. */
+        enum class Known {
+            AGREED,
+            DISAGREED,
+            NONE,
+        }
+
+        /**
+         * An enum containing [AgreementState]'s known values, as well as an [_UNKNOWN] member.
+         *
+         * An instance of [AgreementState] can contain an unknown value in a couple of cases:
+         * - It was deserialized from data that doesn't match any known member. For example, if the
+         *   SDK is on an older version than the API, then the API may respond with new members that
+         *   the SDK is unaware of.
+         * - It was constructed with an arbitrary value using the [of] method.
+         */
+        enum class Value {
+            AGREED,
+            DISAGREED,
+            NONE,
+            /**
+             * An enum member indicating that [AgreementState] was instantiated with an unknown
+             * value.
+             */
+            _UNKNOWN,
+        }
+
+        /**
+         * Returns an enum member corresponding to this class instance's value, or [Value._UNKNOWN]
+         * if the class was instantiated with an unknown value.
+         *
+         * Use the [known] method instead if you're certain the value is always known or if you want
+         * to throw for the unknown case.
+         */
+        fun value(): Value =
+            when (this) {
+                AGREED -> Value.AGREED
+                DISAGREED -> Value.DISAGREED
+                NONE -> Value.NONE
+                else -> Value._UNKNOWN
+            }
+
+        /**
+         * Returns an enum member corresponding to this class instance's value.
+         *
+         * Use the [value] method instead if you're uncertain the value is always known and don't
+         * want to throw for the unknown case.
+         *
+         * @throws LangChainInvalidDataException if this class instance's value is a not a known
+         *   member.
+         */
+        fun known(): Known =
+            when (this) {
+                AGREED -> Known.AGREED
+                DISAGREED -> Known.DISAGREED
+                NONE -> Known.NONE
+                else -> throw LangChainInvalidDataException("Unknown AgreementState: $value")
+            }
+
+        /**
+         * Returns this class instance's primitive wire representation.
+         *
+         * This differs from the [toString] method because that method is primarily for debugging
+         * and generally doesn't throw.
+         *
+         * @throws LangChainInvalidDataException if this class instance's value does not have the
+         *   expected primitive type.
+         */
+        fun asString(): String =
+            _value().asString().orElseThrow {
+                LangChainInvalidDataException("Value is not a String")
+            }
+
+        private var validated: Boolean = false
+
+        /**
+         * Validates that the types of all values in this object match their expected types
+         * recursively.
+         *
+         * This method is _not_ forwards compatible with new types from the API for existing fields.
+         *
+         * @throws LangChainInvalidDataException if any value type in this object doesn't match its
+         *   expected type.
+         */
+        fun validate(): AgreementState = apply {
+            if (validated) {
+                return@apply
+            }
+
+            known()
+            validated = true
+        }
+
+        fun isValid(): Boolean =
+            try {
+                validate()
+                true
+            } catch (e: LangChainInvalidDataException) {
+                false
+            }
+
+        /**
+         * Returns a score indicating how many valid values are contained in this object
+         * recursively.
+         *
+         * Used for best match union deserialization.
+         */
+        @JvmSynthetic internal fun validity(): Int = if (value() == Value._UNKNOWN) 0 else 1
+
+        override fun equals(other: Any?): Boolean {
+            if (this === other) {
+                return true
+            }
+
+            return other is AgreementState && value == other.value
+        }
+
+        override fun hashCode() = value.hashCode()
+
+        override fun toString() = value.toString()
+    }
 
     class ItemType @JsonCreator private constructor(private val value: JsonField<String>) : Enum {
 
@@ -784,6 +1058,115 @@ private constructor(
         override fun toString() = value.toString()
     }
 
+    /** The reviewers' result for each rubric key. */
+    class KeyAgreements
+    @JsonCreator
+    private constructor(
+        @com.fasterxml.jackson.annotation.JsonValue
+        private val additionalProperties: Map<String, JsonValue>
+    ) {
+
+        @JsonAnyGetter
+        @ExcludeMissing
+        fun _additionalProperties(): Map<String, JsonValue> = additionalProperties
+
+        fun toBuilder() = Builder().from(this)
+
+        companion object {
+
+            /** Returns a mutable builder for constructing an instance of [KeyAgreements]. */
+            @JvmStatic fun builder() = Builder()
+        }
+
+        /** A builder for [KeyAgreements]. */
+        class Builder internal constructor() {
+
+            private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
+
+            @JvmSynthetic
+            internal fun from(keyAgreements: KeyAgreements) = apply {
+                additionalProperties = keyAgreements.additionalProperties.toMutableMap()
+            }
+
+            fun additionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
+                this.additionalProperties.clear()
+                putAllAdditionalProperties(additionalProperties)
+            }
+
+            fun putAdditionalProperty(key: String, value: JsonValue) = apply {
+                additionalProperties.put(key, value)
+            }
+
+            fun putAllAdditionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
+                this.additionalProperties.putAll(additionalProperties)
+            }
+
+            fun removeAdditionalProperty(key: String) = apply { additionalProperties.remove(key) }
+
+            fun removeAllAdditionalProperties(keys: Set<String>) = apply {
+                keys.forEach(::removeAdditionalProperty)
+            }
+
+            /**
+             * Returns an immutable instance of [KeyAgreements].
+             *
+             * Further updates to this [Builder] will not mutate the returned instance.
+             */
+            fun build(): KeyAgreements = KeyAgreements(additionalProperties.toImmutable())
+        }
+
+        private var validated: Boolean = false
+
+        /**
+         * Validates that the types of all values in this object match their expected types
+         * recursively.
+         *
+         * This method is _not_ forwards compatible with new types from the API for existing fields.
+         *
+         * @throws LangChainInvalidDataException if any value type in this object doesn't match its
+         *   expected type.
+         */
+        fun validate(): KeyAgreements = apply {
+            if (validated) {
+                return@apply
+            }
+
+            validated = true
+        }
+
+        fun isValid(): Boolean =
+            try {
+                validate()
+                true
+            } catch (e: LangChainInvalidDataException) {
+                false
+            }
+
+        /**
+         * Returns a score indicating how many valid values are contained in this object
+         * recursively.
+         *
+         * Used for best match union deserialization.
+         */
+        @JvmSynthetic
+        internal fun validity(): Int =
+            additionalProperties.count { (_, value) -> !value.isNull() && !value.isMissing() }
+
+        override fun equals(other: Any?): Boolean {
+            if (this === other) {
+                return true
+            }
+
+            return other is KeyAgreements && additionalProperties == other.additionalProperties
+        }
+
+        private val hashCode: Int by lazy { Objects.hash(additionalProperties) }
+
+        override fun hashCode(): Int = hashCode
+
+        override fun toString() = "KeyAgreements{additionalProperties=$additionalProperties}"
+    }
+
     override fun equals(other: Any?): Boolean {
         if (this === other) {
             return true
@@ -792,10 +1175,13 @@ private constructor(
         return other is ItemListResponse &&
             id == other.id &&
             addedAt == other.addedAt &&
+            agreementState == other.agreementState &&
             assignedTo == other.assignedTo &&
             completedBy == other.completedBy &&
             effectiveAddedAt == other.effectiveAddedAt &&
+            hasUnresolvedKeys == other.hasUnresolvedKeys &&
             itemType == other.itemType &&
+            keyAgreements == other.keyAgreements &&
             lastReviewedTime == other.lastReviewedTime &&
             projectId == other.projectId &&
             queueId == other.queueId &&
@@ -811,10 +1197,13 @@ private constructor(
         Objects.hash(
             id,
             addedAt,
+            agreementState,
             assignedTo,
             completedBy,
             effectiveAddedAt,
+            hasUnresolvedKeys,
             itemType,
+            keyAgreements,
             lastReviewedTime,
             projectId,
             queueId,
@@ -830,5 +1219,5 @@ private constructor(
     override fun hashCode(): Int = hashCode
 
     override fun toString() =
-        "ItemListResponse{id=$id, addedAt=$addedAt, assignedTo=$assignedTo, completedBy=$completedBy, effectiveAddedAt=$effectiveAddedAt, itemType=$itemType, lastReviewedTime=$lastReviewedTime, projectId=$projectId, queueId=$queueId, reservedBy=$reservedBy, runId=$runId, sourceProposedExampleId=$sourceProposedExampleId, startTime=$startTime, threadId=$threadId, additionalProperties=$additionalProperties}"
+        "ItemListResponse{id=$id, addedAt=$addedAt, agreementState=$agreementState, assignedTo=$assignedTo, completedBy=$completedBy, effectiveAddedAt=$effectiveAddedAt, hasUnresolvedKeys=$hasUnresolvedKeys, itemType=$itemType, keyAgreements=$keyAgreements, lastReviewedTime=$lastReviewedTime, projectId=$projectId, queueId=$queueId, reservedBy=$reservedBy, runId=$runId, sourceProposedExampleId=$sourceProposedExampleId, startTime=$startTime, threadId=$threadId, additionalProperties=$additionalProperties}"
 }
