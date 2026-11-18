@@ -502,12 +502,15 @@ private constructor(
 
             @JvmField val LANGSMITH_CLI = of("LANGSMITH_CLI")
 
+            @JvmField val LANGSMITH_MCP = of("LANGSMITH_MCP")
+
             @JvmStatic fun of(value: String) = Source(JsonField.of(value))
         }
 
         /** An enum containing [Source]'s known values. */
         enum class Known {
-            LANGSMITH_CLI
+            LANGSMITH_CLI,
+            LANGSMITH_MCP,
         }
 
         /**
@@ -521,6 +524,7 @@ private constructor(
          */
         enum class Value {
             LANGSMITH_CLI,
+            LANGSMITH_MCP,
             /** An enum member indicating that [Source] was instantiated with an unknown value. */
             _UNKNOWN,
         }
@@ -535,6 +539,7 @@ private constructor(
         fun value(): Value =
             when (this) {
                 LANGSMITH_CLI -> Value.LANGSMITH_CLI
+                LANGSMITH_MCP -> Value.LANGSMITH_MCP
                 else -> Value._UNKNOWN
             }
 
@@ -550,6 +555,7 @@ private constructor(
         fun known(): Known =
             when (this) {
                 LANGSMITH_CLI -> Known.LANGSMITH_CLI
+                LANGSMITH_MCP -> Known.LANGSMITH_MCP
                 else -> throw LangChainInvalidDataException("Unknown Source: $value")
             }
 
