@@ -3,12 +3,14 @@
 package com.langchain.smith.services.async.annotationqueues
 
 import com.langchain.smith.client.okhttp.LangsmithOkHttpClientAsync
+import com.langchain.smith.models.annotationqueues.items.ItemClearFinalParams
 import com.langchain.smith.models.annotationqueues.items.ItemCreateParams
 import com.langchain.smith.models.annotationqueues.items.ItemCreateStatusParams
 import com.langchain.smith.models.annotationqueues.items.ItemDeleteAllParams
 import com.langchain.smith.models.annotationqueues.items.ItemListParams
 import com.langchain.smith.models.annotationqueues.items.ItemRetrieveCountParams
 import com.langchain.smith.models.annotationqueues.items.ItemRetrievePlacementParams
+import com.langchain.smith.models.annotationqueues.items.ItemSetFinalParams
 import com.langchain.smith.models.annotationqueues.items.ItemUpdateParams
 import java.time.OffsetDateTime
 import org.junit.jupiter.api.Disabled
@@ -97,6 +99,28 @@ internal class ItemServiceAsyncTest {
 
     @Disabled("Mock server tests are disabled")
     @Test
+    fun clearFinal() {
+        val client =
+            LangsmithOkHttpClientAsync.builder()
+                .apiKey("My API Key")
+                .tenantId("My Tenant ID")
+                .build()
+        val itemServiceAsync = client.annotationQueues().items()
+
+        val future =
+            itemServiceAsync.clearFinal(
+                ItemClearFinalParams.builder()
+                    .queueId("queue_id")
+                    .itemId("item_id")
+                    .key("key")
+                    .build()
+            )
+
+        val response = future.get()
+    }
+
+    @Disabled("Mock server tests are disabled")
+    @Test
     fun createStatus() {
         val client =
             LangsmithOkHttpClientAsync.builder()
@@ -178,6 +202,32 @@ internal class ItemServiceAsyncTest {
         val responseFuture =
             itemServiceAsync.retrievePlacement(
                 ItemRetrievePlacementParams.builder().queueId("queue_id").itemId("item_id").build()
+            )
+
+        val response = responseFuture.get()
+        response.validate()
+    }
+
+    @Disabled("Mock server tests are disabled")
+    @Test
+    fun setFinal() {
+        val client =
+            LangsmithOkHttpClientAsync.builder()
+                .apiKey("My API Key")
+                .tenantId("My Tenant ID")
+                .build()
+        val itemServiceAsync = client.annotationQueues().items()
+
+        val responseFuture =
+            itemServiceAsync.setFinal(
+                ItemSetFinalParams.builder()
+                    .queueId("queue_id")
+                    .itemId("item_id")
+                    .key("key")
+                    .score(0.0)
+                    .value("value")
+                    .addValue("string")
+                    .build()
             )
 
         val response = responseFuture.get()

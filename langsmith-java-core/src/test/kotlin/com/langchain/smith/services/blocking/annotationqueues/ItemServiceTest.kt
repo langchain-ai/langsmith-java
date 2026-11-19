@@ -3,12 +3,14 @@
 package com.langchain.smith.services.blocking.annotationqueues
 
 import com.langchain.smith.client.okhttp.LangsmithOkHttpClient
+import com.langchain.smith.models.annotationqueues.items.ItemClearFinalParams
 import com.langchain.smith.models.annotationqueues.items.ItemCreateParams
 import com.langchain.smith.models.annotationqueues.items.ItemCreateStatusParams
 import com.langchain.smith.models.annotationqueues.items.ItemDeleteAllParams
 import com.langchain.smith.models.annotationqueues.items.ItemListParams
 import com.langchain.smith.models.annotationqueues.items.ItemRetrieveCountParams
 import com.langchain.smith.models.annotationqueues.items.ItemRetrievePlacementParams
+import com.langchain.smith.models.annotationqueues.items.ItemSetFinalParams
 import com.langchain.smith.models.annotationqueues.items.ItemUpdateParams
 import java.time.OffsetDateTime
 import org.junit.jupiter.api.Disabled
@@ -85,6 +87,18 @@ internal class ItemServiceTest {
 
     @Disabled("Mock server tests are disabled")
     @Test
+    fun clearFinal() {
+        val client =
+            LangsmithOkHttpClient.builder().apiKey("My API Key").tenantId("My Tenant ID").build()
+        val itemService = client.annotationQueues().items()
+
+        itemService.clearFinal(
+            ItemClearFinalParams.builder().queueId("queue_id").itemId("item_id").key("key").build()
+        )
+    }
+
+    @Disabled("Mock server tests are disabled")
+    @Test
     fun createStatus() {
         val client =
             LangsmithOkHttpClient.builder().apiKey("My API Key").tenantId("My Tenant ID").build()
@@ -151,6 +165,28 @@ internal class ItemServiceTest {
         val response =
             itemService.retrievePlacement(
                 ItemRetrievePlacementParams.builder().queueId("queue_id").itemId("item_id").build()
+            )
+
+        response.validate()
+    }
+
+    @Disabled("Mock server tests are disabled")
+    @Test
+    fun setFinal() {
+        val client =
+            LangsmithOkHttpClient.builder().apiKey("My API Key").tenantId("My Tenant ID").build()
+        val itemService = client.annotationQueues().items()
+
+        val response =
+            itemService.setFinal(
+                ItemSetFinalParams.builder()
+                    .queueId("queue_id")
+                    .itemId("item_id")
+                    .key("key")
+                    .score(0.0)
+                    .value("value")
+                    .addValue("string")
+                    .build()
             )
 
         response.validate()

@@ -4,7 +4,9 @@ package com.langchain.smith.services.async.annotationqueues
 
 import com.langchain.smith.core.ClientOptions
 import com.langchain.smith.core.RequestOptions
+import com.langchain.smith.core.http.HttpResponse
 import com.langchain.smith.core.http.HttpResponseFor
+import com.langchain.smith.models.annotationqueues.items.ItemClearFinalParams
 import com.langchain.smith.models.annotationqueues.items.ItemCreateParams
 import com.langchain.smith.models.annotationqueues.items.ItemCreateResponse
 import com.langchain.smith.models.annotationqueues.items.ItemCreateStatusParams
@@ -17,6 +19,8 @@ import com.langchain.smith.models.annotationqueues.items.ItemRetrieveCountParams
 import com.langchain.smith.models.annotationqueues.items.ItemRetrieveCountResponse
 import com.langchain.smith.models.annotationqueues.items.ItemRetrievePlacementParams
 import com.langchain.smith.models.annotationqueues.items.ItemRetrievePlacementResponse
+import com.langchain.smith.models.annotationqueues.items.ItemSetFinalParams
+import com.langchain.smith.models.annotationqueues.items.ItemSetFinalResponse
 import com.langchain.smith.models.annotationqueues.items.ItemUpdateParams
 import com.langchain.smith.models.annotationqueues.items.ItemUpdateResponse
 import java.util.concurrent.CompletableFuture
@@ -128,6 +132,30 @@ interface ItemServiceAsync {
         params: ItemListParams,
         requestOptions: RequestOptions = RequestOptions.none(),
     ): CompletableFuture<ItemListPageAsync>
+
+    /**
+     * Remove the final for one rubric key. The key's answer goes back to the reviewers' majority,
+     * or null when they disagreed. Clearing a key that has no final succeeds.
+     */
+    fun clearFinal(key: String, params: ItemClearFinalParams): CompletableFuture<Void?> =
+        clearFinal(key, params, RequestOptions.none())
+
+    /** @see clearFinal */
+    fun clearFinal(
+        key: String,
+        params: ItemClearFinalParams,
+        requestOptions: RequestOptions = RequestOptions.none(),
+    ): CompletableFuture<Void?> = clearFinal(params.toBuilder().key(key).build(), requestOptions)
+
+    /** @see clearFinal */
+    fun clearFinal(params: ItemClearFinalParams): CompletableFuture<Void?> =
+        clearFinal(params, RequestOptions.none())
+
+    /** @see clearFinal */
+    fun clearFinal(
+        params: ItemClearFinalParams,
+        requestOptions: RequestOptions = RequestOptions.none(),
+    ): CompletableFuture<Void?>
 
     /**
      * Log the caller's reviewer status for a RUN or THREAD annotation queue item. A null status
@@ -268,6 +296,32 @@ interface ItemServiceAsync {
         requestOptions: RequestOptions = RequestOptions.none(),
     ): CompletableFuture<ItemRetrievePlacementResponse>
 
+    /**
+     * Set the answer downstream uses for one rubric key when the item's reviewers disagreed. A key
+     * that already has a final can be changed even after reviewers come to agree. Multi-select keys
+     * take a list of category labels in values. final_set_by is empty for API key callers.
+     */
+    fun setFinal(key: String, params: ItemSetFinalParams): CompletableFuture<ItemSetFinalResponse> =
+        setFinal(key, params, RequestOptions.none())
+
+    /** @see setFinal */
+    fun setFinal(
+        key: String,
+        params: ItemSetFinalParams,
+        requestOptions: RequestOptions = RequestOptions.none(),
+    ): CompletableFuture<ItemSetFinalResponse> =
+        setFinal(params.toBuilder().key(key).build(), requestOptions)
+
+    /** @see setFinal */
+    fun setFinal(params: ItemSetFinalParams): CompletableFuture<ItemSetFinalResponse> =
+        setFinal(params, RequestOptions.none())
+
+    /** @see setFinal */
+    fun setFinal(
+        params: ItemSetFinalParams,
+        requestOptions: RequestOptions = RequestOptions.none(),
+    ): CompletableFuture<ItemSetFinalResponse>
+
     /** A view of [ItemServiceAsync] that provides access to raw HTTP responses for each method. */
     interface WithRawResponse {
 
@@ -379,6 +433,32 @@ interface ItemServiceAsync {
             params: ItemListParams,
             requestOptions: RequestOptions = RequestOptions.none(),
         ): CompletableFuture<HttpResponseFor<ItemListPageAsync>>
+
+        /**
+         * Returns a raw HTTP response for `delete
+         * /api/v1/platform/annotation-queues/{queue_id}/items/{item_id}/finals/{key}`, but is
+         * otherwise the same as [ItemServiceAsync.clearFinal].
+         */
+        fun clearFinal(key: String, params: ItemClearFinalParams): CompletableFuture<HttpResponse> =
+            clearFinal(key, params, RequestOptions.none())
+
+        /** @see clearFinal */
+        fun clearFinal(
+            key: String,
+            params: ItemClearFinalParams,
+            requestOptions: RequestOptions = RequestOptions.none(),
+        ): CompletableFuture<HttpResponse> =
+            clearFinal(params.toBuilder().key(key).build(), requestOptions)
+
+        /** @see clearFinal */
+        fun clearFinal(params: ItemClearFinalParams): CompletableFuture<HttpResponse> =
+            clearFinal(params, RequestOptions.none())
+
+        /** @see clearFinal */
+        fun clearFinal(
+            params: ItemClearFinalParams,
+            requestOptions: RequestOptions = RequestOptions.none(),
+        ): CompletableFuture<HttpResponse>
 
         /**
          * Returns a raw HTTP response for `post
@@ -527,5 +607,36 @@ interface ItemServiceAsync {
             params: ItemRetrievePlacementParams,
             requestOptions: RequestOptions = RequestOptions.none(),
         ): CompletableFuture<HttpResponseFor<ItemRetrievePlacementResponse>>
+
+        /**
+         * Returns a raw HTTP response for `put
+         * /api/v1/platform/annotation-queues/{queue_id}/items/{item_id}/finals/{key}`, but is
+         * otherwise the same as [ItemServiceAsync.setFinal].
+         */
+        fun setFinal(
+            key: String,
+            params: ItemSetFinalParams,
+        ): CompletableFuture<HttpResponseFor<ItemSetFinalResponse>> =
+            setFinal(key, params, RequestOptions.none())
+
+        /** @see setFinal */
+        fun setFinal(
+            key: String,
+            params: ItemSetFinalParams,
+            requestOptions: RequestOptions = RequestOptions.none(),
+        ): CompletableFuture<HttpResponseFor<ItemSetFinalResponse>> =
+            setFinal(params.toBuilder().key(key).build(), requestOptions)
+
+        /** @see setFinal */
+        fun setFinal(
+            params: ItemSetFinalParams
+        ): CompletableFuture<HttpResponseFor<ItemSetFinalResponse>> =
+            setFinal(params, RequestOptions.none())
+
+        /** @see setFinal */
+        fun setFinal(
+            params: ItemSetFinalParams,
+            requestOptions: RequestOptions = RequestOptions.none(),
+        ): CompletableFuture<HttpResponseFor<ItemSetFinalResponse>>
     }
 }

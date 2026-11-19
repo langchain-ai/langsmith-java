@@ -5,6 +5,7 @@ package com.langchain.smith.services.blocking.annotationqueues
 import com.langchain.smith.core.ClientOptions
 import com.langchain.smith.core.RequestOptions
 import com.langchain.smith.core.checkRequired
+import com.langchain.smith.core.handlers.emptyHandler
 import com.langchain.smith.core.handlers.errorBodyHandler
 import com.langchain.smith.core.handlers.errorHandler
 import com.langchain.smith.core.handlers.jsonHandler
@@ -16,6 +17,7 @@ import com.langchain.smith.core.http.HttpResponseFor
 import com.langchain.smith.core.http.json
 import com.langchain.smith.core.http.parseable
 import com.langchain.smith.core.prepare
+import com.langchain.smith.models.annotationqueues.items.ItemClearFinalParams
 import com.langchain.smith.models.annotationqueues.items.ItemCreateParams
 import com.langchain.smith.models.annotationqueues.items.ItemCreateResponse
 import com.langchain.smith.models.annotationqueues.items.ItemCreateStatusParams
@@ -29,6 +31,8 @@ import com.langchain.smith.models.annotationqueues.items.ItemRetrieveCountParams
 import com.langchain.smith.models.annotationqueues.items.ItemRetrieveCountResponse
 import com.langchain.smith.models.annotationqueues.items.ItemRetrievePlacementParams
 import com.langchain.smith.models.annotationqueues.items.ItemRetrievePlacementResponse
+import com.langchain.smith.models.annotationqueues.items.ItemSetFinalParams
+import com.langchain.smith.models.annotationqueues.items.ItemSetFinalResponse
 import com.langchain.smith.models.annotationqueues.items.ItemUpdateParams
 import com.langchain.smith.models.annotationqueues.items.ItemUpdateResponse
 import java.util.function.Consumer
@@ -63,6 +67,11 @@ class ItemServiceImpl internal constructor(private val clientOptions: ClientOpti
         // get /api/v1/platform/annotation-queues/{queue_id}/items
         withRawResponse().list(params, requestOptions).parse()
 
+    override fun clearFinal(params: ItemClearFinalParams, requestOptions: RequestOptions) {
+        // delete /api/v1/platform/annotation-queues/{queue_id}/items/{item_id}/finals/{key}
+        withRawResponse().clearFinal(params, requestOptions)
+    }
+
     override fun createStatus(
         params: ItemCreateStatusParams,
         requestOptions: RequestOptions,
@@ -90,6 +99,13 @@ class ItemServiceImpl internal constructor(private val clientOptions: ClientOpti
     ): ItemRetrievePlacementResponse =
         // get /api/v1/platform/annotation-queues/{queue_id}/items/{item_id}/placement
         withRawResponse().retrievePlacement(params, requestOptions).parse()
+
+    override fun setFinal(
+        params: ItemSetFinalParams,
+        requestOptions: RequestOptions,
+    ): ItemSetFinalResponse =
+        // put /api/v1/platform/annotation-queues/{queue_id}/items/{item_id}/finals/{key}
+        withRawResponse().setFinal(params, requestOptions).parse()
 
     class WithRawResponseImpl internal constructor(private val clientOptions: ClientOptions) :
         ItemService.WithRawResponse {
@@ -222,6 +238,40 @@ class ItemServiceImpl internal constructor(private val clientOptions: ClientOpti
                             .response(it)
                             .build()
                     }
+            }
+        }
+
+        private val clearFinalHandler: Handler<Void?> = emptyHandler()
+
+        override fun clearFinal(
+            params: ItemClearFinalParams,
+            requestOptions: RequestOptions,
+        ): HttpResponse {
+            // We check here instead of in the params builder because this can be specified
+            // positionally or in the params class.
+            checkRequired("key", params.key().getOrNull())
+            val request =
+                HttpRequest.builder()
+                    .method(HttpMethod.DELETE)
+                    .baseUrl(clientOptions.baseUrl())
+                    .addPathSegments(
+                        "api",
+                        "v1",
+                        "platform",
+                        "annotation-queues",
+                        params._pathParam(0),
+                        "items",
+                        params._pathParam(1),
+                        "finals",
+                        params._pathParam(2),
+                    )
+                    .apply { params._body().ifPresent { body(json(clientOptions.jsonMapper, it)) } }
+                    .build()
+                    .prepare(clientOptions, params)
+            val requestOptions = requestOptions.applyDefaults(RequestOptions.from(clientOptions))
+            val response = clientOptions.httpClient.execute(request, requestOptions)
+            return errorHandler.handle(response).parseable {
+                response.use { clearFinalHandler.handle(it) }
             }
         }
 
@@ -372,6 +422,47 @@ class ItemServiceImpl internal constructor(private val clientOptions: ClientOpti
             return errorHandler.handle(response).parseable {
                 response
                     .use { retrievePlacementHandler.handle(it) }
+                    .also {
+                        if (requestOptions.responseValidation!!) {
+                            it.validate()
+                        }
+                    }
+            }
+        }
+
+        private val setFinalHandler: Handler<ItemSetFinalResponse> =
+            jsonHandler<ItemSetFinalResponse>(clientOptions.jsonMapper)
+
+        override fun setFinal(
+            params: ItemSetFinalParams,
+            requestOptions: RequestOptions,
+        ): HttpResponseFor<ItemSetFinalResponse> {
+            // We check here instead of in the params builder because this can be specified
+            // positionally or in the params class.
+            checkRequired("key", params.key().getOrNull())
+            val request =
+                HttpRequest.builder()
+                    .method(HttpMethod.PUT)
+                    .baseUrl(clientOptions.baseUrl())
+                    .addPathSegments(
+                        "api",
+                        "v1",
+                        "platform",
+                        "annotation-queues",
+                        params._pathParam(0),
+                        "items",
+                        params._pathParam(1),
+                        "finals",
+                        params._pathParam(2),
+                    )
+                    .body(json(clientOptions.jsonMapper, params._body()))
+                    .build()
+                    .prepare(clientOptions, params)
+            val requestOptions = requestOptions.applyDefaults(RequestOptions.from(clientOptions))
+            val response = clientOptions.httpClient.execute(request, requestOptions)
+            return errorHandler.handle(response).parseable {
+                response
+                    .use { setFinalHandler.handle(it) }
                     .also {
                         if (requestOptions.responseValidation!!) {
                             it.validate()

@@ -5,7 +5,9 @@ package com.langchain.smith.services.blocking.annotationqueues
 import com.google.errorprone.annotations.MustBeClosed
 import com.langchain.smith.core.ClientOptions
 import com.langchain.smith.core.RequestOptions
+import com.langchain.smith.core.http.HttpResponse
 import com.langchain.smith.core.http.HttpResponseFor
+import com.langchain.smith.models.annotationqueues.items.ItemClearFinalParams
 import com.langchain.smith.models.annotationqueues.items.ItemCreateParams
 import com.langchain.smith.models.annotationqueues.items.ItemCreateResponse
 import com.langchain.smith.models.annotationqueues.items.ItemCreateStatusParams
@@ -18,6 +20,8 @@ import com.langchain.smith.models.annotationqueues.items.ItemRetrieveCountParams
 import com.langchain.smith.models.annotationqueues.items.ItemRetrieveCountResponse
 import com.langchain.smith.models.annotationqueues.items.ItemRetrievePlacementParams
 import com.langchain.smith.models.annotationqueues.items.ItemRetrievePlacementResponse
+import com.langchain.smith.models.annotationqueues.items.ItemSetFinalParams
+import com.langchain.smith.models.annotationqueues.items.ItemSetFinalResponse
 import com.langchain.smith.models.annotationqueues.items.ItemUpdateParams
 import com.langchain.smith.models.annotationqueues.items.ItemUpdateResponse
 import java.util.function.Consumer
@@ -118,6 +122,29 @@ interface ItemService {
         params: ItemListParams,
         requestOptions: RequestOptions = RequestOptions.none(),
     ): ItemListPage
+
+    /**
+     * Remove the final for one rubric key. The key's answer goes back to the reviewers' majority,
+     * or null when they disagreed. Clearing a key that has no final succeeds.
+     */
+    fun clearFinal(key: String, params: ItemClearFinalParams) =
+        clearFinal(key, params, RequestOptions.none())
+
+    /** @see clearFinal */
+    fun clearFinal(
+        key: String,
+        params: ItemClearFinalParams,
+        requestOptions: RequestOptions = RequestOptions.none(),
+    ) = clearFinal(params.toBuilder().key(key).build(), requestOptions)
+
+    /** @see clearFinal */
+    fun clearFinal(params: ItemClearFinalParams) = clearFinal(params, RequestOptions.none())
+
+    /** @see clearFinal */
+    fun clearFinal(
+        params: ItemClearFinalParams,
+        requestOptions: RequestOptions = RequestOptions.none(),
+    )
 
     /**
      * Log the caller's reviewer status for a RUN or THREAD annotation queue item. A null status
@@ -247,6 +274,31 @@ interface ItemService {
         requestOptions: RequestOptions = RequestOptions.none(),
     ): ItemRetrievePlacementResponse
 
+    /**
+     * Set the answer downstream uses for one rubric key when the item's reviewers disagreed. A key
+     * that already has a final can be changed even after reviewers come to agree. Multi-select keys
+     * take a list of category labels in values. final_set_by is empty for API key callers.
+     */
+    fun setFinal(key: String, params: ItemSetFinalParams): ItemSetFinalResponse =
+        setFinal(key, params, RequestOptions.none())
+
+    /** @see setFinal */
+    fun setFinal(
+        key: String,
+        params: ItemSetFinalParams,
+        requestOptions: RequestOptions = RequestOptions.none(),
+    ): ItemSetFinalResponse = setFinal(params.toBuilder().key(key).build(), requestOptions)
+
+    /** @see setFinal */
+    fun setFinal(params: ItemSetFinalParams): ItemSetFinalResponse =
+        setFinal(params, RequestOptions.none())
+
+    /** @see setFinal */
+    fun setFinal(
+        params: ItemSetFinalParams,
+        requestOptions: RequestOptions = RequestOptions.none(),
+    ): ItemSetFinalResponse
+
     /** A view of [ItemService] that provides access to raw HTTP responses for each method. */
     interface WithRawResponse {
 
@@ -361,6 +413,35 @@ interface ItemService {
             params: ItemListParams,
             requestOptions: RequestOptions = RequestOptions.none(),
         ): HttpResponseFor<ItemListPage>
+
+        /**
+         * Returns a raw HTTP response for `delete
+         * /api/v1/platform/annotation-queues/{queue_id}/items/{item_id}/finals/{key}`, but is
+         * otherwise the same as [ItemService.clearFinal].
+         */
+        @MustBeClosed
+        fun clearFinal(key: String, params: ItemClearFinalParams): HttpResponse =
+            clearFinal(key, params, RequestOptions.none())
+
+        /** @see clearFinal */
+        @MustBeClosed
+        fun clearFinal(
+            key: String,
+            params: ItemClearFinalParams,
+            requestOptions: RequestOptions = RequestOptions.none(),
+        ): HttpResponse = clearFinal(params.toBuilder().key(key).build(), requestOptions)
+
+        /** @see clearFinal */
+        @MustBeClosed
+        fun clearFinal(params: ItemClearFinalParams): HttpResponse =
+            clearFinal(params, RequestOptions.none())
+
+        /** @see clearFinal */
+        @MustBeClosed
+        fun clearFinal(
+            params: ItemClearFinalParams,
+            requestOptions: RequestOptions = RequestOptions.none(),
+        ): HttpResponse
 
         /**
          * Returns a raw HTTP response for `post
@@ -523,5 +604,37 @@ interface ItemService {
             params: ItemRetrievePlacementParams,
             requestOptions: RequestOptions = RequestOptions.none(),
         ): HttpResponseFor<ItemRetrievePlacementResponse>
+
+        /**
+         * Returns a raw HTTP response for `put
+         * /api/v1/platform/annotation-queues/{queue_id}/items/{item_id}/finals/{key}`, but is
+         * otherwise the same as [ItemService.setFinal].
+         */
+        @MustBeClosed
+        fun setFinal(
+            key: String,
+            params: ItemSetFinalParams,
+        ): HttpResponseFor<ItemSetFinalResponse> = setFinal(key, params, RequestOptions.none())
+
+        /** @see setFinal */
+        @MustBeClosed
+        fun setFinal(
+            key: String,
+            params: ItemSetFinalParams,
+            requestOptions: RequestOptions = RequestOptions.none(),
+        ): HttpResponseFor<ItemSetFinalResponse> =
+            setFinal(params.toBuilder().key(key).build(), requestOptions)
+
+        /** @see setFinal */
+        @MustBeClosed
+        fun setFinal(params: ItemSetFinalParams): HttpResponseFor<ItemSetFinalResponse> =
+            setFinal(params, RequestOptions.none())
+
+        /** @see setFinal */
+        @MustBeClosed
+        fun setFinal(
+            params: ItemSetFinalParams,
+            requestOptions: RequestOptions = RequestOptions.none(),
+        ): HttpResponseFor<ItemSetFinalResponse>
     }
 }
