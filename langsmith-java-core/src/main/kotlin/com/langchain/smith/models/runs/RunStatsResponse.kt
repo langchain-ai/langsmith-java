@@ -30,6 +30,10 @@ import java.util.Objects
 import java.util.Optional
 import kotlin.jvm.optionals.getOrNull
 
+/**
+ * Run statistics: one object for an ungrouped query, or an object keyed by group value or bucket
+ * start time when the query groups or buckets runs.
+ */
 @JsonDeserialize(using = RunStatsResponse.Deserializer::class)
 @JsonSerialize(using = RunStatsResponse.Serializer::class)
 class RunStatsResponse

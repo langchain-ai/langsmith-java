@@ -9,7 +9,10 @@ import com.langchain.smith.core.http.Headers
 import com.langchain.smith.core.http.QueryParams
 import java.util.Objects
 
-/** Get all runs by query in body payload. */
+/**
+ * GET with body payload — no resources created. Returns the run statistics matching the query
+ * passed as the request payload.
+ */
 class RunStatsParams
 private constructor(
     private val runStatsQueryParams: RunStatsQueryParams,

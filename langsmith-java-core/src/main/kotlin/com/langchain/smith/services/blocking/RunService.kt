@@ -316,7 +316,10 @@ interface RunService {
         requestOptions: RequestOptions = RequestOptions.none(),
     ): Run
 
-    /** Get all runs by query in body payload. */
+    /**
+     * GET with body payload — no resources created. Returns the run statistics matching the query
+     * passed as the request payload.
+     */
     fun stats(params: RunStatsParams): RunStatsResponse = stats(params, RequestOptions.none())
 
     /** @see stats */
