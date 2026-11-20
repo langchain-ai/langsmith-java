@@ -12,6 +12,8 @@ import com.langchain.smith.models.sandboxes.SandboxResponse
 import com.langchain.smith.models.sandboxes.SandboxStatusResponse
 import com.langchain.smith.models.sandboxes.ServiceUrlResponse
 import com.langchain.smith.models.sandboxes.SnapshotResponse
+import com.langchain.smith.models.sandboxes.boxes.BoxBatchDeleteParams
+import com.langchain.smith.models.sandboxes.boxes.BoxBatchDeleteResponse
 import com.langchain.smith.models.sandboxes.boxes.BoxCreateParams
 import com.langchain.smith.models.sandboxes.boxes.BoxCreateSnapshotParams
 import com.langchain.smith.models.sandboxes.boxes.BoxDeleteParams
@@ -175,6 +177,24 @@ interface BoxService {
     /** @see delete */
     fun delete(name: String, requestOptions: RequestOptions) =
         delete(name, BoxDeleteParams.none(), requestOptions)
+
+    /** Delete multiple sandboxes by name or UUID in a single request. */
+    fun batchDelete(): BoxBatchDeleteResponse = batchDelete(BoxBatchDeleteParams.none())
+
+    /** @see batchDelete */
+    fun batchDelete(
+        params: BoxBatchDeleteParams = BoxBatchDeleteParams.none(),
+        requestOptions: RequestOptions = RequestOptions.none(),
+    ): BoxBatchDeleteResponse
+
+    /** @see batchDelete */
+    fun batchDelete(
+        params: BoxBatchDeleteParams = BoxBatchDeleteParams.none()
+    ): BoxBatchDeleteResponse = batchDelete(params, RequestOptions.none())
+
+    /** @see batchDelete */
+    fun batchDelete(requestOptions: RequestOptions): BoxBatchDeleteResponse =
+        batchDelete(BoxBatchDeleteParams.none(), requestOptions)
 
     /**
      * Create a snapshot by capturing the current state of a sandbox or promoting an existing
@@ -620,6 +640,32 @@ interface BoxService {
         @MustBeClosed
         fun delete(name: String, requestOptions: RequestOptions): HttpResponse =
             delete(name, BoxDeleteParams.none(), requestOptions)
+
+        /**
+         * Returns a raw HTTP response for `post /api/v2/sandboxes/boxes/batch-delete`, but is
+         * otherwise the same as [BoxService.batchDelete].
+         */
+        @MustBeClosed
+        fun batchDelete(): HttpResponseFor<BoxBatchDeleteResponse> =
+            batchDelete(BoxBatchDeleteParams.none())
+
+        /** @see batchDelete */
+        @MustBeClosed
+        fun batchDelete(
+            params: BoxBatchDeleteParams = BoxBatchDeleteParams.none(),
+            requestOptions: RequestOptions = RequestOptions.none(),
+        ): HttpResponseFor<BoxBatchDeleteResponse>
+
+        /** @see batchDelete */
+        @MustBeClosed
+        fun batchDelete(
+            params: BoxBatchDeleteParams = BoxBatchDeleteParams.none()
+        ): HttpResponseFor<BoxBatchDeleteResponse> = batchDelete(params, RequestOptions.none())
+
+        /** @see batchDelete */
+        @MustBeClosed
+        fun batchDelete(requestOptions: RequestOptions): HttpResponseFor<BoxBatchDeleteResponse> =
+            batchDelete(BoxBatchDeleteParams.none(), requestOptions)
 
         /**
          * Returns a raw HTTP response for `post /api/v2/sandboxes/boxes/{name}/snapshot`, but is

@@ -23,6 +23,8 @@ import com.langchain.smith.models.sandboxes.SandboxResponse
 import com.langchain.smith.models.sandboxes.SandboxStatusResponse
 import com.langchain.smith.models.sandboxes.ServiceUrlResponse
 import com.langchain.smith.models.sandboxes.SnapshotResponse
+import com.langchain.smith.models.sandboxes.boxes.BoxBatchDeleteParams
+import com.langchain.smith.models.sandboxes.boxes.BoxBatchDeleteResponse
 import com.langchain.smith.models.sandboxes.boxes.BoxCreateParams
 import com.langchain.smith.models.sandboxes.boxes.BoxCreateSnapshotParams
 import com.langchain.smith.models.sandboxes.boxes.BoxDeleteParams
@@ -89,6 +91,13 @@ class BoxServiceAsyncImpl internal constructor(private val clientOptions: Client
     ): CompletableFuture<Void?> =
         // delete /api/v2/sandboxes/boxes/{name}
         withRawResponse().delete(params, requestOptions).thenAccept {}
+
+    override fun batchDelete(
+        params: BoxBatchDeleteParams,
+        requestOptions: RequestOptions,
+    ): CompletableFuture<BoxBatchDeleteResponse> =
+        // post /api/v2/sandboxes/boxes/batch-delete
+        withRawResponse().batchDelete(params, requestOptions).thenApply { it.parse() }
 
     override fun createSnapshot(
         params: BoxCreateSnapshotParams,
@@ -318,6 +327,37 @@ class BoxServiceAsyncImpl internal constructor(private val clientOptions: Client
                 .thenApply { response ->
                     errorHandler.handle(response).parseable {
                         response.use { deleteHandler.handle(it) }
+                    }
+                }
+        }
+
+        private val batchDeleteHandler: Handler<BoxBatchDeleteResponse> =
+            jsonHandler<BoxBatchDeleteResponse>(clientOptions.jsonMapper)
+
+        override fun batchDelete(
+            params: BoxBatchDeleteParams,
+            requestOptions: RequestOptions,
+        ): CompletableFuture<HttpResponseFor<BoxBatchDeleteResponse>> {
+            val request =
+                HttpRequest.builder()
+                    .method(HttpMethod.POST)
+                    .baseUrl(clientOptions.baseUrl())
+                    .addPathSegments("api", "v2", "sandboxes", "boxes", "batch-delete")
+                    .body(json(clientOptions.jsonMapper, params._body()))
+                    .build()
+                    .prepareAsync(clientOptions, params)
+            val requestOptions = requestOptions.applyDefaults(RequestOptions.from(clientOptions))
+            return request
+                .thenComposeAsync { clientOptions.httpClient.executeAsync(it, requestOptions) }
+                .thenApply { response ->
+                    errorHandler.handle(response).parseable {
+                        response
+                            .use { batchDeleteHandler.handle(it) }
+                            .also {
+                                if (requestOptions.responseValidation!!) {
+                                    it.validate()
+                                }
+                            }
                     }
                 }
         }

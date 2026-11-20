@@ -31,4 +31,20 @@ internal class SandboxServiceAsyncTest {
         val page = pageFuture.get()
         page.response().validate()
     }
+
+    @Disabled("Mock server tests are disabled")
+    @Test
+    fun retrieveUsage() {
+        val client =
+            LangsmithOkHttpClientAsync.builder()
+                .apiKey("My API Key")
+                .tenantId("My Tenant ID")
+                .build()
+        val sandboxServiceAsync = client.sandboxes()
+
+        val responseFuture = sandboxServiceAsync.retrieveUsage()
+
+        val response = responseFuture.get()
+        response.validate()
+    }
 }

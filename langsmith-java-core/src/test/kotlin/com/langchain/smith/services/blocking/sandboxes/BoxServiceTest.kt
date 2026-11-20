@@ -6,6 +6,7 @@ import com.langchain.smith.client.okhttp.LangsmithOkHttpClient
 import com.langchain.smith.core.JsonValue
 import com.langchain.smith.models.sandboxes.ProxyConfig
 import com.langchain.smith.models.sandboxes.SandboxMountConfig
+import com.langchain.smith.models.sandboxes.boxes.BoxBatchDeleteParams
 import com.langchain.smith.models.sandboxes.boxes.BoxCreateParams
 import com.langchain.smith.models.sandboxes.boxes.BoxCreateSnapshotParams
 import com.langchain.smith.models.sandboxes.boxes.BoxDeleteServiceUrlParams
@@ -490,6 +491,19 @@ internal class BoxServiceTest {
         val boxService = client.sandboxes().boxes()
 
         boxService.delete("name")
+    }
+
+    @Disabled("Mock server tests are disabled")
+    @Test
+    fun batchDelete() {
+        val client =
+            LangsmithOkHttpClient.builder().apiKey("My API Key").tenantId("My Tenant ID").build()
+        val boxService = client.sandboxes().boxes()
+
+        val response =
+            boxService.batchDelete(BoxBatchDeleteParams.builder().addName("string").build())
+
+        response.validate()
     }
 
     @Disabled("Mock server tests are disabled")

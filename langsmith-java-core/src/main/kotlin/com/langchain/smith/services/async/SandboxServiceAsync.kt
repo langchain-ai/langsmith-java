@@ -7,9 +7,12 @@ import com.langchain.smith.core.RequestOptions
 import com.langchain.smith.core.http.HttpResponseFor
 import com.langchain.smith.models.sandboxes.SandboxListUsageCostsPageAsync
 import com.langchain.smith.models.sandboxes.SandboxListUsageCostsParams
+import com.langchain.smith.models.sandboxes.SandboxRetrieveUsageParams
+import com.langchain.smith.models.sandboxes.SandboxRetrieveUsageResponse
 import com.langchain.smith.services.async.sandboxes.BoxServiceAsync
 import com.langchain.smith.services.async.sandboxes.RegistryServiceAsync
 import com.langchain.smith.services.async.sandboxes.SnapshotServiceAsync
+import com.langchain.smith.services.async.sandboxes.VolumeServiceAsync
 import java.util.concurrent.CompletableFuture
 import java.util.function.Consumer
 
@@ -28,6 +31,8 @@ interface SandboxServiceAsync {
     fun withOptions(modifier: Consumer<ClientOptions.Builder>): SandboxServiceAsync
 
     fun boxes(): BoxServiceAsync
+
+    fun volumes(): VolumeServiceAsync
 
     fun registries(): RegistryServiceAsync
 
@@ -52,6 +57,28 @@ interface SandboxServiceAsync {
         requestOptions: RequestOptions = RequestOptions.none(),
     ): CompletableFuture<SandboxListUsageCostsPageAsync>
 
+    /** Get current sandbox resource usage and quota limits for the workspace */
+    fun retrieveUsage(): CompletableFuture<SandboxRetrieveUsageResponse> =
+        retrieveUsage(SandboxRetrieveUsageParams.none())
+
+    /** @see retrieveUsage */
+    fun retrieveUsage(
+        params: SandboxRetrieveUsageParams = SandboxRetrieveUsageParams.none(),
+        requestOptions: RequestOptions = RequestOptions.none(),
+    ): CompletableFuture<SandboxRetrieveUsageResponse>
+
+    /** @see retrieveUsage */
+    fun retrieveUsage(
+        params: SandboxRetrieveUsageParams = SandboxRetrieveUsageParams.none()
+    ): CompletableFuture<SandboxRetrieveUsageResponse> =
+        retrieveUsage(params, RequestOptions.none())
+
+    /** @see retrieveUsage */
+    fun retrieveUsage(
+        requestOptions: RequestOptions
+    ): CompletableFuture<SandboxRetrieveUsageResponse> =
+        retrieveUsage(SandboxRetrieveUsageParams.none(), requestOptions)
+
     /**
      * A view of [SandboxServiceAsync] that provides access to raw HTTP responses for each method.
      */
@@ -67,6 +94,8 @@ interface SandboxServiceAsync {
         ): SandboxServiceAsync.WithRawResponse
 
         fun boxes(): BoxServiceAsync.WithRawResponse
+
+        fun volumes(): VolumeServiceAsync.WithRawResponse
 
         fun registries(): RegistryServiceAsync.WithRawResponse
 
@@ -86,5 +115,30 @@ interface SandboxServiceAsync {
             params: SandboxListUsageCostsParams,
             requestOptions: RequestOptions = RequestOptions.none(),
         ): CompletableFuture<HttpResponseFor<SandboxListUsageCostsPageAsync>>
+
+        /**
+         * Returns a raw HTTP response for `get /api/v2/sandboxes/usage`, but is otherwise the same
+         * as [SandboxServiceAsync.retrieveUsage].
+         */
+        fun retrieveUsage(): CompletableFuture<HttpResponseFor<SandboxRetrieveUsageResponse>> =
+            retrieveUsage(SandboxRetrieveUsageParams.none())
+
+        /** @see retrieveUsage */
+        fun retrieveUsage(
+            params: SandboxRetrieveUsageParams = SandboxRetrieveUsageParams.none(),
+            requestOptions: RequestOptions = RequestOptions.none(),
+        ): CompletableFuture<HttpResponseFor<SandboxRetrieveUsageResponse>>
+
+        /** @see retrieveUsage */
+        fun retrieveUsage(
+            params: SandboxRetrieveUsageParams = SandboxRetrieveUsageParams.none()
+        ): CompletableFuture<HttpResponseFor<SandboxRetrieveUsageResponse>> =
+            retrieveUsage(params, RequestOptions.none())
+
+        /** @see retrieveUsage */
+        fun retrieveUsage(
+            requestOptions: RequestOptions
+        ): CompletableFuture<HttpResponseFor<SandboxRetrieveUsageResponse>> =
+            retrieveUsage(SandboxRetrieveUsageParams.none(), requestOptions)
     }
 }

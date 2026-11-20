@@ -27,4 +27,16 @@ internal class SandboxServiceTest {
 
         page.response().validate()
     }
+
+    @Disabled("Mock server tests are disabled")
+    @Test
+    fun retrieveUsage() {
+        val client =
+            LangsmithOkHttpClient.builder().apiKey("My API Key").tenantId("My Tenant ID").build()
+        val sandboxService = client.sandboxes()
+
+        val response = sandboxService.retrieveUsage()
+
+        response.validate()
+    }
 }
