@@ -7,6 +7,7 @@ import com.langchain.smith.core.ClientOptions
 import com.langchain.smith.core.RequestOptions
 import com.langchain.smith.core.http.HttpResponse
 import com.langchain.smith.core.http.HttpResponseFor
+import com.langchain.smith.models.annotationqueues.items.AnnotationQueueItemKeyReviews
 import com.langchain.smith.models.annotationqueues.items.ItemClearFinalParams
 import com.langchain.smith.models.annotationqueues.items.ItemCreateParams
 import com.langchain.smith.models.annotationqueues.items.ItemCreateResponse
@@ -20,8 +21,11 @@ import com.langchain.smith.models.annotationqueues.items.ItemRetrieveCountParams
 import com.langchain.smith.models.annotationqueues.items.ItemRetrieveCountResponse
 import com.langchain.smith.models.annotationqueues.items.ItemRetrievePlacementParams
 import com.langchain.smith.models.annotationqueues.items.ItemRetrievePlacementResponse
+import com.langchain.smith.models.annotationqueues.items.ItemRetrieveReviewsParams
+import com.langchain.smith.models.annotationqueues.items.ItemRetrieveReviewsResponse
 import com.langchain.smith.models.annotationqueues.items.ItemSetFinalParams
 import com.langchain.smith.models.annotationqueues.items.ItemSetFinalResponse
+import com.langchain.smith.models.annotationqueues.items.ItemSetReviewParams
 import com.langchain.smith.models.annotationqueues.items.ItemUpdateParams
 import com.langchain.smith.models.annotationqueues.items.ItemUpdateResponse
 import java.util.function.Consumer
@@ -275,6 +279,35 @@ interface ItemService {
     ): ItemRetrievePlacementResponse
 
     /**
+     * For each rubric key: whether the reviewers agreed, the final if one is set, and each
+     * reviewer's answer. Reviewers are listed in the order they completed the item. Their name and
+     * email are empty when the caller cannot see other workspace members. Returns 404 unless the
+     * item is completed.
+     */
+    fun retrieveReviews(
+        itemId: String,
+        params: ItemRetrieveReviewsParams,
+    ): ItemRetrieveReviewsResponse = retrieveReviews(itemId, params, RequestOptions.none())
+
+    /** @see retrieveReviews */
+    fun retrieveReviews(
+        itemId: String,
+        params: ItemRetrieveReviewsParams,
+        requestOptions: RequestOptions = RequestOptions.none(),
+    ): ItemRetrieveReviewsResponse =
+        retrieveReviews(params.toBuilder().itemId(itemId).build(), requestOptions)
+
+    /** @see retrieveReviews */
+    fun retrieveReviews(params: ItemRetrieveReviewsParams): ItemRetrieveReviewsResponse =
+        retrieveReviews(params, RequestOptions.none())
+
+    /** @see retrieveReviews */
+    fun retrieveReviews(
+        params: ItemRetrieveReviewsParams,
+        requestOptions: RequestOptions = RequestOptions.none(),
+    ): ItemRetrieveReviewsResponse
+
+    /**
      * Set the answer downstream uses for one rubric key when the item's reviewers disagreed. A key
      * that already has a final can be changed even after reviewers come to agree. Multi-select keys
      * take a list of category labels in values. final_set_by is empty for API key callers.
@@ -298,6 +331,32 @@ interface ItemService {
         params: ItemSetFinalParams,
         requestOptions: RequestOptions = RequestOptions.none(),
     ): ItemSetFinalResponse
+
+    /**
+     * Replace your own answer on one rubric key and update the item's agreement. Only a reviewer
+     * who completed the item can edit their answer. Multi-select keys take a list of category
+     * labels in values; free-text keys take text in value. An empty body clears your answer.
+     */
+    fun setReview(key: String, params: ItemSetReviewParams): AnnotationQueueItemKeyReviews =
+        setReview(key, params, RequestOptions.none())
+
+    /** @see setReview */
+    fun setReview(
+        key: String,
+        params: ItemSetReviewParams,
+        requestOptions: RequestOptions = RequestOptions.none(),
+    ): AnnotationQueueItemKeyReviews =
+        setReview(params.toBuilder().key(key).build(), requestOptions)
+
+    /** @see setReview */
+    fun setReview(params: ItemSetReviewParams): AnnotationQueueItemKeyReviews =
+        setReview(params, RequestOptions.none())
+
+    /** @see setReview */
+    fun setReview(
+        params: ItemSetReviewParams,
+        requestOptions: RequestOptions = RequestOptions.none(),
+    ): AnnotationQueueItemKeyReviews
 
     /** A view of [ItemService] that provides access to raw HTTP responses for each method. */
     interface WithRawResponse {
@@ -606,6 +665,41 @@ interface ItemService {
         ): HttpResponseFor<ItemRetrievePlacementResponse>
 
         /**
+         * Returns a raw HTTP response for `get
+         * /api/v1/platform/annotation-queues/{queue_id}/items/{item_id}/reviews`, but is otherwise
+         * the same as [ItemService.retrieveReviews].
+         */
+        @MustBeClosed
+        fun retrieveReviews(
+            itemId: String,
+            params: ItemRetrieveReviewsParams,
+        ): HttpResponseFor<ItemRetrieveReviewsResponse> =
+            retrieveReviews(itemId, params, RequestOptions.none())
+
+        /** @see retrieveReviews */
+        @MustBeClosed
+        fun retrieveReviews(
+            itemId: String,
+            params: ItemRetrieveReviewsParams,
+            requestOptions: RequestOptions = RequestOptions.none(),
+        ): HttpResponseFor<ItemRetrieveReviewsResponse> =
+            retrieveReviews(params.toBuilder().itemId(itemId).build(), requestOptions)
+
+        /** @see retrieveReviews */
+        @MustBeClosed
+        fun retrieveReviews(
+            params: ItemRetrieveReviewsParams
+        ): HttpResponseFor<ItemRetrieveReviewsResponse> =
+            retrieveReviews(params, RequestOptions.none())
+
+        /** @see retrieveReviews */
+        @MustBeClosed
+        fun retrieveReviews(
+            params: ItemRetrieveReviewsParams,
+            requestOptions: RequestOptions = RequestOptions.none(),
+        ): HttpResponseFor<ItemRetrieveReviewsResponse>
+
+        /**
          * Returns a raw HTTP response for `put
          * /api/v1/platform/annotation-queues/{queue_id}/items/{item_id}/finals/{key}`, but is
          * otherwise the same as [ItemService.setFinal].
@@ -636,5 +730,38 @@ interface ItemService {
             params: ItemSetFinalParams,
             requestOptions: RequestOptions = RequestOptions.none(),
         ): HttpResponseFor<ItemSetFinalResponse>
+
+        /**
+         * Returns a raw HTTP response for `put
+         * /api/v1/platform/annotation-queues/{queue_id}/items/{item_id}/reviews/{key}`, but is
+         * otherwise the same as [ItemService.setReview].
+         */
+        @MustBeClosed
+        fun setReview(
+            key: String,
+            params: ItemSetReviewParams,
+        ): HttpResponseFor<AnnotationQueueItemKeyReviews> =
+            setReview(key, params, RequestOptions.none())
+
+        /** @see setReview */
+        @MustBeClosed
+        fun setReview(
+            key: String,
+            params: ItemSetReviewParams,
+            requestOptions: RequestOptions = RequestOptions.none(),
+        ): HttpResponseFor<AnnotationQueueItemKeyReviews> =
+            setReview(params.toBuilder().key(key).build(), requestOptions)
+
+        /** @see setReview */
+        @MustBeClosed
+        fun setReview(params: ItemSetReviewParams): HttpResponseFor<AnnotationQueueItemKeyReviews> =
+            setReview(params, RequestOptions.none())
+
+        /** @see setReview */
+        @MustBeClosed
+        fun setReview(
+            params: ItemSetReviewParams,
+            requestOptions: RequestOptions = RequestOptions.none(),
+        ): HttpResponseFor<AnnotationQueueItemKeyReviews>
     }
 }

@@ -15,7 +15,7 @@ internal class ItemSetFinalResponseTest {
         val itemSetFinalResponse =
             ItemSetFinalResponse.builder()
                 .answer(
-                    ItemSetFinalResponse.Answer.builder()
+                    AnnotationQueueItemAnswer.builder()
                         .score(0.0)
                         .addScore(0.0)
                         .value("value")
@@ -23,7 +23,7 @@ internal class ItemSetFinalResponseTest {
                         .build()
                 )
                 .final_(
-                    ItemSetFinalResponse.Final.builder()
+                    AnnotationQueueItemAnswer.builder()
                         .score(0.0)
                         .addScore(0.0)
                         .value("value")
@@ -34,12 +34,12 @@ internal class ItemSetFinalResponseTest {
                 .finalSetBy("final_set_by")
                 .hasFinal(true)
                 .key("key")
-                .state(ItemSetFinalResponse.State.AGREED)
+                .state(AnnotationQueueItemAgreementState.AGREED)
                 .build()
 
         assertThat(itemSetFinalResponse.answer())
             .contains(
-                ItemSetFinalResponse.Answer.builder()
+                AnnotationQueueItemAnswer.builder()
                     .score(0.0)
                     .addScore(0.0)
                     .value("value")
@@ -48,7 +48,7 @@ internal class ItemSetFinalResponseTest {
             )
         assertThat(itemSetFinalResponse.final_())
             .contains(
-                ItemSetFinalResponse.Final.builder()
+                AnnotationQueueItemAnswer.builder()
                     .score(0.0)
                     .addScore(0.0)
                     .value("value")
@@ -60,7 +60,7 @@ internal class ItemSetFinalResponseTest {
         assertThat(itemSetFinalResponse.finalSetBy()).contains("final_set_by")
         assertThat(itemSetFinalResponse.hasFinal()).contains(true)
         assertThat(itemSetFinalResponse.key()).contains("key")
-        assertThat(itemSetFinalResponse.state()).contains(ItemSetFinalResponse.State.AGREED)
+        assertThat(itemSetFinalResponse.state()).contains(AnnotationQueueItemAgreementState.AGREED)
     }
 
     @Test
@@ -69,7 +69,7 @@ internal class ItemSetFinalResponseTest {
         val itemSetFinalResponse =
             ItemSetFinalResponse.builder()
                 .answer(
-                    ItemSetFinalResponse.Answer.builder()
+                    AnnotationQueueItemAnswer.builder()
                         .score(0.0)
                         .addScore(0.0)
                         .value("value")
@@ -77,7 +77,7 @@ internal class ItemSetFinalResponseTest {
                         .build()
                 )
                 .final_(
-                    ItemSetFinalResponse.Final.builder()
+                    AnnotationQueueItemAnswer.builder()
                         .score(0.0)
                         .addScore(0.0)
                         .value("value")
@@ -88,7 +88,7 @@ internal class ItemSetFinalResponseTest {
                 .finalSetBy("final_set_by")
                 .hasFinal(true)
                 .key("key")
-                .state(ItemSetFinalResponse.State.AGREED)
+                .state(AnnotationQueueItemAgreementState.AGREED)
                 .build()
 
         val roundtrippedItemSetFinalResponse =

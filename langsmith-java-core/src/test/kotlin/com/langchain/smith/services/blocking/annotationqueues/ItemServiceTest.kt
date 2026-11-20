@@ -10,7 +10,9 @@ import com.langchain.smith.models.annotationqueues.items.ItemDeleteAllParams
 import com.langchain.smith.models.annotationqueues.items.ItemListParams
 import com.langchain.smith.models.annotationqueues.items.ItemRetrieveCountParams
 import com.langchain.smith.models.annotationqueues.items.ItemRetrievePlacementParams
+import com.langchain.smith.models.annotationqueues.items.ItemRetrieveReviewsParams
 import com.langchain.smith.models.annotationqueues.items.ItemSetFinalParams
+import com.langchain.smith.models.annotationqueues.items.ItemSetReviewParams
 import com.langchain.smith.models.annotationqueues.items.ItemUpdateParams
 import java.time.OffsetDateTime
 import org.junit.jupiter.api.Disabled
@@ -172,6 +174,21 @@ internal class ItemServiceTest {
 
     @Disabled("Mock server tests are disabled")
     @Test
+    fun retrieveReviews() {
+        val client =
+            LangsmithOkHttpClient.builder().apiKey("My API Key").tenantId("My Tenant ID").build()
+        val itemService = client.annotationQueues().items()
+
+        val response =
+            itemService.retrieveReviews(
+                ItemRetrieveReviewsParams.builder().queueId("queue_id").itemId("item_id").build()
+            )
+
+        response.validate()
+    }
+
+    @Disabled("Mock server tests are disabled")
+    @Test
     fun setFinal() {
         val client =
             LangsmithOkHttpClient.builder().apiKey("My API Key").tenantId("My Tenant ID").build()
@@ -190,5 +207,27 @@ internal class ItemServiceTest {
             )
 
         response.validate()
+    }
+
+    @Disabled("Mock server tests are disabled")
+    @Test
+    fun setReview() {
+        val client =
+            LangsmithOkHttpClient.builder().apiKey("My API Key").tenantId("My Tenant ID").build()
+        val itemService = client.annotationQueues().items()
+
+        val annotationQueueItemKeyReviews =
+            itemService.setReview(
+                ItemSetReviewParams.builder()
+                    .queueId("queue_id")
+                    .itemId("item_id")
+                    .key("key")
+                    .score(0.0)
+                    .value("value")
+                    .addValue("string")
+                    .build()
+            )
+
+        annotationQueueItemKeyReviews.validate()
     }
 }

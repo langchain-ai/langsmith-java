@@ -17,6 +17,7 @@ import com.langchain.smith.core.http.HttpResponseFor
 import com.langchain.smith.core.http.json
 import com.langchain.smith.core.http.parseable
 import com.langchain.smith.core.prepareAsync
+import com.langchain.smith.models.annotationqueues.items.AnnotationQueueItemKeyReviews
 import com.langchain.smith.models.annotationqueues.items.ItemClearFinalParams
 import com.langchain.smith.models.annotationqueues.items.ItemCreateParams
 import com.langchain.smith.models.annotationqueues.items.ItemCreateResponse
@@ -31,8 +32,11 @@ import com.langchain.smith.models.annotationqueues.items.ItemRetrieveCountParams
 import com.langchain.smith.models.annotationqueues.items.ItemRetrieveCountResponse
 import com.langchain.smith.models.annotationqueues.items.ItemRetrievePlacementParams
 import com.langchain.smith.models.annotationqueues.items.ItemRetrievePlacementResponse
+import com.langchain.smith.models.annotationqueues.items.ItemRetrieveReviewsParams
+import com.langchain.smith.models.annotationqueues.items.ItemRetrieveReviewsResponse
 import com.langchain.smith.models.annotationqueues.items.ItemSetFinalParams
 import com.langchain.smith.models.annotationqueues.items.ItemSetFinalResponse
+import com.langchain.smith.models.annotationqueues.items.ItemSetReviewParams
 import com.langchain.smith.models.annotationqueues.items.ItemUpdateParams
 import com.langchain.smith.models.annotationqueues.items.ItemUpdateResponse
 import java.util.concurrent.CompletableFuture
@@ -107,12 +111,26 @@ class ItemServiceAsyncImpl internal constructor(private val clientOptions: Clien
         // get /api/v1/platform/annotation-queues/{queue_id}/items/{item_id}/placement
         withRawResponse().retrievePlacement(params, requestOptions).thenApply { it.parse() }
 
+    override fun retrieveReviews(
+        params: ItemRetrieveReviewsParams,
+        requestOptions: RequestOptions,
+    ): CompletableFuture<ItemRetrieveReviewsResponse> =
+        // get /api/v1/platform/annotation-queues/{queue_id}/items/{item_id}/reviews
+        withRawResponse().retrieveReviews(params, requestOptions).thenApply { it.parse() }
+
     override fun setFinal(
         params: ItemSetFinalParams,
         requestOptions: RequestOptions,
     ): CompletableFuture<ItemSetFinalResponse> =
         // put /api/v1/platform/annotation-queues/{queue_id}/items/{item_id}/finals/{key}
         withRawResponse().setFinal(params, requestOptions).thenApply { it.parse() }
+
+    override fun setReview(
+        params: ItemSetReviewParams,
+        requestOptions: RequestOptions,
+    ): CompletableFuture<AnnotationQueueItemKeyReviews> =
+        // put /api/v1/platform/annotation-queues/{queue_id}/items/{item_id}/reviews/{key}
+        withRawResponse().setReview(params, requestOptions).thenApply { it.parse() }
 
     class WithRawResponseImpl internal constructor(private val clientOptions: ClientOptions) :
         ItemServiceAsync.WithRawResponse {
@@ -462,6 +480,48 @@ class ItemServiceAsyncImpl internal constructor(private val clientOptions: Clien
                 }
         }
 
+        private val retrieveReviewsHandler: Handler<ItemRetrieveReviewsResponse> =
+            jsonHandler<ItemRetrieveReviewsResponse>(clientOptions.jsonMapper)
+
+        override fun retrieveReviews(
+            params: ItemRetrieveReviewsParams,
+            requestOptions: RequestOptions,
+        ): CompletableFuture<HttpResponseFor<ItemRetrieveReviewsResponse>> {
+            // We check here instead of in the params builder because this can be specified
+            // positionally or in the params class.
+            checkRequired("itemId", params.itemId().getOrNull())
+            val request =
+                HttpRequest.builder()
+                    .method(HttpMethod.GET)
+                    .baseUrl(clientOptions.baseUrl())
+                    .addPathSegments(
+                        "api",
+                        "v1",
+                        "platform",
+                        "annotation-queues",
+                        params._pathParam(0),
+                        "items",
+                        params._pathParam(1),
+                        "reviews",
+                    )
+                    .build()
+                    .prepareAsync(clientOptions, params)
+            val requestOptions = requestOptions.applyDefaults(RequestOptions.from(clientOptions))
+            return request
+                .thenComposeAsync { clientOptions.httpClient.executeAsync(it, requestOptions) }
+                .thenApply { response ->
+                    errorHandler.handle(response).parseable {
+                        response
+                            .use { retrieveReviewsHandler.handle(it) }
+                            .also {
+                                if (requestOptions.responseValidation!!) {
+                                    it.validate()
+                                }
+                            }
+                    }
+                }
+        }
+
         private val setFinalHandler: Handler<ItemSetFinalResponse> =
             jsonHandler<ItemSetFinalResponse>(clientOptions.jsonMapper)
 
@@ -497,6 +557,50 @@ class ItemServiceAsyncImpl internal constructor(private val clientOptions: Clien
                     errorHandler.handle(response).parseable {
                         response
                             .use { setFinalHandler.handle(it) }
+                            .also {
+                                if (requestOptions.responseValidation!!) {
+                                    it.validate()
+                                }
+                            }
+                    }
+                }
+        }
+
+        private val setReviewHandler: Handler<AnnotationQueueItemKeyReviews> =
+            jsonHandler<AnnotationQueueItemKeyReviews>(clientOptions.jsonMapper)
+
+        override fun setReview(
+            params: ItemSetReviewParams,
+            requestOptions: RequestOptions,
+        ): CompletableFuture<HttpResponseFor<AnnotationQueueItemKeyReviews>> {
+            // We check here instead of in the params builder because this can be specified
+            // positionally or in the params class.
+            checkRequired("key", params.key().getOrNull())
+            val request =
+                HttpRequest.builder()
+                    .method(HttpMethod.PUT)
+                    .baseUrl(clientOptions.baseUrl())
+                    .addPathSegments(
+                        "api",
+                        "v1",
+                        "platform",
+                        "annotation-queues",
+                        params._pathParam(0),
+                        "items",
+                        params._pathParam(1),
+                        "reviews",
+                        params._pathParam(2),
+                    )
+                    .body(json(clientOptions.jsonMapper, params._body()))
+                    .build()
+                    .prepareAsync(clientOptions, params)
+            val requestOptions = requestOptions.applyDefaults(RequestOptions.from(clientOptions))
+            return request
+                .thenComposeAsync { clientOptions.httpClient.executeAsync(it, requestOptions) }
+                .thenApply { response ->
+                    errorHandler.handle(response).parseable {
+                        response
+                            .use { setReviewHandler.handle(it) }
                             .also {
                                 if (requestOptions.responseValidation!!) {
                                     it.validate()
