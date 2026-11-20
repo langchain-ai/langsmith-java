@@ -29,6 +29,7 @@ import com.langchain.smith.services.async.ThreadServiceAsync
 import com.langchain.smith.services.async.TraceServiceAsync
 import com.langchain.smith.services.async.WorkspaceSecretServiceAsync
 import com.langchain.smith.services.async.WorkspaceServiceAsync
+import com.langchain.smith.services.async.WorkspaceTagServiceAsync
 import java.util.function.Consumer
 
 /**
@@ -109,6 +110,8 @@ interface LangsmithClientAsync {
 
     fun workspaceSecrets(): WorkspaceSecretServiceAsync
 
+    fun workspaceTags(): WorkspaceTagServiceAsync
+
     fun repos(): RepoServiceAsync
 
     fun commits(): CommitServiceAsync
@@ -187,6 +190,8 @@ interface LangsmithClientAsync {
         fun workspaces(): WorkspaceServiceAsync.WithRawResponse
 
         fun workspaceSecrets(): WorkspaceSecretServiceAsync.WithRawResponse
+
+        fun workspaceTags(): WorkspaceTagServiceAsync.WithRawResponse
 
         fun repos(): RepoServiceAsync.WithRawResponse
 

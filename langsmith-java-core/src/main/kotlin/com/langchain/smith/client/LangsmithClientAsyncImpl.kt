@@ -56,6 +56,8 @@ import com.langchain.smith.services.async.WorkspaceSecretServiceAsync
 import com.langchain.smith.services.async.WorkspaceSecretServiceAsyncImpl
 import com.langchain.smith.services.async.WorkspaceServiceAsync
 import com.langchain.smith.services.async.WorkspaceServiceAsyncImpl
+import com.langchain.smith.services.async.WorkspaceTagServiceAsync
+import com.langchain.smith.services.async.WorkspaceTagServiceAsyncImpl
 import java.util.function.Consumer
 
 class LangsmithClientAsyncImpl(private val clientOptions: ClientOptions) : LangsmithClientAsync {
@@ -153,6 +155,10 @@ class LangsmithClientAsyncImpl(private val clientOptions: ClientOptions) : Langs
         WorkspaceSecretServiceAsyncImpl(clientOptionsWithUserAgent)
     }
 
+    private val workspaceTags: WorkspaceTagServiceAsync by lazy {
+        WorkspaceTagServiceAsyncImpl(clientOptionsWithUserAgent)
+    }
+
     private val repos: RepoServiceAsync by lazy { RepoServiceAsyncImpl(clientOptionsWithUserAgent) }
 
     private val commits: CommitServiceAsync by lazy {
@@ -219,6 +225,8 @@ class LangsmithClientAsyncImpl(private val clientOptions: ClientOptions) : Langs
     override fun workspaces(): WorkspaceServiceAsync = workspaces
 
     override fun workspaceSecrets(): WorkspaceSecretServiceAsync = workspaceSecrets
+
+    override fun workspaceTags(): WorkspaceTagServiceAsync = workspaceTags
 
     override fun repos(): RepoServiceAsync = repos
 
@@ -328,6 +336,10 @@ class LangsmithClientAsyncImpl(private val clientOptions: ClientOptions) : Langs
             WorkspaceSecretServiceAsyncImpl.WithRawResponseImpl(clientOptions)
         }
 
+        private val workspaceTags: WorkspaceTagServiceAsync.WithRawResponse by lazy {
+            WorkspaceTagServiceAsyncImpl.WithRawResponseImpl(clientOptions)
+        }
+
         private val repos: RepoServiceAsync.WithRawResponse by lazy {
             RepoServiceAsyncImpl.WithRawResponseImpl(clientOptions)
         }
@@ -400,6 +412,8 @@ class LangsmithClientAsyncImpl(private val clientOptions: ClientOptions) : Langs
 
         override fun workspaceSecrets(): WorkspaceSecretServiceAsync.WithRawResponse =
             workspaceSecrets
+
+        override fun workspaceTags(): WorkspaceTagServiceAsync.WithRawResponse = workspaceTags
 
         override fun repos(): RepoServiceAsync.WithRawResponse = repos
 

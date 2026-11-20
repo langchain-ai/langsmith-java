@@ -56,6 +56,8 @@ import com.langchain.smith.services.blocking.WorkspaceSecretService
 import com.langchain.smith.services.blocking.WorkspaceSecretServiceImpl
 import com.langchain.smith.services.blocking.WorkspaceService
 import com.langchain.smith.services.blocking.WorkspaceServiceImpl
+import com.langchain.smith.services.blocking.WorkspaceTagService
+import com.langchain.smith.services.blocking.WorkspaceTagServiceImpl
 import java.util.function.Consumer
 
 class LangsmithClientImpl(private val clientOptions: ClientOptions) : LangsmithClient {
@@ -135,6 +137,10 @@ class LangsmithClientImpl(private val clientOptions: ClientOptions) : LangsmithC
         WorkspaceSecretServiceImpl(clientOptionsWithUserAgent)
     }
 
+    private val workspaceTags: WorkspaceTagService by lazy {
+        WorkspaceTagServiceImpl(clientOptionsWithUserAgent)
+    }
+
     private val repos: RepoService by lazy { RepoServiceImpl(clientOptionsWithUserAgent) }
 
     private val commits: CommitService by lazy { CommitServiceImpl(clientOptionsWithUserAgent) }
@@ -193,6 +199,8 @@ class LangsmithClientImpl(private val clientOptions: ClientOptions) : LangsmithC
     override fun workspaces(): WorkspaceService = workspaces
 
     override fun workspaceSecrets(): WorkspaceSecretService = workspaceSecrets
+
+    override fun workspaceTags(): WorkspaceTagService = workspaceTags
 
     override fun repos(): RepoService = repos
 
@@ -298,6 +306,10 @@ class LangsmithClientImpl(private val clientOptions: ClientOptions) : LangsmithC
             WorkspaceSecretServiceImpl.WithRawResponseImpl(clientOptions)
         }
 
+        private val workspaceTags: WorkspaceTagService.WithRawResponse by lazy {
+            WorkspaceTagServiceImpl.WithRawResponseImpl(clientOptions)
+        }
+
         private val repos: RepoService.WithRawResponse by lazy {
             RepoServiceImpl.WithRawResponseImpl(clientOptions)
         }
@@ -366,6 +378,8 @@ class LangsmithClientImpl(private val clientOptions: ClientOptions) : LangsmithC
         override fun workspaces(): WorkspaceService.WithRawResponse = workspaces
 
         override fun workspaceSecrets(): WorkspaceSecretService.WithRawResponse = workspaceSecrets
+
+        override fun workspaceTags(): WorkspaceTagService.WithRawResponse = workspaceTags
 
         override fun repos(): RepoService.WithRawResponse = repos
 
