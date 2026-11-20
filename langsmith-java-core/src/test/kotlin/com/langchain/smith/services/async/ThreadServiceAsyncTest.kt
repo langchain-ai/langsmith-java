@@ -37,6 +37,12 @@ internal class ThreadServiceAsyncTest {
                     .filter("eq(status, \"error\")")
                     .maxStartTime(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
                     .minStartTime(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
+                    .stride(
+                        ThreadAggregateStatsParams.Stride.builder()
+                            .unit(ThreadAggregateStatsParams.Stride.Unit.HOUR)
+                            .value(1L)
+                            .build()
+                    )
                     .threadFilter("gte(turn_count, 3)")
                     .traceFilter("eq(status, \"error\")")
                     .treeFilter("has(tags, \"production\")")

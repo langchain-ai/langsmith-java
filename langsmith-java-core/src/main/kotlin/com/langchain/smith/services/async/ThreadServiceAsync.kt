@@ -39,7 +39,8 @@ interface ThreadServiceAsync {
     /**
      * GET with body payload — no resources created. Returns aggregate statistics for threads in a
      * tracing project. The response includes the thread counts, run counts, latency percentiles,
-     * rates, token totals, and cost totals requested in `select`.
+     * rates, token totals, and cost totals requested in `select`. Set `stride` to return the
+     * statistics as a time series in `buckets`.
      *
      * Self-hosted deployments require LangSmith `v0.17` or later.
      */

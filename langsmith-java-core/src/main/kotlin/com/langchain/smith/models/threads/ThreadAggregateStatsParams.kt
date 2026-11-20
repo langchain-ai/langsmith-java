@@ -27,7 +27,8 @@ import kotlin.jvm.optionals.getOrNull
 /**
  * GET with body payload — no resources created. Returns aggregate statistics for threads in a
  * tracing project. The response includes the thread counts, run counts, latency percentiles, rates,
- * token totals, and cost totals requested in `select`.
+ * token totals, and cost totals requested in `select`. Set `stride` to return the statistics as a
+ * time series in `buckets`.
  *
  * Self-hosted deployments require LangSmith `v0.17` or later.
  */
@@ -83,6 +84,16 @@ private constructor(
      *   server responded with an unexpected value).
      */
     fun minStartTime(): Optional<OffsetDateTime> = body.minStartTime()
+
+    /**
+     * `stride` returns the statistics as a time series in `buckets`. Each thread counts once, in
+     * the bucket containing the start of its most recent trace. Omit for a single aggregate over
+     * the whole window.
+     *
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
+    fun stride(): Optional<Stride> = body.stride()
 
     /**
      * `thread_filter` narrows eligible threads using a LangSmith filter expression evaluated
@@ -145,6 +156,13 @@ private constructor(
      * Unlike [minStartTime], this method doesn't throw if the JSON field has an unexpected type.
      */
     fun _minStartTime(): JsonField<OffsetDateTime> = body._minStartTime()
+
+    /**
+     * Returns the raw JSON value of [stride].
+     *
+     * Unlike [stride], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    fun _stride(): JsonField<Stride> = body._stride()
 
     /**
      * Returns the raw JSON value of [threadFilter].
@@ -302,6 +320,21 @@ private constructor(
         fun minStartTime(minStartTime: JsonField<OffsetDateTime>) = apply {
             body.minStartTime(minStartTime)
         }
+
+        /**
+         * `stride` returns the statistics as a time series in `buckets`. Each thread counts once,
+         * in the bucket containing the start of its most recent trace. Omit for a single aggregate
+         * over the whole window.
+         */
+        fun stride(stride: Stride) = apply { body.stride(stride) }
+
+        /**
+         * Sets [Builder.stride] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.stride] with a well-typed [Stride] value instead. This
+         * method is primarily for setting the field to an undocumented or not yet supported value.
+         */
+        fun stride(stride: JsonField<Stride>) = apply { body.stride(stride) }
 
         /**
          * `thread_filter` narrows eligible threads using a LangSmith filter expression evaluated
@@ -502,6 +535,7 @@ private constructor(
         private val filter: JsonField<String>,
         private val maxStartTime: JsonField<OffsetDateTime>,
         private val minStartTime: JsonField<OffsetDateTime>,
+        private val stride: JsonField<Stride>,
         private val threadFilter: JsonField<String>,
         private val traceFilter: JsonField<String>,
         private val treeFilter: JsonField<String>,
@@ -523,6 +557,7 @@ private constructor(
             @JsonProperty("min_start_time")
             @ExcludeMissing
             minStartTime: JsonField<OffsetDateTime> = JsonMissing.of(),
+            @JsonProperty("stride") @ExcludeMissing stride: JsonField<Stride> = JsonMissing.of(),
             @JsonProperty("thread_filter")
             @ExcludeMissing
             threadFilter: JsonField<String> = JsonMissing.of(),
@@ -538,6 +573,7 @@ private constructor(
             filter,
             maxStartTime,
             minStartTime,
+            stride,
             threadFilter,
             traceFilter,
             treeFilter,
@@ -589,6 +625,16 @@ private constructor(
          *   the server responded with an unexpected value).
          */
         fun minStartTime(): Optional<OffsetDateTime> = minStartTime.getOptional("min_start_time")
+
+        /**
+         * `stride` returns the statistics as a time series in `buckets`. Each thread counts once,
+         * in the bucket containing the start of its most recent trace. Omit for a single aggregate
+         * over the whole window.
+         *
+         * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
+         *   the server responded with an unexpected value).
+         */
+        fun stride(): Optional<Stride> = stride.getOptional("stride")
 
         /**
          * `thread_filter` narrows eligible threads using a LangSmith filter expression evaluated
@@ -659,6 +705,13 @@ private constructor(
         fun _minStartTime(): JsonField<OffsetDateTime> = minStartTime
 
         /**
+         * Returns the raw JSON value of [stride].
+         *
+         * Unlike [stride], this method doesn't throw if the JSON field has an unexpected type.
+         */
+        @JsonProperty("stride") @ExcludeMissing fun _stride(): JsonField<Stride> = stride
+
+        /**
          * Returns the raw JSON value of [threadFilter].
          *
          * Unlike [threadFilter], this method doesn't throw if the JSON field has an unexpected
@@ -720,6 +773,7 @@ private constructor(
             private var filter: JsonField<String> = JsonMissing.of()
             private var maxStartTime: JsonField<OffsetDateTime> = JsonMissing.of()
             private var minStartTime: JsonField<OffsetDateTime> = JsonMissing.of()
+            private var stride: JsonField<Stride> = JsonMissing.of()
             private var threadFilter: JsonField<String> = JsonMissing.of()
             private var traceFilter: JsonField<String> = JsonMissing.of()
             private var treeFilter: JsonField<String> = JsonMissing.of()
@@ -732,6 +786,7 @@ private constructor(
                 filter = body.filter
                 maxStartTime = body.maxStartTime
                 minStartTime = body.minStartTime
+                stride = body.stride
                 threadFilter = body.threadFilter
                 traceFilter = body.traceFilter
                 treeFilter = body.treeFilter
@@ -834,6 +889,22 @@ private constructor(
             }
 
             /**
+             * `stride` returns the statistics as a time series in `buckets`. Each thread counts
+             * once, in the bucket containing the start of its most recent trace. Omit for a single
+             * aggregate over the whole window.
+             */
+            fun stride(stride: Stride) = stride(JsonField.of(stride))
+
+            /**
+             * Sets [Builder.stride] to an arbitrary JSON value.
+             *
+             * You should usually call [Builder.stride] with a well-typed [Stride] value instead.
+             * This method is primarily for setting the field to an undocumented or not yet
+             * supported value.
+             */
+            fun stride(stride: JsonField<Stride>) = apply { this.stride = stride }
+
+            /**
              * `thread_filter` narrows eligible threads using a LangSmith filter expression
              * evaluated against the complete thread summary.
              */
@@ -921,6 +992,7 @@ private constructor(
                     filter,
                     maxStartTime,
                     minStartTime,
+                    stride,
                     threadFilter,
                     traceFilter,
                     treeFilter,
@@ -949,6 +1021,7 @@ private constructor(
             filter()
             maxStartTime()
             minStartTime()
+            stride().ifPresent { it.validate() }
             threadFilter()
             traceFilter()
             treeFilter()
@@ -976,6 +1049,7 @@ private constructor(
                 (if (filter.asKnown().isPresent) 1 else 0) +
                 (if (maxStartTime.asKnown().isPresent) 1 else 0) +
                 (if (minStartTime.asKnown().isPresent) 1 else 0) +
+                (stride.asKnown().getOrNull()?.validity() ?: 0) +
                 (if (threadFilter.asKnown().isPresent) 1 else 0) +
                 (if (traceFilter.asKnown().isPresent) 1 else 0) +
                 (if (treeFilter.asKnown().isPresent) 1 else 0)
@@ -991,6 +1065,7 @@ private constructor(
                 filter == other.filter &&
                 maxStartTime == other.maxStartTime &&
                 minStartTime == other.minStartTime &&
+                stride == other.stride &&
                 threadFilter == other.threadFilter &&
                 traceFilter == other.traceFilter &&
                 treeFilter == other.treeFilter &&
@@ -1004,6 +1079,7 @@ private constructor(
                 filter,
                 maxStartTime,
                 minStartTime,
+                stride,
                 threadFilter,
                 traceFilter,
                 treeFilter,
@@ -1014,7 +1090,7 @@ private constructor(
         override fun hashCode(): Int = hashCode
 
         override fun toString() =
-            "Body{projectId=$projectId, select=$select, filter=$filter, maxStartTime=$maxStartTime, minStartTime=$minStartTime, threadFilter=$threadFilter, traceFilter=$traceFilter, treeFilter=$treeFilter, additionalProperties=$additionalProperties}"
+            "Body{projectId=$projectId, select=$select, filter=$filter, maxStartTime=$maxStartTime, minStartTime=$minStartTime, stride=$stride, threadFilter=$threadFilter, traceFilter=$traceFilter, treeFilter=$treeFilter, additionalProperties=$additionalProperties}"
     }
 
     class Select @JsonCreator private constructor(private val value: JsonField<String>) : Enum {
@@ -1259,6 +1335,354 @@ private constructor(
         override fun hashCode() = value.hashCode()
 
         override fun toString() = value.toString()
+    }
+
+    /**
+     * `stride` returns the statistics as a time series in `buckets`. Each thread counts once, in
+     * the bucket containing the start of its most recent trace. Omit for a single aggregate over
+     * the whole window.
+     */
+    class Stride
+    @JsonCreator(mode = JsonCreator.Mode.DISABLED)
+    private constructor(
+        private val unit: JsonField<Unit>,
+        private val value: JsonField<Long>,
+        private val additionalProperties: MutableMap<String, JsonValue>,
+    ) {
+
+        @JsonCreator
+        private constructor(
+            @JsonProperty("unit") @ExcludeMissing unit: JsonField<Unit> = JsonMissing.of(),
+            @JsonProperty("value") @ExcludeMissing value: JsonField<Long> = JsonMissing.of(),
+        ) : this(unit, value, mutableMapOf())
+
+        /**
+         * `unit` is the unit of time used for each bucket. See the `StrideUnit` enum for allowed
+         * values.
+         *
+         * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
+         *   the server responded with an unexpected value).
+         */
+        fun unit(): Optional<Unit> = unit.getOptional("unit")
+
+        /**
+         * `value` is the number of time units per bucket. Must be at least 1.
+         *
+         * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
+         *   the server responded with an unexpected value).
+         */
+        fun value(): Optional<Long> = value.getOptional("value")
+
+        /**
+         * Returns the raw JSON value of [unit].
+         *
+         * Unlike [unit], this method doesn't throw if the JSON field has an unexpected type.
+         */
+        @JsonProperty("unit") @ExcludeMissing fun _unit(): JsonField<Unit> = unit
+
+        /**
+         * Returns the raw JSON value of [value].
+         *
+         * Unlike [value], this method doesn't throw if the JSON field has an unexpected type.
+         */
+        @JsonProperty("value") @ExcludeMissing fun _value(): JsonField<Long> = value
+
+        @JsonAnySetter
+        private fun putAdditionalProperty(key: String, value: JsonValue) {
+            additionalProperties.put(key, value)
+        }
+
+        @JsonAnyGetter
+        @ExcludeMissing
+        fun _additionalProperties(): Map<String, JsonValue> =
+            Collections.unmodifiableMap(additionalProperties)
+
+        fun toBuilder() = Builder().from(this)
+
+        companion object {
+
+            /** Returns a mutable builder for constructing an instance of [Stride]. */
+            @JvmStatic fun builder() = Builder()
+        }
+
+        /** A builder for [Stride]. */
+        class Builder internal constructor() {
+
+            private var unit: JsonField<Unit> = JsonMissing.of()
+            private var value: JsonField<Long> = JsonMissing.of()
+            private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
+
+            @JvmSynthetic
+            internal fun from(stride: Stride) = apply {
+                unit = stride.unit
+                value = stride.value
+                additionalProperties = stride.additionalProperties.toMutableMap()
+            }
+
+            /**
+             * `unit` is the unit of time used for each bucket. See the `StrideUnit` enum for
+             * allowed values.
+             */
+            fun unit(unit: Unit) = unit(JsonField.of(unit))
+
+            /**
+             * Sets [Builder.unit] to an arbitrary JSON value.
+             *
+             * You should usually call [Builder.unit] with a well-typed [Unit] value instead. This
+             * method is primarily for setting the field to an undocumented or not yet supported
+             * value.
+             */
+            fun unit(unit: JsonField<Unit>) = apply { this.unit = unit }
+
+            /** `value` is the number of time units per bucket. Must be at least 1. */
+            fun value(value: Long) = value(JsonField.of(value))
+
+            /**
+             * Sets [Builder.value] to an arbitrary JSON value.
+             *
+             * You should usually call [Builder.value] with a well-typed [Long] value instead. This
+             * method is primarily for setting the field to an undocumented or not yet supported
+             * value.
+             */
+            fun value(value: JsonField<Long>) = apply { this.value = value }
+
+            fun additionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
+                this.additionalProperties.clear()
+                putAllAdditionalProperties(additionalProperties)
+            }
+
+            fun putAdditionalProperty(key: String, value: JsonValue) = apply {
+                additionalProperties.put(key, value)
+            }
+
+            fun putAllAdditionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
+                this.additionalProperties.putAll(additionalProperties)
+            }
+
+            fun removeAdditionalProperty(key: String) = apply { additionalProperties.remove(key) }
+
+            fun removeAllAdditionalProperties(keys: Set<String>) = apply {
+                keys.forEach(::removeAdditionalProperty)
+            }
+
+            /**
+             * Returns an immutable instance of [Stride].
+             *
+             * Further updates to this [Builder] will not mutate the returned instance.
+             */
+            fun build(): Stride = Stride(unit, value, additionalProperties.toMutableMap())
+        }
+
+        private var validated: Boolean = false
+
+        /**
+         * Validates that the types of all values in this object match their expected types
+         * recursively.
+         *
+         * This method is _not_ forwards compatible with new types from the API for existing fields.
+         *
+         * @throws LangChainInvalidDataException if any value type in this object doesn't match its
+         *   expected type.
+         */
+        fun validate(): Stride = apply {
+            if (validated) {
+                return@apply
+            }
+
+            unit().ifPresent { it.validate() }
+            value()
+            validated = true
+        }
+
+        fun isValid(): Boolean =
+            try {
+                validate()
+                true
+            } catch (e: LangChainInvalidDataException) {
+                false
+            }
+
+        /**
+         * Returns a score indicating how many valid values are contained in this object
+         * recursively.
+         *
+         * Used for best match union deserialization.
+         */
+        @JvmSynthetic
+        internal fun validity(): Int =
+            (unit.asKnown().getOrNull()?.validity() ?: 0) +
+                (if (value.asKnown().isPresent) 1 else 0)
+
+        /**
+         * `unit` is the unit of time used for each bucket. See the `StrideUnit` enum for allowed
+         * values.
+         */
+        class Unit @JsonCreator private constructor(private val value: JsonField<String>) : Enum {
+
+            /**
+             * Returns this class instance's raw value.
+             *
+             * This is usually only useful if this instance was deserialized from data that doesn't
+             * match any known member, and you want to know that value. For example, if the SDK is
+             * on an older version than the API, then the API may respond with new members that the
+             * SDK is unaware of.
+             */
+            @com.fasterxml.jackson.annotation.JsonValue fun _value(): JsonField<String> = value
+
+            companion object {
+
+                @JvmField val SECOND = of("SECOND")
+
+                @JvmField val MINUTE = of("MINUTE")
+
+                @JvmField val HOUR = of("HOUR")
+
+                @JvmField val DAY = of("DAY")
+
+                @JvmStatic fun of(value: String) = Unit(JsonField.of(value))
+            }
+
+            /** An enum containing [Unit]'s known values. */
+            enum class Known {
+                SECOND,
+                MINUTE,
+                HOUR,
+                DAY,
+            }
+
+            /**
+             * An enum containing [Unit]'s known values, as well as an [_UNKNOWN] member.
+             *
+             * An instance of [Unit] can contain an unknown value in a couple of cases:
+             * - It was deserialized from data that doesn't match any known member. For example, if
+             *   the SDK is on an older version than the API, then the API may respond with new
+             *   members that the SDK is unaware of.
+             * - It was constructed with an arbitrary value using the [of] method.
+             */
+            enum class Value {
+                SECOND,
+                MINUTE,
+                HOUR,
+                DAY,
+                /** An enum member indicating that [Unit] was instantiated with an unknown value. */
+                _UNKNOWN,
+            }
+
+            /**
+             * Returns an enum member corresponding to this class instance's value, or
+             * [Value._UNKNOWN] if the class was instantiated with an unknown value.
+             *
+             * Use the [known] method instead if you're certain the value is always known or if you
+             * want to throw for the unknown case.
+             */
+            fun value(): Value =
+                when (this) {
+                    SECOND -> Value.SECOND
+                    MINUTE -> Value.MINUTE
+                    HOUR -> Value.HOUR
+                    DAY -> Value.DAY
+                    else -> Value._UNKNOWN
+                }
+
+            /**
+             * Returns an enum member corresponding to this class instance's value.
+             *
+             * Use the [value] method instead if you're uncertain the value is always known and
+             * don't want to throw for the unknown case.
+             *
+             * @throws LangChainInvalidDataException if this class instance's value is a not a known
+             *   member.
+             */
+            fun known(): Known =
+                when (this) {
+                    SECOND -> Known.SECOND
+                    MINUTE -> Known.MINUTE
+                    HOUR -> Known.HOUR
+                    DAY -> Known.DAY
+                    else -> throw LangChainInvalidDataException("Unknown Unit: $value")
+                }
+
+            /**
+             * Returns this class instance's primitive wire representation.
+             *
+             * This differs from the [toString] method because that method is primarily for
+             * debugging and generally doesn't throw.
+             *
+             * @throws LangChainInvalidDataException if this class instance's value does not have
+             *   the expected primitive type.
+             */
+            fun asString(): String =
+                _value().asString().orElseThrow {
+                    LangChainInvalidDataException("Value is not a String")
+                }
+
+            private var validated: Boolean = false
+
+            /**
+             * Validates that the types of all values in this object match their expected types
+             * recursively.
+             *
+             * This method is _not_ forwards compatible with new types from the API for existing
+             * fields.
+             *
+             * @throws LangChainInvalidDataException if any value type in this object doesn't match
+             *   its expected type.
+             */
+            fun validate(): Unit = apply {
+                if (validated) {
+                    return@apply
+                }
+
+                known()
+                validated = true
+            }
+
+            fun isValid(): Boolean =
+                try {
+                    validate()
+                    true
+                } catch (e: LangChainInvalidDataException) {
+                    false
+                }
+
+            /**
+             * Returns a score indicating how many valid values are contained in this object
+             * recursively.
+             *
+             * Used for best match union deserialization.
+             */
+            @JvmSynthetic internal fun validity(): Int = if (value() == Value._UNKNOWN) 0 else 1
+
+            override fun equals(other: Any?): Boolean {
+                if (this === other) {
+                    return true
+                }
+
+                return other is Unit && value == other.value
+            }
+
+            override fun hashCode() = value.hashCode()
+
+            override fun toString() = value.toString()
+        }
+
+        override fun equals(other: Any?): Boolean {
+            if (this === other) {
+                return true
+            }
+
+            return other is Stride &&
+                unit == other.unit &&
+                value == other.value &&
+                additionalProperties == other.additionalProperties
+        }
+
+        private val hashCode: Int by lazy { Objects.hash(unit, value, additionalProperties) }
+
+        override fun hashCode(): Int = hashCode
+
+        override fun toString() =
+            "Stride{unit=$unit, value=$value, additionalProperties=$additionalProperties}"
     }
 
     override fun equals(other: Any?): Boolean {

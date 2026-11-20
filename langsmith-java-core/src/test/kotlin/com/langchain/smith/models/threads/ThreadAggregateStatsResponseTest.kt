@@ -5,6 +5,8 @@ package com.langchain.smith.models.threads
 import com.fasterxml.jackson.module.kotlin.jacksonTypeRef
 import com.langchain.smith.core.JsonValue
 import com.langchain.smith.core.jsonMapper
+import java.time.OffsetDateTime
+import kotlin.jvm.optionals.getOrNull
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
@@ -14,6 +16,67 @@ internal class ThreadAggregateStatsResponseTest {
     fun create() {
         val threadAggregateStatsResponse =
             ThreadAggregateStatsResponse.builder()
+                .addBucket(
+                    ThreadAggregateStatsResponse.Bucket.builder()
+                        .bucketStartTime(OffsetDateTime.parse("2025-01-01T00:00:00Z"))
+                        .completionCost(0.0)
+                        .completionCostDetails(
+                            ThreadAggregateStatsResponse.Bucket.CompletionCostDetails.builder()
+                                .putAdditionalProperty("foo", JsonValue.from(0))
+                                .build()
+                        )
+                        .completionTokenDetails(
+                            ThreadAggregateStatsResponse.Bucket.CompletionTokenDetails.builder()
+                                .putAdditionalProperty("foo", JsonValue.from(0))
+                                .build()
+                        )
+                        .completionTokens(0L)
+                        .errorRate(0.0)
+                        .firstTokenP50Seconds(0.0)
+                        .firstTokenP99Seconds(0.0)
+                        .latencyP50Seconds(0.0)
+                        .latencyP99Seconds(0.0)
+                        .medianTokens(0L)
+                        .promptCost(0.0)
+                        .promptCostDetails(
+                            ThreadAggregateStatsResponse.Bucket.PromptCostDetails.builder()
+                                .putAdditionalProperty("foo", JsonValue.from(0))
+                                .build()
+                        )
+                        .promptTokenDetails(
+                            ThreadAggregateStatsResponse.Bucket.PromptTokenDetails.builder()
+                                .putAdditionalProperty("foo", JsonValue.from(0))
+                                .build()
+                        )
+                        .promptTokens(0L)
+                        .streamingRate(0.0)
+                        .threadCount(0L)
+                        .threadFeedbackStats(
+                            ThreadAggregateStatsResponse.Bucket.ThreadFeedbackStats.builder()
+                                .putAdditionalProperty(
+                                    "foo",
+                                    JsonValue.from(
+                                        mapOf(
+                                            "avg" to 0.87,
+                                            "comments" to listOf("good answer", "needs citation"),
+                                            "contains_thread_feedback" to false,
+                                            "errors" to 0,
+                                            "max" to 0.95,
+                                            "min" to 0.8,
+                                            "n" to 42,
+                                            "sources" to listOf(mapOf<String, Any>()),
+                                            "stdev" to 0.05,
+                                            "values" to mapOf("foo" to 0),
+                                        )
+                                    ),
+                                )
+                                .build()
+                        )
+                        .totalCost(0.0)
+                        .totalTokens(0L)
+                        .traceCount(0L)
+                        .build()
+                )
                 .completionCost(0.0)
                 .completionCostDetails(
                     ThreadAggregateStatsResponse.CompletionCostDetails.builder()
@@ -72,6 +135,68 @@ internal class ThreadAggregateStatsResponseTest {
                 .traceCount(0L)
                 .build()
 
+        assertThat(threadAggregateStatsResponse.buckets().getOrNull())
+            .containsExactly(
+                ThreadAggregateStatsResponse.Bucket.builder()
+                    .bucketStartTime(OffsetDateTime.parse("2025-01-01T00:00:00Z"))
+                    .completionCost(0.0)
+                    .completionCostDetails(
+                        ThreadAggregateStatsResponse.Bucket.CompletionCostDetails.builder()
+                            .putAdditionalProperty("foo", JsonValue.from(0))
+                            .build()
+                    )
+                    .completionTokenDetails(
+                        ThreadAggregateStatsResponse.Bucket.CompletionTokenDetails.builder()
+                            .putAdditionalProperty("foo", JsonValue.from(0))
+                            .build()
+                    )
+                    .completionTokens(0L)
+                    .errorRate(0.0)
+                    .firstTokenP50Seconds(0.0)
+                    .firstTokenP99Seconds(0.0)
+                    .latencyP50Seconds(0.0)
+                    .latencyP99Seconds(0.0)
+                    .medianTokens(0L)
+                    .promptCost(0.0)
+                    .promptCostDetails(
+                        ThreadAggregateStatsResponse.Bucket.PromptCostDetails.builder()
+                            .putAdditionalProperty("foo", JsonValue.from(0))
+                            .build()
+                    )
+                    .promptTokenDetails(
+                        ThreadAggregateStatsResponse.Bucket.PromptTokenDetails.builder()
+                            .putAdditionalProperty("foo", JsonValue.from(0))
+                            .build()
+                    )
+                    .promptTokens(0L)
+                    .streamingRate(0.0)
+                    .threadCount(0L)
+                    .threadFeedbackStats(
+                        ThreadAggregateStatsResponse.Bucket.ThreadFeedbackStats.builder()
+                            .putAdditionalProperty(
+                                "foo",
+                                JsonValue.from(
+                                    mapOf(
+                                        "avg" to 0.87,
+                                        "comments" to listOf("good answer", "needs citation"),
+                                        "contains_thread_feedback" to false,
+                                        "errors" to 0,
+                                        "max" to 0.95,
+                                        "min" to 0.8,
+                                        "n" to 42,
+                                        "sources" to listOf(mapOf<String, Any>()),
+                                        "stdev" to 0.05,
+                                        "values" to mapOf("foo" to 0),
+                                    )
+                                ),
+                            )
+                            .build()
+                    )
+                    .totalCost(0.0)
+                    .totalTokens(0L)
+                    .traceCount(0L)
+                    .build()
+            )
         assertThat(threadAggregateStatsResponse.completionCost()).contains(0.0)
         assertThat(threadAggregateStatsResponse.completionCostDetails())
             .contains(
@@ -140,6 +265,67 @@ internal class ThreadAggregateStatsResponseTest {
         val jsonMapper = jsonMapper()
         val threadAggregateStatsResponse =
             ThreadAggregateStatsResponse.builder()
+                .addBucket(
+                    ThreadAggregateStatsResponse.Bucket.builder()
+                        .bucketStartTime(OffsetDateTime.parse("2025-01-01T00:00:00Z"))
+                        .completionCost(0.0)
+                        .completionCostDetails(
+                            ThreadAggregateStatsResponse.Bucket.CompletionCostDetails.builder()
+                                .putAdditionalProperty("foo", JsonValue.from(0))
+                                .build()
+                        )
+                        .completionTokenDetails(
+                            ThreadAggregateStatsResponse.Bucket.CompletionTokenDetails.builder()
+                                .putAdditionalProperty("foo", JsonValue.from(0))
+                                .build()
+                        )
+                        .completionTokens(0L)
+                        .errorRate(0.0)
+                        .firstTokenP50Seconds(0.0)
+                        .firstTokenP99Seconds(0.0)
+                        .latencyP50Seconds(0.0)
+                        .latencyP99Seconds(0.0)
+                        .medianTokens(0L)
+                        .promptCost(0.0)
+                        .promptCostDetails(
+                            ThreadAggregateStatsResponse.Bucket.PromptCostDetails.builder()
+                                .putAdditionalProperty("foo", JsonValue.from(0))
+                                .build()
+                        )
+                        .promptTokenDetails(
+                            ThreadAggregateStatsResponse.Bucket.PromptTokenDetails.builder()
+                                .putAdditionalProperty("foo", JsonValue.from(0))
+                                .build()
+                        )
+                        .promptTokens(0L)
+                        .streamingRate(0.0)
+                        .threadCount(0L)
+                        .threadFeedbackStats(
+                            ThreadAggregateStatsResponse.Bucket.ThreadFeedbackStats.builder()
+                                .putAdditionalProperty(
+                                    "foo",
+                                    JsonValue.from(
+                                        mapOf(
+                                            "avg" to 0.87,
+                                            "comments" to listOf("good answer", "needs citation"),
+                                            "contains_thread_feedback" to false,
+                                            "errors" to 0,
+                                            "max" to 0.95,
+                                            "min" to 0.8,
+                                            "n" to 42,
+                                            "sources" to listOf(mapOf<String, Any>()),
+                                            "stdev" to 0.05,
+                                            "values" to mapOf("foo" to 0),
+                                        )
+                                    ),
+                                )
+                                .build()
+                        )
+                        .totalCost(0.0)
+                        .totalTokens(0L)
+                        .traceCount(0L)
+                        .build()
+                )
                 .completionCost(0.0)
                 .completionCostDetails(
                     ThreadAggregateStatsResponse.CompletionCostDetails.builder()
