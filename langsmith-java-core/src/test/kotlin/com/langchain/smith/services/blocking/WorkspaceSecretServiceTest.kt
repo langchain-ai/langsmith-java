@@ -3,7 +3,6 @@
 package com.langchain.smith.services.blocking
 
 import com.langchain.smith.client.okhttp.LangsmithOkHttpClient
-import com.langchain.smith.models.workspacesecrets.WorkspaceSecretListParams
 import com.langchain.smith.models.workspacesecrets.WorkspaceSecretUpsertParams
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
@@ -17,12 +16,9 @@ internal class WorkspaceSecretServiceTest {
             LangsmithOkHttpClient.builder().apiKey("My API Key").tenantId("My Tenant ID").build()
         val workspaceSecretService = client.workspaceSecrets()
 
-        val workspaceSecrets =
-            workspaceSecretService.list(
-                WorkspaceSecretListParams.builder().includeConfigs(true).build()
-            )
+        val page = workspaceSecretService.list()
 
-        workspaceSecrets.forEach { it.validate() }
+        page.response().validate()
     }
 
     @Disabled("Mock server tests are disabled")

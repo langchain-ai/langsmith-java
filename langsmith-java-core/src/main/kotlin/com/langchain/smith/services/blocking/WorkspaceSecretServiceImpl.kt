@@ -19,6 +19,8 @@ import com.langchain.smith.core.http.parseable
 import com.langchain.smith.core.prepare
 import com.langchain.smith.models.workspacesecrets.WorkspaceSecret
 import com.langchain.smith.models.workspacesecrets.WorkspaceSecretDeleteParams
+import com.langchain.smith.models.workspacesecrets.WorkspaceSecretListPage
+import com.langchain.smith.models.workspacesecrets.WorkspaceSecretListPageResponse
 import com.langchain.smith.models.workspacesecrets.WorkspaceSecretListParams
 import com.langchain.smith.models.workspacesecrets.WorkspaceSecretUpsertParams
 import java.util.function.Consumer
@@ -39,8 +41,8 @@ class WorkspaceSecretServiceImpl internal constructor(private val clientOptions:
     override fun list(
         params: WorkspaceSecretListParams,
         requestOptions: RequestOptions,
-    ): List<WorkspaceSecret> =
-        // get /api/v1/workspaces/current/secrets
+    ): WorkspaceSecretListPage =
+        // get /api/v2/workspaces/current/secrets
         withRawResponse().list(params, requestOptions).parse()
 
     override fun delete(params: WorkspaceSecretDeleteParams, requestOptions: RequestOptions) {
@@ -68,18 +70,18 @@ class WorkspaceSecretServiceImpl internal constructor(private val clientOptions:
                 clientOptions.toBuilder().apply(modifier::accept).build()
             )
 
-        private val listHandler: Handler<List<WorkspaceSecret>> =
-            jsonHandler<List<WorkspaceSecret>>(clientOptions.jsonMapper)
+        private val listHandler: Handler<WorkspaceSecretListPageResponse> =
+            jsonHandler<WorkspaceSecretListPageResponse>(clientOptions.jsonMapper)
 
         override fun list(
             params: WorkspaceSecretListParams,
             requestOptions: RequestOptions,
-        ): HttpResponseFor<List<WorkspaceSecret>> {
+        ): HttpResponseFor<WorkspaceSecretListPage> {
             val request =
                 HttpRequest.builder()
                     .method(HttpMethod.GET)
                     .baseUrl(clientOptions.baseUrl())
-                    .addPathSegments("api", "v1", "workspaces", "current", "secrets")
+                    .addPathSegments("api", "v2", "workspaces", "current", "secrets")
                     .build()
                     .prepare(clientOptions, params)
             val requestOptions = requestOptions.applyDefaults(RequestOptions.from(clientOptions))
@@ -89,8 +91,15 @@ class WorkspaceSecretServiceImpl internal constructor(private val clientOptions:
                     .use { listHandler.handle(it) }
                     .also {
                         if (requestOptions.responseValidation!!) {
-                            it.forEach { it.validate() }
+                            it.validate()
                         }
+                    }
+                    .let {
+                        WorkspaceSecretListPage.builder()
+                            .service(WorkspaceSecretServiceImpl(clientOptions))
+                            .params(params)
+                            .response(it)
+                            .build()
                     }
             }
         }

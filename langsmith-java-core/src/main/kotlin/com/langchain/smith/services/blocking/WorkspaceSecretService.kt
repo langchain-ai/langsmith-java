@@ -9,6 +9,7 @@ import com.langchain.smith.core.http.HttpResponse
 import com.langchain.smith.core.http.HttpResponseFor
 import com.langchain.smith.models.workspacesecrets.WorkspaceSecret
 import com.langchain.smith.models.workspacesecrets.WorkspaceSecretDeleteParams
+import com.langchain.smith.models.workspacesecrets.WorkspaceSecretListPage
 import com.langchain.smith.models.workspacesecrets.WorkspaceSecretListParams
 import com.langchain.smith.models.workspacesecrets.WorkspaceSecretUpsertParams
 import java.util.function.Consumer
@@ -27,22 +28,27 @@ interface WorkspaceSecretService {
      */
     fun withOptions(modifier: Consumer<ClientOptions.Builder>): WorkspaceSecretService
 
-    /** List the current workspace's secret keys. Values are never returned. */
-    fun list(): List<WorkspaceSecret> = list(WorkspaceSecretListParams.none())
+    /**
+     * List the current workspace's secret keys in ascending key order. Secret values are never
+     * returned. Set include_configs to include allowed hosts and header configuration. Pass
+     * next_cursor as cursor to retrieve the next page, keeping include_configs unchanged.
+     * Pagination reflects the current secrets on each request, rather than a snapshot.
+     */
+    fun list(): WorkspaceSecretListPage = list(WorkspaceSecretListParams.none())
 
     /** @see list */
     fun list(
         params: WorkspaceSecretListParams = WorkspaceSecretListParams.none(),
         requestOptions: RequestOptions = RequestOptions.none(),
-    ): List<WorkspaceSecret>
+    ): WorkspaceSecretListPage
 
     /** @see list */
     fun list(
         params: WorkspaceSecretListParams = WorkspaceSecretListParams.none()
-    ): List<WorkspaceSecret> = list(params, RequestOptions.none())
+    ): WorkspaceSecretListPage = list(params, RequestOptions.none())
 
     /** @see list */
-    fun list(requestOptions: RequestOptions): List<WorkspaceSecret> =
+    fun list(requestOptions: RequestOptions): WorkspaceSecretListPage =
         list(WorkspaceSecretListParams.none(), requestOptions)
 
     /**
@@ -130,28 +136,29 @@ interface WorkspaceSecretService {
         ): WorkspaceSecretService.WithRawResponse
 
         /**
-         * Returns a raw HTTP response for `get /api/v1/workspaces/current/secrets`, but is
+         * Returns a raw HTTP response for `get /api/v2/workspaces/current/secrets`, but is
          * otherwise the same as [WorkspaceSecretService.list].
          */
         @MustBeClosed
-        fun list(): HttpResponseFor<List<WorkspaceSecret>> = list(WorkspaceSecretListParams.none())
+        fun list(): HttpResponseFor<WorkspaceSecretListPage> =
+            list(WorkspaceSecretListParams.none())
 
         /** @see list */
         @MustBeClosed
         fun list(
             params: WorkspaceSecretListParams = WorkspaceSecretListParams.none(),
             requestOptions: RequestOptions = RequestOptions.none(),
-        ): HttpResponseFor<List<WorkspaceSecret>>
+        ): HttpResponseFor<WorkspaceSecretListPage>
 
         /** @see list */
         @MustBeClosed
         fun list(
             params: WorkspaceSecretListParams = WorkspaceSecretListParams.none()
-        ): HttpResponseFor<List<WorkspaceSecret>> = list(params, RequestOptions.none())
+        ): HttpResponseFor<WorkspaceSecretListPage> = list(params, RequestOptions.none())
 
         /** @see list */
         @MustBeClosed
-        fun list(requestOptions: RequestOptions): HttpResponseFor<List<WorkspaceSecret>> =
+        fun list(requestOptions: RequestOptions): HttpResponseFor<WorkspaceSecretListPage> =
             list(WorkspaceSecretListParams.none(), requestOptions)
 
         /**

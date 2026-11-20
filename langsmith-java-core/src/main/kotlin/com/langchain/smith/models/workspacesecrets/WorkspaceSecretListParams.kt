@@ -9,16 +9,29 @@ import java.util.Objects
 import java.util.Optional
 import kotlin.jvm.optionals.getOrNull
 
-/** List the current workspace's secret keys. Values are never returned. */
+/**
+ * List the current workspace's secret keys in ascending key order. Secret values are never
+ * returned. Set include_configs to include allowed hosts and header configuration. Pass next_cursor
+ * as cursor to retrieve the next page, keeping include_configs unchanged. Pagination reflects the
+ * current secrets on each request, rather than a snapshot.
+ */
 class WorkspaceSecretListParams
 private constructor(
+    private val cursor: String?,
     private val includeConfigs: Boolean?,
+    private val pageSize: Long?,
     private val additionalHeaders: Headers,
     private val additionalQueryParams: QueryParams,
 ) : Params {
 
-    /** If true, include the hosts each secret may be sent to. */
+    /** Opaque cursor from a previous response */
+    fun cursor(): Optional<String> = Optional.ofNullable(cursor)
+
+    /** Include the hosts each secret may be sent to */
     fun includeConfigs(): Optional<Boolean> = Optional.ofNullable(includeConfigs)
+
+    /** Number of secrets per page */
+    fun pageSize(): Optional<Long> = Optional.ofNullable(pageSize)
 
     /** Additional headers to send with the request. */
     fun _additionalHeaders(): Headers = additionalHeaders
@@ -41,18 +54,28 @@ private constructor(
     /** A builder for [WorkspaceSecretListParams]. */
     class Builder internal constructor() {
 
+        private var cursor: String? = null
         private var includeConfigs: Boolean? = null
+        private var pageSize: Long? = null
         private var additionalHeaders: Headers.Builder = Headers.builder()
         private var additionalQueryParams: QueryParams.Builder = QueryParams.builder()
 
         @JvmSynthetic
         internal fun from(workspaceSecretListParams: WorkspaceSecretListParams) = apply {
+            cursor = workspaceSecretListParams.cursor
             includeConfigs = workspaceSecretListParams.includeConfigs
+            pageSize = workspaceSecretListParams.pageSize
             additionalHeaders = workspaceSecretListParams.additionalHeaders.toBuilder()
             additionalQueryParams = workspaceSecretListParams.additionalQueryParams.toBuilder()
         }
 
-        /** If true, include the hosts each secret may be sent to. */
+        /** Opaque cursor from a previous response */
+        fun cursor(cursor: String?) = apply { this.cursor = cursor }
+
+        /** Alias for calling [Builder.cursor] with `cursor.orElse(null)`. */
+        fun cursor(cursor: Optional<String>) = cursor(cursor.getOrNull())
+
+        /** Include the hosts each secret may be sent to */
         fun includeConfigs(includeConfigs: Boolean?) = apply {
             this.includeConfigs = includeConfigs
         }
@@ -67,6 +90,19 @@ private constructor(
         /** Alias for calling [Builder.includeConfigs] with `includeConfigs.orElse(null)`. */
         fun includeConfigs(includeConfigs: Optional<Boolean>) =
             includeConfigs(includeConfigs.getOrNull())
+
+        /** Number of secrets per page */
+        fun pageSize(pageSize: Long?) = apply { this.pageSize = pageSize }
+
+        /**
+         * Alias for [Builder.pageSize].
+         *
+         * This unboxed primitive overload exists for backwards compatibility.
+         */
+        fun pageSize(pageSize: Long) = pageSize(pageSize as Long?)
+
+        /** Alias for calling [Builder.pageSize] with `pageSize.orElse(null)`. */
+        fun pageSize(pageSize: Optional<Long>) = pageSize(pageSize.getOrNull())
 
         fun additionalHeaders(additionalHeaders: Headers) = apply {
             this.additionalHeaders.clear()
@@ -173,7 +209,9 @@ private constructor(
          */
         fun build(): WorkspaceSecretListParams =
             WorkspaceSecretListParams(
+                cursor,
                 includeConfigs,
+                pageSize,
                 additionalHeaders.build(),
                 additionalQueryParams.build(),
             )
@@ -184,7 +222,9 @@ private constructor(
     override fun _queryParams(): QueryParams =
         QueryParams.builder()
             .apply {
+                cursor?.let { put("cursor", it) }
                 includeConfigs?.let { put("include_configs", it.toString()) }
+                pageSize?.let { put("page_size", it.toString()) }
                 putAll(additionalQueryParams)
             }
             .build()
@@ -195,14 +235,16 @@ private constructor(
         }
 
         return other is WorkspaceSecretListParams &&
+            cursor == other.cursor &&
             includeConfigs == other.includeConfigs &&
+            pageSize == other.pageSize &&
             additionalHeaders == other.additionalHeaders &&
             additionalQueryParams == other.additionalQueryParams
     }
 
     override fun hashCode(): Int =
-        Objects.hash(includeConfigs, additionalHeaders, additionalQueryParams)
+        Objects.hash(cursor, includeConfigs, pageSize, additionalHeaders, additionalQueryParams)
 
     override fun toString() =
-        "WorkspaceSecretListParams{includeConfigs=$includeConfigs, additionalHeaders=$additionalHeaders, additionalQueryParams=$additionalQueryParams}"
+        "WorkspaceSecretListParams{cursor=$cursor, includeConfigs=$includeConfigs, pageSize=$pageSize, additionalHeaders=$additionalHeaders, additionalQueryParams=$additionalQueryParams}"
 }

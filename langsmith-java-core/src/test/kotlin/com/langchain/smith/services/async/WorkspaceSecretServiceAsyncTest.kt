@@ -3,7 +3,6 @@
 package com.langchain.smith.services.async
 
 import com.langchain.smith.client.okhttp.LangsmithOkHttpClientAsync
-import com.langchain.smith.models.workspacesecrets.WorkspaceSecretListParams
 import com.langchain.smith.models.workspacesecrets.WorkspaceSecretUpsertParams
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
@@ -20,13 +19,10 @@ internal class WorkspaceSecretServiceAsyncTest {
                 .build()
         val workspaceSecretServiceAsync = client.workspaceSecrets()
 
-        val workspaceSecretsFuture =
-            workspaceSecretServiceAsync.list(
-                WorkspaceSecretListParams.builder().includeConfigs(true).build()
-            )
+        val pageFuture = workspaceSecretServiceAsync.list()
 
-        val workspaceSecrets = workspaceSecretsFuture.get()
-        workspaceSecrets.forEach { it.validate() }
+        val page = pageFuture.get()
+        page.response().validate()
     }
 
     @Disabled("Mock server tests are disabled")

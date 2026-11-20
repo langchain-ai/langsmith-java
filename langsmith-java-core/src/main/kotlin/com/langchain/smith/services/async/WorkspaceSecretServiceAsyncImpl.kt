@@ -19,6 +19,8 @@ import com.langchain.smith.core.http.parseable
 import com.langchain.smith.core.prepareAsync
 import com.langchain.smith.models.workspacesecrets.WorkspaceSecret
 import com.langchain.smith.models.workspacesecrets.WorkspaceSecretDeleteParams
+import com.langchain.smith.models.workspacesecrets.WorkspaceSecretListPageAsync
+import com.langchain.smith.models.workspacesecrets.WorkspaceSecretListPageResponse
 import com.langchain.smith.models.workspacesecrets.WorkspaceSecretListParams
 import com.langchain.smith.models.workspacesecrets.WorkspaceSecretUpsertParams
 import java.util.concurrent.CompletableFuture
@@ -42,8 +44,8 @@ internal constructor(private val clientOptions: ClientOptions) : WorkspaceSecret
     override fun list(
         params: WorkspaceSecretListParams,
         requestOptions: RequestOptions,
-    ): CompletableFuture<List<WorkspaceSecret>> =
-        // get /api/v1/workspaces/current/secrets
+    ): CompletableFuture<WorkspaceSecretListPageAsync> =
+        // get /api/v2/workspaces/current/secrets
         withRawResponse().list(params, requestOptions).thenApply { it.parse() }
 
     override fun delete(
@@ -73,18 +75,18 @@ internal constructor(private val clientOptions: ClientOptions) : WorkspaceSecret
                 clientOptions.toBuilder().apply(modifier::accept).build()
             )
 
-        private val listHandler: Handler<List<WorkspaceSecret>> =
-            jsonHandler<List<WorkspaceSecret>>(clientOptions.jsonMapper)
+        private val listHandler: Handler<WorkspaceSecretListPageResponse> =
+            jsonHandler<WorkspaceSecretListPageResponse>(clientOptions.jsonMapper)
 
         override fun list(
             params: WorkspaceSecretListParams,
             requestOptions: RequestOptions,
-        ): CompletableFuture<HttpResponseFor<List<WorkspaceSecret>>> {
+        ): CompletableFuture<HttpResponseFor<WorkspaceSecretListPageAsync>> {
             val request =
                 HttpRequest.builder()
                     .method(HttpMethod.GET)
                     .baseUrl(clientOptions.baseUrl())
-                    .addPathSegments("api", "v1", "workspaces", "current", "secrets")
+                    .addPathSegments("api", "v2", "workspaces", "current", "secrets")
                     .build()
                     .prepareAsync(clientOptions, params)
             val requestOptions = requestOptions.applyDefaults(RequestOptions.from(clientOptions))
@@ -96,8 +98,16 @@ internal constructor(private val clientOptions: ClientOptions) : WorkspaceSecret
                             .use { listHandler.handle(it) }
                             .also {
                                 if (requestOptions.responseValidation!!) {
-                                    it.forEach { it.validate() }
+                                    it.validate()
                                 }
+                            }
+                            .let {
+                                WorkspaceSecretListPageAsync.builder()
+                                    .service(WorkspaceSecretServiceAsyncImpl(clientOptions))
+                                    .streamHandlerExecutor(clientOptions.streamHandlerExecutor)
+                                    .params(params)
+                                    .response(it)
+                                    .build()
                             }
                     }
                 }
