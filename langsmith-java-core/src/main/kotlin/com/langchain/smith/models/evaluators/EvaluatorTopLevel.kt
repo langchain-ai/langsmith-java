@@ -239,6 +239,9 @@ private constructor(
         fun prompt(): Optional<List<List<JsonValue>>> = prompt.getOptional("prompt")
 
         /**
+         * Output schema for the evaluator's feedback. Not accepted for decision-model (TypeSafe or
+         * OpenAI Decisions) evaluators, whose schema comes from their questions.
+         *
          * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
          *   the server responded with an unexpected value).
          */
@@ -436,6 +439,10 @@ private constructor(
                     }
             }
 
+            /**
+             * Output schema for the evaluator's feedback. Not accepted for decision-model (TypeSafe
+             * or OpenAI Decisions) evaluators, whose schema comes from their questions.
+             */
             fun schema(schema: Schema?) = schema(JsonField.ofNullable(schema))
 
             /** Alias for calling [Builder.schema] with `schema.orElse(null)`. */
@@ -685,6 +692,10 @@ private constructor(
             override fun toString() = "Model{additionalProperties=$additionalProperties}"
         }
 
+        /**
+         * Output schema for the evaluator's feedback. Not accepted for decision-model (TypeSafe or
+         * OpenAI Decisions) evaluators, whose schema comes from their questions.
+         */
         class Schema
         @JsonCreator
         private constructor(
