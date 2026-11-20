@@ -48,6 +48,8 @@ val palantir by configurations.creating {
     resolutionStrategy {
         // CVE-2026-54515: remove once Palantir resolves jackson-databind >= 2.21.5.
         force("com.fasterxml.jackson.core:jackson-databind:2.22.3")
+        // CVE-2026-102554: remove once Palantir resolves guava >= 33.7.2.
+        force("com.google.guava:guava:33.7.2-jre")
     }
 }
 dependencies {

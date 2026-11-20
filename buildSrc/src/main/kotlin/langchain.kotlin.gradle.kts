@@ -51,7 +51,12 @@ tasks.withType<Test>().configureEach {
     inputs.property("skipMockTests", System.getenv("SKIP_MOCK_TESTS")).optional(true)
 }
 
-val ktfmt by configurations.creating
+val ktfmt by configurations.creating {
+    resolutionStrategy {
+        // CVE-2026-102554: remove once ktfmt resolves guava >= 33.7.2.
+        force("com.google.guava:guava:33.7.2-jre")
+    }
+}
 dependencies {
     ktfmt("com.facebook:ktfmt:0.61")
 }
