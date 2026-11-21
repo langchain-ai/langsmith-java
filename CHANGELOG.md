@@ -1,5 +1,42 @@
 # Changelog
 
+## [0.1.0-beta.30](https://github.com/langchain-ai/langsmith-java/compare/v0.1.0-beta.29...v0.1.0-beta.30) (2026-11-21)
+
+
+### ⚠ BREAKING CHANGES
+
+* add cursor-paginated workspace secrets listing
+
+### Features
+
+* add cursor-paginated workspace secrets listing ([5d469fc](https://github.com/langchain-ai/langsmith-java/commit/5d469fc8c758e74b7c8c859e9be1eb12625565a8))
+* **annotation-queues:** return agreement on the items list and count ([1dde4bd](https://github.com/langchain-ai/langsmith-java/commit/1dde4bdf42862cc2b369172181ef2903904c89b0))
+* **annotation-queues:** set and clear a final answer on a completed item ([1731761](https://github.com/langchain-ai/langsmith-java/commit/173176170ddf4ff417bcd4c37613b59f78a5a62f))
+* **feedback:** delete feedback from Go ([9d8d872](https://github.com/langchain-ai/langsmith-java/commit/9d8d8721ea52e22ec8af079c59ffc41fe154ef21))
+* **host:** chart Postgres out-of-memory restarts for Cloud SQL deployments ([edcbad5](https://github.com/langchain-ai/langsmith-java/commit/edcbad506165071478c34a34f745c26b4d9bdf1b))
+* let LangSmith MCP agents report product feedback ([573cbae](https://github.com/langchain-ai/langsmith-java/commit/573cbae57409a5a35ebf192ee2c39887513d1f51))
+* **runs:** add stride to /v2/threads/stats and return thread feedback stats ([60826e9](https://github.com/langchain-ai/langsmith-java/commit/60826e93e34d58e5927817dee01a2b084c449b36))
+* **sdk:** add sandbox volumes, batch delete and usage to the SDKs ([2e1ce77](https://github.com/langchain-ai/langsmith-java/commit/2e1ce771cf1b84b94723d3d59773b1f3bebfd7a0))
+* **sdk:** generate workspace resource tag keys and values ([6efbfea](https://github.com/langchain-ai/langsmith-java/commit/6efbfea8e36c73b9ca25134dc28860792b105b3f))
+
+
+### Bug Fixes
+
+* **run-rules:** apply all filters together in GET /runs/rules ([47bee82](https://github.com/langchain-ai/langsmith-java/commit/47bee82c3fdc522bad76978a5ce867ae61cc6b81))
+* **run-rules:** return backfill_id on create and list every outcomes page in backfill logs ([ece1034](https://github.com/langchain-ai/langsmith-java/commit/ece10343cb34a9eb6b6c3b9b4deab1fee710a0f9))
+* **runs:** gate standard runs/query page limits behind FF_RUNS_QUERY_PAGE_LIMITS [closes LSO-5052] ([67f4378](https://github.com/langchain-ai/langsmith-java/commit/67f4378320da0dbc33c651d894313c0a81e8cc16))
+* **runs:** name the /runs/stats response and gate problem-details 422s [closes LSO-5054] ([ca1eb90](https://github.com/langchain-ai/langsmith-java/commit/ca1eb90b3c80e1b7a3d9e26eac3a07df56695cec))
+
+
+### Chores
+
+* **java:** force guava 33.7.2-jre on formatter classpaths ([32d499c](https://github.com/langchain-ai/langsmith-java/commit/32d499cd41d4a350c0d5f02066cf97f05063a3a1))
+
+
+### Documentation
+
+* **runs:** mark POST /v2/traces/query as a read [closes LSO-5053] ([7e4b5da](https://github.com/langchain-ai/langsmith-java/commit/7e4b5daf6e9a52bcb3b0ec842a75ff31c29d3548))
+
 ## [0.1.0-beta.29](https://github.com/langchain-ai/langsmith-java/compare/v0.1.0-beta.28...v0.1.0-beta.29) (2026-11-17)
 
 
