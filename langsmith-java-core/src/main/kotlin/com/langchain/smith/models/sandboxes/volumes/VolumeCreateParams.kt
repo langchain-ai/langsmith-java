@@ -34,7 +34,7 @@ private constructor(
 ) : Params {
 
     /**
-     * Name is unique within the workspace.
+     * Name of the volume, unique within the workspace.
      *
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type or is
      *   unexpectedly missing or null (e.g. if the server responded with an unexpected value).
@@ -42,7 +42,7 @@ private constructor(
     fun name(): String = body.name()
 
     /**
-     * SizeBytes is the volume's capacity, rounded up to a whole GiB.
+     * Capacity in bytes, rounded up to a whole GiB.
      *
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type or is
      *   unexpectedly missing or null (e.g. if the server responded with an unexpected value).
@@ -50,12 +50,17 @@ private constructor(
     fun sizeBytes(): Long = body.sizeBytes()
 
     /**
+     * Free-text description, at most 1024 characters.
+     *
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
      */
     fun description(): Optional<String> = body.description()
 
     /**
+     * Labels to filter and identify the volume by. Keys are lowercase letters, digits, dots and
+     * hyphens.
+     *
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
      */
@@ -139,7 +144,7 @@ private constructor(
          */
         fun body(body: Body) = apply { this.body = body.toBuilder() }
 
-        /** Name is unique within the workspace. */
+        /** Name of the volume, unique within the workspace. */
         fun name(name: String) = apply { body.name(name) }
 
         /**
@@ -150,7 +155,7 @@ private constructor(
          */
         fun name(name: JsonField<String>) = apply { body.name(name) }
 
-        /** SizeBytes is the volume's capacity, rounded up to a whole GiB. */
+        /** Capacity in bytes, rounded up to a whole GiB. */
         fun sizeBytes(sizeBytes: Long) = apply { body.sizeBytes(sizeBytes) }
 
         /**
@@ -161,6 +166,7 @@ private constructor(
          */
         fun sizeBytes(sizeBytes: JsonField<Long>) = apply { body.sizeBytes(sizeBytes) }
 
+        /** Free-text description, at most 1024 characters. */
         fun description(description: String) = apply { body.description(description) }
 
         /**
@@ -172,6 +178,10 @@ private constructor(
          */
         fun description(description: JsonField<String>) = apply { body.description(description) }
 
+        /**
+         * Labels to filter and identify the volume by. Keys are lowercase letters, digits, dots and
+         * hyphens.
+         */
         fun labels(labels: Labels) = apply { body.labels(labels) }
 
         /**
@@ -349,7 +359,7 @@ private constructor(
         ) : this(name, sizeBytes, description, labels, mutableMapOf())
 
         /**
-         * Name is unique within the workspace.
+         * Name of the volume, unique within the workspace.
          *
          * @throws LangChainInvalidDataException if the JSON field has an unexpected type or is
          *   unexpectedly missing or null (e.g. if the server responded with an unexpected value).
@@ -357,7 +367,7 @@ private constructor(
         fun name(): String = name.getRequired("name")
 
         /**
-         * SizeBytes is the volume's capacity, rounded up to a whole GiB.
+         * Capacity in bytes, rounded up to a whole GiB.
          *
          * @throws LangChainInvalidDataException if the JSON field has an unexpected type or is
          *   unexpectedly missing or null (e.g. if the server responded with an unexpected value).
@@ -365,12 +375,17 @@ private constructor(
         fun sizeBytes(): Long = sizeBytes.getRequired("size_bytes")
 
         /**
+         * Free-text description, at most 1024 characters.
+         *
          * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
          *   the server responded with an unexpected value).
          */
         fun description(): Optional<String> = description.getOptional("description")
 
         /**
+         * Labels to filter and identify the volume by. Keys are lowercase letters, digits, dots and
+         * hyphens.
+         *
          * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
          *   the server responded with an unexpected value).
          */
@@ -450,7 +465,7 @@ private constructor(
                 additionalProperties = body.additionalProperties.toMutableMap()
             }
 
-            /** Name is unique within the workspace. */
+            /** Name of the volume, unique within the workspace. */
             fun name(name: String) = name(JsonField.of(name))
 
             /**
@@ -462,7 +477,7 @@ private constructor(
              */
             fun name(name: JsonField<String>) = apply { this.name = name }
 
-            /** SizeBytes is the volume's capacity, rounded up to a whole GiB. */
+            /** Capacity in bytes, rounded up to a whole GiB. */
             fun sizeBytes(sizeBytes: Long) = sizeBytes(JsonField.of(sizeBytes))
 
             /**
@@ -474,6 +489,7 @@ private constructor(
              */
             fun sizeBytes(sizeBytes: JsonField<Long>) = apply { this.sizeBytes = sizeBytes }
 
+            /** Free-text description, at most 1024 characters. */
             fun description(description: String) = description(JsonField.of(description))
 
             /**
@@ -487,6 +503,10 @@ private constructor(
                 this.description = description
             }
 
+            /**
+             * Labels to filter and identify the volume by. Keys are lowercase letters, digits, dots
+             * and hyphens.
+             */
             fun labels(labels: Labels) = labels(JsonField.of(labels))
 
             /**
@@ -607,6 +627,10 @@ private constructor(
             "Body{name=$name, sizeBytes=$sizeBytes, description=$description, labels=$labels, additionalProperties=$additionalProperties}"
     }
 
+    /**
+     * Labels to filter and identify the volume by. Keys are lowercase letters, digits, dots and
+     * hyphens.
+     */
     class Labels
     @JsonCreator
     private constructor(

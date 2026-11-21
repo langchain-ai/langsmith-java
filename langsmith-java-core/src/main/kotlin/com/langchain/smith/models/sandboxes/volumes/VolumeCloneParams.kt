@@ -46,12 +46,16 @@ private constructor(
     fun name(): String = body.name()
 
     /**
+     * Free-text description of the new volume, at most 1024 characters.
+     *
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
      */
     fun description(): Optional<String> = body.description()
 
     /**
+     * Labels for the new volume. Keys are lowercase letters, digits, dots and hyphens.
+     *
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
      */
@@ -144,6 +148,7 @@ private constructor(
          */
         fun name(name: JsonField<String>) = apply { body.name(name) }
 
+        /** Free-text description of the new volume, at most 1024 characters. */
         fun description(description: String) = apply { body.description(description) }
 
         /**
@@ -155,6 +160,7 @@ private constructor(
          */
         fun description(description: JsonField<String>) = apply { body.description(description) }
 
+        /** Labels for the new volume. Keys are lowercase letters, digits, dots and hyphens. */
         fun labels(labels: Labels) = apply { body.labels(labels) }
 
         /**
@@ -342,12 +348,16 @@ private constructor(
         fun name(): String = name.getRequired("name")
 
         /**
+         * Free-text description of the new volume, at most 1024 characters.
+         *
          * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
          *   the server responded with an unexpected value).
          */
         fun description(): Optional<String> = description.getOptional("description")
 
         /**
+         * Labels for the new volume. Keys are lowercase letters, digits, dots and hyphens.
+         *
          * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
          *   the server responded with an unexpected value).
          */
@@ -429,6 +439,7 @@ private constructor(
              */
             fun name(name: JsonField<String>) = apply { this.name = name }
 
+            /** Free-text description of the new volume, at most 1024 characters. */
             fun description(description: String) = description(JsonField.of(description))
 
             /**
@@ -442,6 +453,7 @@ private constructor(
                 this.description = description
             }
 
+            /** Labels for the new volume. Keys are lowercase letters, digits, dots and hyphens. */
             fun labels(labels: Labels) = labels(JsonField.of(labels))
 
             /**
@@ -557,6 +569,7 @@ private constructor(
             "Body{name=$name, description=$description, labels=$labels, additionalProperties=$additionalProperties}"
     }
 
+    /** Labels for the new volume. Keys are lowercase letters, digits, dots and hyphens. */
     class Labels
     @JsonCreator
     private constructor(
