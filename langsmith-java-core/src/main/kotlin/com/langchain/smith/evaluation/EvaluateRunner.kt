@@ -209,7 +209,8 @@ internal class EvaluateRunner(
     ): RunIngest? {
         var runTree: RunTree? = null
         val wrappedTarget: (Map<String, Any?>) -> Any? = { exampleInputs ->
-            target(exampleInputs).also { runTree = getCurrentRunTree() }
+            runTree = getCurrentRunTree()
+            target(exampleInputs)
         }
 
         val traced =
@@ -219,9 +220,7 @@ internal class EvaluateRunner(
                     name = "Target",
                     client = client,
                     projectName = experimentName,
-                    referenceExampleId =
-                        if (params.errorHandling == EvaluateErrorHandling.LOG) example.id()
-                        else null,
+                    referenceExampleId = example.id(),
                     sessionId = sessionId,
                     metadata = runMetadata,
                     tracingEnabled = true,
