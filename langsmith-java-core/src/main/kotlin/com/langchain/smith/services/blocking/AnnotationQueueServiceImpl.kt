@@ -42,6 +42,8 @@ import com.langchain.smith.models.annotationqueues.AnnotationQueueUpdateResponse
 import com.langchain.smith.models.annotationqueues.RunSchemaWithAnnotationQueueInfo
 import com.langchain.smith.services.blocking.annotationqueues.ItemService
 import com.langchain.smith.services.blocking.annotationqueues.ItemServiceImpl
+import com.langchain.smith.services.blocking.annotationqueues.ReviewerService
+import com.langchain.smith.services.blocking.annotationqueues.ReviewerServiceImpl
 import com.langchain.smith.services.blocking.annotationqueues.RunService
 import com.langchain.smith.services.blocking.annotationqueues.RunServiceImpl
 import java.util.function.Consumer
@@ -58,6 +60,8 @@ class AnnotationQueueServiceImpl internal constructor(private val clientOptions:
 
     private val items: ItemService by lazy { ItemServiceImpl(clientOptions) }
 
+    private val reviewers: ReviewerService by lazy { ReviewerServiceImpl(clientOptions) }
+
     override fun withRawResponse(): AnnotationQueueService.WithRawResponse = withRawResponse
 
     override fun withOptions(modifier: Consumer<ClientOptions.Builder>): AnnotationQueueService =
@@ -66,6 +70,8 @@ class AnnotationQueueServiceImpl internal constructor(private val clientOptions:
     override fun runs(): RunService = runs
 
     override fun items(): ItemService = items
+
+    override fun reviewers(): ReviewerService = reviewers
 
     override fun retrieve(
         params: AnnotationQueueRetrieveParams,
@@ -187,6 +193,10 @@ class AnnotationQueueServiceImpl internal constructor(private val clientOptions:
             ItemServiceImpl.WithRawResponseImpl(clientOptions)
         }
 
+        private val reviewers: ReviewerService.WithRawResponse by lazy {
+            ReviewerServiceImpl.WithRawResponseImpl(clientOptions)
+        }
+
         override fun withOptions(
             modifier: Consumer<ClientOptions.Builder>
         ): AnnotationQueueService.WithRawResponse =
@@ -197,6 +207,8 @@ class AnnotationQueueServiceImpl internal constructor(private val clientOptions:
         override fun runs(): RunService.WithRawResponse = runs
 
         override fun items(): ItemService.WithRawResponse = items
+
+        override fun reviewers(): ReviewerService.WithRawResponse = reviewers
 
         private val retrieveHandler: Handler<AnnotationQueueRetrieveResponse> =
             jsonHandler<AnnotationQueueRetrieveResponse>(clientOptions.jsonMapper)
