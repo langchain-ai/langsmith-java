@@ -1,3 +1,5 @@
+import org.gradle.api.tasks.testing.Test
+
 plugins {
     id("langchain.kotlin")
     id("langchain.publish")
@@ -124,4 +126,25 @@ dependencies {
     // LangChain4j for testing parallel tool execution context propagation
     testImplementation("dev.langchain4j:langchain4j:1.20.0")
     testImplementation("dev.langchain4j:langchain4j-core:1.20.0")
+}
+
+// This class replaces the process-wide System.err. The suite runs other classes
+// concurrently, and the lock only queues tests that declare it, so this class
+// gets a JVM of its own.
+val loggingHttpClientTest = tasks.register<Test>("loggingHttpClientTest") {
+    description = "Runs LoggingHttpClientTest apart from the other test classes."
+    group = "verification"
+    testClassesDirs = sourceSets["test"].output.classesDirs
+    classpath = sourceSets["test"].runtimeClasspath
+    maxParallelForks = 1
+    filter {
+        includeTestsMatching("com.langchain.smith.core.http.LoggingHttpClientTest")
+    }
+}
+
+tasks.test {
+    filter {
+        excludeTestsMatching("com.langchain.smith.core.http.LoggingHttpClientTest")
+    }
+    dependsOn(loggingHttpClientTest)
 }
