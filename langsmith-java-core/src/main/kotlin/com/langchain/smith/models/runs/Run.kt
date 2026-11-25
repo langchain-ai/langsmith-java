@@ -4099,6 +4099,10 @@ private constructor(
 
             @JvmField val PENDING = of("PENDING")
 
+            @JvmField val INTERRUPTED = of("INTERRUPTED")
+
+            @JvmField val CANCELLED = of("CANCELLED")
+
             @JvmStatic fun of(value: String) = Status(JsonField.of(value))
         }
 
@@ -4107,6 +4111,8 @@ private constructor(
             SUCCESS,
             ERROR,
             PENDING,
+            INTERRUPTED,
+            CANCELLED,
         }
 
         /**
@@ -4122,6 +4128,8 @@ private constructor(
             SUCCESS,
             ERROR,
             PENDING,
+            INTERRUPTED,
+            CANCELLED,
             /** An enum member indicating that [Status] was instantiated with an unknown value. */
             _UNKNOWN,
         }
@@ -4138,6 +4146,8 @@ private constructor(
                 SUCCESS -> Value.SUCCESS
                 ERROR -> Value.ERROR
                 PENDING -> Value.PENDING
+                INTERRUPTED -> Value.INTERRUPTED
+                CANCELLED -> Value.CANCELLED
                 else -> Value._UNKNOWN
             }
 
@@ -4155,6 +4165,8 @@ private constructor(
                 SUCCESS -> Known.SUCCESS
                 ERROR -> Known.ERROR
                 PENDING -> Known.PENDING
+                INTERRUPTED -> Known.INTERRUPTED
+                CANCELLED -> Known.CANCELLED
                 else -> throw LangChainInvalidDataException("Unknown Status: $value")
             }
 
