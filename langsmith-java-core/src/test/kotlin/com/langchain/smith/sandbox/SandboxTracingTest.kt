@@ -7,6 +7,8 @@ import io.opentelemetry.api.common.AttributeKey
 import io.opentelemetry.api.trace.Span
 import io.opentelemetry.sdk.trace.ReadableSpan
 import io.opentelemetry.sdk.trace.SdkTracerProvider
+import io.opentelemetry.sdk.trace.export.SimpleSpanProcessor
+import io.opentelemetry.sdk.trace.export.SpanExporter
 import java.util.stream.Stream
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
@@ -36,7 +38,11 @@ internal class SandboxTracingTest {
         val sandbox = client.attach(ID)
         val parent = RunTree()
         val run = RunTree(metadata = mutableMapOf("other" to "preserved"))
-        SdkTracerProvider.builder().build().use { provider ->
+        val tracerProvider =
+            SdkTracerProvider.builder()
+                .addSpanProcessor(SimpleSpanProcessor.create(SpanExporter.composite()))
+                .build()
+        tracerProvider.use { provider ->
             val span = provider.get("sandbox-test").spanBuilder("caller").startSpan()
             try {
                 span.makeCurrent().use {

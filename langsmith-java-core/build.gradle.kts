@@ -56,9 +56,9 @@ dependencies {
     implementation("org.apache.httpcomponents.client5:httpclient5:5.6.4")
 
     // OpenTelemetry dependencies
-    api("io.opentelemetry:opentelemetry-api:1.66.0")
-    api("io.opentelemetry:opentelemetry-sdk:1.66.0")
-    api("io.opentelemetry:opentelemetry-exporter-otlp:1.66.0")
+    api("io.opentelemetry:opentelemetry-api:1.67.0")
+    api("io.opentelemetry:opentelemetry-sdk:1.67.0")
+    api("io.opentelemetry:opentelemetry-exporter-otlp:1.67.0")
     api("io.opentelemetry.semconv:opentelemetry-semconv:1.44.0")
 
     // OpenAI SDK (for wrapOpenAI tracing wrapper)
@@ -100,6 +100,7 @@ dependencies {
         testImplementation("com.jayway.jsonpath:json-path") { version { require("2.10.0") } }
         testImplementation("org.xmlunit:xmlunit-core") { version { require("2.12.0") } }
         testImplementation("net.minidev:json-smart") { version { require("2.6.0") } }
+        testImplementation("org.json:json") { version { require("20260719") } }
     }
 
     testImplementation(kotlin("test"))
